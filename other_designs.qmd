@@ -1,0 +1,122 @@
+# Other Designs
+
+## Split plot with repeated measures
+
+Main plot is "irrigation" and split plot is "mix".
+
+```{r}
+alfalfa_sp <- read.csv("data/alfalfa2021_data.csv")
+library(dplyr)
+```
+
+**cut**: a cutting (harvest) of alfalfa within a single growing season. This is a temporal unit for repeated measures analysis. There were three cuttings in total for that year and field. The dates are not known, but we cannot assume they are evenly spaced apart.
+
+**irrigation**: irrigation treatment ("Full" or "Deficit")
+
+**plot**: a unique number referring to each experimental unit
+
+**block**: the blocking unit
+
+**yield**: response variable
+
+**row**: plot position for row
+
+**col**: plot positions for column or range
+
+```{r}
+head(alfalfa_sp)
+```
+
+Two new variables created:
+
+**rep**: factor version of block (We should treat rep/block as a factor rather than an integer in modelling)
+
+**Cut**: number version of cut where 1 is the first cutting. This is required by `nlme::lme` for specialized correlation structures.
+
+```{r}
+alfalfa_sp <- alfalfa_sp %>% 
+  mutate(rep = as.factor(block)) %>% 
+  mutate(Cut = case_when(
+    cut == "First" ~ 1L,
+    cut == "Second" ~ 2L,
+    cut == "Third" ~ 3L,
+    is.na(cut) ~ NA_integer_)) 
+```
+
+Visualise data
+
+```{r}
+library(ggplot2); library(desplot)
+
+alfalfa_sp %>% filter(cut == "First") %>% 
+  
+ggplot(aes(x = col, y = row)) +
+  geom_raster(aes(fill = irrigation)) +
+  geom_tileborder(aes(group = 1, grp = rep), lwd = 1.5) + 
+  theme_classic()
+```
+
+Model statement
+
+$$y_{ijk} = \mu + \alpha_i+\beta_j + \gamma_k + a_l + b_m + c_n + \epsilon_{}$$ where
+
+$\mu$ = overall mean/intercept\
+$\alpha_i$ = effect of the $i^{th}$ irrigation treatment\
+$\beta_j$ = effect of the $j^{th}$ planting mix treatment $\gamma_k$ = effect of the $k^{th}$ cutting
+
+To make things easier, the interactions between the fixed effects are not shown.
+
+```{r}
+library(nlme)
+
+m1 <- lme(yield ~ mix*irrigation*cut,
+          random = ~ 1|plot/rep/irrigation,
+          data = alfalfa_sp)
+```
+
+use a special correlation structure for correlated error terms `corCompSymm()` is for compound symmetry. There are several other options in the `nlme` machinery (search "cor") for more options and details on the syntax. In general, repeated measures syntax follow this convention: `form = ~ time|grouping`. You can also use `1|group` and the observation order for each group will be. The default starting value (`value`) is zero, and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process.
+
+```{r}
+corstr <- corCompSymm(value = 0.3, 
+                      form = ~ cut|plot/rep/irrigation,
+                      fixed = FALSE)
+```
+
+It's important that these two terms match after the "\|":
+
+```{r, code-line-numbers="2,6", eval=FALSE,echo=TRUE}
+m1 <- lme(yield ~ mix*irrigation*cut,
+          random = ~ 1|plot/rep/irrigation,
+          data = alfalfa_sp)
+
+corstr <- corCompSymm(value = 0.3, 
+                      form = ~ cut|plot/rep/irrigation,
+                      fixed = FALSE)
+```
+
+Update the model:
+
+```{r}
+m2 <- update(m1, cor = corstr)
+```
+
+
+The usual next steps:
+
+check diagnostics
+```{r}
+plot(m2)
+qqnorm(m2, ~ resid(., type = "p"), abline = c(0, 1))
+```
+
+Look at the variance components. 
+```{r}
+VarCorr(m2)
+```
+
+Run ANOVA
+```{r}
+anova(m2)
+```
+
+
