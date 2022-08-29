@@ -1,0 +1,136 @@
+# GLMM
+
+## Hurdle model
+
+```{r}
+insect_exp <- read.csv("data/insect_count_data_glmm.csv")
+```
+
+**plot**: a unique number referring to each experimental unit
+
+**treatment**: pesticidal treatment (6 different products)
+
+**row**: plot position for row
+
+**col**: plot positions for column or range
+
+**block**: the blocking unit
+
+**insect_counts**: response variable
+
+**sampling_date**: dates when each experimental unit were evaluated for insect counts
+
+```{r}
+head(insect_exp)
+```
+
+Two new variables created:
+
+**treatment**: original variable treatment converted to a factor
+
+**block**: original variable block converted to a factor
+
+**Date**: factor version of sampling_date
+
+```{r}
+library(dplyr)
+
+insect_exp <- insect_exp %>% 
+  mutate(block = as.factor(block), 
+         treatment = as.character(treatment), 
+         sampling_date = as.Date(sampling_date, format = "%m/%d/%y")) %>% 
+  mutate(Date = as.factor(sampling_date))
+```
+
+Visualise data
+
+```{r, message=FALSE,warning=FALSE}
+library(ggplot2) 
+
+insect_exp %>% group_by(sampling_date, treatment) %>% 
+  summarise(mean_counts = mean(insect_counts)) %>% 
+  ggplot(., aes(x = sampling_date, y = mean_counts, color = treatment)) +
+    geom_point(size = 2) +
+    geom_line() +
+    theme_classic()
+
+ggplot(insect_exp, aes(x = sampling_date, y = insect_counts, color = treatment, group = plot)) +
+  geom_point(size = 2) +
+  geom_line() +
+  theme_classic()
+```
+
+Model statement 
+{[[[[ FIX THIS - it's still written for alfalfa ]]]]}
+
+$$y_{ijk} = \mu + \alpha_i+\beta_j + \gamma_k + a_l + b_m + c_n + \epsilon_{}$$ where
+
+$\mu$ = overall mean/intercept
+$\alpha_i$ = effect of the $i^{th}$ pesticide treatment
+$\beta_j$ = effect of the $j^{th}$ block 
+$\gamma_k$ = effect of the $k^{th}$ sampling date
+
+To make things easier, the interactions between the fixed effects are not shown.
+
+```{r}
+library(glmmTMB)
+
+m1 = glmmTMB(
+  insect_counts ~ treatment + Date + ar1(Date + 0|plot) + (1|block),
+  ziformula = ~ treatment,
+  data = insect_exp, na.action = na.exclude, 
+  family = nbinom2)
+```
+
+special correlation structure for correlated error terms `ar1()` (autoregressive 1). 
+
+There are several other specialized covariance structures implmented by glmmTMB. 
+In general, repeated measures syntax follow this convention: `(time + 0 | grouping)`.
+
+We can test other distributions
+```{r}
+m2 <- update(m1, family = poisson)
+m3 <- update(m1, family = nbinom1)
+```
+
+Fitting glmm is hard.
+Basic guidance on model fitting: https://glmmtmb.github.io/glmmTMB/articles/troubleshooting.html
+```{r}
+diagnose(m2)
+diagnose(m3)
+```
+
+Summary info
+```{r}
+m1
+```
+
+
+Diagnostics
+
+Look at residuals over space
+```{r}
+insect_exp$model_resids <- residuals(m1)
+
+ggplot(insect_exp, aes(x = row, y = column, fill = model_resids)) +
+  geom_tile() + 
+  facet_wrap(facets = vars(Date), nrow = 3, ncol = 3) + 
+  scale_fill_viridis_c(direction = -1) + 
+  theme_minimal()
+```
+
+use **DHARMa** to conduct residual tests
+```{r}
+simulated_resids <- simulateResiduals(m1_c)
+testDispersion(simulated_resids)
+plot(simulated_resids)
+```
+
+ANOVA
+```{r}
+car::Anova(m1)
+```
+
+**glmmTMB** is compatible with **emmeans** and **effects**. 
+
+

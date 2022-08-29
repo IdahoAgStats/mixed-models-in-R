@@ -63,8 +63,8 @@ $$y_{ijk} = \mu + \alpha_i+\beta_j + \gamma_k + a_l + b_m + c_n + \epsilon_{}$$ 
 $\mu$ = overall mean/intercept\
 $\alpha_i$ = effect of the $i^{th}$ irrigation treatment\
 $\beta_j$ = effect of the $j^{th}$ planting mix treatment $\gamma_k$ = effect of the $k^{th}$ cutting
+[[need all those interactions]]
 
-To make things easier, the interactions between the fixed effects are not shown.
 
 ```{r}
 library(nlme)
@@ -74,7 +74,7 @@ m1 <- lme(yield ~ mix*irrigation*cut,
           data = alfalfa_sp)
 ```
 
-use a special correlation structure for correlated error terms `corCompSymm()` is for compound symmetry. There are several other options in the `nlme` machinery (search "cor") for more options and details on the syntax. In general, repeated measures syntax follow this convention: `form = ~ time|grouping`. You can also use `1|group` and the observation order for each group will be. The default starting value (`value`) is zero, and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process.
+use a special correlation structure for correlated error terms `corCompSymm()` is for compound symmetry. There are several other options in the **nlm** machinery (search "cor" for more options and details on the syntax). In general, repeated measures syntax follow this convention: `form = ~ time|grouping`. You can also use `1|group` and the observation order for each group will be. The default starting value (`value`) is zero, and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process.
 
 ```{r}
 corstr <- corCompSymm(value = 0.3, 
@@ -82,7 +82,7 @@ corstr <- corCompSymm(value = 0.3,
                       fixed = FALSE)
 ```
 
-It's important that these two terms match after the "\|":
+It's important that these two terms match after the "|" in the `random` and `form` arguments:
 
 ```{r, code-line-numbers="2,6", eval=FALSE,echo=TRUE}
 m1 <- lme(yield ~ mix*irrigation*cut,
@@ -100,23 +100,23 @@ Update the model:
 m2 <- update(m1, cor = corstr)
 ```
 
-
 The usual next steps:
 
 check diagnostics
+
 ```{r}
 plot(m2)
 qqnorm(m2, ~ resid(., type = "p"), abline = c(0, 1))
 ```
 
-Look at the variance components. 
+Look at the variance components.
+
 ```{r}
 VarCorr(m2)
 ```
 
 Run ANOVA
+
 ```{r}
 anova(m2)
 ```
-
-
