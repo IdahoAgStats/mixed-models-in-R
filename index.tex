@@ -213,7 +213,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, enhanced, borderline west={3pt}{0pt}{shadecolor}, breakable, frame hidden, interior hidden, boxrule=0pt]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, enhanced, sharp corners, frame hidden, breakable, interior hidden]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -885,7 +885,7 @@ The following object is masked from 'package:dplyr':
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{m1 }\OtherTok{\textless{}{-}} \FunctionTok{lme}\NormalTok{(yield }\SpecialCharTok{\textasciitilde{}}\NormalTok{ mix}\SpecialCharTok{*}\NormalTok{irrigation}\SpecialCharTok{*}\NormalTok{cut,}
-          \AttributeTok{random =} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\SpecialCharTok{|}\NormalTok{plot}\SpecialCharTok{/}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation,}
+          \AttributeTok{random =} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\SpecialCharTok{|}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation}\SpecialCharTok{/}\NormalTok{plot,}
           \AttributeTok{data =}\NormalTok{ alfalfa\_sp)}
 \end{Highlighting}
 \end{Shaded}
@@ -904,7 +904,7 @@ be allowed to change during the model fitting process.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{corstr }\OtherTok{\textless{}{-}} \FunctionTok{corCompSymm}\NormalTok{(}\AttributeTok{value =} \FloatTok{0.3}\NormalTok{, }
-                      \AttributeTok{form =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cut}\SpecialCharTok{|}\NormalTok{plot}\SpecialCharTok{/}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation,}
+                      \AttributeTok{form =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cut}\SpecialCharTok{|}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation}\SpecialCharTok{/}\NormalTok{plot,}
                       \AttributeTok{fixed =} \ConstantTok{FALSE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -915,11 +915,11 @@ the \texttt{random} and \texttt{form} arguments:
 \begin{Shaded}
 \begin{Highlighting}[numbers=left,,]
 \NormalTok{m1 }\OtherTok{\textless{}{-}} \FunctionTok{lme}\NormalTok{(yield }\SpecialCharTok{\textasciitilde{}}\NormalTok{ mix}\SpecialCharTok{*}\NormalTok{irrigation}\SpecialCharTok{*}\NormalTok{cut,}
-          \AttributeTok{random =} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\SpecialCharTok{|}\NormalTok{plot}\SpecialCharTok{/}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation,}
+          \AttributeTok{random =} \SpecialCharTok{\textasciitilde{}} \DecValTok{1}\SpecialCharTok{|}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation}\SpecialCharTok{/}\NormalTok{plot,}
           \AttributeTok{data =}\NormalTok{ alfalfa\_sp)}
 
 \NormalTok{corstr }\OtherTok{\textless{}{-}} \FunctionTok{corCompSymm}\NormalTok{(}\AttributeTok{value =} \FloatTok{0.3}\NormalTok{, }
-                      \AttributeTok{form =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cut}\SpecialCharTok{|}\NormalTok{plot}\SpecialCharTok{/}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation,}
+                      \AttributeTok{form =} \SpecialCharTok{\textasciitilde{}}\NormalTok{ cut}\SpecialCharTok{|}\NormalTok{rep}\SpecialCharTok{/}\NormalTok{irrigation}\SpecialCharTok{/}\NormalTok{plot,}
                       \AttributeTok{fixed =} \ConstantTok{FALSE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -973,14 +973,14 @@ Look at the variance components.
 \end{Shaded}
 
 \begin{verbatim}
-             Variance     StdDev   
-plot =       pdLogChol(1)          
-(Intercept)    287.6650    16.96069
-rep =        pdLogChol(1)          
-(Intercept)    287.6901    16.96143
-irrigation = pdLogChol(1)          
-(Intercept)    287.6733    16.96094
-Residual     16164.7176   127.14054
+             Variance     StdDev    
+rep =        pdLogChol(1)           
+(Intercept)     83.17553    9.120062
+irrigation = pdLogChol(1)           
+(Intercept)    280.54818   16.749573
+plot =       pdLogChol(1)           
+(Intercept)    481.42852   21.941480
+Residual     16182.25878  127.209507
 \end{verbatim}
 
 Run ANOVA
@@ -993,14 +993,14 @@ Run ANOVA
 
 \begin{verbatim}
                    numDF denDF   F-value p-value
-(Intercept)            1   102 2576.9579  <.0001
-mix                    9   102   12.7163  <.0001
-irrigation             1    78    7.1938  0.0089
-cut                    2   102    6.0436  0.0033
-mix:irrigation         9   102    0.4854  0.8814
-mix:cut               18   102    0.8000  0.6960
-irrigation:cut         2   102   14.2652  <.0001
-mix:irrigation:cut    18   102    1.0220  0.4425
+(Intercept)            1   102 1432.6369  <.0001
+mix                    9   102   13.6932  <.0001
+irrigation             1     3    4.8770  0.1143
+cut                    2   102    6.0434  0.0033
+mix:irrigation         9   102    0.5256  0.8530
+mix:cut               18   102    0.8029  0.6927
+irrigation:cut         2   102   14.2649  <.0001
+mix:irrigation:cut    18   102    1.0226  0.4418
 \end{verbatim}
 
 always check the degrees of freedom (denominator and numerator)!
