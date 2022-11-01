@@ -1,4 +1,12 @@
-# GLMM
+# Generalized Linear Mixed Models
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(glmmTMB)
+library(DHARMa)
+```
+
 
 ## Hurdle model
 
@@ -60,15 +68,11 @@ ggplot(insect_exp, aes(x = sampling_date, y = insect_counts, color = treatment, 
   theme_classic()
 ```
 
-Model statement 
-{[[[[ FIX THIS - it's still written for alfalfa ]]]]}
+Model statement {\[\[\[\[ FIX THIS - it's still written for alfalfa \]\]\]\]}
 
 $$y_{ijk} = \mu + \alpha_i+\beta_j + \gamma_k + a_l + b_m + c_n + \epsilon_{}$$ where
 
-$\mu$ = overall mean/intercept
-$\alpha_i$ = effect of the $i^{th}$ pesticide treatment
-$\beta_j$ = effect of the $j^{th}$ block 
-$\gamma_k$ = effect of the $k^{th}$ sampling date
+$\mu$ = overall mean/intercept $\alpha_i$ = effect of the $i^{th}$ pesticide treatment $\beta_j$ = effect of the $j^{th}$ block $\gamma_k$ = effect of the $k^{th}$ sampling date
 
 To make things easier, the interactions between the fixed effects are not shown.
 
@@ -82,33 +86,34 @@ m1 = glmmTMB(
   family = nbinom2)
 ```
 
-special correlation structure for correlated error terms `ar1()` (autoregressive 1). 
+special correlation structure for correlated error terms `ar1()` (autoregressive 1).
 
-There are several other specialized covariance structures implmented by glmmTMB. 
-In general, repeated measures syntax follow this convention: `(time + 0 | grouping)`.
+There are several other specialized covariance structures implmented by glmmTMB. In general, repeated measures syntax follow this convention: `(time + 0 | grouping)`.
 
 We can test other distributions
+
 ```{r}
 m2 <- update(m1, family = poisson)
 m3 <- update(m1, family = nbinom1)
 ```
 
-Fitting glmm is hard.
-Basic guidance on model fitting: https://glmmtmb.github.io/glmmTMB/articles/troubleshooting.html
+Fitting glmm is hard. Basic guidance on model fitting: https://glmmtmb.github.io/glmmTMB/articles/troubleshooting.html
+
 ```{r}
 diagnose(m2)
 diagnose(m3)
 ```
 
 Summary info
+
 ```{r}
 m1
 ```
 
-
 Diagnostics
 
 Look at residuals over space
+
 ```{r}
 insect_exp$model_resids <- residuals(m1)
 
@@ -120,17 +125,17 @@ ggplot(insect_exp, aes(x = row, y = column, fill = model_resids)) +
 ```
 
 use **DHARMa** to conduct residual tests
+
 ```{r}
-simulated_resids <- simulateResiduals(m1_c)
+simulated_resids <- simulateResiduals(m1)
 testDispersion(simulated_resids)
 plot(simulated_resids)
 ```
 
 ANOVA
+
 ```{r}
 car::Anova(m1)
 ```
 
-**glmmTMB** is compatible with **emmeans** and **effects**. 
-
-
+**glmmTMB** is compatible with **emmeans** and **effects**.

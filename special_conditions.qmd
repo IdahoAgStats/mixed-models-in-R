@@ -1,4 +1,4 @@
-# Other Designs
+# Special Conditions
 
 ## Split plot with repeated measures
 
@@ -62,15 +62,13 @@ $$y_{ijk} = \mu + \alpha_i+\beta_j + \gamma_k + a_l + b_m + c_n + \epsilon_{}$$ 
 
 $\mu$ = overall mean/intercept\
 $\alpha_i$ = effect of the $i^{th}$ irrigation treatment\
-$\beta_j$ = effect of the $j^{th}$ planting mix treatment $\gamma_k$ = effect of the $k^{th}$ cutting
-[[need all those interactions]]
-
+$\beta_j$ = effect of the $j^{th}$ planting mix treatment $\gamma_k$ = effect of the $k^{th}$ cutting \[\[need all those interactions\]\]
 
 ```{r}
 library(nlme)
 
 m1 <- lme(yield ~ mix*irrigation*cut,
-          random = ~ 1|plot/rep/irrigation,
+          random = ~ 1|rep/irrigation/plot,
           data = alfalfa_sp)
 ```
 
@@ -78,19 +76,20 @@ use a special correlation structure for correlated error terms `corCompSymm()` i
 
 ```{r}
 corstr <- corCompSymm(value = 0.3, 
-                      form = ~ cut|plot/rep/irrigation,
+                      form = ~ cut|rep/irrigation/plot,
                       fixed = FALSE)
 ```
 
-It's important that these two terms match after the "|" in the `random` and `form` arguments:
+It's important that these two terms match after the "\|" in the `random` and `form` arguments:
 
-```{r, code-line-numbers="2,6", eval=FALSE,echo=TRUE}
+```{r, eval=FALSE,echo=TRUE}
+#| code-line-numbers: 3,4
 m1 <- lme(yield ~ mix*irrigation*cut,
-          random = ~ 1|plot/rep/irrigation,
+          random = ~ 1|rep/irrigation/plot,
           data = alfalfa_sp)
 
 corstr <- corCompSymm(value = 0.3, 
-                      form = ~ cut|plot/rep/irrigation,
+                      form = ~ cut|rep/irrigation/plot,
                       fixed = FALSE)
 ```
 
@@ -120,3 +119,5 @@ Run ANOVA
 ```{r}
 anova(m2)
 ```
+
+always check the degrees of freedom (denominator and numerator)!

@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "special_conditions.html",
+    "href": "special_conditions.html",
+    "title": "4  Special Conditions",
+    "section": "",
+    "text": "Main plot is “irrigation” and split plot is “mix”.\n\nalfalfa_sp <- read.csv(\"data/alfalfa2021_data.csv\")\nlibrary(dplyr)\n\n\nAttaching package: 'dplyr'\n\n\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n\n\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n\n\ncut: a cutting (harvest) of alfalfa within a single growing season. This is a temporal unit for repeated measures analysis. There were three cuttings in total for that year and field. The dates are not known, but we cannot assume they are evenly spaced apart.\nirrigation: irrigation treatment (“Full” or “Deficit”)\nplot: a unique number referring to each experimental unit\nblock: the blocking unit\nyield: response variable\nrow: plot position for row\ncol: plot positions for column or range\n\nhead(alfalfa_sp)\n\n    cut irrigation plot block     mix    yield row col\n1 First       Full 1101     1 50A+50O 221.0418   1   1\n2 First       Full 1102     1 75A+25O 288.7987   1   2\n3 First       Full 1103     1 50A+50F 466.7924   1   3\n4 First       Full 1104     1 75A+25M 556.9506   1   4\n5 First       Full 1105     1 50A+50M 422.9160   1   5\n6 First       Full 1106     1 75A+25F 289.8350   2   1\n\n\nTwo new variables created:\nrep: factor version of block (We should treat rep/block as a factor rather than an integer in modelling)\nCut: number version of cut where 1 is the first cutting. This is required by nlme::lme for specialized correlation structures.\n\nalfalfa_sp <- alfalfa_sp %>% \n  mutate(rep = as.factor(block)) %>% \n  mutate(Cut = case_when(\n    cut == \"First\" ~ 1L,\n    cut == \"Second\" ~ 2L,\n    cut == \"Third\" ~ 3L,\n    is.na(cut) ~ NA_integer_)) \n\nVisualise data\n\nlibrary(ggplot2); library(desplot)\n\nalfalfa_sp %>% filter(cut == \"First\") %>% \n  \nggplot(aes(x = col, y = row)) +\n  geom_raster(aes(fill = irrigation)) +\n  geom_tileborder(aes(group = 1, grp = rep), lwd = 1.5) + \n  theme_classic()\n\n\n\n\nModel statement\n\\[y_{ijk} = \\mu + \\alpha_i+\\beta_j + \\gamma_k + a_l + b_m + c_n + \\epsilon_{}\\] where\n\\(\\mu\\) = overall mean/intercept\n\\(\\alpha_i\\) = effect of the \\(i^{th}\\) irrigation treatment\n\\(\\beta_j\\) = effect of the \\(j^{th}\\) planting mix treatment \\(\\gamma_k\\) = effect of the \\(k^{th}\\) cutting [[need all those interactions]]\n\nlibrary(nlme)\n\n\nAttaching package: 'nlme'\n\n\nThe following object is masked from 'package:dplyr':\n\n    collapse\n\nm1 <- lme(yield ~ mix*irrigation*cut,\n          random = ~ 1|rep/irrigation/plot,\n          data = alfalfa_sp)\n\nuse a special correlation structure for correlated error terms corCompSymm() is for compound symmetry. There are several other options in the nlm machinery (search “cor” for more options and details on the syntax). In general, repeated measures syntax follow this convention: form = ~ time|grouping. You can also use 1|group and the observation order for each group will be. The default starting value (value) is zero, and if fixed = FALSE (the current nlme default), this value will be allowed to change during the model fitting process.\n\ncorstr <- corCompSymm(value = 0.3, \n                      form = ~ cut|rep/irrigation/plot,\n                      fixed = FALSE)\n\nIt’s important that these two terms match after the “|” in the random and form arguments:\n\nm1 <- lme(yield ~ mix*irrigation*cut,\n          random = ~ 1|rep/irrigation/plot,\n          data = alfalfa_sp)\n\ncorstr <- corCompSymm(value = 0.3, \n                      form = ~ cut|rep/irrigation/plot,\n                      fixed = FALSE)\n\nUpdate the model:\n\nm2 <- update(m1, cor = corstr)\n\nThe usual next steps:\ncheck diagnostics\n\nplot(m2)\n\n\n\nqqnorm(m2, ~ resid(., type = \"p\"), abline = c(0, 1))\n\n\n\n\nLook at the variance components.\n\nVarCorr(m2)\n\n             Variance     StdDev    \nrep =        pdLogChol(1)           \n(Intercept)     83.17553    9.120062\nirrigation = pdLogChol(1)           \n(Intercept)    280.54818   16.749573\nplot =       pdLogChol(1)           \n(Intercept)    481.42852   21.941480\nResidual     16182.25878  127.209507\n\n\nRun ANOVA\n\nanova(m2)\n\n                   numDF denDF   F-value p-value\n(Intercept)            1   102 1432.6369  <.0001\nmix                    9   102   13.6932  <.0001\nirrigation             1     3    4.8770  0.1143\ncut                    2   102    6.0434  0.0033\nmix:irrigation         9   102    0.5256  0.8530\nmix:cut               18   102    0.8029  0.6927\nirrigation:cut         2   102   14.2649  <.0001\nmix:irrigation:cut    18   102    1.0226  0.4418\n\n\nalways check the degrees of freedom (denominator and numerator)!"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "mixed_models_guide",
+    "section": "",
+    "text": "This is a defaulf file accompanying a quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books."
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "1  Introduction",
+    "section": "",
+    "text": "Each section contains the minimum to run a model, with more detail found at the later chapters. Unless I decide it makes more sense to include early materials.\nA Tidymodels framework is used whenever possible because that is a promising avenue for making the syntax easier to write across packages."
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "5  Summary",
+    "section": "",
+    "text": "In summary, mixed models are complicated."
+  }
+]
