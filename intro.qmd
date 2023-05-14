@@ -1,7 +1,42 @@
 # Introduction
 
-This guide is focused on frequentist implementations of mixed models in R. If someone wants to write a Bayesian guide, please go for it! I'm not experience sufficiently in Bayesian to do this.
+This guide is focused on frequentist implementations of mixed models in R, covering different scenarios common in the agricultural sciences. 
 
-Each section contains the minimum to run a model, with more detail found at the later chapters. Unless I decide it makes more sense to include early materials.
+This is not intended to be a guide to the theory of mixed models, it is focused on implementations of models only. 
 
-A Tidymodels framework is used whenever possible because that is a promising avenue for making the syntax easier to write across packages.
+A Tidymodels framework is shown whenever possible because that is a promising avenue for making the syntax easier to write across packages.
+
+
+## Terms
+
+Please read this section and refer back to if when you forget what these terms mean.  
+
+|----------|----------------------------------------|
+|random effect |  an independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated    |
+|fixed effect. | an independent variable with specific, predefined levels to estimate       |
+|experimental unit. | the smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level|
+
+: Terms definitions {#tbl-terms}
+
+## Packages
+
+#### Table of required packages
+
+|----------|------------------------------|
+|lme4 | main package for linear mixed models |
+| nlme | main package for linar mixed models          |
+| emmeans |  for estimating fixed effects, their confidence intervals and conducting contrasts   |
+| glmmTMB | package for generalized linear mixed models       |
+| DHARMa    | for evaluating residuals (error terms) in generalized linear models      |
+
+: Table of required packages {#tbl-req_pkg}
+
+#### Optional
+
+|----------|------------------------------|
+|here | for setting the working directory |
+|lmerTest |  for extracting p-values for        |
+ 
+: Table of optional packages {tbl-opt-pkg}
+
+This entire guide will use the [**here**](https://here.r-lib.org/) package for loading data. If you can load your data fine without ths package, please carry on. {here} is certainly not required for running mixed models. 

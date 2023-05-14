@@ -1,22 +1,21 @@
 # Generalized Linear Mixed Models
 
 ```{r}
-library(dplyr)
+library(dplyr); library(readr)
 library(ggplot2)
 library(glmmTMB)
 library(DHARMa)
 ```
 
-
 ## Hurdle model
 
 ```{r}
-insect_exp <- read.csv("data/insect_count_data_glmm.csv")
+insect_exp <- read_csv(here::here("data", "insect_count_data_glmm.csv"))
 ```
 
 **plot**: a unique number referring to each experimental unit
 
-**treatment**: pesticidal treatment (6 different products)
+**treatment**: pesticide treatment (6 different products)
 
 **row**: plot position for row
 
@@ -34,9 +33,9 @@ head(insect_exp)
 
 Two new variables created:
 
-**treatment**: original variable treatment converted to a factor
+**treatment**: original variable treatment converted to a character
 
-**block**: original variable block converted to a factor
+**block**: original variable block converted to a character
 
 **Date**: factor version of sampling_date
 

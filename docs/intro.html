@@ -2,19 +2,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.36">
+<meta name="generator" content="quarto-1.2.475">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>mixed_models_guide - 1&nbsp; Introduction</title>
+<title>Field Guide to the R Mixed Model Wilderness - 1&nbsp; Introduction</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
 </style>
 
 
@@ -78,7 +83,7 @@ ul.task-list{list-style: none;}
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">mixed_models_guide</a> 
+      <a href="./">Field Guide to the R Mixed Model Wilderness</a> 
     </div>
       </div>
       <div class="mt-2 flex-shrink-0 align-items-center">
@@ -100,7 +105,7 @@ ul.task-list{list-style: none;}
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./basic_models.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basic Models</span></a>
+  <a href="./basic_models.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -115,7 +120,12 @@ ul.task-list{list-style: none;}
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./analysis_tips.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Summary</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -128,7 +138,14 @@ ul.task-list{list-style: none;}
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#terms" id="toc-terms" class="nav-link active" data-scroll-target="#terms"><span class="toc-section-number">1.1</span>  Terms</a></li>
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages"><span class="toc-section-number">1.2</span>  Packages</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -143,17 +160,38 @@ ul.task-list{list-style: none;}
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
 
 </header>
 
-<p>This guide is focused on frequentist implementations of mixed models in R. If someone wants to write a Bayesian guide, please go for it! I’m not experience sufficiently in Bayesian to do this.</p>
-<p>Each section contains the minimum to run a model, with more detail found at the later chapters. Unless I decide it makes more sense to include early materials.</p>
-<p>A Tidymodels framework is used whenever possible because that is a promising avenue for making the syntax easier to write across packages.</p>
+<p>This guide is focused on frequentist implementations of mixed models in R, covering different scenarios common in the agricultural sciences.</p>
+<p>This is not intended to be a guide to the theory of mixed models, it is focused on implementations of models only.</p>
+<p>A Tidymodels framework is shown whenever possible because that is a promising avenue for making the syntax easier to write across packages.</p>
+<section id="terms" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="terms"><span class="header-section-number">1.1</span> Terms</h2>
+<p>Please read this section and refer back to if when you forget what these terms mean.</p>
+<p>|———-|—————————————-| |random effect | | |fixed effect. | | |experimental unit. | the smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level|</p>
+<p>: Terms definitions {#tbl-terms}</p>
+</section>
+<section id="packages" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="packages"><span class="header-section-number">1.2</span> Packages</h2>
+<section id="table-of-required-packages" class="level4" data-number="1.2.0.1">
+<h4 data-number="1.2.0.1" class="anchored" data-anchor-id="table-of-required-packages"><span class="header-section-number">1.2.0.1</span> Table of required packages</h4>
+<p>|———-|——————————| |lme4 | main package for linear mixed models | | nlmer | main package for linar mixed models | | emmeans | for estimating fixed effects, their confidence intervals and conducting contrasts | | glmmTMB | package for generalized linear mixed models | | DHARMa | |</p>
+<p>: Table of required packages {#tbl-req_pkg}</p>
+</section>
+<section id="optional" class="level4" data-number="1.2.0.2">
+<h4 data-number="1.2.0.2" class="anchored" data-anchor-id="optional"><span class="header-section-number">1.2.0.2</span> Optional</h4>
+<p>|———-|——————————| |here | for setting the working directory | |lmerTest | for extracting p-values for |</p>
+<p>: Table of optional packages {tbl-opt-pkg}</p>
+<p>This entire guide will use the <a href="https://here.r-lib.org/"><strong>here</strong></a> package for loading data. If you can load your data fine without ths package, please carry on. {here} is certainly not required for running mixed models.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -197,7 +235,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -225,31 +280,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   for (var i=0; i<noterefs.length; i++) {
     const ref = noterefs[i];
     tippyHover(ref, function() {
-      let href = ref.getAttribute('href');
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
     });
   }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
@@ -261,7 +335,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./basic_models.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Basic Models</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
