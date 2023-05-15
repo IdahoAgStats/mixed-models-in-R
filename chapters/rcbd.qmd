@@ -30,12 +30,28 @@ This guide will later address examples when this assumption is violated and how 
 
 First, load the libraries for analysis and estimation:
 
+::: {.panel-tabset}
+
+### lme4
+
 ```{r, include=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr)
 ```
 
-Next, let's load some data. It is located [here]() if you want to download it yourself (recommended).
+### tidymodels
+
+```{r}
+library(dplyr)
+#library(multilevelmod); library(broom)
+```
+
+
+:::
+
+
+
+Next, let's load some data. It is located [here](https://here.r-lib.org/) if you want to download it yourself (recommended).
 
 This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield and test weight of each variety and the determine the rankings of each variety with regard to yield.
 
@@ -114,11 +130,27 @@ $$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ For this model, $\alpha_i$
 
 Here is that model translated into R syntax:
 
+::: {.panel-tabset}
+
+### lme4
+
 ```{r}
 model_rcbd <- lmer(yield_bu_a ~ variety + (1|block),
                    data = var_trial, 
                    na.action = na.exclude)
 ```
+
+### tidymodels
+
+```{r}
+tidy_rcbd <- linear_reg() %>% 
+  set_engine("lmer", random = ~ 1|block) %>%
+  fit(yield_bu_a ~ variety, data = var_trial)
+```
+
+
+:::
+
 
 The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. I use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
 
