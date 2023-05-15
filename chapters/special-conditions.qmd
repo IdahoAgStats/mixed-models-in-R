@@ -1,0 +1,149 @@
+# Combining Scenarios
+
+
+```{r}
+library(nlme); library(emmeans)
+library(dplyr)
+library(desplot); library(ggplot2)
+```
+
+
+## Split plot with repeated measures
+
+*Normally-distributed data* 
+
+#### Load data
+
+This is an alfalfa study consisting of two treatments: irrigation level and planting mix with four reps. Each plot (the experimental unit) was harvested three times and the yield was measured. 
+
+```{r}
+alfalfa <- read.csv("data/alfalfa2021_data.csv")
+```
+
+|----------|----------------------------------------|
+| cut   | a cutting (harvest) of alfalfa within a single growing season. This is a temporal unit for repeated measures analysis. There were three cuttings in total for that year and field. The dates are not known, so we cannot assume they are evenly spaced apart |        
+|irrigation |  main plot, irrigation treatment ("Full" or "Deficit") |       
+|plot     | a number referring to each experimental unit  |       
+|block |  the blocking unit  |       
+|yield  | alfalfa yield (the response variable) |       
+|row |  plot position for row |         
+|col | plot positions for column or range. |
+
+
+Two new variables need to be created:
+
+- **block**: character version of the original 'block' 
+- **cut_num**: integer version of 'cut'. This is required by `nlme::lme` for specialized correlation structures. The numeric order of this variable matches the cut order. 
+
+```{r}
+alfalfa_sp <- alfalfa %>% 
+  mutate(block = as.character(block)) %>% 
+  mutate(cut_num = case_when(
+    cut == "First" ~ 1L,
+    cut == "Second" ~ 2L,
+    cut == "Third" ~ 3L,
+    is.na(cut) ~ NA_integer_)) 
+```
+
+#### Data integrity checks
+
+Data type check: 
+```{r}
+str(alfalfa_sp)
+```
+Data balance check: 
+```{r}
+table(alfalfa_sp$irrigation, alfalfa_sp$mix, alfalfa_sp$cut)
+```
+
+Check missingness: 
+```{r}
+apply(alfalfa_sp, 2, function(x) sum(is.na(x)))
+```
+
+Check dependent data:
+
+```{r}
+hist(alfalfa_sp$yield)
+```
+There are some very high values that we should keep an eye on. 
+
+Experimental layout: 
+```{r}
+alfalfa_sp %>% filter(cut == "First") %>% 
+  ggplot(aes(x = col, y = row)) +
+    geom_raster(aes(fill = irrigation)) +
+    geom_tileborder(aes(group = 1, grp = block), lwd = 1.5) + 
+    theme_classic()
+```
+
+#### Data analysis
+
+Model statement: 
+
+$$y_{ijk} = \mu + \alpha_i+ \beta_j + \gamma_k + (\alpha\beta)_{ij} + (\alpha\gamma)_{ik} + (\beta\gamma)_{jk} + (\alpha\beta\gamma)_{ijk} +\epsilon_{ijk}$$ 
+
+where
+
+$\mu$ = overall mean        
+$\alpha_i$ = effect of the $i^{th}$ irrigation treatment                
+$\beta_j$ = effect of the $j^{th}$ planting mix treatment     
+$\gamma_k$ = effect of the $k^{th}$ cutting 
+
+And the remaining terms reflect two-way and three-way interactions.
+
+The error terms are assumed to follow this distribution, $\epsilon \sim N(0, \sigma)$, and each plot is assumed to follow an auto-regressive correlation structure. 
+
+The starting model is very similar to the other split plot example in this guide where the main plot "irrigation" is nested with "block". An additional level of nesting is used for "plot" since that is the experimental unit we are designating for the repeated measures term. 
+
+I usually build the model in two steps: first the basic model is estimated, and next a correlation structure is added. This is not strictly needed; the model can be estimated in one step. 
+
+```{r}
+m1 <- lme(yield ~ mix*irrigation*cut,
+          random = ~ 1|block/irrigation/plot,
+          data = alfalfa_sp)
+```
+
+Since we don't know the temporal spacing for each cutting, a compound symmetry correlation structure will be used. This type assumes a single correlation across time. This has a starting value of 0.3 and this may chagne during the fitting process since `fixed = FALSE`. 
+
+```{r}
+corstr <- corCompSymm(value = 0.3, 
+                      form = ~ cut|block/irrigation/plot,
+                      fixed = FALSE)
+```
+
+*It is required by nlme that two terms match after the "|" in the `random` and `form` arguments match exactly. The plot term is needed because this is the unit to calculate correlations at.* 
+
+```{r, eval=FALSE,echo=TRUE}
+#| code-line-numbers: 3, 7
+
+corstr <- corCompSymm(value = 0.3, 
+                      form = ~ cut|block/irrigation/plot,
+                      fixed = FALSE)
+
+m1 <- lme(yield ~ mix*irrigation*cut,
+          random = ~ 1|block/irrigation/plot,
+          data = alfalfa_sp)
+```
+
+Update the model with the correlation structure: 
+
+```{r}
+m2 <- update(m1, cor = corstr)
+```
+
+#### Check model assumpotion
+
+```{r}
+plot(m2)
+qqnorm(m2, ~ resid(., type = "p"), abline = c(0, 1))
+```
+There are some very large outliers at the right side of the plot. 
+
+#### Run ANOVA
+
+```{r}
+anova(m2)
+```
+
+Always check the degrees of freedom (denominator and numerator) to make sure the model is specified correctly. 

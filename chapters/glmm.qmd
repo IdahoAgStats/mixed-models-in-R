@@ -1,0 +1,175 @@
+# Generalized Linear Mixed Models
+
+Generalized models capture the landscape of models where the residuals are not normally distributed and hence require an alternative approach. In the recent past, various transformations were performed on the dependent variable, but in general, that is not recommended anymore. Instead, use a different distribution to model the variable and a link function to link your variable to this. 
+
+Generalized linear mixed models are hard to properly fit, so much harder than general linear mixed models. 
+
+Common models include the zero-inflated, Poisson and negative binomial distributions for count data, and beta distribution for data between zero and 1.  A special (and common) case of these is the log-normal model, which uses the log function to lnk the dependent varaible to the log-normal distribution (and ends up meeting the assumptions of general linear models when used correctly). 
+
+The most commonly used libraries for general linear models are ***[glmmTMB](https://glmmtmb.github.io/glmmTMB/)***, as well as lme4. ***[DHARMa]()*** is a package for checking the distribution of residuals in GLMM's. 
+```{r, include = FALSE}
+# data import & manipulation
+library(dplyr)
+# data viz
+library(ggplot2)
+# modelling
+library(glmmTMB); library(lme4); library(lmerTest); library(DHARMa)
+```
+
+## Zero-inflated & hurdle models
+
+When data have a large number of zeros, that can skew the results very dramatically and are most certainly violating standard assumptions of linear models (constant variance, normality, iid). What is a large number? That depends (of course) but I suggest 15% to 60% of the total data being zeros is high. Anything more than 60% starts to be too high - and it begs the question if statistics are really needed to understand what is going on. 
+
+Additionally, the occurence of zero's does matter. If there are all occurring for a particular treatment (e.g. a negative control), estimation is impossible for that treatment level and running a conditional analysis may be a better choice. This mean filtering the data set to the treatments that are not completely all zero's and running the analysis as a condition of a limited number of treatments. 
+
+Zero-inflated models are currently best developed for count variable and less ammenable (although not impossible) for continuous variable. I find these models helpful for studies in plant pathology, entomology, etc when pathogen/disease/pest occurence is spotty. 
+
+#### Zero-inflated versus hurdle models
+
+Keeping with this tutorial self-imposed rule, I will not go into theory, but really, you ought to read up on these models because they are *complicated*. The Wikipedia entries for [zero-inflated](https://en.wikipedia.org/wiki/Zero-inflated_model) and [hurdle](https://en.wikipedia.org/wiki/Hurdle_model) models are a good source for an introductory overview. 
+
+### Data import & preparation
+
+```{r}
+insect_exp <- read.csv(here::here("data", "insect_count_data_glmm.csv")) %>% 
+  mutate(sampling_date = as.Date(sampling_date, format = "%m/%d/%y")) %>% 
+  mutate(Date = as.character(sampling_date), 
+         block = as.character(block),
+         treatment = as.character(treatment))
+```
+
+|----------|----------------------------------------|       
+|plot | a unique number referring to each experimental unit |       
+|treatment |  6 pesticide treatments (converted to a ) |       
+|row | plot position for row |        
+|col |  plot positions for column or range |       
+|block | the blocking unit (converted to character) |       
+| insect_counts | response variable, number of insects counted |        
+|sampling_date |  dates when each experimental unit were evaluated for insect counts |         
+|Date | sampling date converted to a character variable |         
+
+### Data integrity checks 
+
+Data types: 
+```{r}
+str(insect_exp)
+```
+
+Data balance: 
+```{r}
+table(insect_exp$sampling_date, insect_exp$treatment)
+```
+Missingness: 
+```{r}
+apply(insect_exp, 2, function(x) sum(is.na(x)))
+```
+
+Data visualization: 
+
+Histograms are often not helpful for zero-inflated data since the zero's dominate the distribution. Stem-and-leaf plots can be better. It's also helpful to count the total number of zero's. 
+```{r}
+stem(insect_exp$insect_counts)
+sum(insect_exp$insect_counts == 0)/nrow(insect_exp)
+```
+
+Roughly 42% of the data are zero's. The remaining non-zero data look like it might folow a Poisson or negative binomial distribution. 
+
+```{r, message=FALSE, warning=FALSE}
+# all data
+ggplot(insect_exp, aes(x = sampling_date, y = insect_counts, color = treatment, group = plot)) +
+  geom_point(size = 2) +
+  geom_line() +
+  ggtitle("all data") + 
+  theme_classic()
+
+# mean of each treatment
+insect_exp %>% group_by(sampling_date, treatment) %>% 
+  summarise(mean_counts = mean(insect_counts)) %>% 
+  ggplot(., aes(x = sampling_date, y = mean_counts, color = treatment)) +
+    geom_point(size = 2) +
+    geom_line() +
+    ggtitle("mean data") + 
+    theme_classic()
+```
+
+### Statistical modelling
+
+Model statement:  
+
+$$y_{ijk} = \mu + \alpha_i + \beta_j + \gamma_k + \delta_i + \epsilon_{ijk}$$         
+
+where: 
+
+$\mu$ = overall mean
+$\alpha_i$ = effect of the $i^{th}$ pesticide treatment         
+$\beta_j$ = effect of the $j^{th}$ block 
+$\gamma_k$ = effect of the $k^{th}$ sampling date
+$\delta_i$ = effect of the $i^{th}$ pesticide treatment on becoming non-zero
+
+and
+
+
+#### Model fitting
+
+As mentioned, this is hard and often takes many tries. 
+
+```{r}
+m1 = glmmTMB(
+  insect_counts ~ treatment + Date + ar1(Date + 0|plot) + (1|block),
+  ziformula = ~ treatment,
+  data = insect_exp, 
+  na.action = na.exclude, 
+  family = nbinom2)
+```
+
+This model is using the correlation structure for autoregressive correlated error terms, `ar1()`. There are several other specialized covariance structures implmented by glmmTMB. In general, repeated measures syntax follow this convention: `(time + 0 | grouping)`.
+
+Fitting glmm is hard. The glmmTMB writers have written some [guidance on model fitting](https://glmmtmb.github.io/glmmTMB/articles/troubleshooting.html). 
+
+
+```{r}
+m1
+```
+
+#### Model diagnostics
+
+Look at residuals over space
+
+```{r}
+insect_exp$model_resids <- residuals(m1)
+
+ggplot(insect_exp, aes(x = row, y = column, fill = model_resids)) +
+  geom_tile() + 
+  facet_wrap(facets = vars(Date), nrow = 3, ncol = 3) + 
+  scale_fill_viridis_c(direction = -1) + 
+  theme_minimal()
+```
+
+Use **DHARMa** to conduct residual tests
+
+```{r}
+simulated_resids <- simulateResiduals(m1)
+testDispersion(simulated_resids)
+plot(simulated_resids)
+```
+
+#### Inference
+
+ANOVA
+
+The package ***[car]()*** is needed to conduct ANOVA tests on glmmTMB object. It conducts a chi-square test rather than an F-test. These tend to be more sensitive than F-tests, resulting in lower p-values. 
+
+```{r}
+car::Anova(m1)
+```
+
+Estimates. 
+
+**glmmTMB** is compatible with **emmeans** and **effects**.
+
+```{r}
+
+```
+
+
+
