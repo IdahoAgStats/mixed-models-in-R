@@ -105,11 +105,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 20,
   "language": {
     "search-no-results-text": "No results",
@@ -128,10 +128,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar docked nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Field Guide to the R Mixed Model Wilderness</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
       <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></h1>
@@ -142,13 +152,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../">Field Guide to the R Mixed Model Wilderness</a> 
-    </div>
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../img/hexLogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
       </div>
       <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
@@ -206,15 +216,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="toc-section-number">2.0.1</span>  Background</a></li>
-  <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="toc-section-number">2.0.2</span>  Example Analysis</a></li>
-  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="toc-section-number">2.0.3</span>  Model Building</a></li>
-  <li><a href="#check-assumptions" id="toc-check-assumptions" class="nav-link" data-scroll-target="#check-assumptions"><span class="toc-section-number">2.0.4</span>  Check Assumptions</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="toc-section-number">2.1</span>  Background</a></li>
+  <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="toc-section-number">2.2</span>  Example Analysis</a>
+  <ul class="collapse">
+  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="toc-section-number">2.2.1</span>  <em>Data integrity checks</em></a></li>
+  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="toc-section-number">2.2.2</span>  Model Building</a></li>
+  <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="toc-section-number">2.2.3</span>  Check Model Assumptions</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="toc-section-number">2.2.4</span>  Inference</a></li>
+  <li><a href="#flotsam-jetsam" id="toc-flotsam-jetsam" class="nav-link" data-scroll-target="#flotsam-jetsam"><span class="toc-section-number">2.2.5</span>  Flotsam &amp; Jetsam</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -235,12 +250,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <p>This is a simple model that can serve as a good entrance point to mixed models.</p>
 <p>It is very common design where experimental treatments are applied at random to experimental units within each block. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes.</p>
-<section id="background" class="level3" data-number="2.0.1">
-<h3 data-number="2.0.1" class="anchored" data-anchor-id="background"><span class="header-section-number">2.0.1</span> Background</h3>
+<section id="background" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="background"><span class="header-section-number">2.1</span> Background</h2>
 <p>The statistical model:</p>
 <p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span> Where:</p>
 <p><span class="math inline">\(\mu\)</span> = overall experimental mean <span class="math inline">\(\alpha\)</span> = treatment effects (fixed) <span class="math inline">\(\beta\)</span> = block effects (random) <span class="math inline">\(\epsilon\)</span> = error terms</p>
-<p><span class="math display">\[ \epsilon} \sim N(0, \sigma)\]</span></p>
+<p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[ \beta \sim N(0, \sigma_b)\]</span></p>
 <p>Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(sigma_B\)</span>, respectively.</p>
 <div class="callout-note callout callout-style-default callout-captioned">
@@ -258,26 +273,75 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </section>
-<section id="example-analysis" class="level3" data-number="2.0.2">
-<h3 data-number="2.0.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">2.0.2</span> Example Analysis</h3>
+<section id="example-analysis" class="level2 page-columns page-full" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">2.2</span> Example Analysis</h2>
 <p>First, load the libraries for analysis and estimation:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">tidymodels</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multilevelmod); <span class="fu">library</span>(broom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 <p>Next, let’s load some data. It is located <a href="">here</a> if you want to download it yourself (recommended).</p>
 <p>This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield and test weight of each variety and the determine the rankings of each variety with regard to yield.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var_trial <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"aberdeen2015.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>var_trial <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"aberdeen2015.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>|—|————| |———-|—————————————-|<br>
-|block | blocking unit |<br>
-|range | column position for each plot |<br>
-|row | row position for each plot |<br>
-|variety | crop variety (the treatment) being evaluated | |stand_pct| percentage of the plot with actual plants growing in them |<br>
-|days_to_heading_julian | Julian days (starting January 1st) until plot “headed” (first spike emerged)| |height | plant height at crop maturity |<br>
-|lodging | percentage of plants in the plot that fell down and hence could not be harvested |<br>
-|yield_bu_a | yield (bushels per acre) | |test weight | test weight (lbs per bushel of wheat) |</p>
-<p>: Table of variables in the data set {tbl-rcbd}</p>
-<p>There are several variables present that are not useful for this analysis. The only thing we are concerned about is “block”, “variety”, “yield_bu_a”, and “test_weight”.</p>
-<section id="data-integrity-checks" class="level4" data-number="2.0.2.1">
-<h4 data-number="2.0.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">2.0.2.1</span> <em>Data integrity checks</em></h4>
+<table class="table">
+<caption>Table of variables in the data set {tbl-rcbd}</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>block</td>
+<td>blocking unit</td>
+</tr>
+<tr class="even">
+<td>range</td>
+<td>column position for each plot</td>
+</tr>
+<tr class="odd">
+<td>row</td>
+<td>row position for each plot</td>
+</tr>
+<tr class="even">
+<td>variety</td>
+<td>crop variety (the treatment) being evaluated</td>
+</tr>
+<tr class="odd">
+<td>stand_pct</td>
+<td>percentage of the plot with actual plants growing in them</td>
+</tr>
+<tr class="even">
+<td>days_to_heading_julian</td>
+<td>Julian days (starting January 1st) until plot “headed” (first spike emerged)</td>
+</tr>
+<tr class="odd">
+<td>lodging</td>
+<td>percentage of plants in the plot that fell down and hence could not be harvested</td>
+</tr>
+<tr class="even">
+<td>yield_bu_a</td>
+<td>yield (bushels per acre)</td>
+</tr>
+</tbody>
+</table>
+<p>There are several variables present that are not useful for this analysis. The only thing we are concerned about is <strong>block</strong>, <strong>variety</strong>, <strong>yield_bu_a</strong>, and <strong>test_weight</strong>.</p>
+<section id="data-integrity-checks" class="level3 page-columns page-full" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">2.2.1</span> <em>Data integrity checks</em></h3>
 <p>The first thing is to make sure the data is what we expect. There are two steps:</p>
 <ol type="1">
 <li>make sure data are the expected data type</li>
@@ -286,7 +350,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>inspect the dependent variable to ensure its distribution is following expectations</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(var_trial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(var_trial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   168 obs. of  10 variables:
  $ block                 : int  4 4 4 4 4 4 4 4 4 4 ...
@@ -303,11 +367,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>These look okay except for block, which is currently coded as integer (numeric). We don’t want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but I find character easier to work with, and ultimately, equivalent to factor conversion</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>var_trial<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(var_trial<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var_trial<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(var_trial<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, check the independent variables. Running a cross tabulations is often sufficient to ascertain this.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(var_trial<span class="sc">$</span>variety, var_trial<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(var_trial<span class="sc">$</span>variety, var_trial<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                        
                          1 2 3 4
@@ -344,11 +408,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   SY  Ovation            1 1 1 1
   SY 107                 1 1 1 1
   SY Assure              1 1 1 1
+  UI-WSU Huffman         1 1 1 1
   UI Castle CLP          1 1 1 1
   UI Magic CLP           1 1 1 1
   UI Palouse             1 1 1 1
   UI Sparrow             1 1 1 1
-  UI-WSU Huffman         1 1 1 1
   WB 456                 1 1 1 1
   WB 528                 1 1 1 1
   WB1376 CLP             1 1 1 1
@@ -358,7 +422,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as “eltan” and “Eltan” and “Eltan”. There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.</p>
 <p>Here is a quick check I run to count the number of missing data in each column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(var_trial, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(var_trial, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 block                  range                    row 
                      0                      0                      0 
@@ -373,26 +437,48 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Alas, no missing data!</p>
 <p>If there were independent variables with a continuous distribution (a covariate), I would plot those data.</p>
 <p>Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="rcbd_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+<div class="cell page-columns page-full">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-rcbd_hist" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="rcbd_files/figure-html/fig-rcbd_hist-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;2.1: Histogram of the dependent variable.</figcaption><p></p>
+</figure>
 </div>
-</div>
-<p>The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems. Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knoweldge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
+</div></div></div>
+<p>The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems.</p>
+<p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
 <p>These are not complicated checks. They are designed to be done quickly and should be done for <em>every analysis</em> if you not previously already inspected the data as thus. I do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
 <p>This data set is ready for analysis!</p>
 </section>
-</section>
-<section id="model-building" class="level3" data-number="2.0.3">
-<h3 data-number="2.0.3" class="anchored" data-anchor-id="model-building"><span class="header-section-number">2.0.3</span> Model Building</h3>
+<section id="model-building" class="level3 page-columns page-full" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">2.2.2</span> Model Building</h3>
+
+<div class="no-row-height column-margin column-container"><div class="">
 <p>Recall the model:</p>
-<p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span> For this model, <span class="math inline">\(\alpha_i\)</span> is the variety effect (fixed) and <span class="math inline">\(\beta_j\)</span> is the block effect (random).</p>
-<p>Here is that model translated into R syntax:</p>
+<p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span></p>
+<p>For this model, <span class="math inline">\(\alpha_i\)</span> is the variety effect (fixed) and <span class="math inline">\(\beta_j\)</span> is the block effect (random).</p>
+</div></div><p>Here is the R syntax for the RCBD statistical model:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">tidymodels</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_rcbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield_bu_a <span class="sc">~</span> variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> var_trial, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model_rcbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield_bu_a <span class="sc">~</span> variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> var_trial, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tidy_rcbd <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lmer"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(yield_bu_a <span class="sc">~</span> variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> var_trial, <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </div>
 <p>The parentheses are used to indicate that ‘block’ is a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block. I use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
 <div class="callout-note callout callout-style-default callout-captioned">
@@ -407,38 +493,42 @@ Formula notation
 <div class="callout-body-container callout-body">
 <p>Formula notation is often used in the R syntax for linear models. It looks like this: <span class="math inline">\(Y ~ X\)</span>, where Y is the dependent variable (the response) and X is/are the independent variable(s) (e.g.&nbsp;the experimental treatments).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>my_formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(Y <span class="sc">~</span> treatment1 <span class="sc">+</span> treatment2)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(my_formula)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>my_formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(Y <span class="sc">~</span> treatment1 <span class="sc">+</span> treatment2)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(my_formula)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "formula"</code></pre>
 </div>
 </div>
+<p>The package ‘lmer’ has some additional conventions regarding the formula. Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes).</p>
 </div>
 </div>
 </section>
-<section id="check-assumptions" class="level3" data-number="2.0.4">
-<h3 data-number="2.0.4" class="anchored" data-anchor-id="check-assumptions"><span class="header-section-number">2.0.4</span> Check Assumptions</h3>
+<section id="check-model-assumptions" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">2.2.3</span> Check Model Assumptions</h3>
 <p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
 <p>There is a special plotting function written for lme4 object for checking the homoscedasticity (constant variance):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_rcbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_rcbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="rcbd_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<p><img src="rcbd_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We are looking for a random and uniform distribution of points. This looks good!</p>
 <p>Checking normality requiring first extracting the model residuals with <code>resid()</code> and then generaing a qq-plot and line.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd)); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd)); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="rcbd_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<p><img src="rcbd_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This is reasonably good. Things do tend to fall apart at the tails.</p>
-<p>Next, extract estimates:</p>
+</section>
+<section id="inference" class="level3" data-number="2.2.4">
+<h3 data-number="2.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">2.2.4</span> Inference</h3>
+<p>Estimates for each treatment level can be obtained with the ‘emmeans’ package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rcbd_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_rcbd, <span class="sc">~</span> variety)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(rcbd_emm) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(emmean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>rcbd_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_rcbd, <span class="sc">~</span> variety)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(rcbd_emm) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(emmean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> variety                  emmean       SE    df  lower.CL upper.CL
  Rosalyn                155.2703 7.212203 77.85 140.91149 169.6292
@@ -490,15 +580,16 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>This table indicates the estimated marginal means (“emmean”, sometimes called “least squares means”), the standard error (“SE”) of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.</p>
 <p>At this point, the analysis goals have been met: we know the estimated means for each treatment and their rankings.</p>
-<section id="flotsam-jetsam" class="level4" data-number="2.0.4.1">
-<h4 data-number="2.0.4.1" class="anchored" data-anchor-id="flotsam-jetsam"><span class="header-section-number">2.0.4.1</span> Flotsam &amp; Jetsam</h4>
+</section>
+<section id="flotsam-jetsam" class="level3" data-number="2.2.5">
+<h3 data-number="2.2.5" class="anchored" data-anchor-id="flotsam-jetsam"><span class="header-section-number">2.2.5</span> Flotsam &amp; Jetsam</h3>
 <p>Sometimes, researchers want to conduct an ANOVA or add the letters for indicating differences among treatments, even though we have reached the original goals of analysis. It is important to evaluate why you want to do these extra things, what extra information it will bring and what you plan to do with those results.</p>
 <p>Running an ANOVA may increase or decrease confidence in the results, depending on what results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us!</p>
 <p>Labelling each treatment, especially when there are this many (42 in total), has its own perils. The biggest problem is that this creates a multiple testing problem: with 42 treatments, a total of 861 comparison are being run (=<span class="math inline">\(42*(42-1)/2\)</span>), and then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to variety, but they all share the same letter!</p>
 <p>The second problem is one of interpretation. Just because two treatments or varieties share a letter does not mean they are equivalent. It only means that they were not found to be different. A funny distinction, but alas. There is an entire branch of statistics, ‘equivalence testing’ devoted to just this topic - how to test if two things are actually the same. This involves the user declaring a maximum allowable numeric difference for a variable in order to determine if two items are statistically different or equivalent - something that these pairwise comparisons are not doing.</p>
 <p>If you want to run ANOVA, it can be done quite easily:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_rcbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_rcbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
         Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
@@ -665,7 +756,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../chapters/intro.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
