@@ -1,8 +1,14 @@
 # Split Plot Design
 
-This is a simple model that can serve as a good entrance point to mixed models.
+Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized, completely randomized block, and Latin square designs. The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+
+height_data used for this example has a split plot design as follows: 3 replicates, in each rep there are four plots (whole-plot) representing time; Besides, the whole-plot is divided into 8 sub-plots to apply different management (manage) levels.
+
+***add split plot figure for height data***
 
 ![Split Plot Design with Variety as main factor and fertilizer as a split factor.](images/split_plot_image1.png)
+
+1.  Load required libaraies
 
 ```{r}
 library(ggplot2)
@@ -10,6 +16,75 @@ library(emmeans)
 library(lme4)
 library(multcompView)
 ```
+
+2.  Import height data and check the structure of the data.
+
+```{r}
+library(readxl)
+height_data <- read_excel("~/height_data.xlsx")
+View(height_data)
+
+table(height_data$time, height_data$manage)
+
+str(height_data)
+
+```
+
+3.  Explore data
+
+```{r}
+ggplot(data=height_data, aes(y=height,x=time))+geom_boxplot(aes(colour=manage))
+```
+
+```{r}
+library(agridat)
+data(gomez.splitplot.subsample.txt)
+```
+
+4.  Specify a model for data
+
+The statistical model structure for split plot design:
+
+$$y_{ijk} = \mu + \rho_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$ Where:
+
+$\mu$ = overall experimental mean, $\rho$ = block,rep effects (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B , $\epsilon$ = error.
+
+$$ \epsilon \sim N(0, \sigma)$$
+
+$$ \rho \sim N(0, \sigma_b)$$
+
+Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
+
+## 'iid' assumption for error terms
+
+In this model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.
+
+```{r}
+model1<-lmer(height ~ time*manage + (1|rep/time), data=height_data)
+
+summary(model1)
+
+```
+
+```{r}
+plot(model1)
+
+qqnorm(resid(model1)); qqline(resid(model1))
+```
+
+5.  Interpretation of the model:
+
+```{r}
+library(lmerTest)
+anova(model1)
+```
+
+```{r}
+library(multcomp)
+emmeans(model1, ~ time*manage)
+```
+
+## Example 2
 
 ```{r}
 Yield_data <- read.csv(here::here("data", "Yield.csv"))
@@ -36,4 +111,12 @@ splitplotmodel1<-lme(Yield ~ Variety*Fertilizer,
 
 
 splitplotmodel1<-lmer(Yield ~ Variety*Fertilizer + (1|Rep/Variety), data=Yield_data)
+```
+
+### Split-split plot design in R
+
+<https://search.r-project.org/CRAN/refmans/agricolae/html/ssp.plot.html>
+
+```{r}
+
 ```
