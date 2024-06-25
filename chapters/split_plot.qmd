@@ -1,0 +1,39 @@
+# Split Plot Design
+
+This is a simple model that can serve as a good entrance point to mixed models.
+
+![Split Plot Design with Variety as main factor and fertilizer as a split factor.](images/split_plot_image1.png)
+
+```{r}
+library(ggplot2)
+library(emmeans)
+library(lme4)
+library(multcompView)
+```
+
+```{r}
+Yield_data <- read.csv(here::here("data", "Yield.csv"))
+```
+
+```{r}
+str(Yield_data)
+```
+
+```{r}
+Yield_data$Fertilizer <- factor(Yield_data$Fertilizer)
+Yield_data$Rep <- factor(Yield_data$Rep)
+```
+
+```{r}
+ggplot(data=Yield_data, aes(y=Yield,x=Variety))+geom_boxplot(aes(colour=Fertilizer))
+summaryBy(Yield ~Variety +Fertilizer, data=Yield_data, FUN=c(mean,sd))
+```
+
+```{r}
+library(nlme)
+splitplotmodel1<-lme(Yield ~ Variety*Fertilizer,
+                     random =~ (1|Rep/Variety), data=Yield_data)
+
+
+splitplotmodel1<-lmer(Yield ~ Variety*Fertilizer + (1|Rep/Variety), data=Yield_data)
+```
