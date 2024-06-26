@@ -1,6 +1,38 @@
 # Split Plot Design
 
-Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized, completely randomized block, and Latin square designs. The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD), and Latin square designs. The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+
+### Details for Split Plot Designs
+
+1.  Whole Plot Randomized as a completely randomized design
+
+The statistical model structure this design:
+
+$$y_{ijk} = \mu + \alpha_i + \beta_k + (\alpha_j\beta_k) + \epsilon_{ij} + \delta_{ijk} $$    Where:
+
+$\mu$= overall experimental mean, $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\tau$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+
+$$ \epsilon \sim N(0, \sigma_\epsilon)$$
+
+$$\ \delta  \sim N(0, \sigma_\delta)$$
+
+Both the error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
+
+2.  Whole Plot Randomized as an RCBD
+
+The statistical model structure for split plot design:
+
+$$y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha_i\beta_k) + \epsilon_{ij} + \delta_{ijk}$$ Where:
+
+$\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+
+$$ \epsilon \sim N(0, \sigma_\epsilon)$$
+
+$$\ \delta  \sim N(0, \sigma_\delta)$$
+
+Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
+
+### Example model for CRD Split Plot Designs 
 
 height_data used for this example has a split plot design as follows: 3 replicates, in each rep there are four plots (whole-plot) representing time; Besides, the whole-plot is divided into 8 sub-plots to apply different management (manage) levels.
 
@@ -8,21 +40,25 @@ height_data used for this example has a split plot design as follows: 3 replicat
 
 ![Split Plot Design with Variety as main factor and fertilizer as a split factor.](images/split_plot_image1.png)
 
-1.  Load required libaraies
+1.  Load required libraries
 
 ```{r}
+#| message: false
+#| warning: false
+
 library(ggplot2)
 library(emmeans)
 library(lme4)
 library(multcompView)
+install.packages("performance")
+library(performance)
 ```
 
 2.  Import height data and check the structure of the data.
 
 ```{r}
 library(readxl)
-height_data <- read_excel("~/height_data.xlsx")
-View(height_data)
+height_data <- read_excel(here::here("data", "height_data.xlsx"))
 
 table(height_data$time, height_data$manage)
 
@@ -47,7 +83,7 @@ The statistical model structure for split plot design:
 
 $$y_{ijk} = \mu + \rho_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$ Where:
 
-$\mu$ = overall experimental mean, $\rho$ = block,rep effects (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B , $\epsilon$ = error.
+$\mu$ = overall experimental mean, $\rho$ = block/rep effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon$ = error.
 
 $$ \epsilon \sim N(0, \sigma)$$
 
@@ -71,8 +107,7 @@ plot(model1)
 
 qqnorm(resid(model1)); qqline(resid(model1))
 
-install.packages("performance")
-library(performance)
+
 
 # checking model assumptions
 check_model(model1)
@@ -88,6 +123,66 @@ anova(model1)
 ```{r}
 library(multcomp)
 emmeans(model1, ~ time*manage)
+```
+
+### Example model for RCBD Split Plot Designs 
+
+Design Summary:
+
+Main plot = Variety (V), 3 levels
+
+Subplot = Nitrogen (N), 4 levels
+
+Number of blocks (B) = 6
+
+Dependent variable = yield (Y)
+
+To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties, nutrient levels, their interaction, and the effects of plots and subplots.
+
+```{r}
+library(MASS)
+data("oats")
+head(oats,10)
+```
+
+Evaluate the structure of the data. The "B", "V", and "N" needs to be 'factor' and "Y" should be numeric.
+
+```{r}
+str(oats)
+```
+
+<https://rpubs.com/lumumba99/1063203>
+
+```{r}
+table(oats$V, oats$N)
+```
+
+Building the Model
+
+```{r}
+model2 <- lmer(Y ~ V + N + V:N + (1|B) + (1|B:V), data = oats)
+summary(model2)
+```
+
+Assumption tests
+
+Normality of residuals and homogenous variance
+
+```{r}
+# checking model assumptions
+check_model(model2)
+```
+
+Analysis of Variance (ANOVA)
+
+```{r}
+anova(model2)
+```
+
+Post-Hoc analysis
+
+```{r}
+emmeans 
 ```
 
 ## Example 2
