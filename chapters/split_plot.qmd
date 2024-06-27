@@ -32,13 +32,13 @@ $$\ \delta  \sim N(0, \sigma_\delta)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
 
+![](images/split_plot_CRD-01.jpeg){fig-align="left" width="341"}
+
+![](images/Split_plot_RCBD.jpeg){fig-align="right" width="348"}
+
 ### Example model for CRD Split Plot Designs
 
 height_data used for this example has a split plot design as follows: 3 replicates, in each rep there are four plots (whole-plot) representing time; Besides, the whole-plot is divided into 8 sub-plots to apply different management (manage) levels.
-
-***add split plot figure for height data***
-
-![Split Plot Design with Variety as main factor and fertilizer as a split factor.](images/split_plot_image1.png)
 
 1.  Load required libraries
 
@@ -139,6 +139,8 @@ Dependent variable = yield (Y)
 
 To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties, nutrient levels, their interaction, and the effects of plots and subplots.
 
+**Load the data:**
+
 ```{r}
 library(MASS)
 data("oats")
@@ -151,20 +153,18 @@ Evaluate the structure of the data. The "B", "V", and "N" needs to be 'factor' a
 str(oats)
 ```
 
-<https://rpubs.com/lumumba99/1063203>
-
 ```{r}
 table(oats$V, oats$N)
 ```
 
-Building the Model
+**Building the Model**
 
 ```{r}
 model2 <- lmer(Y ~ V + N + V:N + (1|B) + (1|B:V), data = oats)
 summary(model2)
 ```
 
-Assumption tests
+**Assumption tests**
 
 Normality of residuals and homogenous variance
 
@@ -173,16 +173,18 @@ Normality of residuals and homogenous variance
 check_model(model2)
 ```
 
-Analysis of Variance (ANOVA)
+**Analysis of Variance** (ANOVA)
 
 ```{r}
 anova(model2)
 ```
 
-Post-Hoc analysis
+**Post-Hoc analysis**
 
 ```{r}
-emmeans 
+emm <- emmeans(model2, ~ variety * nutrient)
+comparison <- cld(emm, Letters = LETTERS, reversed = T)
+comparison
 ```
 
 ## Example 2
@@ -215,6 +217,8 @@ splitplotmodel1<-lmer(Yield ~ Variety*Fertilizer + (1|Rep/Variety), data=Yield_d
 ```
 
 ### Split-split plot design in R
+
+Statistical model:
 
 <https://search.r-project.org/CRAN/refmans/agricolae/html/ssp.plot.html>
 
