@@ -225,10 +225,6 @@ rice$variety<-factor(rice$variety)
 Statistical model
 
 ```{r}
-model<-with(ssp,ssp.plot(block,nitrogen,management,variety,yield))
-```
-
-```{r}
 library(ggplot2)
 library(emmeans)
 library(lme4)
@@ -257,16 +253,22 @@ library(see)
 check_model(model3)
 ```
 
+Analysis of variance
+
 ```{r}
 anova(model3)
 Anova(model3,test="F")
 ```
 
+Post-Hoc analysis
+
 ```{r}
-check_model(model2)
+emmeans(model3, ~ nitrogen)
+emmeans(model3, ~ variety*management)
 ```
 
 ```{r}
-library(multcomp)
-emmeans(model3, ~ nitrogen)
+emm <- emmeans(model3, ~ nitrogen*variety) 
+comparison <- cld(emm, Letters = LETTERS, reversed = T) 
+comparison
 ```
