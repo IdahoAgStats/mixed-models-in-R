@@ -2,7 +2,7 @@
 
 Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD), and Latin square designs. The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
 
-### Details for Split Plot Designs
+## Details for Split Plot Designs
 
 1.  Whole Plot Randomized as a completely randomized design
 
@@ -35,6 +35,7 @@ Both the overall error and the rep effects are assumed to be normally distribute
 ![Split Plot CRD Design](images/split_plot_CRD-01.jpeg){fig-align="center" width="341"}
 
 ![Split Plot RCBD Design](images/Split_plot_RCBD.jpeg){fig-align="center" width="348"}
+## Analysis Examples
 
 ### Example model for CRD Split Plot Designs
 
@@ -69,7 +70,8 @@ str(height_data)
 3.  Explore data
 
 ```{r}
-ggplot(data=height_data, aes(y=height,x=time))+geom_boxplot(aes(colour=manage))
+ggplot(data = height_data, aes(y = height, x = time)) +
+  geom_boxplot(aes(colour = manage))
 ```
 
 ```{r}
@@ -81,7 +83,9 @@ data(gomez.splitplot.subsample.txt)
 
 The statistical model structure for split plot design:
 
-$$y_{ijk} = \mu + \rho_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$ Where:
+$$y_{ijk} = \mu + \rho_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$ 
+
+Where:
 
 $\mu$ = overall experimental mean, $\rho$ = block/rep effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon$ = error.
 
@@ -91,7 +95,7 @@ $$ \rho \sim N(0, \sigma_b)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
 
-## 'iid' assumption for error terms
+#### 'iid' assumption for error terms
 
 In this model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.
 
