@@ -32,9 +32,9 @@ $$\ \delta  \sim N(0, \sigma_\delta)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
 
-![](images/split_plot_CRD-01.jpeg){fig-align="left" width="341"}
+![Split Plot CRD Design](images/split_plot_CRD-01.jpeg){fig-align="center" width="341"}
 
-![](images/Split_plot_RCBD.jpeg){fig-align="right" width="348"}
+![Split Plot RCBD Design](images/Split_plot_RCBD.jpeg){fig-align="center" width="348"}
 
 ### Example model for CRD Split Plot Designs
 
@@ -179,49 +179,94 @@ check_model(model2)
 anova(model2)
 ```
 
-**Post-Hoc analysis**
+Post-Hoc analysis
 
 ```{r}
-emm <- emmeans(model2, ~ variety * nutrient)
-comparison <- cld(emm, Letters = LETTERS, reversed = T)
-comparison
-```
-
-## Example 2
-
-```{r}
-Yield_data <- read.csv(here::here("data", "Yield.csv"))
-```
-
-```{r}
-str(Yield_data)
-```
-
-```{r}
-Yield_data$Fertilizer <- factor(Yield_data$Fertilizer)
-Yield_data$Rep <- factor(Yield_data$Rep)
-```
-
-```{r}
-ggplot(data=Yield_data, aes(y=Yield,x=Variety))+geom_boxplot(aes(colour=Fertilizer))
-summaryBy(Yield ~Variety +Fertilizer, data=Yield_data, FUN=c(mean,sd))
-```
-
-```{r}
-library(nlme)
-splitplotmodel1<-lme(Yield ~ Variety*Fertilizer,
-                     random =~ (1|Rep/Variety), data=Yield_data)
-
-
-splitplotmodel1<-lmer(Yield ~ Variety*Fertilizer + (1|Rep/Variety), data=Yield_data)
+emm <- emmeans(model2, ~ variety * nutrient) comparison <- cld(emm, Letters = LETTERS, reversed = T) comparison
 ```
 
 ### Split-split plot design in R
 
+In this example, we have a yield data of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels. In this spliy-split design:
+
+blocks = block (3 blocks),
+
+Whole plot factor = Nitrogen (5 levels)
+
+Sub plot = management (3 levels)
+
+sub-subplot = variety (3 levels)
+
 Statistical model:
 
-<https://search.r-project.org/CRAN/refmans/agricolae/html/ssp.plot.html>
+Here, we are extracting the rice yield data from `agricolae` package.
+
+```{r}
+library(agricolae)
+f <- system.file("external/ssp.csv", package="agricolae")
+rice <-read.csv(f)
+```
+
+Exploratory analysis
+
+```{r}
+str(rice)
+```
+
+Convert block, nitrogen, variety, and management to factors.
+
+```{r}
+rice$block<-factor(rice$block)
+rice$nitrogen<-factor(rice$nitrogen)
+rice$management<-factor(rice$management)
+rice$variety<-factor(rice$variety)
+```
+
+Statistical model
+
+```{r}
+model<-with(ssp,ssp.plot(block,nitrogen,management,variety,yield))
+```
+
+```{r}
+library(ggplot2)
+library(emmeans)
+library(lme4)
+library(multcompView)
+install.packages("performance")
+library(performance)
+```
+
+Here is the basic split-split plot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.
+
+```{r}
+model3 <-lmer(yield ~  block + nitrogen*management*variety + (1|block/nitrogen/management),data=rice, na.action = na.exclude)
+
+summary(model3)
+
+```
+
+Model Diagnostics: we observed a constant variance and normality of residuals.
 
 ```{r}
 
+plot(model3)
+qqnorm(residuals(model3)); qqline(residuals(model3))
+
+library(see)
+check_model(model3)
+```
+
+```{r}
+anova(model3)
+Anova(model3,test="F")
+```
+
+```{r}
+check_model(model2)
+```
+
+```{r}
+library(multcomp)
+emmeans(model3, ~ nitrogen)
 ```
