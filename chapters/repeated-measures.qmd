@@ -10,6 +10,8 @@ There are several other options in the **nlm** machinery (search "cor" for more 
 
 Fitting models with correlated observations requires new libraries including mmrm and nlme. lmer allows random effects only.
 
+### Talk about different covariance structures and provide reference for details 
+
 Packages required for this tutorial:
 
 ```{r}
@@ -18,9 +20,88 @@ Packages required for this tutorial:
 library(dplyr) 
 library(mmrm)
 library(emmeans)
+library(performance)
 ```
 
-**Split plot repeated measures using mmrm()**
+1.  **Repeated Measures RCBD**
+
+The example shown below contains yield data
+
+2.  **Split plot repeated measures using mmrm()**
+
+The example shown below contains yield data in a split-plot design. In this data set, we have:
+
+Variety: 2 levels
+
+Fertilizer: 3 levels
+
+Replications: 4
+
+The yield data was collected repeatedly from the same Reps over 5 'Sample_times'.
+
+This can be analyze either using `nlme` or `mmr`.
+
+Using mmr package:
+
+```{r}
+library(readr)
+Yield <- read_csv(here::here("data/Yield.csv"))
+head(Yield)
+str(Yield)
+```
+
+```{r}
+Yield$Variety <- factor(Yield$Variety)
+Yield$Fertilizer <- factor(Yield$Fertilizer)
+Yield$Sample_time <- factor(Yield$Sample_time)
+Yield$Rep <- factor(Yield$Rep)
+
+table(Yield$Fertilizer, Yield$Variety)
+##creating a plot variable
+Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-'))
+table(Yield$plot)
+
+```
+
+## Model fit
+
+```{r}
+asp.fit <- mmrm(Yield ~ Variety + Fertilizer + Sample_time + Variety:Fertilizer +  + ar1(Sample_time|Variety/plot),
+data=Yield)
+
+```
+
+Model Diagnostics
+
+```{r}
+
+##check_model(asp.fit) ## performance package doesn't work with mmrm class.
+plot(residuals(asp.fit))
+qqnorm(residuals(asp.fit)); qqline(residuals(asp.fit))
+```
+
+Anova
+
+```{r}
+# type III tests
+#Anova.mmrm(asp.fit, type = "III") ## some issues with it
+
+# type III tests
+joint_tests(asp.fit)
+```
+
+Post-Hoc comparison
+
+```{r}
+# cell means
+asp.emm <- emmeans(asp.fit, c('Variety','Fertilizer'))
+
+joint_tests(asp.emm)
+
+
+asp.emm1 <- emmeans(asp.fit1, c('trt.f','year.f'))
+joint_tests(asp.emm1)
+```
 
 ```{r}
 library(agridat)
