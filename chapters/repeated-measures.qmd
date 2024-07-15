@@ -18,6 +18,7 @@ Packages required for this tutorial:
 #| message: false
 #| warning: false
 library(dplyr) 
+library(nlme)
 library(mmrm)
 library(emmeans)
 library(performance)
@@ -26,6 +27,14 @@ library(performance)
 1.  **Repeated Measures RCBD**
 
 The example shown below contains yield data
+
+```{r}
+dat <- agriTutorial::sorghum
+```
+
+```{r}
+agridat::caribbean.maize
+```
 
 2.  **Split plot repeated measures**
     -   **using mmrm() from mmrm package:**
@@ -62,6 +71,7 @@ Yield$Rep <- factor(Yield$Rep)
 table(Yield$Fertilizer, Yield$Variety)
 ##creating a plot variable
 Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-'))
+Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-'))
 table(Yield$plot)
 
 ```
@@ -69,9 +79,27 @@ table(Yield$plot)
 ## Model fit
 
 ```{r}
-asp.fit <- mmrm(Yield ~ Variety + Fertilizer + Sample_time + Variety:Fertilizer +  + ar1(Sample_time|Variety/plot),
-data=Yield)
 
+fit1 <- mmrm(
+  formula = Yield ~ Variety + Fertilizer + Sample_time1 + Variety*Fertilizer +  + ar1(Sample_time1|Rep/plot),
+  data = Yield,
+   reml = FALSE
+)
+summary(fit1)
+
+fit2 <- mmrm(
+  formula = Yield ~ Variety + Fertilizer + Sample_time1 + Variety*Fertilizer +  + ar1(Sample_time1|Rep2/plot),
+  data = Yield,
+   reml = FALSE
+)
+
+summary(fit2)
+
+anova(fit1, fit2)
+
+asp.fit <- mmrm(Yield ~ Variety + Fertilizer + Sample_time1 + Variety:Fertilizer +  + ar1(Sample_time1|Rep/plot),
+data=Yield)
+summary(asp.fit)
 ```
 
 Model Diagnostics
@@ -87,7 +115,7 @@ Anova
 
 ```{r}
 # type III tests
-#Anova.mmrm(asp.fit, type = "III") ## some issues with it
+Anova.mmrm(asp.fit, type = "III") ## some issues with it
 
 # type III tests
 joint_tests(asp.fit)
@@ -98,7 +126,7 @@ Post-Hoc comparison
 ```{r}
 # cell means
 asp.emm <- emmeans(asp.fit, c('Variety','Fertilizer'))
-
+pairs(asp.emm)
 joint_tests(asp.emm)
 
 
@@ -110,20 +138,31 @@ joint_tests(asp.emm1)
 
 ```{r}
 
-asp.fit <- mmrm(Yield ~ Variety + Fertilizer + Sample_time + Variety:Fertilizer +  + ar1(Sample_time|Variety/plot),
-data=Yield)
+corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot, value = 0.2, fixed = FALSE)
+corr_str2 = corCompSymm(form = ~ Sample_time|Rep/Variety/plot, fixed = FALSE)
 
 
-str(Yield$Sample_time)
-str(Yield$plot)
-Yield$plot1 <- as.character(Yield$plot)
-
-corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot1, value = 0.2, fixed = FALSE)
-
-m_2023A1 <- lme(pH ~ Sample_time1*Variety*Fertilizer,
-                random = ~ 1|Rep/Variety/plot1,
-                corr = corr_str1,
+# establish model2
+mod <- lme(Yield ~ Sample_time1*Variety*Fertilizer,
+                random = ~ 1|Rep/Variety/plot,
                 data = Yield, na.action= na.exclude)
+
+mod1 <- update(mod, corr= corr_str1)
+mod2 <- update(mod, corr= corr_str2)
+
+##compare different correlation matrices
+
+anova(mod1, mod2)
+
+```
+
+```{r}
+anova(mod1)
+```
+
+```{r}
+emm <- emmeans(mod1,~ Sample_time1*Variety|Fertilizer)
+pairs(emm)
 ```
 
 ```{r}
