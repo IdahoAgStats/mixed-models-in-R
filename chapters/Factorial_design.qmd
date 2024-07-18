@@ -1,0 +1,154 @@
+---
+title: "Factorial_design"
+---
+
+## Background
+
+::: callout-note
+## A note
+:::
+
+## Example Analysis
+
+```{r, message=FALSE}
+library(dplyr) 
+library(nlme)
+library(mmrm)
+library(emmeans)
+library(performance)
+library(lme4); library(lmerTest); library(emmeans)
+```
+
+1.  **A 4x4 Factorial design**
+
+The response variable: yield
+
+A data frame with 32 observations on the following 4 variables.
+
+-   rep: replication factor
+
+-   block: block factor
+
+-   trt: treatment factor, 16 levels
+
+There were 4 treatment factors: d (dung treatment, 2 levels), n (nitrogen treatment, 2 levels), p (phosphorous treatment, 2 levels), and k (potassium treatment, 2 levels)
+
+```{r}
+library(agridat)
+
+data1 <- agridat::cochran.factorial %>% mutate(d = as.factor(d),
+         n = as.factor(n),
+         p = as.factor(p),
+         k = as.factor(k))
+str(data1)
+
+```
+
+## Model fitting
+
+Model fitting with R is exactly the same as shown in previous chapters: we need to include all effect, as well as the interaction, which is represented by using the colon indicator ‘:’. Therefore, model syntax is:
+
+`yield ~ d + n + p + k + d:n + d:p + d:k + n:p + n:k + p:k + d:n:p:k`
+
+which can be abbreviated as:
+
+`yield ~ d*n*p*k`
+
+```{r}
+
+model1 <- lmer(yield ~ d*n*p*k + (1|block),
+                   data = data1, 
+                   na.action = na.exclude)
+
+summary(model1)
+```
+
+::: callout-note
+## Model fit using lme()
+
+This same model can be fitted by using `lme()` from the 'nlme' package as well.
+
+```{r}
+model2 <- lme(yield ~ d*n*p*k,
+              random = ~1|block,
+                   data = data1, 
+                   na.action = na.exclude)
+
+model2 
+anova(model2)
+```
+
+The results are same from both models with lmer() or lme().
+:::
+
+```{r}
+anova(model1)
+```
+
+### Check Model Assumptions
+
+```{r}
+check_model(model1)
+```
+
+### Inference
+
+```{r}
+
+m1 <- emmeans(model1, specs = ~ d|k)
+m1
+pairs(m1)
+```
+
+```{r}
+
+m2 <- emmeans(model1, specs = ~ n)
+m2
+pairs(m2)
+```
+
+::: panel-tabset
+### lme4
+
+```{r, message=FALSE}
+
+```
+
+### tidymodels
+
+```{r, message=FALSE}
+library(tidymodels)
+tidy_rcbd <- linear_reg(engine = "lm") %>% 
+  fit(yield ~ d*n*p*k + (1|block),
+                   data = data1, 
+                   na.action = na.exclude)
+```
+:::
+
+### *Data integrity checks*
+
+### Model Building
+
+::: column-margin
+Recall the model:
+
+$$        $$
+:::
+
+Here is the R syntax for that statistical model:
+
+::: panel-tabset
+### lme4
+
+```{r}
+
+```
+
+### tidymodels
+
+```{r}
+
+```
+:::
+
+### Flotsam & Jetsam
