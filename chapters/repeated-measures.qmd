@@ -26,14 +26,71 @@ library(performance)
 
 1.  **Repeated Measures RCBD**
 
-The example shown below contains yield data
+The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable 'y' is the leaf area index assessed in five consecutive weeks on each plot.
+
+We need to have time as numeric and factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).
 
 ```{r}
-dat <- agriTutorial::sorghum
+dat <- agriTutorial::sorghum %>%   
+  mutate(week = as.numeric(factweek),
+         block = as.character(varblock)) 
+
+str(dat)
+
 ```
 
 ```{r}
-agridat::caribbean.maize
+cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
+cs2 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
+
+
+
+lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
+              data = dat,
+              na.action = na.exclude)
+
+
+lm2 <- update(lm1, corr = cs1)
+lm3 <- update(lm1, corr= cs2)
+
+# Compare models with different correlation structure using anova()
+anova(lm1, lm2, lm3)
+```
+
+We can compare the performance of these models (lm1, lm2, lm3) either by using `anova()` or by `compare_performance()` function from the 'performance' library.
+
+```{r}
+anova(lm1, lm2, lm3)
+## or
+result <- compare_performance(lm1, lm2, lm3)
+print_md(result)
+
+##model with AR1 correaltion matrix is better
+```
+
+## Model Diagnostcis
+
+```{r}
+check_model(lm2)
+```
+
+## Post-Hoc Analysis
+
+```{r}
+anova(lm2)
+```
+
+## Emmeans
+
+```{r}
+
+mean_1 <- emmeans(lm2, ~ variety)
+mean_1
+pairs(mean_1)
+
+mean_2 <- emmeans(lm2, ~ variety:factweek)
+mean_2
+
 ```
 
 2.  **Split plot repeated measures**
@@ -49,9 +106,7 @@ Replications: 4
 
 The yield data was collected repeatedly from the same Reps over 5 'Sample_times'.
 
-This can be analyze either using `nlme` or `mmr`.
-
-Using mmr package:
+This can be analyze either using `nlme` or `mmrm`.
 
 ```{r}
 library(readr)
@@ -60,81 +115,27 @@ head(Yield)
 str(Yield)
 ```
 
-To use mmrm(), we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
+## Model fit
+
+**using lme() from nlme package.**
+
+To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
 
 ```{r}
-Yield$Variety <- factor(Yield$Variety)
-Yield$Fertilizer <- factor(Yield$Fertilizer)
-Yield$Sample_time1 <- factor(Yield$Sample_time)
-Yield$Rep <- factor(Yield$Rep)
+Yield$Variety <- factor(Yield$Variety) 
+Yield$Fertilizer <- factor(Yield$Fertilizer) 
+Yield$Sample_time1 <- factor(Yield$Sample_time) 
+Yield$Rep <- factor(Yield$Rep)  
 
-table(Yield$Fertilizer, Yield$Variety)
-##creating a plot variable
-Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-'))
-Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-'))
-table(Yield$plot)
+table(Yield$Fertilizer, Yield$Variety) 
 
+##creating a plot variable 
+Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-')) 
+Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-')) 
+table(Yield$plot) 
 ```
 
 ## Model fit
-
-```{r}
-
-fit1 <- mmrm(
-  formula = Yield ~ Variety + Fertilizer + Sample_time1 + Variety*Fertilizer +  + ar1(Sample_time1|Rep/plot),
-  data = Yield,
-   reml = FALSE
-)
-summary(fit1)
-
-fit2 <- mmrm(
-  formula = Yield ~ Variety + Fertilizer + Sample_time1 + Variety*Fertilizer +  + ar1(Sample_time1|Rep2/plot),
-  data = Yield,
-   reml = FALSE
-)
-
-summary(fit2)
-
-anova(fit1, fit2)
-
-asp.fit <- mmrm(Yield ~ Variety + Fertilizer + Sample_time1 + Variety:Fertilizer +  + ar1(Sample_time1|Rep/plot),
-data=Yield)
-summary(asp.fit)
-```
-
-Model Diagnostics
-
-```{r}
-
-##check_model(asp.fit) ## performance package doesn't work with mmrm class.
-plot(residuals(asp.fit))
-qqnorm(residuals(asp.fit)); qqline(residuals(asp.fit))
-```
-
-Anova
-
-```{r}
-# type III tests
-Anova.mmrm(asp.fit, type = "III") ## some issues with it
-
-# type III tests
-joint_tests(asp.fit)
-```
-
-Post-Hoc comparison
-
-```{r}
-# cell means
-asp.emm <- emmeans(asp.fit, c('Variety','Fertilizer'))
-pairs(asp.emm)
-joint_tests(asp.emm)
-
-
-asp.emm1 <- emmeans(asp.fit1, c('trt.f','year.f'))
-joint_tests(asp.emm1)
-```
-
--   **using lme() from nlme package.**
 
 ```{r}
 
@@ -142,27 +143,79 @@ corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot, value = 0.2, fixed = F
 corr_str2 = corCompSymm(form = ~ Sample_time|Rep/Variety/plot, fixed = FALSE)
 
 
-# establish model2
+# establish model
 mod <- lme(Yield ~ Sample_time1*Variety*Fertilizer,
                 random = ~ 1|Rep/Variety/plot,
                 data = Yield, na.action= na.exclude)
 
+##update model with correlation matrix
 mod1 <- update(mod, corr= corr_str1)
 mod2 <- update(mod, corr= corr_str2)
 
 ##compare different correlation matrices
 
-anova(mod1, mod2)
+anova(mod, mod1, mod2)
 
 ```
+
+A model with AR1 is better than compared to the model with compound symmetry structure.
+
+### Model diagnostics
+
+```{r}
+check_model(mod1)
+```
+
+Post-Hoc analysis
 
 ```{r}
 anova(mod1)
 ```
 
 ```{r}
-emm <- emmeans(mod1,~ Sample_time1*Variety|Fertilizer)
+emm <- emmeans(mod1,~ Fertilizer)
 pairs(emm)
+```
+
+##### Fitting Model using `mmrm()` from the mmrm package:
+
+```{r}
+fit1 <- mmrm(
+  formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
+  data = Yield)
+
+
+summary(fit1)
+
+```
+
+Model Diagnostics
+
+```{r}
+##check_model(asp.fit) ## performance package doesn't work with mmrm class.
+plot(residuals(fit1)) 
+qqnorm(residuals(fit1)); qqline(residuals(fit1))
+```
+
+Anova
+
+```{r}
+# type III tests 
+car::Anova(fit1)
+```
+
+Post-Hoc comparison
+
+```{r}
+# cell means 
+asp.emm <- emmeans(fit1, c('Variety','Fertilizer')) 
+pairs(asp.emm) 
+```
+
+3.  **Split-split plot repeated measures**
+
+```{r}
+agridat::caribbean.maize
 ```
 
 ```{r}
