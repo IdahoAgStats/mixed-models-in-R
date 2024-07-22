@@ -3,3 +3,47 @@ title: "lattice_design"
 ---
 
 https://kwstat.github.io/agridat/reference/cochran.lattice.html
+
+
+```{r}
+library(dplyr) 
+library(nlme)
+library(mmrm)
+library(emmeans)
+library(performance)
+library(lme4); library(lmerTest); library(emmeans)
+```
+
+
+Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design 
+
+```{r}
+library(agridat)
+data(burgueno.rowcol)
+dat <- burgueno.rowcol
+
+```
+
+```{r}
+
+# Two contiguous reps in 8 rows, 16 columns
+libs(desplot)
+desplot(dat, yield ~ col*row,
+        out1=rep, # aspect unknown
+        text=gen, shorten="none", cex=.75,
+        main="burgueno.rowcol")
+
+```
+
+```{r}
+#Random rep, row and col within rep
+ m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), data=dat)
+summary(m1) 
+anova(m1)
+
+```
+
+```{r}
+check_model(m1)
+```
+
