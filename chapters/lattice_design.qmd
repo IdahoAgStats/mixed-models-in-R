@@ -4,7 +4,6 @@ title: "lattice_design"
 
 https://kwstat.github.io/agridat/reference/cochran.lattice.html
 
-
 ```{r}
 library(dplyr) 
 library(nlme)
@@ -14,8 +13,7 @@ library(performance)
 library(lme4); library(lmerTest); library(emmeans)
 ```
 
-
-Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design 
+Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design
 
 ```{r}
 library(agridat)
@@ -35,6 +33,12 @@ desplot(dat, yield ~ col*row,
 
 ```
 
+Statistical model for lattice design:
+
+$Yijk = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
+
+where, mu is the µ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
+
 ```{r}
 #Random rep, row and col within rep
  m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), data=dat)
@@ -47,3 +51,14 @@ anova(m1)
 check_model(m1)
 ```
 
+ANOVA
+
+```{r}
+anova(m1)
+```
+
+Estimated marginal means
+
+```{r}
+emmeans(m1, ~ gen)
+```
