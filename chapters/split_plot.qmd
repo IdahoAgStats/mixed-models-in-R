@@ -30,12 +30,17 @@ $$ \epsilon \sim N(0, \sigma_\epsilon)$$
 
 $$\ \delta  \sim N(0, \sigma_\delta)$$
 
-Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
+Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_\delta$, respectively.
+
+#### 'iid' assumption for error terms
+
+In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.
 
 ![Split Plot CRD Design](images/split_plot_CRD-01.jpeg){fig-align="center" width="341"}
 
 ![Split Plot RCBD Design](images/Split_plot_RCBD.jpeg){fig-align="center" width="348"}
-## Analysis Examples
+
+### Analysis Examples
 
 ### Example model for CRD Split Plot Designs
 
@@ -51,7 +56,6 @@ library(ggplot2)
 library(emmeans)
 library(lme4)
 library(multcompView)
-install.packages("performance")
 library(performance)
 ```
 
@@ -64,7 +68,6 @@ height_data <- read_excel(here::here("data", "height_data.xlsx"))
 table(height_data$time, height_data$manage)
 
 str(height_data)
-
 ```
 
 3.  Explore data
@@ -83,21 +86,17 @@ data(gomez.splitplot.subsample.txt)
 
 The statistical model structure for split plot design:
 
-$$y_{ijk} = \mu + \rho_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$ 
+$$y_{ijk} = \mu + \gamma_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$
 
 Where:
 
-$\mu$ = overall experimental mean, $\rho$ = block/rep effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon$ = error.
+$\mu$ = overall experimental mean, $\gamma$ = block/rep effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon$ = error.
 
 $$ \epsilon \sim N(0, \sigma)$$
 
-$$ \rho \sim N(0, \sigma_b)$$
+$$ \gamma \sim N(0, \sigma_b)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
-
-#### 'iid' assumption for error terms
-
-In this model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.
 
 ```{r}
 model1<-lmer(height ~ time*manage + (1|rep/time), data=height_data)
@@ -189,9 +188,15 @@ Post-Hoc analysis
 emm <- emmeans(model2, ~ variety * nutrient) comparison <- cld(emm, Letters = LETTERS, reversed = T) comparison
 ```
 
+::: callout-note
+## `na.action = na.exclude`
+
+The RCBD split-plot design is also commonly called split-block Design or the strip-plot Design
+:::
+
 ### Split-split plot design in R
 
-In this example, we have a yield data of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels. In this spliy-split design:
+In this example, we have a yield data of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels. In this split-split design:
 
 blocks = block (3 blocks),
 
@@ -202,6 +207,8 @@ Sub plot = management (3 levels)
 sub-subplot = variety (3 levels)
 
 Statistical model:
+
+**add model equation here**
 
 Here, we are extracting the rice yield data from `agricolae` package.
 
@@ -226,16 +233,7 @@ rice$management<-factor(rice$management)
 rice$variety<-factor(rice$variety)
 ```
 
-Statistical model
-
-```{r}
-library(ggplot2)
-library(emmeans)
-library(lme4)
-library(multcompView)
-install.packages("performance")
-library(performance)
-```
+Statistical model:
 
 Here is the basic split-split plot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.
 
