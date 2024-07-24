@@ -2,33 +2,32 @@
 
 A set of tutorial for running mixed models in R
 
-Not ready for public consumption.
+#### Not ready for public consumption. 
 
-#### Tutorials done
+### Tutorials done
 
 - RCBD
 
 
-#### Tutorials in progress
+### Tutorials in progress
 
 - intro
 - tips
 - special conditions
 - resources
+- split plot, split-split plot
+- lattice
+- IBD
+
+### Tutorials TODO
 
 
-#### Tutorials to do
-
-- split plot
-- split-split plot
 - multi random effects
 - repeated measures - AR1, CS structures
-- glmm: zero-inflated
-- glmm: Poisson
 - glmm: non binary
 - glmm: log normal
 
 
-#### TODO
+### Other TODO
 
 - remove extra columns from each data set
