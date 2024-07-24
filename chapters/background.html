@@ -234,11 +234,18 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#model" id="toc-model" class="nav-link active" data-scroll-target="#model"><span class="header-section-number">2.1</span> Model</a></li>
+  <li><a href="#random-effect-syntax" id="toc-random-effect-syntax" class="nav-link" data-scroll-target="#random-effect-syntax"><span class="header-section-number">2.2</span> Random-effect syntax</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -247,7 +254,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
   
@@ -260,8 +267,8 @@ window.Quarto = {
 
 
 <p>Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects (e.g.&nbsp;treatments) represent population-level (i.e., average) effects that should persist across experiments. Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares. Random effects are discrete units sampled from some population (e.g.&nbsp;plots, participants), they are inherently categorical (Winter, 2019).</p>
-<section id="model" class="level4" data-number="2.0.0.1">
-<h4 data-number="2.0.0.1" class="anchored" data-anchor-id="model"><span class="header-section-number">2.0.0.1</span> Model</h4>
+<section id="model" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="model"><span class="header-section-number">2.1</span> Model</h2>
 <p>Recall simple linear regression with intercept (β<sub>0</sub>) and slope (β<sub>1</sub>) effect for subject <em>i</em>. The (β<sub>0</sub>) and (β<sub>1</sub>) are chosen in a way so that the residual sum of squares is as small as possible.</p>
 <p><span class="math display">\[  Y = \beta_0 + \beta_1(X) + 𝜺\]</span></p>
 <p>If we consider this model in a mixed model framework, β<sub>0</sub> and β<sub>1</sub> are considered fixed effects (also known as the population-averaged values) and b<em>i</em> is a random effect for subject <em>i</em>. The random effect can be thought of as each subject’s deviation from the fixed intercept parameter. The key assumption about <em>bi</em> is that it is <strong>independent, identically and normally distributed with a mean of zero and associated variance</strong>. Random effects are especially useful when we have (1) lots of levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and (3) uneven sampling across levels.</p>
@@ -293,8 +300,8 @@ window.Quarto = {
 </figure>
 </div>
 </section>
-<section id="random-effect-syntax" class="level4" data-number="2.0.0.2">
-<h4 data-number="2.0.0.2" class="anchored" data-anchor-id="random-effect-syntax"><span class="header-section-number">2.0.0.2</span> Random-effect syntax</h4>
+<section id="random-effect-syntax" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="random-effect-syntax"><span class="header-section-number">2.2</span> Random-effect syntax</h2>
 <ul>
 <li><p>(1| group): Random intercept with fixed mean.</p></li>
 <li><p>(1| g1/g2): intercepts vary among g1 and g2 within g1.</p></li>
@@ -727,7 +734,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../chapters/intro.html" class="pagination-link" aria-label="Introduction">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
