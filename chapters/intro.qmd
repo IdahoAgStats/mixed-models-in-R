@@ -1,6 +1,6 @@
 # Introduction
 
-This guide is focused on frequentist implementations of mixed models in R, covering different scenarios common in the agricultural sciences.
+This guide is focused on frequent implementations of mixed models in R, covering different scenarios common in the agricultural sciences.
 
 This is not intended to be a guide to the theory of mixed models, it is focused on implementations of models only.
 
@@ -10,34 +10,42 @@ A Tidymodels framework is shown whenever possible because that is a promising av
 
 Please read this section and refer back to if when you forget what these terms mean.
 
-|----------|----------------------------------------|         
-|random effect | an independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated |         
-|fixed effect. | an independent variable with specific, predefined levels to estimate |         
-|experimental unit. | the smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level |
+\|----------\|----------------------------------------\| \|random effect \| an independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated \| \|fixed effect \| an independent variable with specific, predefined levels to estimate \| \|experimental unit \| the smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level \|
+
+| Term               | Definition /Explanation                                                                                                                                                                                                                                                        |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Random effect      | An independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated                                                                                                                                            |
+| Fixed effect       | An independent variable with specific, predefined levels to estimate                                                                                                                                                                                                           |
+| Experimental unit  |  The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level. |
 
 : Terms definitions {#tbl-terms}
 
 ## Packages
 
-#### Table of required packagesn for modelling
+#### Table of required packages for modelling
 
-|----------|------------------------------|         
-|lme4 | main package for linear mixed models |    
-|lmerTest | for computing p-values when using lme4 |        
-|nlme | main package for linar mixed models |         
-|emmeans | for estimating fixed effects, their confidence intervals and conducting contrasts |        
-|glmmTMB | package for generalized linear mixed models |         
-|DHARMa | for evaluating residuals (error terms) in generalized linear models |
+| Package     | Function                                                                          |
+|---------------------------|---------------------------------------------|
+| lme4        | main package for linear mixed models                                              |
+| lmerTest    | for computing p-values when using lme4                                            |
+| nlme        | main package for linear mixed models                                              |
+| emmeans     | for estimating fixed effects, their confidence intervals and conducting contrasts |
+| broom.mixed | package for presenting the model summary output into a tidy workflow.             |
+| DHARMa      | for evaluating residuals (error terms) in generalized linear models               |
+| Performance | For creating diagnostic plots or to compute fit measures                          |
 
 : Table of required packages {#tbl-req_pkg}
 
 #### Optional packages
 
-|----------|------------------------------| 
-|here | for setting the working directory |       
-|ggplot   | plotting        |
-|desplot  | plotting        |
-
+|              |                             |
+|--------------|-----------------------------|
+| Package Name | Function                    |
+| here         | For setting work directory  |
+| ggplot       | plotting                    |
+| desplot      | plotting                    |
+| agridat      | to download example dataset |
+| agricolae    | to download example dataset |
 
 : Table of optional packages {tbl-opt-pkg}
 
