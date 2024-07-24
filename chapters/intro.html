@@ -237,36 +237,136 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This guide is focused on frequentist implementations of mixed models in R, covering different scenarios common in the agricultural sciences.</p>
+<p>This guide is focused on frequent implementations of mixed models in R, covering different scenarios common in the agricultural sciences.</p>
 <p>This is not intended to be a guide to the theory of mixed models, it is focused on implementations of models only.</p>
 <p>A Tidymodels framework is shown whenever possible because that is a promising avenue for making the syntax easier to write across packages.</p>
 <section id="terms" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="terms"><span class="header-section-number">1.1</span> Terms</h2>
 <p>Please read this section and refer back to if when you forget what these terms mean.</p>
-<p>|———-|—————————————-|<br>
-|random effect | an independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated |<br>
-|fixed effect. | an independent variable with specific, predefined levels to estimate |<br>
-|experimental unit. | the smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level |</p>
-<p>: Terms definitions {#tbl-terms}</p>
+<p>|———-|—————————————-| |random effect | an independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated | |fixed effect | an independent variable with specific, predefined levels to estimate | |experimental unit | the smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level |</p>
+<div id="tbl-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.1: Terms definitions
+</figcaption>
+<div aria-describedby="tbl-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 93%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Definition /Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Random effect</td>
+<td>An independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated</td>
+</tr>
+<tr class="even">
+<td>Fixed effect</td>
+<td>An independent variable with specific, predefined levels to estimate</td>
+</tr>
+<tr class="odd">
+<td>Experimental unit</td>
+<td>The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multitple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
 <section id="packages" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="packages"><span class="header-section-number">1.2</span> Packages</h2>
-<section id="table-of-required-packagesn-for-modelling" class="level4" data-number="1.2.0.1">
-<h4 data-number="1.2.0.1" class="anchored" data-anchor-id="table-of-required-packagesn-for-modelling"><span class="header-section-number">1.2.0.1</span> Table of required packagesn for modelling</h4>
-<p>|———-|——————————|<br>
-|lme4 | main package for linear mixed models |<br>
-|lmerTest | for computing p-values when using lme4 |<br>
-|nlme | main package for linar mixed models |<br>
-|emmeans | for estimating fixed effects, their confidence intervals and conducting contrasts |<br>
-|glmmTMB | package for generalized linear mixed models |<br>
-|DHARMa | for evaluating residuals (error terms) in generalized linear models |</p>
-<p>: Table of required packages {#tbl-req_pkg}</p>
+<section id="table-of-required-packages-for-modelling" class="level4" data-number="1.2.0.1">
+<h4 data-number="1.2.0.1" class="anchored" data-anchor-id="table-of-required-packages-for-modelling"><span class="header-section-number">1.2.0.1</span> Table of required packages for modelling</h4>
+<div id="tbl-req_pkg" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-req_pkg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1.2: Table of required packages
+</figcaption>
+<div aria-describedby="tbl-req_pkg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 62%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lme4</td>
+<td>main package for linear mixed models</td>
+</tr>
+<tr class="even">
+<td>lmerTest</td>
+<td>for computing p-values when using lme4</td>
+</tr>
+<tr class="odd">
+<td>nlme</td>
+<td>main package for linear mixed models</td>
+</tr>
+<tr class="even">
+<td>emmeans</td>
+<td>for estimating fixed effects, their confidence intervals and conducting contrasts</td>
+</tr>
+<tr class="odd">
+<td>broom.mixed</td>
+<td>package for presenting the model summary output into a tidy workflow.</td>
+</tr>
+<tr class="even">
+<td>DHARMa</td>
+<td>for evaluating residuals (error terms) in generalized linear models</td>
+</tr>
+<tr class="odd">
+<td>Performance</td>
+<td>For creating diagnostic plots or to compute fit measures</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
 <section id="optional-packages" class="level4" data-number="1.2.0.2">
 <h4 data-number="1.2.0.2" class="anchored" data-anchor-id="optional-packages"><span class="header-section-number">1.2.0.2</span> Optional packages</h4>
-<p>|———-|——————————| |here | for setting the working directory |<br>
-|ggplot | plotting | |desplot | plotting |</p>
-<p>: Table of optional packages {tbl-opt-pkg}</p>
+<table class="caption-top table">
+<caption>Table of optional packages</caption>
+<tbody>
+<tr class="odd">
+<td>Package Name</td>
+<td>Function</td>
+</tr>
+<tr class="even">
+<td>here</td>
+<td>For setting work directory</td>
+</tr>
+<tr class="odd">
+<td>ggplot</td>
+<td>plotting</td>
+</tr>
+<tr class="even">
+<td>desplot</td>
+<td>plotting</td>
+</tr>
+<tr class="odd">
+<td>agridat</td>
+<td>to download example dataset</td>
+</tr>
+<tr class="even">
+<td>agricolae</td>
+<td>to download example dataset</td>
+</tr>
+</tbody>
+</table>
 <p>This entire guide will use the <a href="https://here.r-lib.org/"><strong>here</strong></a> package for loading data. If you can load your data fine without ths package, please carry on. {here} is certainly not required for running mixed models.</p>
 
 
