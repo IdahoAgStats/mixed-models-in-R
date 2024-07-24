@@ -185,9 +185,13 @@ The package 'lmer' has some additional conventions regarding the formula. Random
 
 Remember those iid assumptions? Let's make sure we actually met them.
 
-There is a special plotting function written for lme4 object for checking the homoscedasticity (constant variance):
+There is a special plotting function written for lme4 objects for checking the homoscedasticity (constant variance):
 
 ```{r}
+#| label: fig-rcbd_error
+#| fig-cap: "Plot of residuals versus fitted values"
+#| column: margin
+#| 
 plot(model_rcbd)
 ```
 
@@ -196,6 +200,10 @@ We are looking for a random and uniform distribution of points. This looks good!
 Checking normality requiring first extracting the model residuals with `resid()` and then generaing a qq-plot and line.
 
 ```{r}
+#| label: fig-rcbd_norm
+#| fig-cap: "QQ-plot of residuals"
+#| column: margin
+#| 
 qqnorm(resid(model_rcbd)); qqline(resid(model_rcbd))
 ```
 
@@ -247,16 +255,4 @@ I use the argument `na.action = na.exclude` as instruction for how to handle mis
 
 Since there are no missing data, this step was not strictly necessary, but it's a good habit to be in.
 :::
-
-
-### ADD RCBD Repeated Measures Model
-
-
-
-### Incomplete BLock design
-
-
-https://search.r-project.org/CRAN/refmans/agridat/html/burgueno.alpha.html 
-
-
 
