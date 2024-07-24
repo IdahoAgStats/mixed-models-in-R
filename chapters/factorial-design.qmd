@@ -12,13 +12,13 @@ add description of factorial design
 
 ## Example Analysis
 
-```{r, message=FALSE}
+```{r, message=FALSE,warning=FALSE}
 library(dplyr) 
 library(nlme)
 library(mmrm)
 library(emmeans)
 library(performance)
-library(lme4); library(lmerTest); library(emmeans)
+library(lme4); library(lmerTest)
 ```
 
 1.  **A 4x4 Factorial design**
@@ -80,7 +80,7 @@ model2
 anova(model2)
 ```
 
-The results are same from both models with lmer() or lme().
+The results are same from both models with `lmer()` or `lme()`.
 :::
 
 ```{r}
@@ -120,7 +120,7 @@ pairs(m2)
 
 ### tidymodels
 
-```{r, message=FALSE}
+```{r, message=FALSE, eval=FALSE}
 library(tidymodels)
 tidy_rcbd <- linear_reg(engine = "lm") %>% 
   fit(yield ~ d*n*p*k + (1|block),
