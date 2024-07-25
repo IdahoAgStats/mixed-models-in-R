@@ -101,7 +101,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar docked nav-fixed">
+<body class="nav-sidebar docked nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -240,11 +240,20 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#think-about-your-analytical-goals" id="toc-think-about-your-analytical-goals" class="nav-link active" data-scroll-target="#think-about-your-analytical-goals"><span class="header-section-number">2.0.1</span> Think About Your Analytical Goals</a></li>
+  <li><a href="#data-cleaning-is-time-consuming" id="toc-data-cleaning-is-time-consuming" class="nav-link" data-scroll-target="#data-cleaning-is-time-consuming"><span class="header-section-number">2.0.2</span> Data Cleaning is Time Consuming</a></li>
+  <li><a href="#interpret-anova-and-p-values-with-caution" id="toc-interpret-anova-and-p-values-with-caution" class="nav-link" data-scroll-target="#interpret-anova-and-p-values-with-caution"><span class="header-section-number">2.0.3</span> Interpret ANOVA and P-values with Caution</a></li>
+  <li><a href="#comments-on-hypothesis-testing-and-usage-of-treatment-letters" id="toc-comments-on-hypothesis-testing-and-usage-of-treatment-letters" class="nav-link" data-scroll-target="#comments-on-hypothesis-testing-and-usage-of-treatment-letters"><span class="header-section-number">2.0.4</span> Comments on Hypothesis Testing and Usage of Treatment Letters</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content page-columns page-full column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -253,7 +262,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
   
@@ -265,40 +274,62 @@ window.Quarto = {
 </header>
 
 
-<section id="think-about-your-analytical-goals" class="level4" data-number="2.0.0.1">
-<h4 data-number="2.0.0.1" class="anchored" data-anchor-id="think-about-your-analytical-goals"><span class="header-section-number">2.0.0.1</span> Think about your analytical goals</h4>
-<p>Throughout this guide, I have tried to explicitly state the goals of each analysis. This helps inform us on how to approach the analysis of an experiment. It can be difficult, especially for new scientists-in-training (i.e.&nbsp;graduate students), to understand what it is they want to estimate. You may have been handed a data set you had no role in generating and told to “analyze this” with no additional context. Or perhaps you may have conducted a large study that has some overall goals that are lofty, yet vague.</p>
+<p>Below are some things I frequently say to researchers.</p>
+<section id="think-about-your-analytical-goals" class="level3" data-number="2.0.1">
+<h3 data-number="2.0.1" class="anchored" data-anchor-id="think-about-your-analytical-goals"><span class="header-section-number">2.0.1</span> Think About Your Analytical Goals</h3>
+<p>Throughout this guide, we have tried to explicitly state the goals of each analysis. This helps inform us on how to approach the analysis of an experiment. It can be difficult, especially for new scientists-in-training (i.e.&nbsp;graduate students), to understand what it is they want to estimate. You may have been handed a data set you had no role in generating and told to “analyze this” with no additional context. Or perhaps you may have conducted a large study that has some overall goals that are lofty, yet vague.</p>
 <p>It can helpful to think about the exact results you are hoping to get. What does this look like exactly? Do you want to estimate the changes in plant diversity as the result of a herbicide spraying program? Do you want to find out if a fertilizer treatment changed protein content in a crop and by how much? Do you want to know about changes in human diet due to an intervention? What are quantifiable difference that you and/or experts in your domain would find meaningful?</p>
 <p>Consider what the results would look like for (1) the best case scenario when your wildest dreams come true, and (2) null results, when you find out that your treatment or invention had no effect. It’s very helpful to understand and recognize both situations.</p>
-<p>By “consider”, I mean: imagine the final plot or table, or summary sentence you want to present, either in a peer-reviewed manuscript, or some output for stakeholders. From this, you work backwards to determine the analytical approach needed to arrive at that final output. Or you may determine that your data are unsuitable to generate the desired output, in which case, it’s best to determine that as soon as possible.</p>
-<p>By “consider”, I also mean: imagine exactly what the spreadsheet of results would say - what columns are present and what data are in the cells. If you are planning an experiment, this can help ensure you plan it properly to actually test whatever it is you want to evaluate. If the experiment is done, this enables you to evaluate if you have the information present to test your hypothesis.</p>
+<p>By “consider”, we mean: imagine the final plot or table, or summary sentence you want to present, either in a peer-reviewed manuscript, or some output for stakeholders. From this, you work backwards to determine the analytical approach needed to arrive at that final output. Or you may determine that your data are unsuitable to generate the desired output, in which case, it’s best to determine that as soon as possible.</p>
+<p>By “consider”, we also mean: imagine exactly what the spreadsheet of results would say - what columns are present and what data are in the cells. If you are planning an experiment, this can help ensure you plan it properly to actually test whatever it is you want to evaluate. If the experiment is done, this enables you to evaluate if you have the information present to test your hypothesis.</p>
 <p>By taking the time to reflect on what it is you exactly want to analyse, this can save time and prevent you from doing unneeded analyses that don’t serve this final goal. There is rarely (never?) one way to analyse an experiment or a data set, so use your limited time wisely and focus on what matters.</p>
 </section>
-<section id="data-cleaning" class="level4" data-number="2.0.0.2">
-<h4 data-number="2.0.0.2" class="anchored" data-anchor-id="data-cleaning"><span class="header-section-number">2.0.0.2</span> Data cleaning</h4>
-<p>This has and will continue to occupy the majority of researcher’s time when conducting an analysis. Truly, I am sorry for this. But, please know it is not you, it is the nature of data. I have written extensively about this elsewhere, but please prepare yourself to spend time cleaning and preparing your data for analysis. This will take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence worthy of the time invested.</p>
-</section>
-<section id="anova-and-p-values" class="level4" data-number="2.0.0.3">
-<h4 data-number="2.0.0.3" class="anchored" data-anchor-id="anova-and-p-values"><span class="header-section-number">2.0.0.3</span> ANOVA and P-values</h4>
+<section id="data-cleaning-is-time-consuming" class="level3 page-columns page-full" data-number="2.0.2">
+<h3 data-number="2.0.2" class="anchored" data-anchor-id="data-cleaning-is-time-consuming"><span class="header-section-number">2.0.2</span> Data Cleaning is Time Consuming</h3>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-piechart" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-piechart-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../img/pie_chart.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-piechart-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: How you will spend your time
+</figcaption>
+</figure>
+</div>
+</div></div></div>
+<p>This has and will continue to occupy the majority of researcher’s time when conducting an analysis. Truly, we a5re sorry for this. But, please know it is not you, it is the nature of data. Please plan for and prepare yourself mentally to spend time cleaning and preparing your data for analysis.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> This will take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence data cleaning is worth the time it requires.</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For an excellent set of basic instructions on data preparation, please see: Broman, K. W., &amp; Woo, K. H. (2018). Data Organization in Spreadsheets. The American Statistician, 72(1), 2–10. <a href="https://doi.org/10.1080/00031305.2017.1375989">https://doi.org/10.1080/00031305.2017.1375989</a></p></div></div></section>
+<section id="interpret-anova-and-p-values-with-caution" class="level3 page-columns page-full" data-number="2.0.3">
+<h3 data-number="2.0.3" class="anchored" data-anchor-id="interpret-anova-and-p-values-with-caution"><span class="header-section-number">2.0.3</span> Interpret ANOVA and P-values with Caution</h3>
 <p>Sometimes, researchers want to conduct an ANOVA even though we have reached the original goals of analysis. It is important to evaluate why you want to do these extra things, what extra information it will bring and what you plan to do with those results.</p>
 <p>Running an ANOVA may increase or decrease confidence in the results, depending on what results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us!</p>
 <blockquote class="blockquote">
-<p>Informally, a p-value is the probability under a specified statistical model that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be equal to or more extreme than its observed value. -American Statistical Association</p>
+<p>Informally, a p-value is the probability under a specified statistical model that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be equal to or more extreme than its observed value.</p>
+<pre><code>---American Statistical Association</code></pre>
 </blockquote>
-<p>The great majority of researched are deeply interested in p-values. This is not a bad thing per se, but sometimes the focus is so strong it comes at the expense of other valuable pieces of information, like treatment estimates!</p>
-<p>The American Statistics Association <a href="https://amstat.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#.ZF_Y33bMLW-">recommends</a> that <strong>“Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold.”</strong> That articles also contain explanations regarding what p-values are telling us and how to avoid committing analytical errors and/or misinterpreting p-values. If you have time to read the full article, it will benefit your research!</p>
-<p>The main problematic behavior I see is researchers using p-values as the sole criteria on whether to present results: “We wanted to test if x, y and z had an effect. We ran some model and found that that only x had a significant effect, and those results indicate…” (results with a p-value &lt; 0.05 are ignored).</p>
+<p>The great majority of researched are deeply interested in p-values. This is not a bad thing <em>per se</em>, but sometimes the focus is so strong it comes at the expense of other valuable pieces of information, like treatment estimates! Russ Leanth, author of the <strong><a href="https://rvlenth.github.io/emmeans/articles/basics.html#pvalues">emmeans package</a></strong> refers to this practice as “star gazing”.</p>
+<p>The American Statistics Association recommends that <strong>“Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold.”</strong><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> That article also explains what p-values are telling us and how to avoid committing analytical errors and/or misinterpreting p-values. If you have time to read the full article, it will benefit your research!</p>
+<div class="no-row-height column-margin column-container"><div id="fn2"><p><sup>2</sup>&nbsp;Wasserstein, R. L., &amp; Lazar, N. A. (2016). The ASA Statement on p-Values: Context, Process, and Purpose. <em>The American Statistician,</em> 70(2), 129–133. <a href="https://doi.org/10.1080/00031305.2016.1154108">https://doi.org/10.1080/00031305.2016.1154108</a></p></div></div><p>The main problematic behavior I see is researchers using p-values as the sole criteria on whether to present results: “We wanted to test if x, y and z had an effect. We ran some model and found that that only x had a significant effect, and those results indicate…” (while results with a p-value &gt; 0.05 are ignored).</p>
 <p>A better option would be to discuss the the results of the analysis and how they addressed the research questions: how did the dependent variable change (or not change) as a result of the treatments/interventions/independent variables? What are the parameters or treatment predictions and what do they tell us with regard to the research goals? And to bolster those estimates, what are the confidence intervals on those estimates? What are the p-values for the statistical tests? P-values can support the results and conclusions, but the main results desired by a researcher are usually the estimates themselves - so lead with that!</p>
-</section>
-<section id="comments-on-hypothesis-testing-and-usage-of-treatment-letters" class="level4" data-number="2.0.0.4">
-<h4 data-number="2.0.0.4" class="anchored" data-anchor-id="comments-on-hypothesis-testing-and-usage-of-treatment-letters"><span class="header-section-number">2.0.0.4</span> Comments on Hypothesis Testing and Usage of Treatment Letters</h4>
-<p>Often, I see researchers add letters (“A”, “B”, “C”, ….) for indicating differences among treatments. This makes for concise presentation of results in tables and figures, but it can both kill statistical power and misses nuance in the results.</p>
-<p>Labeling each treatment, especially when there are many, has its perils. The biggest problem is that this creates a multiple testing problem. The RCBND example hash 42 treatments, resulting in a total of 861 comparison are being run (=<span class="math inline">\(42*(42-1)/2\)</span>), and then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to variety, but they all share the same letter!</p>
+<p>To learn more about common pitfalls in interpreting p-values, check out our <a href="https://agstats.io/posts/p-values/">blog post</a> on the subject and/or this paper<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> on the subject.</p>
+<div class="no-row-height column-margin column-container"><div id="fn3"><p><sup>3</sup>&nbsp;Greenland S, Senn SJ, Rothman KJ, Carlin JB, Poole C, Goodman SN, Altman DG. (2016) Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations. <em>Eur J Epidemiol</em>. 31(4):337-50. doi: 10.1007/s10654-016-0149-3. <a href="https://doi.org/10.1007/s10654-016-0149-3">https://doi.org/10.1007/s10654-016-0149-3</a></p></div></div></section>
+<section id="comments-on-hypothesis-testing-and-usage-of-treatment-letters" class="level3 page-columns page-full" data-number="2.0.4">
+<h3 data-number="2.0.4" class="anchored" data-anchor-id="comments-on-hypothesis-testing-and-usage-of-treatment-letters"><span class="header-section-number">2.0.4</span> Comments on Hypothesis Testing and Usage of Treatment Letters</h3>
+<p>Often, I see researchers use <a href="https://en.wikipedia.org/wiki/Compact_letter_display">compact letter display</a> (e.g.&nbsp;“A”, “B”, “C”, ….) for indicating differences among treatments. This makes for concise presentation of results in tables and figures, but it can both kill statistical power and misses nuance in the results.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="../img/cld.png" class="img-fluid"></p>
+<p>Image from a paper published in 2024. Although this was a fully crossed factorial experiment, compact letter display was implemented across all treatment combinations, resulting in some nonsensical comparisons among some informative contrasts.</p>
+</div></div><p>Implementing compact letter display can kill statistical power because it requires that all pairwise comparison being made. Doing this, especially when there are many treatment levels, has its perils. The biggest problem is that this creates a multiple testing problem. The RCBD example in this guide has 42 treatments, resulting in a total of 861 comparisons (<span class="math inline">\(=42*(42-1)/2\)</span>), that are then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to treatment, but they all share the same letter! Additionally, it could be that not every pairwise combination is of any interest or relevance to the study.</p>
 <p>The second problem is one of interpretation. Just because two treatments or varieties share a letter does not mean they are equivalent. It only means that they were not found to be different. A funny distinction, but alas. There is an entire branch of statistics, ‘equivalence testing’ devoted to just this topic - how to test if two things are actually the same. This involves the user declaring a maximum allowable numeric difference for a variable in order to determine if two items are statistically different or equivalent - something that these pairwise comparisons are not doing.</p>
-<p>Often, researchers have embedded additional structure in the treatments that is not fully reflected in the statistical model. For example, perhaps a study is looking at five different intercropping mixtures, two that incorporate a legume and 3 that do not. Conducting all pairwise comparisons with miss estimating the difference due to including a legume in an intercropping mix and not incorporating one. Soil fertility and other agronomic studies often have complex treatment structure. When it is not practical or financially feasible to have a full factorial experiment, embedding different treatment combinations in the main factor of analysis can accomplish this. This is a a good study design, and we have statistical tools to analyze it.</p>
+<p>Often, researchers have embedded additional structure in the treatments that is not fully reflected in the statistical model. For example, perhaps a study is looking at five different intercropping mixtures, two that incorporate a legume and 3 that do not. Conducting all pairwise comparisons with miss estimating the difference due to including a legume in an intercropping mix and not incorporating one. Soil fertility and other agronomic studies often have complex treatment structure. When it is not practical or financially feasible to have a full factorial experiment, embedding different treatment combinations in the main factor of analysis can accomplish this. This is a good study design approach, and we have statistical tools to analyze it.</p>
 
 
 </section>
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -721,7 +752,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../chapters/intro.html" class="pagination-link" aria-label="Introduction">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
