@@ -1,3 +1,4 @@
+
 # Randomized Complete Block Design
 
 This is a simple model that can serve as a good entrance point to mixed models.
@@ -36,14 +37,14 @@ First, load the libraries for analysis and estimation:
 
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
-library(dplyr)
+library(dplyr); library(broom.mixed)
 ```
 
-### tidymodels
+### nlme
 
 ```{r, message=FALSE, warning=FALSE}
+library(nlme); library(broom.mixed); library(emmeans)
 library(dplyr)
-library(multilevelmod); library(broom)
 ```
 
 
@@ -154,12 +155,13 @@ model_rcbd <- lmer(yield_bu_a ~ variety + (1|block),
                    na.action = na.exclude)
 ```
 
-### tidymodels
+### nlme
 
-```{r}
-tidy_rcbd <- linear_reg() %>% 
-  set_engine("lmer") %>%
-  fit(yield_bu_a ~ variety + (1|block), data = var_trial, na.action = na.exclude)
+```{r, eval=FALSE}
+model_rcbd <- lme(yield_bu_a ~ variety,
+                  random = ~ 1|block,
+                  data = var_trial, 
+                  na.action = na.exclude)
 ```
 
 
@@ -192,7 +194,7 @@ There is a special plotting function written for lme4 objects for checking the h
 #| fig-cap: "Plot of residuals versus fitted values"
 #| column: margin
 #| 
-plot(model_rcbd)
+plot(model_rcbd, cex.lab = 2)
 ```
 
 We are looking for a random and uniform distribution of points. This looks good!
