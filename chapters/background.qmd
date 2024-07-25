@@ -6,35 +6,52 @@ Mixed-effects models are called “mixed” because they simultaneously model fi
 
 Recall simple linear regression with intercept (β~0~) and slope (β~1~) effect for subject *i*. The (β~0~) and (β~1~) are chosen in a way so that the residual sum of squares is as small as possible.
 
-$$  Y = \beta_0 + \beta_1(X) + 𝜺$$
+$$  Y = \beta_0 + \beta_1(X) + \epsilon $$
 
 If we consider this model in a mixed model framework, β~0~ and β~1~ are considered fixed effects (also known as the population-averaged values) and b*i* is a random effect for subject *i*. The random effect can be thought of as each subject’s deviation from the fixed intercept parameter. The key assumption about *bi* is that it is **independent, identically and normally distributed with a mean of zero and associated variance**. Random effects are especially useful when we have (1) lots of levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and (3) uneven sampling across levels.
 
 For example, if we let the intercept be a random effect, it takes the form:
 
-$$  Y = \beta_0 + b_i + \beta_1(X) + 𝜺$$
+$$  Y = \beta_0 + b_i + \beta_1(X) + \epsilon $$
 
-In this model, predictions would vary depending on each subject’s random intercept term, but slopes would be the same:
+In this model, predictions would vary depending on each subject’s random intercept term, but slopes would be the same.
 
-![Example mixed model with random intercepts but identical slopes.](/img/random_intercept_same_slope.png){width="501"}
+::: column-margin
+
+![Example mixed model with random intercepts but identical slopes.](/img/random_intercept_same_slope.png)
+:::
 
 In second case, we can have a fixed intercept and a random slope. The model will be:
 
-$$  Y = \beta_0 + (\beta_1 + b_i)(X) + 𝜺$$
+$$  Y = \beta_0 + (\beta_1 + b_i)(X) + \epsilon$$
 
 In this model, the *bi* is a random effect for subject *i* applied to the slope. Predictions would vary with random slope term, but the intercept will be the same:
 
-![Mixed model with random slopes but identical intercepts.](/img/fixed_intercept_random_slope.png){width="501"}
+::: column-margin
+![Mixed model with random slopes but identical intercepts.](/img/fixed_intercept_random_slope.png)
+:::
 
 Third case would be the mixed model with random slope and intercept:
 
-$$  Y = (\beta_0 + ai) + (\beta_1 + b_i)(X) + 𝜺$$
+$$  Y = (\beta_0 + ai) + (\beta_1 + b_i)(X) + \epsilon$$
 
 In this model, a*i* and b*i* are random effects for subject *i* applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:
 
-![Mixed Model with random intercept and slope](/img/random_intercept_and_slope.png){width="526"}
+::: column-margin
+![Mixed Model with random intercept and slope](/img/random_intercept_and_slope.png)
+:::
 
-## Random-effect syntax
+## R Formula Syntax for Random and Fixed Effects {#formula-notation}
+
+Formula notation is often used in the R syntax for linear models. It looks like this: $Y ~ X$, where Y is the dependent variable (the response) and X is/are the independent variable(s) (e.g. the experimental treatments).
+
+```{r}
+my_formula <- formula(Y ~ treatment1 + treatment2)
+class(my_formula)
+```
+
+The package 'lmer' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes).
+
 
 -   (1\| group): Random intercept with fixed mean.
 
