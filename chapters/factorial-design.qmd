@@ -15,11 +15,10 @@ add description of factorial design
 ```{r, message=FALSE,warning=FALSE}
 library(dplyr) 
 library(nlme)
-library(mmrm)
+#library(mmrm) # what is this doing in factorial? 
 library(emmeans)
-library(performance)
+library(performance); library(patchwork)
 library(lme4); library(lmerTest)
-
 ```
 
 1.  **A 4x4 Factorial design**
@@ -44,7 +43,6 @@ data1 <- agridat::cochran.factorial %>% mutate(d = as.factor(d),
          p = as.factor(p),
          k = as.factor(k))
 str(data1)
-
 ```
 
 ## Model fitting
@@ -58,7 +56,6 @@ which can be abbreviated as:
 `yield ~ d*n*p*k`
 
 ```{r}
-
 model1 <- lmer(yield ~ d*n*p*k + (1|block),
                    data = data1, 
                    na.action = na.exclude)
@@ -71,7 +68,7 @@ summary(model1)
 
 This same model can be fitted by using `lme()` from the 'nlme' package as well.
 
-```{r}
+```{r, eval=FALSE}
 model2 <- lme(yield ~ d*n*p*k,
               random = ~1|block,
                    data = data1, 
@@ -92,7 +89,7 @@ anova(model1)
 
 the residuals seem to fit the assumption required for normality.
 
-```{r}
+```{r, "performance"}
 check_model(model1)
 ```
 
@@ -105,7 +102,6 @@ pairs(m1)
 ```
 
 ```{r}
-
 m2 <- emmeans(model1, specs = ~ n)
 m2
 pairs(m2)
