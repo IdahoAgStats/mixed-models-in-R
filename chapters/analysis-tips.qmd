@@ -6,7 +6,7 @@ Throughout this guide, I have tried to explicitly state the goals of each analys
 
 It can helpful to think about the exact results you are hoping to get. What does this look like exactly? Do you want to estimate the changes in plant diversity as the result of a herbicide spraying program? Do you want to find out if a fertilizer treatment changed protein content in a crop and by how much? Do you want to know about changes in human diet due to an intervention? What are quantifiable difference that you and/or experts in your domain would find meaningful? 
 
-Consider what the results would look like on the best case scenario when your wildest dreams come true and null results, when you find out that your treatment or invention had no effect. 
+Consider what the results would look like for (1) the best case scenario when your wildest dreams come true, and (2) null results, when you find out that your treatment or invention had no effect. It's very helpful to understand and recognize both situations. 
 
 By "consider", I mean: imagine the final plot or table, or summary sentence you want to present, either in a peer-reviewed manuscript, or some output for stakeholders. From this, you work backwards to determine the analytical approach needed to arrive at that final output. Or you may determine that your data are unsuitable to generate the desired output, in which case, it's best to determine that as soon as possible. 
 
@@ -14,7 +14,16 @@ By "consider", I also mean: imagine exactly what the spreadsheet of results woul
 
 By taking the time to reflect on what it is you exactly want to analyse, this can save time and prevent you from doing unneeded analyses that don't serve this final goal. There is rarely (never?) one way to analyse an experiment or a data set, so use your limited time wisely and focus on what matters. 
 
-#### Some reflections on p-values
+#### Data cleaning
+
+This has and will continue to occupy the majority of researcher's time when conducting an analysis. Truly, I am sorry for this. But, please know it is not you, it is the nature of data. I have written extensively about this elsewhere, but please prepare yourself to spend time cleaning and preparing your data for analysis. This will take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence worthy of the time invested. 
+
+
+#### ANOVA and P-values
+
+Sometimes, researchers want to conduct an ANOVA even though we have reached the original goals of analysis. It is important to evaluate why you want to do these extra things, what extra information it will bring and what you plan to do with those results.
+
+Running an ANOVA may increase or decrease confidence in the results, depending on what results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us!
 
 > Informally, a p-value is the probability under a specified statistical model that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be equal to or more extreme than its observed value.
 > -American Statistical Association
@@ -27,8 +36,13 @@ The main problematic behavior I see is researchers using p-values as the sole cr
 
 A better option would be to discuss the the results of the analysis and how they addressed the research questions: how did the dependent variable change (or not change) as a result of the treatments/interventions/independent variables? What are the parameters or treatment predictions and what do they tell us with regard to the research goals? And to bolster those estimates, what are the confidence intervals on those estimates? What are the p-values for the statistical tests? P-values can support the results and conclusions, but the main results desired by a researcher are usually the estimates themselves - so lead with that! 
 
-#### Data cleaning
+#### Comments on Hypothesis Testing and Usage of Treatment Letters
 
-This has and will continue to occupy the majority of researcher's time when conducting an analysis. Truly, I am sorry for this. But, please know it is not you, it is the nature of data. I have written extensively about this elsewhere, but please prepare yourself to spend time cleaning and preparing your data for analysis. This will take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence worthy of the time invested. 
+Often, I see researchers add letters ("A", "B", "C", ....) for indicating differences among treatments. This makes for concise presentation of results in tables and figures, but it can both kill statistical power and misses nuance in the results. 
 
+Labeling each treatment, especially when there are many, has its perils. The biggest problem is that this creates a multiple testing problem. The RCBND example hash 42 treatments, resulting in a total of 861 comparison are being run (=$42*(42-1)/2$), and then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to variety, but they all share the same letter!
+
+The second problem is one of interpretation. Just because two treatments or varieties share a letter does not mean they are equivalent. It only means that they were not found to be different. A funny distinction, but alas. There is an entire branch of statistics, 'equivalence testing' devoted to just this topic - how to test if two things are actually the same. This involves the user declaring a maximum allowable numeric difference for a variable in order to determine if two items are statistically different or equivalent - something that these pairwise comparisons are not doing.
+
+Often, researchers have embedded additional structure in the treatments that is not fully reflected in the statistical model. For example, perhaps a study is looking at five different intercropping mixtures, two that incorporate a legume and 3 that do not. Conducting all pairwise comparisons with miss estimating the difference due to including a legume in an intercropping mix and not incorporating one. Soil fertility and other agronomic studies often have complex treatment structure. When it is not practical or financially feasible to have a full factorial experiment, embedding different treatment combinations in the main factor of analysis can accomplish this. This is a a good study design, and we have statistical tools to analyze it. 
 
