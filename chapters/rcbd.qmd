@@ -30,8 +30,7 @@ This guide will later address examples when this assumption is violated and how 
 
 First, load the libraries for analysis and estimation:
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ### lme4
 
 ```{r, message=FALSE, warning=FALSE}
@@ -45,11 +44,7 @@ library(dplyr)
 library(dplyr)
 library(multilevelmod); library(broom)
 ```
-
-
 :::
-
-
 
 Next, let's load some data. It is located [here]() if you want to download it yourself (recommended).
 
@@ -59,18 +54,18 @@ This data set is for a single wheat variety trial conducted in Aberdeen, Idaho i
 var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 ```
 
-|   |   |
-|----------|----------------------------------------|    
-|block | blocking unit |    
-|range | column position for each plot |    
-|row | row position for each plot |     
-|variety | crop variety (the treatment) being evaluated | 
-|stand_pct| percentage of the plot with actual plants growing in them |     
-|days_to_heading_julian | Julian days (starting January 1st) until plot "headed" (first spike emerged)|    |height | plant height at crop maturity |     
-|lodging | percentage of plants in the plot that fell down and hence could not be harvested |     
-|yield_bu_a | yield (bushels per acre) | |test weight | test weight (lbs per bushel of wheat) |       
+|                        |                                                                                  |
+|-----------------|-------------------------------------------------------|
+| block                  | blocking unit                                                                    |
+| range                  | column position for each plot                                                    |
+| row                    | row position for each plot                                                       |
+| variety                | crop variety (the treatment) being evaluated                                     |
+| stand_pct              | percentage of the plot with actual plants growing in them                        |
+| days_to_heading_julian | Julian days (starting January 1st) until plot "headed" (first spike emerged)     |
+| lodging                | percentage of plants in the plot that fell down and hence could not be harvested |
+| yield_bu_a             | yield (bushels per acre)                                                         |
 
-: Table of variables in the data set  {tbl-rcbd} 
+: Table of variables in the data set {tbl-rcbd}
 
 There are several variables present that are not useful for this analysis. The only thing we are concerned about is **block**, **variety**, **yield_bu_a**, and **test_weight**.
 
@@ -121,7 +116,7 @@ Last, check the dependent variable. A histogram is often quite sufficient to acc
 hist(var_trial$yield_bu_a, main = "", xlab = "yield")
 ```
 
-The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems. 
+The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems.
 
 Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
 
@@ -131,21 +126,17 @@ This data set is ready for analysis!
 
 ### Model Building
 
-
-::: {.column-margin}
-
+::: column-margin
 Recall the model:
 
-$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ 
+$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$
 
 For this model, $\alpha_i$ is the variety effect (fixed) and $\beta_j$ is the block effect (random).
-
 :::
 
 Here is the R syntax for the RCBD statistical model:
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ### lme4
 
 ```{r}
@@ -161,10 +152,7 @@ tidy_rcbd <- linear_reg() %>%
   set_engine("lmer") %>%
   fit(yield_bu_a ~ variety + (1|block), data = var_trial, na.action = na.exclude)
 ```
-
-
 :::
-
 
 The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. I use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
 
@@ -178,7 +166,7 @@ my_formula <- formula(Y ~ treatment1 + treatment2)
 class(my_formula)
 ```
 
-The package 'lmer' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes). 
+The package 'lmer' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes).
 :::
 
 ### Check Model Assumptions
@@ -211,7 +199,7 @@ This is reasonably good. Things do tend to fall apart at the tails.
 
 ### Inference
 
-Estimates for each treatment level can be obtained with the 'emmeans' package. 
+Estimates for each treatment level can be obtained with the 'emmeans' package.
 
 ```{r}
 rcbd_emm <- emmeans(model_rcbd, ~ variety)
@@ -228,7 +216,7 @@ Sometimes, researchers want to conduct an ANOVA or add the letters for indicatin
 
 Running an ANOVA may increase or decrease confidence in the results, depending on what results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us!
 
-Labelling each treatment, especially when there are this many (42 in total), has its own perils. The biggest problem is that this creates a multiple testing problem: with 42 treatments, a total of 861 comparison are being run (=$42*(42-1)/2$), and then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to variety, but they all share the same letter!
+Labeling each treatment, especially when there are this many (42 in total), has its own perils. The biggest problem is that this creates a multiple testing problem: with 42 treatments, a total of 861 comparison are being run (=$42*(42-1)/2$), and then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to variety, but they all share the same letter!
 
 The second problem is one of interpretation. Just because two treatments or varieties share a letter does not mean they are equivalent. It only means that they were not found to be different. A funny distinction, but alas. There is an entire branch of statistics, 'equivalence testing' devoted to just this topic - how to test if two things are actually the same. This involves the user declaring a maximum allowable numeric difference for a variable in order to determine if two items are statistically different or equivalent - something that these pairwise comparisons are not doing.
 
@@ -255,4 +243,3 @@ I use the argument `na.action = na.exclude` as instruction for how to handle mis
 
 Since there are no missing data, this step was not strictly necessary, but it's a good habit to be in.
 :::
-
