@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Tips on Analysis – Field Guide to the R Mixed Model Wilderness</title>
+<title>2&nbsp; Tips on Analysis – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/variance-components.html" rel="next">
-<link href="../chapters/special-conditions.html" rel="prev">
+<link href="../chapters/background.html" rel="next">
+<link href="../chapters/intro.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -93,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/analysis-tips.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/analysis-tips.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -124,74 +153,80 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapters/analysis-tips.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapters/background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Mixed model theory and background</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed model theory and background</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/rcbd.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/factorial-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Factorial Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Factorial Design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/split-plot-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Split Plot Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Split Plot Design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/incomplete-block-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Balanced Incomplete Block Experiment</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Balanced Incomplete Block Experiment</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/lattice-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">lattice_design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">lattice_design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/glmm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generalized Linear Mixed Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Generalized Linear Mixed Models</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/special-conditions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Combining Scenarios</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Combining Scenarios</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/analysis-tips.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></span></a>
+  <a href="../chapters/analysis-tips.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/variance-components.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Variance Components</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Variance Components</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/resources.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -213,7 +248,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></h1>
 </div>
 
 
@@ -230,17 +265,23 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="think-about-your-analytical-goals" class="level4" data-number="10.0.0.1">
-<h4 data-number="10.0.0.1" class="anchored" data-anchor-id="think-about-your-analytical-goals"><span class="header-section-number">10.0.0.1</span> Think about your analytical goals</h4>
+<section id="think-about-your-analytical-goals" class="level4" data-number="2.0.0.1">
+<h4 data-number="2.0.0.1" class="anchored" data-anchor-id="think-about-your-analytical-goals"><span class="header-section-number">2.0.0.1</span> Think about your analytical goals</h4>
 <p>Throughout this guide, I have tried to explicitly state the goals of each analysis. This helps inform us on how to approach the analysis of an experiment. It can be difficult, especially for new scientists-in-training (i.e.&nbsp;graduate students), to understand what it is they want to estimate. You may have been handed a data set you had no role in generating and told to “analyze this” with no additional context. Or perhaps you may have conducted a large study that has some overall goals that are lofty, yet vague.</p>
 <p>It can helpful to think about the exact results you are hoping to get. What does this look like exactly? Do you want to estimate the changes in plant diversity as the result of a herbicide spraying program? Do you want to find out if a fertilizer treatment changed protein content in a crop and by how much? Do you want to know about changes in human diet due to an intervention? What are quantifiable difference that you and/or experts in your domain would find meaningful?</p>
-<p>Consider what the results would look like on the best case scenario when your wildest dreams come true and null results, when you find out that your treatment or invention had no effect.</p>
+<p>Consider what the results would look like for (1) the best case scenario when your wildest dreams come true, and (2) null results, when you find out that your treatment or invention had no effect. It’s very helpful to understand and recognize both situations.</p>
 <p>By “consider”, I mean: imagine the final plot or table, or summary sentence you want to present, either in a peer-reviewed manuscript, or some output for stakeholders. From this, you work backwards to determine the analytical approach needed to arrive at that final output. Or you may determine that your data are unsuitable to generate the desired output, in which case, it’s best to determine that as soon as possible.</p>
 <p>By “consider”, I also mean: imagine exactly what the spreadsheet of results would say - what columns are present and what data are in the cells. If you are planning an experiment, this can help ensure you plan it properly to actually test whatever it is you want to evaluate. If the experiment is done, this enables you to evaluate if you have the information present to test your hypothesis.</p>
 <p>By taking the time to reflect on what it is you exactly want to analyse, this can save time and prevent you from doing unneeded analyses that don’t serve this final goal. There is rarely (never?) one way to analyse an experiment or a data set, so use your limited time wisely and focus on what matters.</p>
 </section>
-<section id="some-reflections-on-p-values" class="level4" data-number="10.0.0.2">
-<h4 data-number="10.0.0.2" class="anchored" data-anchor-id="some-reflections-on-p-values"><span class="header-section-number">10.0.0.2</span> Some reflections on p-values</h4>
+<section id="data-cleaning" class="level4" data-number="2.0.0.2">
+<h4 data-number="2.0.0.2" class="anchored" data-anchor-id="data-cleaning"><span class="header-section-number">2.0.0.2</span> Data cleaning</h4>
+<p>This has and will continue to occupy the majority of researcher’s time when conducting an analysis. Truly, I am sorry for this. But, please know it is not you, it is the nature of data. I have written extensively about this elsewhere, but please prepare yourself to spend time cleaning and preparing your data for analysis. This will take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence worthy of the time invested.</p>
+</section>
+<section id="anova-and-p-values" class="level4" data-number="2.0.0.3">
+<h4 data-number="2.0.0.3" class="anchored" data-anchor-id="anova-and-p-values"><span class="header-section-number">2.0.0.3</span> ANOVA and P-values</h4>
+<p>Sometimes, researchers want to conduct an ANOVA even though we have reached the original goals of analysis. It is important to evaluate why you want to do these extra things, what extra information it will bring and what you plan to do with those results.</p>
+<p>Running an ANOVA may increase or decrease confidence in the results, depending on what results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us!</p>
 <blockquote class="blockquote">
 <p>Informally, a p-value is the probability under a specified statistical model that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be equal to or more extreme than its observed value. -American Statistical Association</p>
 </blockquote>
@@ -249,9 +290,12 @@ ul.task-list li input[type="checkbox"] {
 <p>The main problematic behavior I see is researchers using p-values as the sole criteria on whether to present results: “We wanted to test if x, y and z had an effect. We ran some model and found that that only x had a significant effect, and those results indicate…” (results with a p-value &lt; 0.05 are ignored).</p>
 <p>A better option would be to discuss the the results of the analysis and how they addressed the research questions: how did the dependent variable change (or not change) as a result of the treatments/interventions/independent variables? What are the parameters or treatment predictions and what do they tell us with regard to the research goals? And to bolster those estimates, what are the confidence intervals on those estimates? What are the p-values for the statistical tests? P-values can support the results and conclusions, but the main results desired by a researcher are usually the estimates themselves - so lead with that!</p>
 </section>
-<section id="data-cleaning" class="level4" data-number="10.0.0.3">
-<h4 data-number="10.0.0.3" class="anchored" data-anchor-id="data-cleaning"><span class="header-section-number">10.0.0.3</span> Data cleaning</h4>
-<p>This has and will continue to occupy the majority of researcher’s time when conducting an analysis. Truly, I am sorry for this. But, please know it is not you, it is the nature of data. I have written extensively about this elsewhere, but please prepare yourself to spend time cleaning and preparing your data for analysis. This will take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence worthy of the time invested.</p>
+<section id="comments-on-hypothesis-testing-and-usage-of-treatment-letters" class="level4" data-number="2.0.0.4">
+<h4 data-number="2.0.0.4" class="anchored" data-anchor-id="comments-on-hypothesis-testing-and-usage-of-treatment-letters"><span class="header-section-number">2.0.0.4</span> Comments on Hypothesis Testing and Usage of Treatment Letters</h4>
+<p>Often, I see researchers add letters (“A”, “B”, “C”, ….) for indicating differences among treatments. This makes for concise presentation of results in tables and figures, but it can both kill statistical power and misses nuance in the results.</p>
+<p>Labeling each treatment, especially when there are many, has its perils. The biggest problem is that this creates a multiple testing problem. The RCBND example hash 42 treatments, resulting in a total of 861 comparison are being run (=<span class="math inline">\(42*(42-1)/2\)</span>), and then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to variety, but they all share the same letter!</p>
+<p>The second problem is one of interpretation. Just because two treatments or varieties share a letter does not mean they are equivalent. It only means that they were not found to be different. A funny distinction, but alas. There is an entire branch of statistics, ‘equivalence testing’ devoted to just this topic - how to test if two things are actually the same. This involves the user declaring a maximum allowable numeric difference for a variable in order to determine if two items are statistically different or equivalent - something that these pairwise comparisons are not doing.</p>
+<p>Often, researchers have embedded additional structure in the treatments that is not fully reflected in the statistical model. For example, perhaps a study is looking at five different intercropping mixtures, two that incorporate a legume and 3 that do not. Conducting all pairwise comparisons with miss estimating the difference due to including a legume in an intercropping mix and not incorporating one. Soil fertility and other agronomic studies often have complex treatment structure. When it is not practical or financially feasible to have a full factorial experiment, embedding different treatment combinations in the main factor of analysis can accomplish this. This is a a good study design, and we have statistical tools to analyze it.</p>
 
 
 </section>
@@ -679,13 +723,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/special-conditions.html" class="pagination-link" aria-label="Combining Scenarios">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Combining Scenarios</span></span>
+      <a href="../chapters/intro.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/variance-components.html" class="pagination-link" aria-label="Variance Components">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Variance Components</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/background.html" class="pagination-link" aria-label="Mixed model theory and background">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed model theory and background</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
