@@ -55,6 +55,7 @@ library(emmeans)
 library(lme4)
 library(nlme)
 library(broom.mixed)
+library(multcomp)
 library(multcompView)
 library(performance)
 ```
@@ -132,28 +133,84 @@ summary(model1)
 
 ### Check Model Assumptions
 
+Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.
 
-```{r}
-plot(model1)
+We can evaluate the assumptions in two ways: 1. By plotting model using `plot()` and residuals using `qqnorm()`.
 
-qqnorm(resid(model1)); qqline(resid(model1))
+```{r, eval=FALSE}
+plot(model1, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
 ```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_error
+#| fig-cap: "Plot of residuals versus fitted values"
+#| column: margin
+#| 
+par(mar=c(5.1, 5, 2.1, 2.1))
+plot(model1, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals",
+     cex.lab = 1.8, cex.axis = 1.5)
+```
+
+We are looking for a random and uniform distribution of points. This looks good!
+
+::: column-margin
+The same code works for nlme and lme4-generated models.
+:::
+
+Checking normality requiring first extracting the model residuals with `resid()` and then generaing a qq-plot and line.
+
+```{r, eval=FALSE}
+qqnorm(resid(model1), main = NULL); qqline(resid(model1))
+```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_norm
+#| fig-cap: "QQ-plot of residuals"
+#| column: margin
+
+par(mar=c(5.1, 5, 2.1, 2.1))
+qqnorm(resid(model1), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model1))
+```
+
+Or we can use `check_model()` function from 'performance' package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.
 
 ```{r, fig.height=9}
 # checking model assumptions
 check_model(model1)
-
 ```
 
-5.  Interpretation of the model:
+In this case the residuals fit the assumptions of the model well.
+
+### Interpretation of the model:
+
+The `anova()` function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions.
 
 ```{r}
 anova(model1)
 ```
 
+The estimated marginal means for each fixed effect and interaction effect can be obtained using `emmeans()`.
+
 ```{r}
-library(multcomp)
+m1 <- emmeans(model1, ~ time)
+emmeans(model1, ~ manage)
 emmeans(model1, ~ time*manage)
+```
+
+Further, a pairwise comparison or contrasts can be analyzed using estimated means.
+
+For example, if we want to compare difference in height at different time periods, this could be done using `pairs()` command from emmeans package.
+
+```{r}
+pairs(m1)
+```
+
+The letters indicating signficant differences can be generated using
+
+```{r}
+multcomp::cld(m1, Letters= TRUE)
 ```
 
 ### Example model for RCBD Split Plot Designs

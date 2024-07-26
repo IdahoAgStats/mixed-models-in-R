@@ -284,7 +284,8 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#example-model-for-crd-split-plot-designs" id="toc-example-model-for-crd-split-plot-designs" class="nav-link" data-scroll-target="#example-model-for-crd-split-plot-designs"><span class="header-section-number">6.2.1</span> Example model for CRD Split Plot Designs</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">6.2.2</span> Check Model Assumptions</a></li>
-  <li><a href="#example-model-for-rcbd-split-plot-designs" id="toc-example-model-for-rcbd-split-plot-designs" class="nav-link" data-scroll-target="#example-model-for-rcbd-split-plot-designs"><span class="header-section-number">6.2.3</span> Example model for RCBD Split Plot Designs</a></li>
+  <li><a href="#interpretation-of-the-model" id="toc-interpretation-of-the-model" class="nav-link" data-scroll-target="#interpretation-of-the-model"><span class="header-section-number">6.2.3</span> Interpretation of the model:</a></li>
+  <li><a href="#example-model-for-rcbd-split-plot-designs" id="toc-example-model-for-rcbd-split-plot-designs" class="nav-link" data-scroll-target="#example-model-for-rcbd-split-plot-designs"><span class="header-section-number">6.2.4</span> Example model for RCBD Split Plot Designs</a></li>
   </ul></li>
   <li><a href="#split-split-plot-design-in-r" id="toc-split-split-plot-design-in-r" class="nav-link" data-scroll-target="#split-split-plot-design-in-r"><span class="header-section-number">6.3</span> Split-split plot design in R</a></li>
   </ul>
@@ -364,8 +365,9 @@ window.Quarto = {
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcompView)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcompView)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol start="2" type="1">
 <li>Import height data and check the structure of the data.</li>
@@ -506,14 +508,21 @@ Correlation matrix not shown by default, as p = 32 &gt; 12.
 Use print(x, correlation=TRUE)  or
     vcov(x)        if you need it</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="sc">%&gt;%</span> <span class="fu">glance</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 7
+   nobs sigma logLik   AIC   BIC REMLcrit df.residual
+  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt;
+1   192  4.42  -499. 1068. 1182.     998.         157</code></pre>
+</div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span><span class="fu">lme</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage,</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">random=</span><span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time, <span class="at">data=</span>height_data)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span><span class="fu">lme</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">random=</span><span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time, <span class="at">data=</span>height_data)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: height ~ time * manage + (1 | rep/time)
@@ -578,42 +587,69 @@ Use print(x, correlation=TRUE)  or
 </div>
 </div>
 </section>
-<section id="check-model-assumptions" class="level3" data-number="6.2.2">
+<section id="check-model-assumptions" class="level3 page-columns page-full" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">6.2.2</span> Check Model Assumptions</h3>
+<p>Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.</p>
+<p>We can evaluate the assumptions in two ways: 1. By plotting model using <code>plot()</code> and residuals using <code>qqnorm()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-rcbd_error" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rcbd_error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="split-plot-design_files/figure-html/fig-rcbd_error-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rcbd_error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Plot of residuals versus fitted values
+</figcaption>
+</figure>
+</div>
+</div></div></div>
+<p>We are looking for a random and uniform distribution of points. This looks good!</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The same code works for nlme and lme4-generated models.</p>
+</div></div><p>Checking normality requiring first extracting the model residuals with <code>resid()</code> and then generaing a qq-plot and line.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model1), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-rcbd_norm" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rcbd_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="split-plot-design_files/figure-html/fig-rcbd_norm-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rcbd_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.2: QQ-plot of residuals
+</figcaption>
+</figure>
+</div>
+</div></div></div>
+<p>Or we can use <code>check_model()</code> function from ‘performance’ package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking model assumptions</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model1)); <span class="fu">qqline</span>(<span class="fu">resid</span>(model1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>In this case the residuals fit the assumptions of the model well.</p>
+</section>
+<section id="interpretation-of-the-model" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="interpretation-of-the-model"><span class="header-section-number">6.2.3</span> Interpretation of the model:</h3>
+<p>The <code>anova()</code> function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking model assumptions</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<ol start="5" type="1">
-<li>Interpretation of the model:</li>
-</ol>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
             npar  Sum Sq Mean Sq F value
@@ -622,39 +658,43 @@ manage         7 1482.42 211.774 10.8425
 time:manage   21  475.31  22.634  1.1588</code></pre>
 </div>
 </div>
+<p>The estimated marginal means for each fixed effect and interaction effect can be obtained using <code>emmeans()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: mvtnorm</code></pre>
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: survival</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: TH.data</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: MASS</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'MASS'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:dplyr':
+<div class="cell-output cell-output-stdout">
+<pre><code> time emmean  SE   df lower.CL upper.CL
+ T1      103 2.7 2.27     92.8      114
+ T2      106 2.7 2.27     95.5      116
+ T3      100 2.7 2.27     89.8      111
+ T4      104 2.7 2.27     94.0      115
 
-    select</code></pre>
+Results are averaged over the levels of: manage 
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="sc">~</span> manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'TH.data'</code></pre>
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:MASS':
+<div class="cell-output cell-output-stdout">
+<pre><code> manage emmean   SE   df lower.CL upper.CL
+ M1      108.6 2.75 2.44     98.6      119
+ M2      102.7 2.75 2.44     92.7      113
+ M3      102.0 2.75 2.44     92.0      112
+ M4      105.4 2.75 2.44     95.3      115
+ M5      102.5 2.75 2.44     92.5      112
+ M6      104.6 2.75 2.44     94.6      115
+ M7       98.3 2.75 2.44     88.3      108
+ M8      103.3 2.75 2.44     93.3      113
 
-    geyser</code></pre>
+Results are averaged over the levels of: time 
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="sc">~</span> time<span class="sc">*</span>manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="sc">~</span> time<span class="sc">*</span>manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> time manage emmean   SE   df lower.CL upper.CL
  T1   M1      108.0 3.19 4.38     99.5      117
@@ -694,9 +734,10 @@ Degrees-of-freedom method: kenward-roger
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
+<p>tggy</p>
 </section>
-<section id="example-model-for-rcbd-split-plot-designs" class="level3" data-number="6.2.3">
-<h3 data-number="6.2.3" class="anchored" data-anchor-id="example-model-for-rcbd-split-plot-designs"><span class="header-section-number">6.2.3</span> Example model for RCBD Split Plot Designs</h3>
+<section id="example-model-for-rcbd-split-plot-designs" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="example-model-for-rcbd-split-plot-designs"><span class="header-section-number">6.2.4</span> Example model for RCBD Split Plot Designs</h3>
 <p>Design Summary:</p>
 <p>Main plot = Variety (V), 3 levels</p>
 <p>Subplot = Nitrogen (N), 4 levels</p>
@@ -705,9 +746,9 @@ Confidence level used: 0.95 </code></pre>
 <p>To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties, nutrient levels, their interaction, and the effects of plots and subplots.</p>
 <p><strong>Load the data:</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   B           V      N   Y
 1  I     Victory 0.0cwt 111
@@ -724,7 +765,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>Evaluate the structure of the data. The “B”, “V”, and “N” needs to be ‘factor’ and “Y” should be numeric.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   72 obs. of  4 variables:
  $ B: Factor w/ 6 levels "I","II","III",..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -734,7 +775,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             
               0.0cwt 0.2cwt 0.4cwt 0.6cwt
@@ -745,8 +786,8 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p><strong>Building the Model</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">:</span>V), <span class="at">data =</span> oats)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span> V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">:</span>V), <span class="at">data =</span> oats)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: Y ~ V + N + V:N + (1 | B) + (1 | B:V)
@@ -806,24 +847,24 @@ VVctry:N0.4
 VMrvll:N0.6  0.250         
 VVctry:N0.6  0.500   0.500 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="do">## use broom.mixed here instead of summary</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="do">## use broom.mixed here instead of summary</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Assumption tests</strong></p>
 <p>Normality of residuals and homogenous variance</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking model assumptions</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking model assumptions</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>Analysis of Variance</strong> (ANOVA)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
     npar  Sum Sq Mean Sq F value
@@ -834,8 +875,8 @@ V:N    6   321.7    53.6  0.3028</code></pre>
 </div>
 <p>Post-Hoc analysis</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>omparison <span class="ot">&lt;-</span> <span class="fu">cld</span>(emm, <span class="at">Letters =</span> LETTERS, <span class="at">reversed =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>omparison <span class="ot">&lt;-</span> <span class="fu">cld</span>(emm, <span class="at">Letters =</span> LETTERS, <span class="at">reversed =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -863,13 +904,13 @@ V:N    6   321.7    53.6  0.3028</code></pre>
 <p><strong>add model equation here</strong></p>
 <p>Here, we are extracting the rice yield data from <code>agricolae</code> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"external/ssp.csv"</span>, <span class="at">package=</span><span class="st">"agricolae"</span>)</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span><span class="fu">read.csv</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"external/ssp.csv"</span>, <span class="at">package=</span><span class="st">"agricolae"</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span><span class="fu">read.csv</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Exploratory analysis</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   135 obs. of  5 variables:
  $ block     : int  1 1 1 1 1 1 1 1 1 1 ...
@@ -881,19 +922,19 @@ V:N    6   321.7    53.6  0.3028</code></pre>
 </div>
 <p>Convert block, nitrogen, variety, and management to factors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>block<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>block)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>nitrogen<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>nitrogen)</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>management<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>management)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>variety<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>block<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>block)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>nitrogen<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>nitrogen)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>management<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>management)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>variety<span class="ot">&lt;-</span><span class="fu">factor</span>(rice<span class="sc">$</span>variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Statistical model:</p>
 <p>Here is the basic split-split plot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span><span class="fu">lmer</span>(yield <span class="sc">~</span>  block <span class="sc">+</span> nitrogen<span class="sc">*</span>management<span class="sc">*</span>variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management),<span class="at">data=</span>rice, <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span><span class="fu">lmer</span>(yield <span class="sc">~</span>  block <span class="sc">+</span> nitrogen<span class="sc">*</span>management<span class="sc">*</span>variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management),<span class="at">data=</span>rice, <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: 
@@ -978,35 +1019,35 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
 <p>Model Diagnostics: we observed a constant variance and normality of residuals.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(model3)); <span class="fu">qqline</span>(<span class="fu">residuals</span>(model3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(model3)); <span class="fu">qqline</span>(<span class="fu">residuals</span>(model3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-24-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-28-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(see)</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(see)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-24-3.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-28-3.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Analysis of variance</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
                             npar  Sum Sq Mean Sq  F value
@@ -1022,7 +1063,7 @@ nitrogen:management:variety   16   3.699   0.231   0.5289</code></pre>
 </div>
 <p>Post-Hoc analysis</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1038,7 +1079,7 @@ Results are averaged over the levels of: block, management, variety
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1060,12 +1101,12 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">cld</span>(emm, <span class="at">Letters =</span> LETTERS, <span class="at">reversed =</span> T) </span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>comparison</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">cld</span>(emm, <span class="at">Letters =</span> LETTERS, <span class="at">reversed =</span> T) </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>comparison</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> nitrogen variety emmean    SE df lower.CL upper.CL .group     
  140      3         9.34 0.231  0     -Inf      Inf  A         
