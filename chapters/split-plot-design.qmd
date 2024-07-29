@@ -54,13 +54,12 @@ library(ggplot2)
 library(emmeans)
 library(lme4)
 library(nlme)
-library(broom.mixed)
 library(multcomp)
 library(multcompView)
 library(performance)
 ```
 
-2.  Import height data and check the structure of the data.
+#### **Import height data and check the data integrity.**
 
 The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are times and management represents subplot and 3 replications.
 
@@ -68,8 +67,6 @@ The data (Height data) for this example involves a CRD split plot designed exper
 height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
 
 ```
-
-3.  Data integrity checks
 
 -   Run a cross tabulation using `table()` to check the arrangement of whole-plots and sub-plots.
 
@@ -96,7 +93,7 @@ ggplot(data = height_data, aes(y = height, x = time)) +
   geom_boxplot(aes(colour = manage))
 ```
 
-4.  Specify a model for data
+#### **Model building**
 
 ::: column-margin
 Recall the model:
@@ -117,21 +114,19 @@ When dealing with split plot design across reps or blocks, the random effects ne
 model1<-lmer(height ~ time*manage + (1|rep/time), data=height_data)
 
 summary(model1)
-model1 %>% glance()
 ```
 
 ### nlme
 
 ```{r}
-model2 <-lme(height ~ time*manage,
+model1 <-lme(height ~ time*manage,
              random=~ 1|rep/time, data=height_data)
 
 summary(model1)
-
 ```
 :::
 
-### Check Model Assumptions
+#### **Check Model Assumptions**
 
 Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.
 
@@ -183,11 +178,12 @@ check_model(model1)
 
 In this case the residuals fit the assumptions of the model well.
 
-### Interpretation of the model:
+#### **Inference**
 
-The `anova()` function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions.
+The `anova()` function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions. We observed a signficant effect if time and manage factors.
 
 ```{r}
+# same syntax for lme4 & nlme
 anova(model1)
 ```
 
@@ -195,8 +191,9 @@ The estimated marginal means for each fixed effect and interaction effect can be
 
 ```{r}
 m1 <- emmeans(model1, ~ time)
-emmeans(model1, ~ manage)
-emmeans(model1, ~ time*manage)
+m1
+m2 <- emmeans(model1, ~ manage)
+m2
 ```
 
 Further, a pairwise comparison or contrasts can be analyzed using estimated means.
@@ -207,15 +204,16 @@ For example, if we want to compare difference in height at different time period
 pairs(m1)
 ```
 
-The letters indicating signficant differences can be generated using
+The letters indicating significant differences can be generated using cld() function from the 'multcomp' package". In the output below, groups sharing a letter in the .group are not statistically different from each other.
 
 ```{r}
-multcomp::cld(m1, Letters= TRUE)
+cld(m1, Letters= TRUE)
+cld(m2, Letters= TRUE)
 ```
 
 ### Example model for RCBD Split Plot Designs
 
-Design Summary:
+The oats data used in this example is from the MASS package. The design with RCBD split plot with 6 blocks, 3 main plots and 4 sub-plots. The primary outcome variable was oat yield.
 
 Main plot = Variety (V), 3 levels
 
@@ -225,14 +223,16 @@ Number of blocks (B) = 6
 
 Dependent variable = yield (Y)
 
+The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.
+
 To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties, nutrient levels, their interaction, and the effects of plots and subplots.
 
-**Load the data:**
+#### **Import data and check the structure of the data.**
 
 ```{r}
 library(MASS)
 data("oats")
-head(oats,10)
+head(oats,5)
 ```
 
 Evaluate the structure of the data. The "B", "V", and "N" needs to be 'factor' and "Y" should be numeric.
@@ -241,11 +241,21 @@ Evaluate the structure of the data. The "B", "V", and "N" needs to be 'factor' a
 str(oats)
 ```
 
+Running the table() command to verify the levels of main-plots and sub-plots.
+
 ```{r}
 table(oats$V, oats$N)
 ```
 
-**Building the Model**
+::: column-margin
+Recall the model:
+
+$$y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha_i\beta_k) + \epsilon_{ij} + \delta_{ijk}$$ Where:
+
+$\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+:::
+
+#### **Building the Model**
 
 ```{r}
 model2 <- lmer(Y ~ V + N + V:N + (1|B) + (1|B:V), data = oats)
@@ -253,7 +263,7 @@ summary(model2)
 ## use broom.mixed here instead of summary
 ```
 
-**Assumption tests**
+#### **Check Model Assumptions**
 
 Normality of residuals and homogenous variance
 
@@ -262,7 +272,7 @@ Normality of residuals and homogenous variance
 check_model(model2)
 ```
 
-**Analysis of Variance** (ANOVA)
+#### **Inference** 
 
 ```{r}
 anova(model2)
