@@ -108,7 +108,7 @@ In order to test the main effects of the treatments as well as the interaction b
 When dealing with split plot design across reps or blocks, the random effects needs to be nested hierarchically, from largest unit to smallest. For example, in this example the random effects will be designated as `(1 | rep/time)`. This implies that random intercepts vary with rep and time within rep.
 
 ::: panel-tabset
-### lme4
+#### lme4
 
 ```{r}
 model1<-lmer(height ~ time*manage + (1|rep/time), data=height_data)
@@ -116,7 +116,7 @@ model1<-lmer(height ~ time*manage + (1|rep/time), data=height_data)
 summary(model1)
 ```
 
-### nlme
+#### nlme
 
 ```{r}
 model1 <-lme(height ~ time*manage,
@@ -227,7 +227,7 @@ The objective of this analysis is to study the impact of different varieties and
 
 To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties, nutrient levels, their interaction, and the effects of plots and subplots.
 
-#### **Import data and check the structure of the data.**
+#### **Import data and check the data structure.**
 
 ```{r}
 library(MASS)
@@ -257,11 +257,29 @@ $\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = ma
 
 #### **Building the Model**
 
+We are evaluating the effect of V, N and their interaction on yield. The `1|B/V` implies that random intercepts vary with block and V within each block.
+
+::: panel-tabset 
+### lme4
+
 ```{r}
-model2 <- lmer(Y ~ V + N + V:N + (1|B) + (1|B:V), data = oats)
+model2 <- lmer(Y ~  V + N + V:N + (1|B/V), 
+                   data = oats, 
+                   na.action = na.exclude)
 summary(model2)
-## use broom.mixed here instead of summary
 ```
+
+### nlme
+
+```{r, eval=FALSE}
+model2 <- lme(Y ~  V + N + V:N ,
+                  random = ~1|B/V,
+                  data = oats, 
+                  na.action = na.exclude)
+summary(model2)
+```
+
+:::
 
 #### **Check Model Assumptions**
 
@@ -272,7 +290,7 @@ Normality of residuals and homogenous variance
 check_model(model2)
 ```
 
-#### **Inference** 
+#### **Inference**
 
 ```{r}
 anova(model2)
@@ -286,14 +304,34 @@ omparison <- cld(emm, Letters = LETTERS, reversed = T)
 ```
 
 ::: callout-note
-## `na.action = na.exclude`
+##### RCBD Split-plot
 
 The RCBD split-plot design is also commonly called split-block Design or the strip-plot Design
 :::
 
-## Split-split plot design in R
+# Split-split plot design
 
-In this example, we have a yield data of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels. In this split-split design:
+The split-split-plot design is an extension of the split-plot design to accommodate a third factor: one factor in main-plot, other in subplot and the third factor in sub-subplot
+
+## Details for split-split plot designs
+
+The statistical model structure this design:
+
+$$y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha_i\beta_k) + \tau_n + (\alpha_i\tau_n) + (\tau_n\beta_k) + (\alpha_i\beta_k\tau_n) + \epsilon_{ijk} + \delta_{ijkn}$$ Where:
+
+$\mu$= overall experimental mean, $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\tau$ = main effect of sub-subplot, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+
+$$ \epsilon \sim N(0, \sigma_\epsilon)$$
+
+$$\ \delta  \sim N(0, \sigma_\delta)$$
+
+Both the error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
+
+## Example Analysis
+
+In this example, we have a rice yield data from 'agricolae' package.
+
+This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design, levels of each factor are outlined below:
 
 blocks = block (3 blocks),
 
@@ -303,9 +341,7 @@ Sub plot = management (3 levels)
 
 sub-subplot = variety (3 levels)
 
-Statistical model:
-
-**add model equation here**
+### *Load Data and integrity checks*
 
 Here, we are extracting the rice yield data from `agricolae` package.
 
@@ -315,7 +351,7 @@ f <- system.file("external/ssp.csv", package="agricolae")
 rice <-read.csv(f)
 ```
 
-Exploratory analysis
+Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
 
 ```{r}
 str(rice)
@@ -330,41 +366,111 @@ rice$management<-factor(rice$management)
 rice$variety<-factor(rice$variety)
 ```
 
-Statistical model:
-
-Here is the basic split-split plot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.
+Next, run a cross tabulations to check the independent variables
 
 ```{r}
-model3 <-lmer(yield ~  block + nitrogen*management*variety + (1|block/nitrogen/management),data=rice, na.action = na.exclude)
-
-summary(model3)
-
+table(rice$variety, rice$nitrogen, rice$management)
 ```
 
-Model Diagnostics: we observed a constant variance and normality of residuals.
+It looks perfectly balanced, with exactly 3 observation per treatment group.
+
+Last, check the distribution of the dependent variable by plotting a histogram using a `hist()`.
 
 ```{r}
+hist(rice$yield)
+```
 
-plot(model3)
-qqnorm(residuals(model3)); qqline(residuals(model3))
+```{r}
+#| label: fig-rcbd_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(rice$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
 
-library(see)
+### Model Building
+
+The variance analysis of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.
+
+::: panel-tabset
+### lme4
+
+```{r}
+model3 <- lmer(yield ~ nitrogen*management*variety + (1|block/nitrogen/management),
+              data=rice, 
+              na.action = na.exclude)
+
+summary(model3)
+```
+
+### nlme
+
+```{r, eval=FALSE}
+model3 <- lme(yield ~ nitrogen*management*variety,
+                  random = ~ 1|block/nitrogen/management,
+                  data = rice, 
+                  na.action = na.exclude)
+summary(model3)
+```
+:::
+
+::: column-margin
+#### boundary (singular) fit:
+explain it here
+:::
+
+### Check Model Assumptions
+Model Diagnostics: we are looking for a constant variance and normality of residuals.
+```{r, eval=FALSE}
+plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
+```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_error
+#| fig-cap: "Plot of residuals versus fitted values"
+#| column: margin
+#| 
+par(mar=c(5.1, 5, 2.1, 2.1))
+plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals",
+     cex.lab = 1.8, cex.axis = 1.5)
+```
+
+Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and qq-line.
+
+```{r, eval=FALSE}
+qqnorm(resid(model3), main = NULL); qqline(resid(model_rcbd))
+```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_norm
+#| fig-cap: "QQ-plot of residuals"
+#| column: margin
+
+par(mar=c(5.1, 5, 2.1, 2.1))
+qqnorm(resid(model3), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd))
+```
+
+Or we can do all at one using one function `check_model()`. 
+```{r}
 check_model(model3)
 ```
 
+### Inference
 Analysis of variance
 
 ```{r}
 anova(model3)
 ```
 
-Post-Hoc analysis
-
+Determining the estimates for each treatment factor (variety, nitrogen, management)
 ```{r}
 emmeans(model3, ~ nitrogen)
 emmeans(model3, ~ variety*management)
 ```
 
+If the goal is to calculate estimates and know the statistics difference, that can be evaluated by using `cld()` 
 ```{r}
 emm <- emmeans(model3, ~ nitrogen*variety) 
 comparison <- cld(emm, Letters = LETTERS, reversed = T) 
