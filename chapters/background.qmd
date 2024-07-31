@@ -17,7 +17,6 @@ $$  Y = \beta_0 + b_i + \beta_1(X) + \epsilon $$
 In this model, predictions would vary depending on each subject’s random intercept term, but slopes would be the same.
 
 ::: column-margin
-
 ![Example mixed model with random intercepts but identical slopes.](/img/random_intercept_same_slope.png)
 :::
 
@@ -50,15 +49,12 @@ my_formula <- formula(Y ~ treatment1 + treatment2)
 class(my_formula)
 ```
 
-The package 'lmer' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes).
+The package 'lmer' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of grouping factors are denoted g, g1, and g2, and covariate as x.
 
-
--   (1\| group): Random intercept with fixed mean.
-
--   (1\| g1/g2): intercepts vary among g1 and g2 within g1.
-
--   (1 \| g1) + (1 \| g2): random intercepts for 2 variables.
-
--   x + (x \| g): correlated random slope and intercept.
-
--   x + (x \|\| g): uncorrelated random slope and intercept.
+| Formula                 | Alternative                     | Meaning                                      |
+|-------------------------|---------------------------------|----------------------------------------------|
+| (1 \| g)                | 1 + (1 \| g)                    | Random intercept with a fixed mean           |
+| (1 \| g1/g2)            | (1 \| g1) + (1 \| g1:g2)        | Intercept varying among g1 and g2 within g1. |
+| (1 \| g1) + (1 \| g2)   | 1 + (1 \| g1) + (1\| g2)        | Intercept varying among g1 and g2.           |
+| x + (x \| g)            | 1 + x + (1 + x \| g)            | Correlated random intercept and slope        |
+| x + (x \|\| g)          | 1 + x + (1 \| g) + (0 + x \| g) | Uncorrelated random intercept and slope.     |
