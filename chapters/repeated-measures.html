@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.55">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Repeated measures – Field Guide to the R Mixed Model Wilderness</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/incomplete-block-design.html" rel="next">
+<link href="../chapters/split-plot-design.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Field Guide to the R Mixed Model Wilderness</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/repeated-measures.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../img/hexLogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/analysis-tips.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed model theory and background</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/rcbd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/factorial-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Factorial Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/split-plot-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Split Plot Design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/repeated-measures.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/incomplete-block-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Balanced Incomplete Block Experiment</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/lattice-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">lattice_design</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/glmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Generalized Linear Mixed Models</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/special-conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Combining Scenarios</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/analysis-tips.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/variance-components.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Variance Components</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/resources.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#talk-about-different-covariance-structures-and-provide-reference-for-details" id="toc-talk-about-different-covariance-structures-and-provide-reference-for-details" class="nav-link active" data-scroll-target="#talk-about-different-covariance-structures-and-provide-reference-for-details"><span class="header-section-number">7.0.1</span> Talk about different covariance structures and provide reference for details</a></li>
+  <li><a href="#model-diagnostcis" id="toc-model-diagnostcis" class="nav-link" data-scroll-target="#model-diagnostcis"><span class="header-section-number">7.1</span> Model Diagnostcis</a></li>
+  <li><a href="#post-hoc-analysis" id="toc-post-hoc-analysis" class="nav-link" data-scroll-target="#post-hoc-analysis"><span class="header-section-number">7.2</span> Post-Hoc Analysis</a></li>
+  <li><a href="#emmeans" id="toc-emmeans" class="nav-link" data-scroll-target="#emmeans"><span class="header-section-number">7.3</span> Emmeans</a></li>
+  <li><a href="#model-fit" id="toc-model-fit" class="nav-link" data-scroll-target="#model-fit"><span class="header-section-number">7.4</span> Model fit</a></li>
+  <li><a href="#model-fit-1" id="toc-model-fit-1" class="nav-link" data-scroll-target="#model-fit-1"><span class="header-section-number">7.5</span> Model fit</a>
+  <ul class="collapse">
+  <li><a href="#model-diagnostics" id="toc-model-diagnostics" class="nav-link" data-scroll-target="#model-diagnostics"><span class="header-section-number">7.5.1</span> Model diagnostics</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Studies that involve repeated observations of the exact same experimental units require a repeated measures component to properly model correlations across time with the experiment unit. This is common in any perennial crop that is evaluated across years, hay crops subject to repeat cuttings, and many other circumstances. In these models, the ‘iid’ assumption (idependently and identically distributed) is being violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
+<p>There are several types of structures.</p>
+<p>The repeated measures syntax in <strong><em>nlme</em></strong> follow this convention: <code>form = ~ time|grouping</code>. You can also use <code>1|group</code> and the observation order for each group will be. The default starting value (<code>value</code>) is zero, and if <code>fixed = FALSE</code> (the current nlme default), this value will be allowed to change during the model fitting process.</p>
+<p>There are several other options in the <strong>nlm</strong> machinery (search “cor” for more options and details on the syntax).</p>
+<p>Fitting models with correlated observations requires new libraries including mmrm and nlme. lmer allows random effects only.</p>
+<section id="talk-about-different-covariance-structures-and-provide-reference-for-details" class="level3" data-number="7.0.1">
+<h3 data-number="7.0.1" class="anchored" data-anchor-id="talk-about-different-covariance-structures-and-provide-reference-for-details"><span class="header-section-number">7.0.1</span> Talk about different covariance structures and provide reference for details</h3>
+<p>Packages required for this tutorial:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mmrm)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="1">
+<li><strong>Repeated Measures RCBD</strong></li>
+</ol>
+<p>The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable ‘y’ is the leaf area index assessed in five consecutive weeks on each plot.</p>
+<p>We need to have time as numeric and factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> agriTutorial<span class="sc">::</span>sorghum <span class="sc">%&gt;%</span>   </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">week =</span> <span class="fu">as.numeric</span>(factweek),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">block =</span> <span class="fu">as.character</span>(varblock)) </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   100 obs. of  9 variables:
+ $ y        : num  5 4.84 4.02 3.75 3.13 4.42 4.3 3.67 3.23 2.83 ...
+ $ variety  : Factor w/ 4 levels "1","2","3","4": 1 1 1 1 1 1 1 1 1 1 ...
+ $ Replicate: Factor w/ 5 levels "1","2","3","4",..: 1 1 1 1 1 2 2 2 2 2 ...
+ $ factweek : Factor w/ 5 levels "1","2","3","4",..: 1 2 3 4 5 1 2 3 4 5 ...
+ $ factplot : Factor w/ 20 levels "1","2","3","4",..: 1 1 1 1 1 2 2 2 2 2 ...
+ $ varweek  : int  1 2 3 4 5 1 2 3 4 5 ...
+ $ varblock : int  1 1 1 1 1 2 2 2 2 2 ...
+ $ week     : num  1 2 3 4 5 1 2 3 4 5 ...
+ $ block    : chr  "1" "1" "1" "1" ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cs1 <span class="ot">&lt;-</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cs2 <span class="ot">&lt;-</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>factplot,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>lm2 <span class="ot">&lt;-</span> <span class="fu">update</span>(lm1, <span class="at">corr =</span> cs1)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>lm3 <span class="ot">&lt;-</span> <span class="fu">update</span>(lm1, <span class="at">corr=</span> cs2)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare models with different correlation structure using anova()</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm1, lm2, lm3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Model df       AIC      BIC   logLik   Test  L.Ratio p-value
+lm1     1 23 18.837478 73.62409 13.58126                        
+lm2     2 24 -2.347391 54.82125 25.17370 1 vs 2 23.18487  &lt;.0001
+lm3     3 24 20.837478 78.00612 13.58126                        </code></pre>
+</div>
+</div>
+<p>We can compare the performance of these models (lm1, lm2, lm3) either by using <code>anova()</code> or by <code>compare_performance()</code> function from the ‘performance’ library.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm1, lm2, lm3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Model df       AIC      BIC   logLik   Test  L.Ratio p-value
+lm1     1 23 18.837478 73.62409 13.58126                        
+lm2     2 24 -2.347391 54.82125 25.17370 1 vs 2 23.18487  &lt;.0001
+lm3     3 24 20.837478 78.00612 13.58126                        </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## or</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">compare_performance</span>(lm1, lm2, lm3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Some of the nested models seem to be identical and probably only vary in
+  their random effects.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print_md</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Comparison of Model Performance Indices</caption>
+<colgroup>
+<col style="width: 4%">
+<col style="width: 6%">
+<col style="width: 14%">
+<col style="width: 15%">
+<col style="width: 14%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: center;">Model</th>
+<th style="text-align: center;">AIC (weights)</th>
+<th style="text-align: center;">AICc (weights)</th>
+<th style="text-align: center;">BIC (weights)</th>
+<th style="text-align: center;">R2 (cond.)</th>
+<th style="text-align: center;">R2 (marg.)</th>
+<th style="text-align: center;">ICC</th>
+<th style="text-align: center;">RMSE</th>
+<th style="text-align: center;">Sigma</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">lm1</td>
+<td style="text-align: center;">lme</td>
+<td style="text-align: center;">-50.5 (&lt;.001)</td>
+<td style="text-align: center;">-36.0 (&lt;.001)</td>
+<td style="text-align: center;">9.4 (&lt;.001)</td>
+<td style="text-align: center;">0.99</td>
+<td style="text-align: center;">0.37</td>
+<td style="text-align: center;">0.98</td>
+<td style="text-align: center;">0.10</td>
+<td style="text-align: center;">0.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lm2</td>
+<td style="text-align: center;">lme</td>
+<td style="text-align: center;">-77.5 (&gt;.999)</td>
+<td style="text-align: center;">-61.5 (&gt;.999)</td>
+<td style="text-align: center;">-15.0 (&gt;.999)</td>
+<td style="text-align: center;">0.97</td>
+<td style="text-align: center;">0.41</td>
+<td style="text-align: center;">0.95</td>
+<td style="text-align: center;">0.15</td>
+<td style="text-align: center;">0.18</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lm3</td>
+<td style="text-align: center;">lme</td>
+<td style="text-align: center;">-48.5 (&lt;.001)</td>
+<td style="text-align: center;">-32.5 (&lt;.001)</td>
+<td style="text-align: center;">14.0 (&lt;.001)</td>
+<td style="text-align: center;">0.98</td>
+<td style="text-align: center;">0.37</td>
+<td style="text-align: center;">0.98</td>
+<td style="text-align: center;">0.11</td>
+<td style="text-align: center;">0.14</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">##model with AR1 correaltion matrix is better</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-diagnostcis" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="model-diagnostcis"><span class="header-section-number">7.1</span> Model Diagnostcis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(lm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Converting missing values (`NA`) into regular values currently not
+  possible for variables of class `NULL`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="post-hoc-analysis" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="post-hoc-analysis"><span class="header-section-number">7.2</span> Post-Hoc Analysis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 numDF denDF   F-value p-value
+(Intercept)          1    64 231.49887  &lt;.0001
+variety              3    12  69.53675  &lt;.0001
+factweek             4    64 186.02244  &lt;.0001
+variety:factweek    12    64   7.03546  &lt;.0001</code></pre>
+</div>
+</div>
+</section>
+<section id="emmeans" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="emmeans"><span class="header-section-number">7.3</span> Emmeans</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mean_1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(lm2, <span class="sc">~</span> variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mean_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> variety emmean    SE df lower.CL upper.CL
+ 1         3.50 0.288  4     2.70     4.29
+ 2         4.59 0.288  4     3.79     5.39
+ 3         4.63 0.288  4     3.84     5.43
+ 4         4.61 0.288  4     3.81     5.40
+
+Results are averaged over the levels of: factweek 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(mean_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast            estimate     SE df t.ratio p.value
+ variety1 - variety2  -1.0940 0.0932 12 -11.738  &lt;.0001
+ variety1 - variety3  -1.1380 0.0932 12 -12.210  &lt;.0001
+ variety1 - variety4  -1.1092 0.0932 12 -11.901  &lt;.0001
+ variety2 - variety3  -0.0440 0.0932 12  -0.472  0.9638
+ variety2 - variety4  -0.0152 0.0932 12  -0.163  0.9984
+ variety3 - variety4   0.0288 0.0932 12   0.309  0.9892
+
+Results are averaged over the levels of: factweek 
+Degrees-of-freedom method: containment 
+P value adjustment: tukey method for comparing a family of 4 estimates </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mean_2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(lm2, <span class="sc">~</span> variety<span class="sc">:</span>factweek)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>mean_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> variety factweek emmean    SE df lower.CL upper.CL
+ 1       1          4.24 0.291  4     3.43     5.05
+ 2       1          5.15 0.291  4     4.34     5.96
+ 3       1          4.89 0.291  4     4.08     5.70
+ 4       1          5.15 0.291  4     4.35     5.96
+ 1       2          4.05 0.291  4     3.24     4.85
+ 2       2          4.98 0.291  4     4.17     5.79
+ 3       2          5.07 0.291  4     4.27     5.88
+ 4       2          4.94 0.291  4     4.14     5.75
+ 1       3          3.41 0.291  4     2.60     4.21
+ 2       3          4.59 0.291  4     3.79     5.40
+ 3       3          4.71 0.291  4     3.91     5.52
+ 4       3          4.71 0.291  4     3.90     5.51
+ 1       4          3.09 0.291  4     2.28     3.89
+ 2       4          4.22 0.291  4     3.41     5.03
+ 3       4          4.48 0.291  4     3.67     5.28
+ 4       4          4.39 0.291  4     3.58     5.20
+ 1       5          2.70 0.291  4     1.89     3.51
+ 2       5          4.01 0.291  4     3.20     4.82
+ 3       5          4.02 0.291  4     3.21     4.83
+ 4       5          3.83 0.291  4     3.03     4.64
+
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li><strong>Split plot repeated measures</strong>
+<ul>
+<li><strong>using mmrm() from mmrm package:</strong></li>
+</ul></li>
+</ol>
+<p>The example shown below contains yield data in a split-plot design. In this data set, we have:</p>
+<p>Variety: 2 levels</p>
+<p>Fertilizer: 3 levels</p>
+<p>Replications: 4</p>
+<p>The yield data was collected repeatedly from the same Reps over 5 ‘Sample_times’.</p>
+<p>This can be analyze either using <code>nlme</code> or <code>mmrm</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>Yield <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/Yield.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 120 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): Variety
+dbl (5): Sample_time, Fertilizer, Rep, pH, Yield
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  Sample_time Variety Fertilizer   Rep    pH Yield
+        &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1           1 VAR1             1     1  7.07 0.604
+2           1 VAR1             1     2  7.06 0.595
+3           1 VAR1             1     3  7.08 3.15 
+4           1 VAR1             1     4  7.09 3.09 
+5           1 VAR1             2     1  7.13 2.42 
+6           1 VAR1             2     2  7.12 2.62 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(Yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [120 × 6] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Sample_time: num [1:120] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Variety    : chr [1:120] "VAR1" "VAR1" "VAR1" "VAR1" ...
+ $ Fertilizer : num [1:120] 1 1 1 1 2 2 2 2 3 3 ...
+ $ Rep        : num [1:120] 1 2 3 4 1 2 3 4 1 2 ...
+ $ pH         : num [1:120] 7.07 7.06 7.08 7.09 7.13 7.12 7.15 7.14 7.18 7.18 ...
+ $ Yield      : num [1:120] 0.604 0.595 3.145 3.091 2.415 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   Sample_time = col_double(),
+  ..   Variety = col_character(),
+  ..   Fertilizer = col_double(),
+  ..   Rep = col_double(),
+  ..   pH = col_double(),
+  ..   Yield = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+</section>
+<section id="model-fit" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="model-fit"><span class="header-section-number">7.4</span> Model fit</h2>
+<p><strong>using lme() from nlme package.</strong></p>
+<p>To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named ‘plot’ with a unique value for each plot. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>Yield<span class="sc">$</span>Variety <span class="ot">&lt;-</span> <span class="fu">factor</span>(Yield<span class="sc">$</span>Variety) </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>Yield<span class="sc">$</span>Fertilizer <span class="ot">&lt;-</span> <span class="fu">factor</span>(Yield<span class="sc">$</span>Fertilizer) </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>Yield<span class="sc">$</span>Sample_time1 <span class="ot">&lt;-</span> <span class="fu">factor</span>(Yield<span class="sc">$</span>Sample_time) </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>Yield<span class="sc">$</span>Rep <span class="ot">&lt;-</span> <span class="fu">factor</span>(Yield<span class="sc">$</span>Rep)  </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(Yield<span class="sc">$</span>Fertilizer, Yield<span class="sc">$</span>Variety) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+    VAR1 VAR2
+  1   20   20
+  2   20   20
+  3   20   20</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="do">##creating a plot variable </span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>Yield<span class="sc">$</span>plot <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">paste</span>(Yield<span class="sc">$</span>Rep, Yield<span class="sc">$</span>Fertilizer, Yield<span class="sc">$</span>Variety, <span class="at">sep=</span><span class="st">'-'</span>)) </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>Yield<span class="sc">$</span>Rep2 <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">paste</span>(Yield<span class="sc">$</span>Rep, Yield<span class="sc">$</span>Variety, <span class="at">sep=</span><span class="st">'-'</span>)) </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(Yield<span class="sc">$</span>plot) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+1-1-VAR1 1-1-VAR2 1-2-VAR1 1-2-VAR2 1-3-VAR1 1-3-VAR2 2-1-VAR1 2-1-VAR2 
+       5        5        5        5        5        5        5        5 
+2-2-VAR1 2-2-VAR2 2-3-VAR1 2-3-VAR2 3-1-VAR1 3-1-VAR2 3-2-VAR1 3-2-VAR2 
+       5        5        5        5        5        5        5        5 
+3-3-VAR1 3-3-VAR2 4-1-VAR1 4-1-VAR2 4-2-VAR1 4-2-VAR2 4-3-VAR1 4-3-VAR2 
+       5        5        5        5        5        5        5        5 </code></pre>
+</div>
+</div>
+</section>
+<section id="model-fit-1" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="model-fit-1"><span class="header-section-number">7.5</span> Model fit</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> Sample_time<span class="sc">|</span>Rep<span class="sc">/</span>Variety<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>corr_str2 <span class="ot">=</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> Sample_time<span class="sc">|</span>Rep<span class="sc">/</span>Variety<span class="sc">/</span>plot, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># establish model</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lme</span>(Yield <span class="sc">~</span> Sample_time1<span class="sc">*</span>Variety<span class="sc">*</span>Fertilizer,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>Rep<span class="sc">/</span>Variety<span class="sc">/</span>plot,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> Yield, <span class="at">na.action=</span> na.exclude)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="do">##update model with correlation matrix</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">update</span>(mod, <span class="at">corr=</span> corr_str1)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">update</span>(mod, <span class="at">corr=</span> corr_str2)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="do">##compare different correlation matrices</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod, mod1, mod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     Model df      AIC      BIC    logLik   Test    L.Ratio p-value
+mod      1 34 387.9459 472.9394 -159.9729                          
+mod1     2 35 389.8854 477.3788 -159.9427 1 vs 2 0.06044197  0.8058
+mod2     3 35 389.9459 477.4392 -159.9729                          </code></pre>
+</div>
+</div>
+<p>A model with AR1 is better than compared to the model with compound symmetry structure.</p>
+<section id="model-diagnostics" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="model-diagnostics"><span class="header-section-number">7.5.1</span> Model diagnostics</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Converting missing values (`NA`) into regular values currently not
+  possible for variables of class `NULL`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Post-Hoc analysis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                numDF denDF   F-value p-value
+(Intercept)                         1    72 203.81670  &lt;.0001
+Sample_time1                        4    72 157.70742  &lt;.0001
+Variety                             1     3   4.11752  0.1355
+Fertilizer                          2    12  92.58733  &lt;.0001
+Sample_time1:Variety                4    72   0.29760  0.8786
+Sample_time1:Fertilizer             8    72  19.66649  &lt;.0001
+Variety:Fertilizer                  2    12   0.19841  0.8227
+Sample_time1:Variety:Fertilizer     8    72   0.73170  0.6631</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(mod1,<span class="sc">~</span> Fertilizer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(emm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                  estimate    SE df t.ratio p.value
+ Fertilizer1 - Fertilizer2    -4.26 0.431 12  -9.879  &lt;.0001
+ Fertilizer1 - Fertilizer3    -5.62 0.431 12 -13.040  &lt;.0001
+ Fertilizer2 - Fertilizer3    -1.36 0.431 12  -3.161  0.0208
+
+Results are averaged over the levels of: Sample_time1, Variety 
+Degrees-of-freedom method: containment 
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+</div>
+</div>
+<section id="fitting-model-using-mmrm-from-the-mmrm-package" class="level5" data-number="7.5.1.0.1">
+<h5 data-number="7.5.1.0.1" class="anchored" data-anchor-id="fitting-model-using-mmrm-from-the-mmrm-package"><span class="header-section-number">7.5.1.0.1</span> Fitting Model using <code>mmrm()</code> from the mmrm package:</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">mmrm</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Yield <span class="sc">~</span> Sample_time1<span class="sc">*</span>Variety<span class="sc">*</span>Fertilizer <span class="sc">+</span>  <span class="fu">ar1</span>(Sample_time1<span class="sc">|</span>Rep<span class="sc">/</span>plot),</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> Yield)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mmrm fit
+
+Formula:     Yield ~ Sample_time1 * Variety * Fertilizer + ar1(Sample_time1 |  
+    Rep/plot)
+Data:        Yield (used 120 observations from 24 subjects with maximum 5 
+timepoints)
+Covariance:  auto-regressive order one (8 variance parameters of 4 groups)
+Method:      Satterthwaite
+Vcov Method: Asymptotic
+Inference:   REML
+
+Model selection criteria:
+     AIC      BIC   logLik deviance 
+   320.0    329.4   -152.0    304.0 
+
+Coefficients: 
+                                      Estimate Std. Error      df t value
+(Intercept)                             2.8556     0.4637 12.6530   6.158
+Sample_time12                           0.6556     0.3099  1.8140   2.115
+Sample_time13                           1.4042     0.4144  2.2920   3.388
+Sample_time14                           1.4573     0.4838  2.8660   3.012
+Sample_time15                           2.4676     0.5486  3.1380   4.498
+VarietyVAR2                            -1.0688     0.6558 12.6530  -1.630
+Fertilizer2                             1.6744     0.6558 12.6530   2.553
+Fertilizer3                             0.5952     0.6558 12.6530   0.908
+Sample_time12:VarietyVAR2              -0.5911     0.4383  1.8140  -1.349
+Sample_time13:VarietyVAR2              -0.4123     0.5861  2.2920  -0.704
+Sample_time14:VarietyVAR2              -0.4697     0.6843  2.8660  -0.686
+Sample_time15:VarietyVAR2              -1.0333     0.7758  3.1380  -1.332
+Sample_time12:Fertilizer2               1.3372     0.4383  1.8140   3.051
+Sample_time13:Fertilizer2               2.1910     0.5861  2.2920   3.739
+Sample_time14:Fertilizer2               3.7979     0.6843  2.8660   5.551
+Sample_time15:Fertilizer2               4.8424     0.7758  3.1380   6.242
+Sample_time12:Fertilizer3               2.2033     0.4383  1.8140   5.027
+Sample_time13:Fertilizer3               3.6240     0.5861  2.2920   6.183
+Sample_time14:Fertilizer3               5.7761     0.6843  2.8660   8.442
+Sample_time15:Fertilizer3               7.3779     0.7758  3.1380   9.510
+VarietyVAR2:Fertilizer2                 0.5290     0.9274 12.6530   0.570
+VarietyVAR2:Fertilizer3                 1.5638     0.9274 12.6530   1.686
+Sample_time12:VarietyVAR2:Fertilizer2   0.8314     0.6198  1.8140   1.341
+Sample_time13:VarietyVAR2:Fertilizer2   0.3481     0.8288  2.2920   0.420
+Sample_time14:VarietyVAR2:Fertilizer2   0.7627     0.9677  2.8660   0.788
+Sample_time15:VarietyVAR2:Fertilizer2   0.9813     1.0972  3.1380   0.894
+Sample_time12:VarietyVAR2:Fertilizer3   0.6327     0.6198  1.8140   1.021
+Sample_time13:VarietyVAR2:Fertilizer3  -0.1950     0.8288  2.2920  -0.235
+Sample_time14:VarietyVAR2:Fertilizer3  -0.0170     0.9677  2.8660  -0.018
+Sample_time15:VarietyVAR2:Fertilizer3   0.2325     1.0972  3.1380   0.212
+                                      Pr(&gt;|t|)    
+(Intercept)                           3.87e-05 ***
+Sample_time12                          0.18155    
+Sample_time13                          0.06364 .  
+Sample_time14                          0.06054 .  
+Sample_time15                          0.01863 *  
+VarietyVAR2                            0.12777    
+Fertilizer2                            0.02446 *  
+Fertilizer3                            0.38106    
+Sample_time12:VarietyVAR2              0.32119    
+Sample_time13:VarietyVAR2              0.54634    
+Sample_time14:VarietyVAR2              0.54384    
+Sample_time15:VarietyVAR2              0.27140    
+Sample_time12:Fertilizer2              0.10440    
+Sample_time13:Fertilizer2              0.05218 .  
+Sample_time14:Fertilizer2              0.01300 *  
+Sample_time15:Fertilizer2              0.00726 ** 
+Sample_time12:Fertilizer3              0.04541 *  
+Sample_time13:Fertilizer3              0.01789 *  
+Sample_time14:Fertilizer3              0.00414 ** 
+Sample_time15:Fertilizer3              0.00205 ** 
+VarietyVAR2:Fertilizer2                0.57840    
+VarietyVAR2:Fertilizer3                0.11624    
+Sample_time12:VarietyVAR2:Fertilizer2  0.32313    
+Sample_time13:VarietyVAR2:Fertilizer2  0.71063    
+Sample_time14:VarietyVAR2:Fertilizer2  0.49058    
+Sample_time15:VarietyVAR2:Fertilizer2  0.43439    
+Sample_time12:VarietyVAR2:Fertilizer3  0.42397    
+Sample_time13:VarietyVAR2:Fertilizer3  0.83343    
+Sample_time14:VarietyVAR2:Fertilizer3  0.98713    
+Sample_time15:VarietyVAR2:Fertilizer3  0.84518    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Covariance estimate:
+Group: 1
+       1      2      3      4      5
+1 3.3958 3.3326 3.2705 3.2095 3.1497
+2 3.3326 3.3958 3.3326 3.2705 3.2095
+3 3.2705 3.3326 3.3958 3.3326 3.2705
+4 3.2095 3.2705 3.3326 3.3958 3.3326
+5 3.1497 3.2095 3.2705 3.3326 3.3958
+Group: 2
+       1      2      3      4      5
+1 3.9313 3.5606 3.2248 2.9207 2.6453
+2 3.5606 3.9313 3.5606 3.2248 2.9207
+3 3.2248 3.5606 3.9313 3.5606 3.2248
+4 2.9207 3.2248 3.5606 3.9313 3.5606
+5 2.6453 2.9207 3.2248 3.5606 3.9313
+Group: 3
+       1      2      3      4      5
+1 1.8891 1.0258 0.5570 0.3024 0.1642
+2 1.0258 1.8891 1.0258 0.5570 0.3024
+3 0.5570 1.0258 1.8891 1.0258 0.5570
+4 0.3024 0.5570 1.0258 1.8891 1.0258
+5 0.1642 0.3024 0.5570 1.0258 1.8891
+Group: 4
+        1       2       3       4       5
+1  1.6862 -0.7232  0.3102 -0.1330  0.0571
+2 -0.7232  1.6862 -0.7232  0.3102 -0.1330
+3  0.3102 -0.7232  1.6862 -0.7232  0.3102
+4 -0.1330  0.3102 -0.7232  1.6862 -0.7232
+5  0.0571 -0.1330  0.3102 -0.7232  1.6862</code></pre>
+</div>
+</div>
+<p>Model Diagnostics</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="do">##check_model(asp.fit) ## performance package doesn't work with mmrm class.</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">residuals</span>(fit1)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(fit1)); <span class="fu">qqline</span>(<span class="fu">residuals</span>(fit1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Anova</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># type III tests </span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>mmrm() registered as car::Anova extension</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Fixed Effect Table (Type II F tests)
+                                Num Df Denom Df F Statistic  Pr(&gt;=F)   
+Sample_time1                         4   2.0000     19.3168 0.049826 * 
+Variety                              1   3.8878      2.1112 0.221860   
+Fertilizer                           2   5.1356     29.2728 0.001557 **
+Sample_time1:Variety                 4   2.0000      1.0574 0.539021   
+Sample_time1:Fertilizer              8   2.0000     26.3829 0.037022 * 
+Variety:Fertilizer                   2   8.0184      3.0751 0.102038   
+Sample_time1:Variety:Fertilizer      8   2.0000      0.5396 0.781917   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Post-Hoc comparison</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cell means </span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>asp.emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(fit1, <span class="fu">c</span>(<span class="st">'Variety'</span>,<span class="st">'Fertilizer'</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(asp.emm) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                            estimate    SE   df t.ratio p.value
+ VAR1 Fertilizer1 - VAR2 Fertilizer1    1.570 0.491 8.02   3.198  0.0916
+ VAR1 Fertilizer1 - VAR1 Fertilizer2   -4.108 0.491 8.02  -8.366  0.0003
+ VAR1 Fertilizer1 - VAR2 Fertilizer2   -3.652 0.491 8.02  -7.437  0.0007
+ VAR1 Fertilizer1 - VAR1 Fertilizer3   -4.391 0.491 8.02  -8.943  0.0002
+ VAR1 Fertilizer1 - VAR2 Fertilizer3   -4.516 0.491 8.02  -9.197  0.0001
+ VAR2 Fertilizer1 - VAR1 Fertilizer2   -5.678 0.491 8.02 -11.564  &lt;.0001
+ VAR2 Fertilizer1 - VAR2 Fertilizer2   -5.222 0.491 8.02 -10.634  0.0001
+ VAR2 Fertilizer1 - VAR1 Fertilizer3   -5.962 0.491 8.02 -12.141  &lt;.0001
+ VAR2 Fertilizer1 - VAR2 Fertilizer3   -6.086 0.491 8.02 -12.394  &lt;.0001
+ VAR1 Fertilizer2 - VAR2 Fertilizer2    0.456 0.491 8.02   0.929  0.9278
+ VAR1 Fertilizer2 - VAR1 Fertilizer3   -0.283 0.491 8.02  -0.577  0.9899
+ VAR1 Fertilizer2 - VAR2 Fertilizer3   -0.408 0.491 8.02  -0.830  0.9532
+ VAR2 Fertilizer2 - VAR1 Fertilizer3   -0.740 0.491 8.02  -1.506  0.6705
+ VAR2 Fertilizer2 - VAR2 Fertilizer3   -0.864 0.491 8.02  -1.760  0.5346
+ VAR1 Fertilizer3 - VAR2 Fertilizer3   -0.124 0.491 8.02  -0.253  0.9998
+
+Results are averaged over the levels of: Sample_time1, Rep 
+P value adjustment: tukey method for comparing a family of 6 estimates </code></pre>
+</div>
+</div>
+<ol start="3" type="1">
+<li><strong>Split-split plot repeated measures</strong></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>agridat<span class="sc">::</span>caribbean.maize</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         isle site block plot  trt ears yield
+1     Antigua DBAN    B1    1 T111   42  4.96
+2     Antigua DBAN    B1    2 T000   41  3.94
+3     Antigua DBAN    B1    3 T311   49  6.35
+4     Antigua DBAN    B1    4 T202   48  5.56
+5     Antigua DBAN    B1    5 T111   45  5.36
+6     Antigua DBAN    B1    6 T220   46  6.18
+7     Antigua DBAN    B1    7 T113   42  4.71
+8     Antigua DBAN    B1    8 T131   44  6.03
+9     Antigua DBAN    B1    9 T022   42  2.88
+10    Antigua DBAN    B2   10 T222   44  5.68
+11    Antigua DBAN    B2   11 T311   42  5.80
+12    Antigua DBAN    B2   12 T020   42  4.16
+13    Antigua DBAN    B2   13 T200   46  4.90
+14    Antigua DBAN    B2   14 T111   44  5.25
+15    Antigua DBAN    B2   15 T131   48  5.80
+16    Antigua DBAN    B2   16 T002   46  2.18
+17    Antigua DBAN    B2   17 T111   48  4.36
+18    Antigua DBAN    B2   18 T113   45  4.36
+19    Antigua DBAN    B3   19 T131   43  4.81
+20    Antigua DBAN    B3   20 T111   47  5.19
+21    Antigua DBAN    B3   21 T311   47  5.96
+22    Antigua DBAN    B3   22 T000   45  3.88
+23    Antigua DBAN    B3   23 T220   50  5.72
+24    Antigua DBAN    B3   24 T022   44  2.51
+25    Antigua DBAN    B3   25 T111   47  4.94
+26    Antigua DBAN    B3   26 T113   44  3.70
+27    Antigua DBAN    B3   27 T202   40  2.77
+28    Antigua DBAN    B4   28 T111   41  4.34
+29    Antigua DBAN    B4   29 T200   45  4.33
+30    Antigua DBAN    B4   30 T111   41  4.68
+31    Antigua DBAN    B4   31 T113   46  4.76
+32    Antigua DBAN    B4   32 T131   47  5.24
+33    Antigua DBAN    B4   33 T020   42  1.86
+34    Antigua DBAN    B4   34 T222   41  3.84
+35    Antigua DBAN    B4   35 T002   41  1.36
+36    Antigua DBAN    B4   36 T311   36  3.98
+37    Antigua LFAN    B1    1 T111   37  2.92
+38    Antigua LFAN    B1    2 T022   36  1.68
+39    Antigua LFAN    B1    3 T113   42  4.50
+40    Antigua LFAN    B1    4 T220   41  4.74
+41    Antigua LFAN    B1    5 T202   40  4.44
+42    Antigua LFAN    B1    6 T311   44  4.66
+43    Antigua LFAN    B1    7 T111   44  2.94
+44    Antigua LFAN    B1    8 T000   44  1.60
+45    Antigua LFAN    B1    9 T131   38  1.82
+46    Antigua LFAN    B2   10 T113   39  4.44
+47    Antigua LFAN    B2   11 T222   40  5.78
+48    Antigua LFAN    B2   12 T311   46  6.24
+49    Antigua LFAN    B2   13 T111   47  5.40
+50    Antigua LFAN    B2   14 T200   46  5.62
+51    Antigua LFAN    B2   15 T002   35  1.72
+52    Antigua LFAN    B2   16 T131   43  4.42
+53    Antigua LFAN    B2   17 T111   46  4.14
+54    Antigua LFAN    B2   18 T020   40  3.94
+55    Antigua LFAN    B3   19 T220   41  5.00
+56    Antigua LFAN    B3   20 T202   46  5.26
+57    Antigua LFAN    B3   21 T000   36  2.90
+58    Antigua LFAN    B3   22 T111   43  4.94
+59    Antigua LFAN    B3   23 T113   45  4.43
+60    Antigua LFAN    B3   24 T311   47  5.42
+61    Antigua LFAN    B3   25 T022   34  1.22
+62    Antigua LFAN    B3   26 T111   42  3.72
+63    Antigua LFAN    B3   27 T131   41  3.70
+64    Antigua LFAN    B4   28 T131   46  5.61
+65    Antigua LFAN    B4   29 T111   45  6.02
+66    Antigua LFAN    B4   30 T020   45  3.18
+67    Antigua LFAN    B4   31 T311   47  6.07
+68    Antigua LFAN    B4   32 T002   38  1.48
+69    Antigua LFAN    B4   33 T222   47  5.94
+70    Antigua LFAN    B4   34 T111   42  3.58
+71    Antigua LFAN    B4   35 T200   39  3.95
+72    Antigua LFAN    B4   36 T113   44  3.38
+73    Antigua TEAN    B1    1 T113   32  1.27
+74    Antigua TEAN    B1    2 T111   29  2.10
+75    Antigua TEAN    B1    3 T022   46  2.37
+76    Antigua TEAN    B1    4 T202   28  2.08
+77    Antigua TEAN    B1    5 T000   31  1.74
+78    Antigua TEAN    B1    6 T131   39  3.16
+79    Antigua TEAN    B1    7 T220   42  4.55
+80    Antigua TEAN    B1    8 T111   36  3.20
+81    Antigua TEAN    B1    9 T311   35  3.69
+82    Antigua TEAN    B2   10 T200   28  1.52
+83    Antigua TEAN    B2   11 T311   30  2.02
+84    Antigua TEAN    B2   12 T222   29  1.97
+85    Antigua TEAN    B2   13 T020   29  1.94
+86    Antigua TEAN    B2   14 T131   30  2.01
+87    Antigua TEAN    B2   15 T111   35  2.18
+88    Antigua TEAN    B2   16 T002   36  3.24
+89    Antigua TEAN    B2   17 T113   39  3.91
+90    Antigua TEAN    B2   18 T111   48  4.20
+91    Antigua TEAN    B3   19 T111   34  2.57
+92    Antigua TEAN    B3   20 T202   37  2.88
+93    Antigua TEAN    B3   21 T220   37  3.45
+94    Antigua TEAN    B3   22 T000   42  2.89
+95    Antigua TEAN    B3   23 T111   38  3.01
+96    Antigua TEAN    B3   24 T113   39  2.87
+97    Antigua TEAN    B3   25 T311   35  3.25
+98    Antigua TEAN    B3   26 T131   41  3.92
+99    Antigua TEAN    B3   27 T022   28  0.88
+100   Antigua TEAN    B4   28 T311   25  1.14
+101   Antigua TEAN    B4   29 T111   43  3.61
+102   Antigua TEAN    B4   30 T113   42  3.05
+103   Antigua TEAN    B4   31 T002   44  3.41
+104   Antigua TEAN    B4   32 T222   48  4.46
+105   Antigua TEAN    B4   33 T200   41  4.36
+106   Antigua TEAN    B4   34 T111   39  3.42
+107   Antigua TEAN    B4   35 T131   28  1.06
+108   Antigua TEAN    B4   36 T020   NA    NA
+109   Antigua WEAN    B1    1 T000   48  4.02
+110   Antigua WEAN    B1    2 T311   47  5.80
+111   Antigua WEAN    B1    3 T202   32  2.16
+112   Antigua WEAN    B1    4 T220   43  5.31
+113   Antigua WEAN    B1    5 T111   42  5.12
+114   Antigua WEAN    B1    6 T131   45  5.98
+115   Antigua WEAN    B1    7 T113   46  5.46
+116   Antigua WEAN    B1    8 T022   43  3.45
+117   Antigua WEAN    B1    9 T111   45  4.96
+118   Antigua WEAN    B2   10 T111   46  4.26
+119   Antigua WEAN    B2   11 T131   48  6.35
+120   Antigua WEAN    B2   12 T020   47  4.28
+121   Antigua WEAN    B2   13 T111   41  4.94
+122   Antigua WEAN    B2   14 T311   38  4.39
+123   Antigua WEAN    B2   15 T002   44  3.92
+124   Antigua WEAN    B2   16 T113   43  5.74
+125   Antigua WEAN    B2   17 T200   46  4.98
+126   Antigua WEAN    B2   18 T222   44  5.40
+127   Antigua WEAN    B3   19 T111   45  6.10
+128   Antigua WEAN    B3   20 T113   45  5.86
+129   Antigua WEAN    B3   21 T022   47  4.59
+130   Antigua WEAN    B3   22 T311   36  4.36
+131   Antigua WEAN    B3   23 T000   41  4.16
+132   Antigua WEAN    B3   24 T111   46  6.58
+133   Antigua WEAN    B3   25 T220   38  5.11
+134   Antigua WEAN    B3   26 T131   48  5.96
+135   Antigua WEAN    B3   27 T202   36  3.45
+136   Antigua WEAN    B4   28 T020   43  5.77
+137   Antigua WEAN    B4   29 T111   46  6.60
+138   Antigua WEAN    B4   30 T200   43  3.88
+139   Antigua WEAN    B4   31 T222   34  4.04
+140   Antigua WEAN    B4   32 T002   32  2.76
+141   Antigua WEAN    B4   33 T311   42  6.31
+142   Antigua WEAN    B4   34 T131   38  5.28
+143   Antigua WEAN    B4   35 T113   44  4.61
+144   Antigua WEAN    B4   36 T111   46  5.65
+145   Antigua WLAN    B1    1 T000   58  2.00
+146   Antigua WLAN    B1    2 T113   56  2.39
+147   Antigua WLAN    B1    3 T131   52  2.04
+148   Antigua WLAN    B1    4 T202   44  1.64
+149   Antigua WLAN    B1    5 T220   45  1.83
+150   Antigua WLAN    B1    6 T111   47  2.08
+151   Antigua WLAN    B1    7 T022   55  3.13
+152   Antigua WLAN    B1    8 T111   53  1.96
+153   Antigua WLAN    B1    9 T311   43  1.30
+154   Antigua WLAN    B2   10 T311   68  2.16
+155   Antigua WLAN    B2   11 T002   40  1.74
+156   Antigua WLAN    B2   12 T111   58  2.46
+157   Antigua WLAN    B2   13 T200   44  2.17
+158   Antigua WLAN    B2   14 T020   42  2.72
+159   Antigua WLAN    B2   15 T113   55  2.07
+160   Antigua WLAN    B2   16 T111   54  2.87
+161   Antigua WLAN    B2   17 T222   48  2.14
+162   Antigua WLAN    B2   18 T131   38  1.45
+163   Antigua WLAN    B3   19 T311   69  2.05
+164   Antigua WLAN    B3   20 T022   60  2.44
+165   Antigua WLAN    B3   21 T111   50  2.88
+166   Antigua WLAN    B3   22 T000   40  2.28
+167   Antigua WLAN    B3   23 T111   51  3.44
+168   Antigua WLAN    B3   24 T113   54  2.56
+169   Antigua WLAN    B3   25 T202   41  2.41
+170   Antigua WLAN    B3   26 T131   53  3.24
+171   Antigua WLAN    B3   27 T220   51  1.66
+172   Antigua WLAN    B4   28 T200   57  1.76
+173   Antigua WLAN    B4   29 T113   55  2.84
+174   Antigua WLAN    B4   30 T002   39  2.25
+175   Antigua WLAN    B4   31 T131   63  2.73
+176   Antigua WLAN    B4   32 T111   48  3.55
+177   Antigua WLAN    B4   33 T311   51  3.13
+178   Antigua WLAN    B4   34 T020   39  2.41
+179   Antigua WLAN    B4   35 T111   43  3.49
+180   Antigua WLAN    B4   36 T222   56  1.96
+181   Antigua NSAN    B1    1 T202   25  2.43
+182   Antigua NSAN    B1    2 T111   13  1.28
+183   Antigua NSAN    B1    3 T311   10  0.83
+184   Antigua NSAN    B1    4 T131   24  2.44
+185   Antigua NSAN    B1    5 T022   30  1.30
+186   Antigua NSAN    B1    6 T000   25  1.34
+187   Antigua NSAN    B1    7 T113   25  2.06
+188   Antigua NSAN    B1    8 T220   32  3.02
+189   Antigua NSAN    B1    9 T111   27  2.18
+190   Antigua NSAN    B2   10 T131   26  2.35
+191   Antigua NSAN    B2   11 T002   28  2.15
+192   Antigua NSAN    B2   12 T111   36  3.24
+193   Antigua NSAN    B2   13 T020   34  2.78
+194   Antigua NSAN    B2   14 T222   27  2.91
+195   Antigua NSAN    B2   15 T111   32  3.10
+196   Antigua NSAN    B2   16 T200   28  2.86
+197   Antigua NSAN    B2   17 T113   32  3.33
+198   Antigua NSAN    B2   18 T311   32  3.00
+199   Antigua NSAN    B3   19 T022   32  2.75
+200   Antigua NSAN    B3   20 T131   36  2.92
+201   Antigua NSAN    B3   21 T000   28  1.70
+202   Antigua NSAN    B3   22 T220   34  3.36
+203   Antigua NSAN    B3   23 T111   30  1.58
+204   Antigua NSAN    B3   24 T202   27  1.98
+205   Antigua NSAN    B3   25 T311   39  2.90
+206   Antigua NSAN    B3   26 T113   26  2.05
+207   Antigua NSAN    B3   27 T111   24  1.40
+208   Antigua NSAN    B4   28 T002   33  1.95
+209   Antigua NSAN    B4   29 T111   29  2.34
+210   Antigua NSAN    B4   30 T200   19  1.55
+211   Antigua NSAN    B4   31 T222   22  1.73
+212   Antigua NSAN    B4   32 T020   30  2.05
+213   Antigua NSAN    B4   33 T131   33  3.44
+214   Antigua NSAN    B4   34 T113   33  2.11
+215   Antigua NSAN    B4   35 T311   35  3.22
+216   Antigua NSAN    B4   36 T111   21  1.60
+217   Antigua OVAN    B1    1 T111   28  2.04
+218   Antigua OVAN    B1    2 T113   35  3.88
+219   Antigua OVAN    B1    3 T311   38  5.53
+220   Antigua OVAN    B1    4 T131   42  6.61
+221   Antigua OVAN    B1    5 T000   31  2.97
+222   Antigua OVAN    B1    6 T111   35  4.47
+223   Antigua OVAN    B1    7 T220   26  4.06
+224   Antigua OVAN    B1    8 T022   37  5.02
+225   Antigua OVAN    B1    9 T202   38  4.56
+226   Antigua OVAN    B2   10 T111   41  3.50
+227   Antigua OVAN    B2   11 T020   37  4.58
+228   Antigua OVAN    B2   12 T131   30  4.42
+229   Antigua OVAN    B2   13 T200   47  6.16
+230   Antigua OVAN    B2   14 T311   45  6.09
+231   Antigua OVAN    B2   15 T113   38  4.94
+232   Antigua OVAN    B2   16 T222   37  5.83
+233   Antigua OVAN    B2   17 T111   37  5.05
+234   Antigua OVAN    B2   18 T002   30  3.90
+235   Antigua OVAN    B3   19 T131   35  3.92
+236   Antigua OVAN    B3   20 T022   42  4.78
+237   Antigua OVAN    B3   21 T111   40  5.26
+238   Antigua OVAN    B3   22 T220   40  5.52
+239   Antigua OVAN    B3   23 T111   42  5.87
+240   Antigua OVAN    B3   24 T311   43  6.19
+241   Antigua OVAN    B3   25 T000   39  5.26
+242   Antigua OVAN    B3   26 T202   30  3.08
+243   Antigua OVAN    B3   27 T113   29  3.14
+244   Antigua OVAN    B4   28 T222   45  4.56
+245   Antigua OVAN    B4   29 T113   38  4.74
+246   Antigua OVAN    B4   30 T311   38  5.32
+247   Antigua OVAN    B4   31 T111   45  5.57
+248   Antigua OVAN    B4   32 T002   26  1.69
+249   Antigua OVAN    B4   33 T020   40  4.57
+250   Antigua OVAN    B4   34 T131   38  6.18
+251   Antigua OVAN    B4   35 T111   48  6.90
+252   Antigua OVAN    B4   36 T200   33  3.93
+253   Antigua ORAN    B1    1 T113   43  5.26
+254   Antigua ORAN    B1    2 T111   44  6.87
+255   Antigua ORAN    B1    3 T202   44  7.78
+256   Antigua ORAN    B1    4 T311   41  6.75
+257   Antigua ORAN    B1    5 T022   44  6.56
+258   Antigua ORAN    B1    6 T131   42  6.47
+259   Antigua ORAN    B1    7 T111   41  6.71
+260   Antigua ORAN    B1    8 T220   41  6.74
+261   Antigua ORAN    B1    9 T000   45  6.92
+262   Antigua ORAN    B2   10 T002   36  3.75
+263   Antigua ORAN    B2   11 T020   35  3.56
+264   Antigua ORAN    B2   12 T113   38  5.45
+265   Antigua ORAN    B2   13 T311   40  7.55
+266   Antigua ORAN    B2   14 T111   40  7.20
+267   Antigua ORAN    B2   15 T222   44  6.48
+268   Antigua ORAN    B2   16 T200   41  7.36
+269   Antigua ORAN    B2   17 T131   41  7.18
+270   Antigua ORAN    B2   18 T111   48  7.53
+271   Antigua ORAN    B3   19 T000   36  5.74
+272   Antigua ORAN    B3   20 T311   44  7.52
+273   Antigua ORAN    B3   21 T220   46  7.87
+274   Antigua ORAN    B3   22 T111   43  6.39
+275   Antigua ORAN    B3   23 T113   46  7.04
+276   Antigua ORAN    B3   24 T111   40  6.48
+277   Antigua ORAN    B3   25 T131   47  7.56
+278   Antigua ORAN    B3   26 T202   46  6.87
+279   Antigua ORAN    B3   27 T022   41  6.12
+280   Antigua ORAN    B4   28 T200   47  7.45
+281   Antigua ORAN    B4   29 T111   45  6.75
+282   Antigua ORAN    B4   30 T131   42  6.41
+283   Antigua ORAN    B4   31 T020   37  5.28
+284   Antigua ORAN    B4   32 T311   35  5.27
+285   Antigua ORAN    B4   33 T002   46  7.28
+286   Antigua ORAN    B4   34 T111   45  7.39
+287   Antigua ORAN    B4   35 T222   43  6.61
+288   Antigua ORAN    B4   36 T113   37  4.75
+289 StVincent CPSV    B1    1 T022   NA 24.00
+290 StVincent CPSV    B1    2 T131   NA 27.10
+291 StVincent CPSV    B1    3 T111   NA 26.50
+292 StVincent CPSV    B1    4 T000   NA 23.10
+293 StVincent CPSV    B1    5 T202   NA 22.10
+294 StVincent CPSV    B1    6 T220   NA 24.10
+295 StVincent CPSV    B1    7 T111   NA 26.10
+296 StVincent CPSV    B1    8 T113   NA 22.50
+297 StVincent CPSV    B1    9 T311   NA 23.00
+298 StVincent CPSV    B2   10 T111   NA 26.40
+299 StVincent CPSV    B2   11 T311   NA 24.80
+300 StVincent CPSV    B2   12 T111   NA 23.80
+301 StVincent CPSV    B2   13 T222   NA 24.00
+302 StVincent CPSV    B2   14 T200   NA 22.80
+303 StVincent CPSV    B2   15 T131   NA 26.00
+304 StVincent CPSV    B2   16 T002   NA 20.50
+305 StVincent CPSV    B2   17 T113   NA 24.40
+306 StVincent CPSV    B2   18 T020   NA 26.00
+307 StVincent CPSV    B3   19 T220   NA 19.00
+308 StVincent CPSV    B3   20 T111   NA 21.00
+309 StVincent CPSV    B3   21 T111   NA 24.10
+310 StVincent CPSV    B3   22 T311   NA 23.10
+311 StVincent CPSV    B3   23 T131   NA 20.10
+312 StVincent CPSV    B3   24 T022   NA 23.20
+313 StVincent CPSV    B3   25 T202   NA 19.80
+314 StVincent CPSV    B3   26 T113   NA 19.00
+315 StVincent CPSV    B3   27 T000   NA 22.20
+316 StVincent CPSV    B4   28 T131   NA 25.20
+317 StVincent CPSV    B4   29 T222   NA 24.80
+318 StVincent CPSV    B4   30 T200   NA 21.20
+319 StVincent CPSV    B4   31 T111   NA 23.10
+320 StVincent CPSV    B4   32 T002   NA 20.90
+321 StVincent CPSV    B4   33 T311   NA 20.00
+322 StVincent CPSV    B4   34 T020   NA 20.90
+323 StVincent CPSV    B4   35 T111   NA 21.50
+324 StVincent CPSV    B4   36 T113   NA 13.40
+325 StVincent MPSV    B1    1 T311   NA 16.70
+326 StVincent MPSV    B1    2 T131   NA 13.00
+327 StVincent MPSV    B1    3 T111   NA 17.80
+328 StVincent MPSV    B1    4 T111   NA 11.50
+329 StVincent MPSV    B1    5 T022   NA 12.40
+330 StVincent MPSV    B1    6 T113   NA 12.10
+331 StVincent MPSV    B1    7 T220   NA 13.50
+332 StVincent MPSV    B1    8 T000   NA  8.50
+333 StVincent MPSV    B1    9 T202   NA 13.00
+334 StVincent MPSV    B2   10 T131   NA 12.20
+335 StVincent MPSV    B2   11 T222   NA 15.10
+336 StVincent MPSV    B2   12 T200   NA 11.80
+337 StVincent MPSV    B2   13 T111   NA 12.80
+338 StVincent MPSV    B2   14 T002   NA  7.10
+339 StVincent MPSV    B2   15 T311   NA 17.00
+340 StVincent MPSV    B2   16 T020   NA  6.20
+341 StVincent MPSV    B2   17 T111   NA 12.50
+342 StVincent MPSV    B2   18 T113   NA 15.20
+343 StVincent MPSV    B3   19 T000   NA  8.10
+344 StVincent MPSV    B3   20 T113   NA 13.10
+345 StVincent MPSV    B3   21 T202   NA 14.20
+346 StVincent MPSV    B3   22 T311   NA 18.90
+347 StVincent MPSV    B3   23 T022   NA 12.50
+348 StVincent MPSV    B3   24 T131   NA 17.00
+349 StVincent MPSV    B3   25 T111   NA 13.50
+350 StVincent MPSV    B3   26 T220   NA 12.00
+351 StVincent MPSV    B3   27 T111   NA 12.80
+352 StVincent MPSV    B4   28 T113   NA 14.00
+353 StVincent MPSV    B4   29 T002   NA 10.50
+354 StVincent MPSV    B4   30 T020   NA 14.40
+355 StVincent MPSV    B4   31 T111   NA 13.80
+356 StVincent MPSV    B4   32 T311   NA 12.80
+357 StVincent MPSV    B4   33 T131   NA 14.50
+358 StVincent MPSV    B4   34 T222   NA 13.10
+359 StVincent MPSV    B4   35 T200   NA 14.00
+360 StVincent MPSV    B4   36 T111   NA 13.50
+361 StVincent AGSV    B1    1 T220   NA 10.40
+362 StVincent AGSV    B1    2 T000   NA  9.10
+363 StVincent AGSV    B1    3 T131   NA  9.20
+364 StVincent AGSV    B1    4 T022   NA 10.10
+365 StVincent AGSV    B1    5 T311   NA 15.20
+366 StVincent AGSV    B1    6 T111   NA 13.90
+367 StVincent AGSV    B1    7 T113   NA 15.10
+368 StVincent AGSV    B1    8 T111   NA 12.20
+369 StVincent AGSV    B1    9 T202   NA  9.80
+370 StVincent AGSV    B2   10 T113   NA 11.80
+371 StVincent AGSV    B2   11 T002   NA 10.10
+372 StVincent AGSV    B2   12 T020   NA 13.00
+373 StVincent AGSV    B2   13 T111   NA 13.20
+374 StVincent AGSV    B2   14 T311   NA 10.20
+375 StVincent AGSV    B2   15 T131   NA 12.00
+376 StVincent AGSV    B2   16 T222   NA 13.20
+377 StVincent AGSV    B2   17 T200   NA 10.90
+378 StVincent AGSV    B2   18 T111   NA 15.10
+379 StVincent AGSV    B3   19 T220   NA  9.90
+380 StVincent AGSV    B3   20 T022   NA 12.00
+381 StVincent AGSV    B3   21 T113   NA 12.50
+382 StVincent AGSV    B3   22 T111   NA 14.50
+383 StVincent AGSV    B3   23 T131   NA 12.20
+384 StVincent AGSV    B3   24 T111   NA 11.50
+385 StVincent AGSV    B3   25 T202   NA 11.50
+386 StVincent AGSV    B3   26 T311   NA 16.50
+387 StVincent AGSV    B3   27 T000   NA  7.80
+388 StVincent AGSV    B4   28 T200   NA 13.00
+389 StVincent AGSV    B4   29 T311   NA  7.00
+390 StVincent AGSV    B4   30 T111   NA 12.40
+391 StVincent AGSV    B4   31 T222   NA 14.00
+392 StVincent AGSV    B4   32 T131   NA 13.10
+393 StVincent AGSV    B4   33 T111   NA 13.00
+394 StVincent AGSV    B4   34 T020   NA 16.00
+395 StVincent AGSV    B4   35 T113   NA 14.50
+396 StVincent AGSV    B4   36 T002   NA 11.00
+397 StVincent CASV    B1    1 T311   NA 22.00
+398 StVincent CASV    B1    2 T113   NA 18.20
+399 StVincent CASV    B1    3 T022   NA 14.40
+400 StVincent CASV    B1    4 T111   NA 22.40
+401 StVincent CASV    B1    5 T220   NA 22.30
+402 StVincent CASV    B1    6 T111   NA 20.00
+403 StVincent CASV    B1    7 T000   NA 16.00
+404 StVincent CASV    B1    8 T202   NA 17.20
+405 StVincent CASV    B1    9 T131   NA 16.10
+406 StVincent CASV    B2   10 T311   NA 22.10
+407 StVincent CASV    B2   11 T113   NA 20.30
+408 StVincent CASV    B2   12 T020   NA 16.00
+409 StVincent CASV    B2   13 T111   NA 23.80
+410 StVincent CASV    B2   14 T131   NA 20.20
+411 StVincent CASV    B2   15 T111   NA 24.50
+412 StVincent CASV    B2   16 T222   NA 26.80
+413 StVincent CASV    B2   17 T200   NA 19.90
+414 StVincent CASV    B2   18 T002   NA 13.70
+415 StVincent CASV    B3   19 T202   NA  9.10
+416 StVincent CASV    B3   20 T113   NA 12.20
+417 StVincent CASV    B3   21 T000   NA 11.10
+418 StVincent CASV    B3   22 T131   NA 10.50
+419 StVincent CASV    B3   23 T311   NA 21.80
+420 StVincent CASV    B3   24 T111   NA 17.20
+421 StVincent CASV    B3   25 T111   NA 20.50
+422 StVincent CASV    B3   26 T220   NA 20.00
+423 StVincent CASV    B3   27 T022   NA 16.10
+424 StVincent CASV    B4   28 T002   NA 19.10
+425 StVincent CASV    B4   29 T111   NA 22.20
+426 StVincent CASV    B4   30 T111   NA 24.20
+427 StVincent CASV    B4   31 T131   NA 20.20
+428 StVincent CASV    B4   32 T311   NA 21.10
+429 StVincent CASV    B4   33 T200   NA 22.80
+430 StVincent CASV    B4   34 T020   NA 20.10
+431 StVincent CASV    B4   35 T113   NA 20.30
+432 StVincent CASV    B4   36 T222   NA 22.00
+433 StVincent SSSV    B1    1 T022   NA  9.50
+434 StVincent SSSV    B1    2 T202   NA 10.50
+435 StVincent SSSV    B1    3 T000   NA 14.10
+436 StVincent SSSV    B1    4 T220   NA  9.70
+437 StVincent SSSV    B1    5 T131   NA 11.20
+438 StVincent SSSV    B1    6 T111   NA 13.10
+439 StVincent SSSV    B1    7 T311   NA  9.20
+440 StVincent SSSV    B1    8 T113   NA 13.10
+441 StVincent SSSV    B1    9 T111   NA 11.50
+442 StVincent SSSV    B2   10 T111   NA 11.20
+443 StVincent SSSV    B2   11 T020   NA 12.10
+444 StVincent SSSV    B2   12 T002   NA 11.00
+445 StVincent SSSV    B2   13 T111   NA 16.10
+446 StVincent SSSV    B2   14 T200   NA 12.50
+447 StVincent SSSV    B2   15 T131   NA  9.90
+448 StVincent SSSV    B2   16 T222   NA 17.50
+449 StVincent SSSV    B2   17 T131   NA 11.80
+450 StVincent SSSV    B2   18 T311   NA 12.20
+451 StVincent SSSV    B3   19 T202   NA  8.70
+452 StVincent SSSV    B3   20 T131   NA 16.40
+453 StVincent SSSV    B3   21 T113   NA 16.10
+454 StVincent SSSV    B3   22 T220   NA  9.10
+455 StVincent SSSV    B3   23 T022   NA 12.20
+456 StVincent SSSV    B3   24 T111   NA 12.40
+457 StVincent SSSV    B3   25 T111   NA 10.00
+458 StVincent SSSV    B3   26 T000   NA 12.30
+459 StVincent SSSV    B3   27 T311   NA  9.00
+460 StVincent SSSV    B4   28 T111   NA 15.20
+461 StVincent SSSV    B4   29 T113   NA 20.20
+462 StVincent SSSV    B4   30 T020   NA 13.70
+463 StVincent SSSV    B4   31 T111   NA 14.20
+464 StVincent SSSV    B4   32 T200   NA 14.50
+465 StVincent SSSV    B4   33 T222   NA 12.00
+466 StVincent SSSV    B4   34 T002   NA 11.50
+467 StVincent SSSV    B4   35 T311   NA 11.20
+468 StVincent SSSV    B4   36 T131   NA 10.20
+469 StVincent UISV    B1    1 T202   NA 15.40
+470 StVincent UISV    B1    2 T000   NA 12.20
+471 StVincent UISV    B1    3 T220   NA 26.00
+472 StVincent UISV    B1    4 T111   NA 20.10
+473 StVincent UISV    B1    5 T022   NA 14.10
+474 StVincent UISV    B1    6 T131   NA 21.80
+475 StVincent UISV    B1    7 T113   NA 20.10
+476 StVincent UISV    B1    8 T311   NA 28.10
+477 StVincent UISV    B1    9 T111   NA 23.10
+478 StVincent UISV    B2   10 T311   NA 22.40
+479 StVincent UISV    B2   11 T113   NA 28.90
+480 StVincent UISV    B2   12 T111   NA 19.00
+481 StVincent UISV    B2   13 T131   NA 21.40
+482 StVincent UISV    B2   14 T111   NA 20.50
+483 StVincent UISV    B2   15 T020   NA 14.00
+484 StVincent UISV    B2   16 T200   NA 29.50
+485 StVincent UISV    B2   17 T002   NA 13.30
+486 StVincent UISV    B2   18 T222   NA 23.70
+487 StVincent UISV    B3   19 T202   NA 25.10
+488 StVincent UISV    B3   20 T220   NA 30.10
+489 StVincent UISV    B3   21 T111   NA 23.10
+490 StVincent UISV    B3   22 T113   NA 24.50
+491 StVincent UISV    B3   23 T131   NA 17.80
+492 StVincent UISV    B3   24 T022   NA 15.10
+493 StVincent UISV    B3   25 T311   NA 25.80
+494 StVincent UISV    B3   26 T111   NA 23.20
+495 StVincent UISV    B3   27 T000   NA 17.20
+496 StVincent UISV    B4   28 T113   NA 20.40
+497 StVincent UISV    B4   29 T111   NA 22.50
+498 StVincent UISV    B4   30 T200   NA 22.20
+499 StVincent UISV    B4   31 T311   NA 26.80
+500 StVincent UISV    B4   32 T131   NA 23.00
+501 StVincent UISV    B4   33 T002   NA 11.40
+502 StVincent UISV    B4   34 T020   NA 19.50
+503 StVincent UISV    B4   35 T222   NA 25.50
+504 StVincent UISV    B4   36 T111   NA 19.80
+505 StVincent OOSV    B1    1 T111   NA 16.00
+506 StVincent OOSV    B1    2 T000   NA 12.00
+507 StVincent OOSV    B1    3 T113   NA 21.10
+508 StVincent OOSV    B1    4 T311   NA 22.10
+509 StVincent OOSV    B1    5 T111   NA 20.00
+510 StVincent OOSV    B1    6 T220   NA 23.20
+511 StVincent OOSV    B1    7 T202   NA 20.60
+512 StVincent OOSV    B1    8 T131   NA 12.80
+513 StVincent OOSV    B1    9 T022   NA  9.00
+514 StVincent OOSV    B2   10 T020   NA 12.30
+515 StVincent OOSV    B2   11 T002   NA 11.00
+516 StVincent OOSV    B2   12 T111   NA 17.00
+517 StVincent OOSV    B2   13 T113   NA 24.00
+518 StVincent OOSV    B2   14 T311   NA 28.50
+519 StVincent OOSV    B2   15 T200   NA 25.70
+520 StVincent OOSV    B2   16 T111   NA 13.10
+521 StVincent OOSV    B2   17 T222   NA 16.30
+522 StVincent OOSV    B2   18 T131   NA 15.00
+523 StVincent OOSV    B3   19 T131   NA 13.10
+524 StVincent OOSV    B3   20 T022   NA 10.00
+525 StVincent OOSV    B3   21 T202   NA 14.00
+526 StVincent OOSV    B3   22 T220   NA 18.80
+527 StVincent OOSV    B3   23 T111   NA 14.00
+528 StVincent OOSV    B3   24 T113   NA 11.00
+529 StVincent OOSV    B3   25 T111   NA 18.10
+530 StVincent OOSV    B3   26 T000   NA 12.10
+531 StVincent OOSV    B3   27 T311   NA 28.00
+532 StVincent OOSV    B4   28 T311   NA 20.60
+533 StVincent OOSV    B4   29 T113   NA 10.10
+534 StVincent OOSV    B4   30 T200   NA 19.20
+535 StVincent OOSV    B4   31 T002   NA  7.60
+536 StVincent OOSV    B4   32 T020   NA  8.20
+537 StVincent OOSV    B4   33 T222   NA 23.10
+538 StVincent OOSV    B4   34 T111   NA 15.80
+539 StVincent OOSV    B4   35 T111   NA 18.60
+540 StVincent OOSV    B4   36 T113   NA 20.00
+541 StVincent OTSV    B1    1 T022   NA 12.20
+542 StVincent OTSV    B1    2 T113   NA 19.80
+543 StVincent OTSV    B1    3 T131   NA 19.90
+544 StVincent OTSV    B1    4 T311   NA 25.30
+545 StVincent OTSV    B1    5 T111   NA 19.00
+546 StVincent OTSV    B1    6 T111   NA 20.50
+547 StVincent OTSV    B1    7 T000   NA  7.80
+548 StVincent OTSV    B1    8 T202   NA 17.80
+549 StVincent OTSV    B1    9 T220   NA 19.70
+550 StVincent OTSV    B2   10 T020   NA 13.10
+551 StVincent OTSV    B2   11 T311   NA 22.40
+552 StVincent OTSV    B2   12 T113   NA 23.20
+553 StVincent OTSV    B2   13 T111   NA 17.80
+554 StVincent OTSV    B2   14 T200   NA 20.00
+555 StVincent OTSV    B2   15 T002   NA 20.00
+556 StVincent OTSV    B2   16 T131   NA 15.60
+557 StVincent OTSV    B2   17 T222   NA 15.70
+558 StVincent OTSV    B2   18 T111   NA 29.10
+559 StVincent OTSV    B3   19 T311   NA 13.10
+560 StVincent OTSV    B3   20 T022   NA 20.40
+561 StVincent OTSV    B3   21 T111   NA 10.80
+562 StVincent OTSV    B3   22 T000   NA 18.40
+563 StVincent OTSV    B3   23 T220   NA 14.00
+564 StVincent OTSV    B3   24 T131   NA 14.20
+565 StVincent OTSV    B3   25 T111   NA 14.10
+566 StVincent OTSV    B3   26 T113   NA 18.40
+567 StVincent OTSV    B3   27 T202   NA 20.50
+568 StVincent OTSV    B4   28 T113   NA 13.00
+569 StVincent OTSV    B4   29 T020   NA  8.40
+570 StVincent OTSV    B4   30 T002   NA 10.00
+571 StVincent OTSV    B4   31 T311   NA 14.10
+572 StVincent OTSV    B4   32 T200   NA 18.10
+573 StVincent OTSV    B4   33 T222   NA 22.20
+574 StVincent OTSV    B4   34 T131   NA 14.20
+575 StVincent OTSV    B4   35 T111   NA 12.10
+576 StVincent OTSV    B4   36 T111   NA 13.00
+577 StVincent LPSV    B1    1 T311   NA 14.20
+578 StVincent LPSV    B1    2 T111   NA  8.20
+579 StVincent LPSV    B1    3 T220   NA  3.50
+580 StVincent LPSV    B1    4 T022   NA  7.20
+581 StVincent LPSV    B1    5 T131   NA  9.20
+582 StVincent LPSV    B1    6 T202   NA  8.50
+583 StVincent LPSV    B1    7 T111   NA  6.70
+584 StVincent LPSV    B1    8 T000   NA  7.50
+585 StVincent LPSV    B1    9 T113   NA 14.20
+586 StVincent LPSV    B2   10 T111   NA  4.50
+587 StVincent LPSV    B2   11 T200   NA  8.00
+588 StVincent LPSV    B2   12 T222   NA  5.50
+589 StVincent LPSV    B2   13 T131   NA  9.10
+590 StVincent LPSV    B2   14 T111   NA  7.20
+591 StVincent LPSV    B2   15 T311   NA  8.70
+592 StVincent LPSV    B2   16 T020   NA  6.10
+593 StVincent LPSV    B2   17 T113   NA 16.30
+594 StVincent LPSV    B2   18 T002   NA 15.20
+595 StVincent LPSV    B3   19 T111   NA  7.10
+596 StVincent LPSV    B3   20 T000   NA  6.10
+597 StVincent LPSV    B3   21 T220   NA 16.00
+598 StVincent LPSV    B3   22 T202   NA 16.80
+599 StVincent LPSV    B3   23 T131   NA 13.50
+600 StVincent LPSV    B3   24 T022   NA  8.80
+601 StVincent LPSV    B3   25 T111   NA 18.20
+602 StVincent LPSV    B3   26 T311   NA 13.50
+603 StVincent LPSV    B3   27 T113   NA 15.90
+604 StVincent LPSV    B4   28 T111   NA 17.50
+605 StVincent LPSV    B4   29 T113   NA 11.00
+606 StVincent LPSV    B4   30 T131   NA 11.40
+607 StVincent LPSV    B4   31 T111   NA 14.90
+608 StVincent LPSV    B4   32 T200   NA 24.50
+609 StVincent LPSV    B4   33 T002   NA  9.00
+610 StVincent LPSV    B4   34 T020   NA  7.10
+611 StVincent LPSV    B4   35 T222   NA 12.90
+612 StVincent LPSV    B4   36 T311   NA  6.80</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agridat)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"durban.splitplot"</span>)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"brandle.rape"</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> brandle.rape</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>gen, data1<span class="sc">$</span>loc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        
+         Bagot Beausejour Dauphin Mariapolis Roblin ShoalLake Souris SwanRiver
+  Altex      3          3       3          3      3         3      3         3
+  Andor      3          3       3          3      3         3      3         3
+  Regent     3          3       3          3      3         3      3         3
+  Triton     3          3       3          3      3         3      3         3
+  Westar     3          3       3          3      3         3      3         3
+        
+         Teulon
+  Altex       3
+  Andor       3
+  Regent      3
+  Triton      3
+  Westar      3</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"hunter.corn"</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> hunter.corn</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data2<span class="sc">$</span>nitro, data2<span class="sc">$</span>loc, data2<span class="sc">$</span>year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, ,  = 1950
+
+     
+      Benedict Cloud Custer Hobson Malheur MalheurSp Martin Moeller VdeW
+  0          0     0      0      1       1         0      0       1    0
+  50         0     0      0      1       1         0      0       1    0
+  100        0     0      0      1       1         0      0       1    0
+  150        0     0      0      1       1         0      0       1    0
+  200        0     0      0      0       0         0      0       0    0
+
+, ,  = 1951
+
+     
+      Benedict Cloud Custer Hobson Malheur MalheurSp Martin Moeller VdeW
+  0          0     0      1      0       1         0      0       1    1
+  50         0     0      1      0       1         0      0       1    1
+  100        0     0      1      0       1         0      0       1    1
+  150        0     0      1      0       1         0      0       1    1
+  200        0     0      1      0       0         0      0       1    1
+
+, ,  = 1952
+
+     
+      Benedict Cloud Custer Hobson Malheur MalheurSp Martin Moeller VdeW
+  0          1     1      0      0       1         1      1       0    0
+  50         1     1      0      0       1         1      1       0    0
+  100        1     1      0      0       1         1      1       0    0
+  150        1     1      0      0       1         1      1       0    0
+  200        1     1      0      0       0         0      1       0    0</code></pre>
+</div>
+</div>
+<ol start="4" type="1">
+<li><strong>Factorial design repeated measures</strong></li>
+</ol>
+<p>https://search.r-project.org/CRAN/refmans/agridat/html/gregory.cotton.html</p>
+<p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle&nbsp;<a href="https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/">crossed random factors</a>&nbsp;as well as nested</p>
+<p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/split-plot-design.html" class="pagination-link" aria-label="Split Plot Design">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Split Plot Design</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/incomplete-block-design.html" class="pagination-link" aria-label="Balanced Incomplete Block Experiment">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Balanced Incomplete Block Experiment</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
