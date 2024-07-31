@@ -46,7 +46,7 @@ In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, in
 
 1.  Load required libraries
 
-```{r}
+```{r,  message=FALSE}
 #| message: false
 #| warning: false
 library(dplyr)
@@ -138,7 +138,7 @@ plot(model1, resid(., scaled=TRUE) ~ fitted(.),
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-rcbd_error
+#| label: fig-split-plot_error
 #| fig-cap: "Plot of residuals versus fitted values"
 #| column: margin
 #| 
@@ -161,7 +161,7 @@ qqnorm(resid(model1), main = NULL); qqline(resid(model1))
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-rcbd_norm
+#| label: fig-split-plot_norm
 #| fig-cap: "QQ-plot of residuals"
 #| column: margin
 
@@ -376,12 +376,12 @@ It looks perfectly balanced, with exactly 3 observation per treatment group.
 
 Last, check the distribution of the dependent variable by plotting a histogram using a `hist()`.
 
-```{r}
+```{r, eval=FALSE}
 hist(rice$yield)
 ```
 
-```{r}
-#| label: fig-rcbd_hist
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_hist
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
@@ -405,7 +405,7 @@ summary(model3)
 
 ### nlme
 
-```{r, eval=FALSE}
+```{r}
 model3 <- lme(yield ~ nitrogen*management*variety,
                   random = ~ 1|block/nitrogen/management,
                   data = rice, 
@@ -427,7 +427,7 @@ plot(model3, resid(., scaled=TRUE) ~ fitted(.),
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-rcbd_error
+#| label: fig-split-split-plot_error
 #| fig-cap: "Plot of residuals versus fitted values"
 #| column: margin
 #| 
@@ -440,16 +440,16 @@ plot(model3, resid(., scaled=TRUE) ~ fitted(.),
 Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and qq-line.
 
 ```{r, eval=FALSE}
-qqnorm(resid(model3), main = NULL); qqline(resid(model_rcbd))
+qqnorm(resid(model3), main = NULL); qqline(resid(model3))
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-rcbd_norm
+#| label: fig-split-split-plot_norm
 #| fig-cap: "QQ-plot of residuals"
 #| column: margin
 
 par(mar=c(5.1, 5, 2.1, 2.1))
-qqnorm(resid(model3), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd))
+qqnorm(resid(model3), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model3))
 ```
 
 Or we can do all at one using one function `check_model()`. 
