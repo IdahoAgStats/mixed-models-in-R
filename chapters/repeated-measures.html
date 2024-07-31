@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Repeated measures – Field Guide to the R Mixed Model Wilderness</title>
+<title>7&nbsp; Repeated measures mixed models – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -127,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/repeated-measures.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/repeated-measures.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures mixed models</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -189,7 +189,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/repeated-measures.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures mixed models</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -273,7 +273,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Repeated measures mixed models</span></h1>
 </div>
 
 
@@ -290,8 +290,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p>In the previous chapters we covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures random effects.</p>
 <p>Studies that involve repeated observations of the exact same experimental units require a repeated measures component to properly model correlations across time with the experiment unit. This is common in any perennial crop that is evaluated across years, hay crops subject to repeat cuttings, and many other circumstances. In these models, the ‘iid’ assumption (idependently and identically distributed) is being violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
-<p>There are several types of structures.</p>
+<p><strong><em>ADD STATISTICAL Model here</em></strong></p>
+<p>**add table for R codes for different covariance structures**</p>
+<p>There are several types of covariance structures:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Structure name</th>
+<th>nlme</th>
+<th>Assumption</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AR1</td>
+<td>corAR1()</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Compound symmetry</td>
+<td>corCompSymm()</td>
+<td>Correlation is equal for all time gaps between observations</td>
+</tr>
+<tr class="odd">
+<td>Unstructures</td>
+<td>CorSymm()</td>
+<td>Correlations are different for the various time gaps</td>
+</tr>
+</tbody>
+</table>
 <p>The repeated measures syntax in <strong><em>nlme</em></strong> follow this convention: <code>form = ~ time|grouping</code>. You can also use <code>1|group</code> and the observation order for each group will be. The default starting value (<code>value</code>) is zero, and if <code>fixed = FALSE</code> (the current nlme default), this value will be allowed to change during the model fitting process.</p>
 <p>There are several other options in the <strong>nlm</strong> machinery (search “cor” for more options and details on the syntax).</p>
 <p>Fitting models with correlated observations requires new libraries including mmrm and nlme. lmer allows random effects only.</p>
@@ -856,7 +890,7 @@ Variety                              1   3.8878      2.1112 0.221860
 Fertilizer                           2   5.1356     29.2728 0.001557 **
 Sample_time1:Variety                 4   2.0000      1.0574 0.539021   
 Sample_time1:Fertilizer              8   2.0000     26.3829 0.037022 * 
-Variety:Fertilizer                   2   8.0184      3.0751 0.102038   
+Variety:Fertilizer                   2   8.0183      3.0751 0.102038   
 Sample_time1:Variety:Fertilizer      8   2.0000      0.5396 0.781917   
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
