@@ -1,4 +1,4 @@
-## Repeated measures mixed models
+# Repeated measures mixed models
 
 In the previous chapters we covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures random effects.
 
@@ -10,15 +10,15 @@ Studies that involve repeated observations of the exact same experimental units 
 
 There are several types of covariance structures:
 
-| Structure name    | nlme          | Assumption                                                  |
+| Structure name       | nlme          | Assumption                                                                                    |
 |------------------------|------------------------|------------------------|
-| AR1               | corAR1()      |                                                             |
-| Compound symmetry | corCompSymm() | Correlation is equal for all time gaps between observations |
-| Unstructures      | CorSymm()     | Correlations are different for the various time gaps        |
+| Autoregressive (AR1) | corAR1()      | observations which are more proximate are more correlated than measures that are more distant |
+| Compound symmetry    | corCompSymm() | Correlation is equal for all time gaps between observations                                   |
+| Unstructured         | CorSymm()     | Correlations are different for the various time gaps                                          |
 
 The repeated measures syntax in ***nlme*** follow this convention: `form = ~ time|grouping`. You can also use `1|group` and the observation order for each group will be. The default starting value (`value`) is zero, and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process.
 
-There are several other options in the **nlm** machinery (search "cor" for more options and details on the syntax).
+There are several other options in the **nlme** machinery (search "cor" for more options and details on the syntax).
 
 Fitting models with correlated observations requires new libraries including mmrm and nlme. lmer allows random effects only.
 
@@ -30,13 +30,16 @@ Packages required for this tutorial:
 #| message: false
 #| warning: false
 library(dplyr) 
+library(ggplot2)
 library(nlme)
 library(mmrm)
 library(emmeans)
 library(performance)
 ```
 
-1.  **Repeated Measures RCBD**
+## Example Analysis
+
+### Repeated Measures RCBD
 
 The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable 'y' is the leaf area index assessed in five consecutive weeks on each plot.
 
@@ -47,26 +50,68 @@ dat <- agriTutorial::sorghum %>%
   mutate(week = as.numeric(factweek),
          block = as.character(varblock)) 
 
+```
+
+#### Data Integrity Checks
+
+```{r}
 str(dat)
+```
+
+```{r}
+table(dat$variety, dat$block)
+```
+
+```{r}
+
+#install.packages("viridis")
+library(viridis)
+
+ggplot(data = dat, aes(y = y, x = factweek, fill = variety)) +
+  geom_boxplot() +  
+  #scale_fill_brewer(palette="Dark2") +
+  scale_fill_viridis_d(option = "F") +
+    theme_bw()
+```
+
+Looks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
+
+One last step before we fit model is to look at the distribution of response variable.
+
+```{r, eval=FALSE}
+hist(dat$y, main = "", xlab = "yield")
+```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(dat$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+#### Model Building
+
+Let's fit the basic model first
+
+```{r}
+lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
+              data = dat,
+              na.action = na.exclude)
 
 ```
+
+The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject (plot).
+
+By adding this correlation structure, what we are implying is to keep each plot independent, but to allowing AR1 or compound symmetry correlations between responses for a given subject, here time factor is `week`.
 
 ```{r}
 cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
 cs2 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
 
-
-
-lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
-              data = dat,
-              na.action = na.exclude)
-
-
 lm2 <- update(lm1, corr = cs1)
 lm3 <- update(lm1, corr= cs2)
 
-# Compare models with different correlation structure using anova()
-anova(lm1, lm2, lm3)
 ```
 
 We can compare the performance of these models (lm1, lm2, lm3) either by using `anova()` or by `compare_performance()` function from the 'performance' library.
@@ -80,32 +125,46 @@ print_md(result)
 ##model with AR1 correaltion matrix is better
 ```
 
-## Model Diagnostcis
+We prefer to chose model with lower AIC and BIC values. In this scenario, we will move forward with lm2 model containing AR1 structure.
+
+Let's run a `summary()` on lm2 model to look at the estimates for random and fixed effects.
 
 ```{r}
-check_model(lm2)
+summary(lm2)
 ```
 
-## Post-Hoc Analysis
+#### Check Model Assumptions
+
+```{r}
+#| message: false
+#| warning: false
+check_model(lm2)
+plot(lm2)
+qqnorm(resid(lm2)); qqline(resid(lm2))
+```
+
+#### Inference
+
+The ANOVA table suggests a highly significant effect of the variety, week, and variety x week interaction effect.
 
 ```{r}
 anova(lm2)
 ```
 
-## Emmeans
+We can estimate the marginal means for variety and week effect and their interaction using `emmeans()` function.
 
 ```{r}
 
 mean_1 <- emmeans(lm2, ~ variety)
 mean_1
-pairs(mean_1)
 
-mean_2 <- emmeans(lm2, ~ variety:factweek)
+mean_2 <- emmeans(lm2, ~ variety*factweek)
 mean_2
 
 ```
 
-2.  **Split plot repeated measures**
+### Split plot repeated measures
+
     -   **using mmrm() from mmrm package:**
 
 The example shown below contains yield data in a split-plot design. In this data set, we have:
@@ -122,7 +181,7 @@ This can be analyze either using `nlme` or `mmrm`.
 
 ```{r}
 library(readr)
-Yield <- read_csv(here::here("data/Yield.csv"))
+Yield <- read.csv(here::here("data/Yield.csv"))
 head(Yield)
 str(Yield)
 ```
@@ -148,6 +207,37 @@ table(Yield$plot)
 ```
 
 ## Model fit
+
+Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from nlme package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the mmrm package. 
+
+::: panel-tabset
+### nlme
+
+```{r}
+corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot, value = 0.2, fixed = FALSE)
+mod <- lme(Yield ~ Sample_time1*Variety*Fertilizer,
+                random = ~ 1|Rep/Variety/plot,
+                corr= corr_str1,
+                data = Yield, na.action= na.exclude)
+
+summary(mod)
+library(broom.mixed)
+tidy(mod)
+```
+
+### mmrm
+
+```{r}
+fit1 <- mmrm(
+  formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
+  data = Yield)
+
+
+summary(fit1)
+```
+:::
+
+
 
 ```{r}
 
