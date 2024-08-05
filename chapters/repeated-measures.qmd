@@ -139,8 +139,6 @@ summary(lm2)
 #| message: false
 #| warning: false
 check_model(lm2)
-plot(lm2)
-qqnorm(resid(lm2)); qqline(resid(lm2))
 ```
 
 #### Inference
@@ -165,8 +163,6 @@ mean_2
 
 ### Split plot repeated measures
 
-    -   **using mmrm() from mmrm package:**
-
 The example shown below contains yield data in a split-plot design. In this data set, we have:
 
 Variety: 2 levels
@@ -180,11 +176,43 @@ The yield data was collected repeatedly from the same Reps over 5 'Sample_times'
 This can be analyze either using `nlme` or `mmrm`.
 
 ```{r}
-library(readr)
 Yield <- read.csv(here::here("data/Yield.csv"))
-head(Yield)
+head(Yield, 5)
+```
+
+#### Data Integrity Checks
+The class of the variety, fertilizer, and Rep should be character. 
+```{r}
 str(Yield)
 ```
+We will now convert the fertilizer and Rep into character. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
+```{r}
+Yield$Variety <- factor(Yield$Variety) 
+Yield$Fertilizer <- factor(Yield$Fertilizer) 
+Yield$Sample_time1 <- factor(Yield$Sample_time) 
+Yield$Rep <- factor(Yield$Rep)  
+```
+
+In addition, we need a create variable for each subject which is plot in this case. The plot variable is needed to model the variation in each plot over the sampling time.
+```{r}
+##creating a plot variable 
+Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-')) 
+Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-')) 
+table(Yield$plot) 
+```
+Before fitting a model, let's check the distribution of the response variable.
+```{r, eval=FALSE}
+hist(Yield$Yield)
+```
+
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(Yield$Yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
 
 ## Model fit
 
@@ -193,17 +221,11 @@ str(Yield)
 To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
 
 ```{r}
-Yield$Variety <- factor(Yield$Variety) 
-Yield$Fertilizer <- factor(Yield$Fertilizer) 
-Yield$Sample_time1 <- factor(Yield$Sample_time) 
-Yield$Rep <- factor(Yield$Rep)  
+
 
 table(Yield$Fertilizer, Yield$Variety) 
 
-##creating a plot variable 
-Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-')) 
-Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-')) 
-table(Yield$plot) 
+
 ```
 
 ## Model fit
