@@ -33,6 +33,7 @@ library(dplyr)
 library(ggplot2)
 library(nlme)
 library(mmrm)
+library(broom.mixed)
 library(emmeans)
 library(performance)
 ```
@@ -152,13 +153,11 @@ anova(lm2)
 We can estimate the marginal means for variety and week effect and their interaction using `emmeans()` function.
 
 ```{r}
-
 mean_1 <- emmeans(lm2, ~ variety)
 mean_1
 
 mean_2 <- emmeans(lm2, ~ variety*factweek)
 mean_2
-
 ```
 
 ### Split plot repeated measures
@@ -221,29 +220,28 @@ hist(Yield$Yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
 
 ```{r}
-
-
 table(Yield$Fertilizer, Yield$Variety) 
-
-
 ```
 
 ## Model fit
 
 Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from nlme package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the mmrm package. 
+In addition, instead of `summary()` function to look at estimates of mixed and random effects. In this model we used `tidy()` function from the 'broom.mixed' package. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
 ::: panel-tabset
 ### nlme
 
 ```{r}
+#| warning: false
 corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot, value = 0.2, fixed = FALSE)
+
 mod <- lme(Yield ~ Sample_time1*Variety*Fertilizer,
                 random = ~ 1|Rep/Variety/plot,
                 corr= corr_str1,
                 data = Yield, na.action= na.exclude)
 
-summary(mod)
-library(broom.mixed)
+#summary(mod)
+
 tidy(mod)
 ```
 
@@ -254,89 +252,65 @@ fit1 <- mmrm(
   formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
   data = Yield)
 
-
-summary(fit1)
+tidy(fit1)
 ```
 :::
 
-
-
-```{r}
-
-corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot, value = 0.2, fixed = FALSE)
-corr_str2 = corCompSymm(form = ~ Sample_time|Rep/Variety/plot, fixed = FALSE)
-
-
-# establish model
-mod <- lme(Yield ~ Sample_time1*Variety*Fertilizer,
-                random = ~ 1|Rep/Variety/plot,
-                data = Yield, na.action= na.exclude)
-
-##update model with correlation matrix
-mod1 <- update(mod, corr= corr_str1)
-mod2 <- update(mod, corr= corr_str2)
-
-##compare different correlation matrices
-
-anova(mod, mod1, mod2)
-
-```
-
-A model with AR1 is better than compared to the model with compound symmetry structure.
-
 ### Model diagnostics
+We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions. 
 
+::: panel-tabset
+### nlme
 ```{r}
-check_model(mod1)
+#| warning: false
+#| message: false
+check_model(mod)
 ```
-
-Post-Hoc analysis
-
+### mmrm
 ```{r}
-anova(mod1)
-```
-
-```{r}
-emm <- emmeans(mod1,~ Fertilizer)
-pairs(emm)
-```
-
-##### Fitting Model using `mmrm()` from the mmrm package:
-
-```{r}
-fit1 <- mmrm(
-  formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
-  data = Yield)
-
-
-summary(fit1)
-
-```
-
-Model Diagnostics
-
-```{r}
-##check_model(asp.fit) ## performance package doesn't work with mmrm class.
+## performance package doesn't work with mmrm model class.
 plot(residuals(fit1)) 
 qqnorm(residuals(fit1)); qqline(residuals(fit1))
 ```
+:::
+These diagnostic plots look great! The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects all fall on a straight line so we can be satisfied with that.
 
-Anova
-
+### Inference
+::: panel-tabset
+### nlme
 ```{r}
-# type III tests 
+#| warning: false
+#| message: false
+anova(mod)
+```
+### mmrm
+```{r}
 car::Anova(fit1)
 ```
+:::
 
-Post-Hoc comparison
+Next, we can estimate marginal means and confidence intervals for the independent variables using `emmeans()`. 
 
+::: panel-tabset
+### nlme
 ```{r}
-# cell means 
-asp.emm <- emmeans(fit1, c('Variety','Fertilizer')) 
-pairs(asp.emm) 
+emmeans(mod,~ Fertilizer)
+emmeans(mod,~ Variety)
 ```
+### mmrm
+```{r}
+emmeans(fit1,~ Fertilizer)
+ emmeans(fit1,~ Variety)
+```
+:::
+
+::: column-margin
+Add a link for further exploring emmeans and contrast statements.
+:::
 
 3.  **Split-split plot repeated measures**
+
+Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures statement 
 
 ```{r}
 agridat::caribbean.maize
@@ -359,6 +333,9 @@ table(data2$nitro, data2$loc, data2$year)
 ```
 
 4.  **Factorial design repeated measures**
+
+As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously 
+
 
 https://search.r-project.org/CRAN/refmans/agridat/html/gregory.cotton.html
 
