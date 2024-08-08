@@ -10,9 +10,6 @@ $\mu$ = experiment mean, $\tau$ = effect of factor A, $\beta$ = effect of factor
 
 Assumptions of this model includes: independent and identically distributed error terms with a constant variance.
 
-::: callout-note
-## A note
-:::
 
 ## Example Analysis
 First step is to load the libraries required for the analysis:
@@ -39,7 +36,8 @@ While importing the data, d, n, p, and k were converted into factor variables us
 ```{r}
 library(agridat)
 
-data1 <- agridat::cochran.factorial %>%  mutate(d = as.factor(d),
+data1 <- agridat::cochran.factorial %>% 
+  mutate(d = as.factor(d),
          n = as.factor(n),
          p = as.factor(p),
          k = as.factor(k))
@@ -58,12 +56,19 @@ table(data1$d, data1$n, data1$p, data1$k)
 The design looks well balanced.
 
 Last step is to inspect the dependent variable to ensure its distribution is following expectations
-```{r}
+```{r, echo=FALSE}
+#| label: fig-factorial_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+```{r, eval=FALSE}
 hist(data1$yield)
 ```
 The range is roughly falling into the expected range. I don't see any extreme values (high or low) which might indicate issues with data.
 
-## Model fitting
+### Model fitting
 
 Model fitting with R is exactly the same as shown in previous chapters: we need to include all effect, as well as the interaction, which is represented by using the colon indicator ‘:’. Therefore, model syntax is:
 
@@ -73,84 +78,49 @@ which can be abbreviated as:
 
 `yield ~ d*n*p*k`
 
-```{r}
+::: panel-tabset
+### lme4
+
+```{r, warning=FALSE}
 model1 <- lmer(yield ~ d*n*p*k + (1|block),
                    data = data1, 
                    na.action = na.exclude)
-
-summary(model1)
+tidy(model1)
 ```
+### nlme
 
-::: callout-note
-## Model fit using lme()
-
-This same model can be fitted by using `lme()` from the 'nlme' package as well.
-
-```{r, eval=FALSE}
-model2 <- lme(yield ~ d*n*p*k,
-              random = ~1|block,
-                   data = data1, 
-                   na.action = na.exclude)
-
-model2 
-anova(model2)
-```
-
-The results are same from both models with `lmer()` or `lme()`.
+```{r, warning=FALSE}
+model1 <- lme(yield ~ d*n*p*k,
+                  random = ~ 1|block,
+                  data = data1, 
+                  na.action = na.exclude)
+tidy(model1)
+```   
 :::
 
+::: column-margin
+::: callout-note
+Instead of `summary()` function, we used `tidy()` function from 'broom.mixed' package to get a short summary output of the model.
+:::
+:::
+### Check Model Assumptions
+
+```{r, fig.height=9, message=FALSE}
+check_model(model1)
+```
+The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects all fall nearly on a straight line so we can be satisfied with that.
+### Inference
+We can get an ANOVA table for the linear mixed model using the function `anova()`, which works for both `lmer()` and `lme()` models..
 ```{r}
 anova(model1)
 ```
-
-### Check Model Assumptions
-
-the residuals seem to fit the assumption required for normality.
-
-```{r, "performance"}
-check_model(model1)
-```
-
-### Inference
-
+Let’s find estimates for some of the factors such as n, p, and n:k interaction. We will try the random intercept model first.
 ```{r}
-m1 <- emmeans(model1, specs = ~ d|k)
-m1
-pairs(m1)
-```
-
-```{r}
-m2 <- emmeans(model1, specs = ~ n)
-m2
-pairs(m2)
+emmeans(model1, specs = ~ n)
+emmeans(model1, specs = ~ p)
+emmeans(model1, specs = ~ n:k)
 ```
 
 2.  Unbalanced factorial design
 
-### *Data integrity checks*
-
-### Model Building
-
-::: column-margin
-Recall the model:
-
-$$                $$
-:::
-
-Here is the R syntax for that statistical model:
-
-::: panel-tabset
-### lme4
-
-```{r}
-
-```
-
-### nlme
-
-```{r}
-
-```
-:::
-
-### Flotsam & Jetsam
+### *Data integrity
