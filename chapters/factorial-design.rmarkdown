@@ -2,6 +2,7 @@
 title: "Factorial Design"
 ---
 
+
 ## Background
 
 Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is:
@@ -20,48 +21,48 @@ First step is to load the libraries required for the analysis:
 ::: panel-tabset
 ### lme4
 
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(broom.mixed); library(performance)
 ```
 
+
 ### nlme
+
 
 ```{r, message=FALSE, warning=FALSE, eval=FALSE}
 library(nlme); library(broom.mixed); library(emmeans)
 library(dplyr)
 ```
-:::
-Next, we will load the data set named 'cochran.factorial' from the 'agridat' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.
 
-While importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function.
+:::
+Next, we will load the data set named 'cochran.factorial' from the 'agridat' package.
+1.  **A 4x4 Factorial design**
+
+The response variable: yield
+
+A data frame with 32 observations on the following 4 variables.
+
+-   rep: replication factor
+
+-   block: block factor
+
+-   trt: treatment factor, 16 levels
+
+There were 4 treatment factors: d (dung treatment, 2 levels), n (nitrogen treatment, 2 levels), p (phosphorous treatment, 2 levels), and k (potassium treatment, 2 levels)
+
 
 ```{r}
 library(agridat)
 
-data1 <- agridat::cochran.factorial %>%  mutate(d = as.factor(d),
+data1 <- agridat::cochran.factorial %>% mutate(d = as.factor(d),
          n = as.factor(n),
          p = as.factor(p),
          k = as.factor(k))
-```
-### Data Integrity Checks
-Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer. 
-```{r}
 str(data1)
 ```
-This looks good.
 
-Next, inspect the independent variables and make sure the expected levels are present in the data.
-```{r}
-table(data1$d, data1$n, data1$p, data1$k)
-```
-The design looks well balanced.
-
-Last step is to inspect the dependent variable to ensure its distribution is following expectations
-```{r}
-hist(data1$yield)
-```
-The range is roughly falling into the expected range. I don't see any extreme values (high or low) which might indicate issues with data.
 
 ## Model fitting
 
@@ -73,6 +74,7 @@ which can be abbreviated as:
 
 `yield ~ d*n*p*k`
 
+
 ```{r}
 model1 <- lmer(yield ~ d*n*p*k + (1|block),
                    data = data1, 
@@ -81,10 +83,12 @@ model1 <- lmer(yield ~ d*n*p*k + (1|block),
 summary(model1)
 ```
 
+
 ::: callout-note
 ## Model fit using lme()
 
 This same model can be fitted by using `lme()` from the 'nlme' package as well.
+
 
 ```{r, eval=FALSE}
 model2 <- lme(yield ~ d*n*p*k,
@@ -96,22 +100,28 @@ model2
 anova(model2)
 ```
 
+
 The results are same from both models with `lmer()` or `lme()`.
 :::
+
 
 ```{r}
 anova(model1)
 ```
 
+
 ### Check Model Assumptions
 
 the residuals seem to fit the assumption required for normality.
+
 
 ```{r, "performance"}
 check_model(model1)
 ```
 
+
 ### Inference
+
 
 ```{r}
 m1 <- emmeans(model1, specs = ~ d|k)
@@ -124,6 +134,7 @@ m2 <- emmeans(model1, specs = ~ n)
 m2
 pairs(m2)
 ```
+
 
 2.  Unbalanced factorial design
 
@@ -142,15 +153,20 @@ Here is the R syntax for that statistical model:
 ::: panel-tabset
 ### lme4
 
+
 ```{r}
 
 ```
+
 
 ### nlme
 
+
 ```{r}
 
 ```
+
 :::
 
 ### Flotsam & Jetsam
+
