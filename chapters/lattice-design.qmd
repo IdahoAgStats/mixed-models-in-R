@@ -1,29 +1,16 @@
 ---
 title: "lattice_design"
 ---
+## Background
+Yates (1936) proposed this method of arranging agricultural variety trials involving a large number of crop varieties. These types of arrangements were named a quasi-factorial or lattice designs. His paper contained numerical examples based on the results of a uniformity trial on orange trees. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2, t = k3, or t = k(k +1).
+
+Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments. 
+
 
 https://kwstat.github.io/agridat/reference/cochran.lattice.html
 
-```{r}
-library(dplyr) 
-library(nlme)
-library(mmrm)
-library(emmeans)
-library(performance)
-library(lme4); library(lmerTest); library(emmeans)
-```
-
-Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design
 
 ```{r}
-library(agridat)
-data(burgueno.rowcol)
-dat <- burgueno.rowcol
-
-```
-
-```{r}
-
 # Two contiguous reps in 8 rows, 16 columns
 libs(desplot)
 desplot(dat, yield ~ col*row,
@@ -37,7 +24,27 @@ Statistical model for lattice design:
 
 $Yijk = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
 
-where, mu is the µ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
+where, $mu is the µ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
+
+
+```{r}
+library(dplyr) 
+library(nlme)
+library(mmrm)
+library(emmeans)
+library(performance)
+library(lme4); library(lmerTest); library(emmeans)
+```
+
+
+Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design
+
+```{r}
+library(agridat)
+data(burgueno.rowcol)
+dat <- burgueno.rowcol
+
+```
 
 ```{r}
 #Random rep, row and col within rep

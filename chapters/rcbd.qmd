@@ -1,10 +1,8 @@
-
 # Randomized Complete Block Design
 
 ```{r, echo=FALSE}
 par(mar=c(5.1, 6, 4.1, 2.1))
 ```
-
 
 This is a simple model that can serve as a good entrance point to mixed models.
 
@@ -61,7 +59,7 @@ var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 ```
 
 |                        |                                                                                  |
-|-----------------|-------------------------------------------------------|
+|------------------------|----------------------------------------------------------------------------------|
 | block                  | blocking unit                                                                    |
 | range                  | column position for each plot                                                    |
 | row                    | row position for each plot                                                       |
@@ -99,6 +97,7 @@ Next, check the independent variables. Running a cross tabulations is often suff
 ```{r}
 table(var_trial$variety, var_trial$block)
 ```
+
 There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
 Here is a quick check I run to count the number of missing data in each column.
@@ -112,7 +111,6 @@ Alas, no missing data!
 If there were independent variables with a continuous distribution (a covariate), I would plot those data.
 
 Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
-
 
 ```{r, eval=FALSE}
 hist(var_trial$yield_bu_a, main = "", xlab = "yield")
@@ -178,7 +176,6 @@ plot(model_rcbd, resid(., scaled=TRUE) ~ fitted(.),
      xlab = "fitted values", ylab = "studentized residuals")
 ```
 
-
 ```{r, echo=FALSE}
 #| label: fig-rcbd_error
 #| fig-cap: "Plot of residuals versus fitted values"
@@ -193,7 +190,7 @@ plot(model_rcbd, resid(., scaled=TRUE) ~ fitted(.),
 We are looking for a random and uniform distribution of points. This looks good!
 
 ::: column-margin
-The same code works for nlme and lme4-generated models. 
+The same code works for nlme and lme4-generated models.
 :::
 
 Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and line.
@@ -217,13 +214,11 @@ This is reasonably good. Things do tend to fall apart at the tails.
 
 Estimates for each treatment level can be obtained with the 'emmeans' package.
 
-
 ```{r}
 # same syntax for lme4 & nlme
 rcbd_emm <- emmeans(model_rcbd, ~ variety)
 as.data.frame(rcbd_emm) %>% arrange(desc(emmean))
 ```
-
 
 This table indicates the estimated marginal means ("emmean", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.
 
@@ -235,7 +230,6 @@ If you want to run ANOVA, it can be done quite easily:
 # same syntax for lme4 & nlme
 anova(model_rcbd)
 ```
-
 
 ::: callout-note
 ## `na.action = na.exclude`
@@ -251,5 +245,4 @@ model_rcbd <- lmer(yield_bu_a ~ variety + (1|block),
 I use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
 
 Since there are no missing data, this step was not strictly necessary, but it's a good habit to be in.
-
 :::
