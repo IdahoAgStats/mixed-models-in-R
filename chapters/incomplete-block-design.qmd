@@ -6,18 +6,33 @@ title: "Balanced Incomplete Block Experiment"
 
 ## Background
 
-The block design in **link RCBD guide** was complete, meaning that every block contained all the treatments. In practice, it may not be possible to have too many treatments in each block. Sometimes, there are also situations where it is advised to not have many treatments in each block.
+The block design in [**Chapter 4**](rcbd.qmd) was complete, meaning that every block contained all the treatments. In practice, it may not be possible to have too many treatments in each block. Sometimes, there are also situations where it is advised to not have many treatments in each block.
 
 In such cases, incomplete block designs are used where we have to decide what subset of treatments to be used in an individual block. This will work well if we enough blocks. However, if we only have small number of blocks, there would be the risk that certain quantities are not estimable anymore.
 
-To avoid having a disconnected design, a balanced incomplete block design can be used 
+To avoid having a disconnected design, a balanced incomplete block design can be used
+
+The statistical model for balanced incomplete block design is:
+
+$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ Where:
+
+$\mu$ = overall experimental mean $\alpha$ = treatment effects (fixed) $\beta$ = block effects (random) $\epsilon$ = error terms
+
+$$ \epsilon \sim N(0, \sigma)$$
+
+$$ \beta \sim N(0, \sigma_b)$$ There are few key points that we need to keep in mind while designing incomplete block designs:
+
+-   A drawback of this design is that block effect and treatment effects are confounded.
+
+-   To eliminate of block effects, better compare treatments within a block.
+
+-   No treatment should appear twice in any block as they contributes nothing no within block comparisons.
 
 ::: callout-note
 ## A note
 
-
+Because the blocks are incomplete, the Type I and Type III sums of squares will be different. That is, the missing treatments in each block represent missing observations (but not missing ‘at random’).
 :::
-
 
 ## Example Analysis
 
@@ -29,58 +44,87 @@ https://kwstat.github.io/agridat/reference/weiss.incblock.html
   dat <- weiss.incblock
 ```
 
-```{r}
+```{r, fig.height= 9}
+par(mar=c(5.1, 5, 2.1, 2.1))
  library(desplot)
   desplot(dat, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
           aspect=252/96, # true aspect
           main="weiss.incblock")
-  
 ```
-
-::: {.panel-tabset}
-
-### lme4
-
-```{r, message=FALSE}
-
-```
-
-### nlme
-
-```{r, message=FALSE}
-
-```
-
-
-:::
-
-
-
-
-|   |   |
-|----------|----------------------------------------|    
 
 
 ### *Data integrity checks*
 
+The first thing is to make sure the data is what we expect. There are two steps:
 
+1.  make sure data are the expected data type
+2.  check the extent of missing data
+3.  inspect the independent variables and make sure the expected levels are present in the data
+4.  inspect the dependent variable to ensure its distribution is following expectations
+
+```{r}
+str(dat)
+```
+
+These look okay with block and gen being factor variables and yield, row, and col being numeric variables.
+
+Next, check the independent variables. Running a cross tabulations is often sufficient to ascertain this.
+
+```{r}
+table(dat$gen, dat$block)
+```
+
+There are 31 varieties and it is perfectly balanced, with exactly one observation per treatment per block.
+
+Here is a quick check I run to count the number of missing data in each column.
+
+```{r}
+apply(dat, 2, function(x) sum(is.na(x)))
+```
+
+We observed no missing data!
+
+Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
+
+```{r, eval=FALSE}
+hist(dat$yield, main = "", xlab = "yield")
+```
+
+```{r, echo=FALSE}
+#| label: fig-ibd_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+::: panel-tabset
+### lme4
+
+```{r, message=FALSE}
+
+```
+
+### nlme
+
+```{r, message=FALSE}
+
+```
+:::
+
+### *Data integrity checks*
 
 ### Model Building
 
-
-::: {.column-margin}
-
+::: column-margin
 Recall the model:
 
-$$ $$ 
-
+$$  $$
 :::
 
 Here is the R syntax for that statistical model:
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ### lme4
 
 ```{r}
@@ -92,12 +136,8 @@ Here is the R syntax for that statistical model:
 ```{r}
 
 ```
-
 :::
 
-
-
 ### Check Model Assumptions
-
 
 ### Inference
