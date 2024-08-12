@@ -1,0 +1,182 @@
+# Split-Split Plot Design
+
+The split-split-plot design is an extension of the split-plot design to accommodate a third factor: one factor in main-plot, other in subplot and the third factor in sub-subplot
+
+## Details for split-split plot designs
+
+The statistical model structure this design:
+
+$$y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha_i\beta_k) + \tau_n + (\alpha_i\tau_n) + (\tau_n\beta_k) + (\alpha_i\beta_k\tau_n) + \epsilon_{ijk} + \delta_{ijkn}$$ Where:
+
+$\mu$= overall experimental mean, $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\tau$ = main effect of sub-subplot, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+
+$$ \epsilon \sim N(0, \sigma_\epsilon)$$
+
+$$\ \delta  \sim N(0, \sigma_\delta)$$
+
+Both the error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
+
+## Example Analysis
+
+::: panel-tabset
+### lme4
+
+```{r, message=FALSE, warning=FALSE}
+library(lme4); library(lmerTest); library(emmeans)
+library(dplyr); library(broom.mixed); library(performance)
+```
+
+### nlme
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+library(nlme); library(broom.mixed); library(emmeans)
+library(dplyr); library(performance)
+```
+:::
+
+In this example, we have a rice yield data from 'agricolae' package.
+
+This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design, levels of each factor are outlined below:
+
+blocks = block (3 blocks),
+
+Whole plot factor = Nitrogen (5 levels)
+
+Sub plot = management (3 levels)
+
+sub-subplot = variety (3 levels)
+
+### *Load Data and integrity checks*
+
+Here, we are extracting the rice yield data from `agricolae` package.
+
+```{r}
+library(agricolae)
+f <- system.file("external/ssp.csv", package="agricolae")
+rice <-read.csv(f)
+```
+
+Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
+
+```{r}
+str(rice)
+```
+
+Convert block, nitrogen, variety, and management to factors.
+
+```{r}
+rice$block<-factor(rice$block)
+rice$nitrogen<-factor(rice$nitrogen)
+rice$management<-factor(rice$management)
+rice$variety<-factor(rice$variety)
+```
+
+Next, run a cross tabulations to check the independent variables
+
+```{r}
+table(rice$variety, rice$nitrogen, rice$management)
+```
+
+It looks perfectly balanced, with exactly 3 observation per treatment group.
+
+Last, check the distribution of the dependent variable by plotting a histogram using a `hist()`.
+
+```{r, eval=FALSE}
+hist(rice$yield)
+```
+
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(rice$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+### Model Building
+
+The variance analysis of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.
+
+::: panel-tabset
+### lme4
+
+```{r}
+model3 <- lmer(yield ~ nitrogen*management*variety + (1|block/nitrogen/management),
+              data=rice, 
+              na.action = na.exclude)
+
+summary(model3)
+```
+
+### nlme
+```{r}
+model3 <- lme(yield ~ nitrogen*management*variety,
+                  random = ~ 1|block/nitrogen/management,
+                  data = rice, 
+                  na.action = na.exclude)
+tidy(model3)
+```
+:::
+
+::: column-margin
+#### boundary (singular) fit:
+We get a message that the fit is singular. What does this mean? Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one. OK what about in English? Basically it means that the algorithm that fits the model parameters doesn’t have enough data to get a good estimate. This often happens when we are trying to fit a model that is too complex for the amount of data we have, or when the random effects are very small and can’t be distinguished from zero. We still get some output but this message should make us take a close look at the random effects and their variances.
+:::
+
+### Check Model Assumptions
+Model Diagnostics: we are looking for a constant variance and normality of residuals.
+```{r, eval=FALSE}
+plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
+```
+
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_error
+#| fig-cap: "Plot of residuals versus fitted values"
+#| column: margin
+#| 
+par(mar=c(5.1, 5, 2.1, 2.1))
+plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals",
+     cex.lab = 1.8, cex.axis = 1.5)
+```
+
+Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and qq-line.
+
+```{r, eval=FALSE}
+qqnorm(resid(model3), main = NULL); qqline(resid(model3))
+```
+
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_norm
+#| fig-cap: "QQ-plot of residuals"
+#| column: margin
+
+par(mar=c(5.1, 5, 2.1, 2.1))
+qqnorm(resid(model3), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model3))
+```
+
+Or we can do all at one using one function `check_model()`. 
+```{r}
+check_model(model3)
+```
+
+### Inference
+Analysis of variance
+
+```{r}
+anova(model3)
+```
+
+Determining the estimates for each treatment factor (variety, nitrogen, management)
+```{r}
+emmeans(model3, ~ nitrogen)
+emmeans(model3, ~ variety*management)
+```
+
+If the goal is to calculate estimates and know the statistics difference, that can be evaluated by using `cld()` 
+```{r}
+emm <- emmeans(model3, ~ nitrogen*variety) 
+comparison <- cld(emm, Letters = LETTERS, reversed = T) 
+comparison
+```

@@ -85,6 +85,9 @@ str(dat)
 These look okay with block and gen being factor variables and yield, row, and col being numeric variables.
 
 Next, check the independent variables. Running a cross tabulations is often sufficient to ascertain this.
+```{r}
+dat$row <- as.factor(dat$row)
+```
 
 ```{r}
 table(dat$gen, dat$block)
@@ -127,6 +130,12 @@ model_icbd <- lmer(yield ~ gen + (1|block),
 tidy(model_icbd)
 ```
 
+```{r}
+#model_icbd1 <- lmer(yield ~ gen + (1|block) +  (1|row:block),
+#                   data = dat, 
+#                   na.action = na.exclude)
+#tidy(model_icbd1)
+```
 ### nlme
 
 ```{r, eval=FALSE}

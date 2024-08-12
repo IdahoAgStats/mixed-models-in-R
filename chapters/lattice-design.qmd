@@ -37,10 +37,8 @@ library(dplyr); library(agridat); library(desplot)
 Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design
 
 ```{r}
-
 data(burgueno.rowcol)
 dat <- burgueno.rowcol
-
 ```
 
 ```{r}
@@ -52,6 +50,56 @@ desplot(dat, yield ~ col*row,
         main="burgueno.rowcol")
 
 ```
+### Data integrity checks
+```{r}
+str(dat)
+```
+```{r}
+dat$row <- as.factor(dat$row)
+dat$col <- as.factor(dat$col)
+```
+
+```{r, eval=FALSE}
+hist(dat$yield, main = "", xlab = "yield")
+```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+::: panel-tabset
+### lme4
+
+```{r}
+m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), 
+           data=dat, 
+           na.action = na.exclude)
+summary(m1) 
+```
+
+### nlme
+
+```{r, eval=FALSE}
+## lme not working for this, need help in fixing it
+#m1 <- lme(yield ~ gen,
+          random = ~ 1|rep + 1|rep:row + 1|rep:col,
+          data = dat, 
+          na.action = na.exclude)
+```
+:::
+
+### Check Model Assumptions
+
+Remember those iid assumptions? Let's make sure we actually met them.
+```{r, fig.height=9}
+check_model(m1)
+```
+
+
 
 ```{r}
 #Random rep, row and col within rep
@@ -60,12 +108,9 @@ summary(m1)
 anova(m1)
 
 ```
+### Inference
 
-```{r}
-check_model(m1)
-```
-
-ANOVA
+Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
 
 ```{r}
 anova(m1)
