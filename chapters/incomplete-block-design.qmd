@@ -1,7 +1,9 @@
 ---
 title: "Balanced Incomplete Block Experiment"
 ---
-
+```{r, echo=FALSE}
+par(mar=c(5.1, 6, 4.1, 2.1))
+```
 # Balanced incomplete block experiment
 
 ## Background
@@ -35,6 +37,20 @@ Because the blocks are incomplete, the Type I and Type III sums of squares will 
 :::
 
 ## Example Analysis
+We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries for analysis and estimation:
+::: panel-tabset
+### lme4
+
+```{r, message=FALSE, warning=FALSE}
+library(lme4); library(lmerTest); library(emmeans)
+library(dplyr); library(broom.mixed); library(performance)
+```
+### nlme
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+library(nlme); library(broom.mixed); library(emmeans)
+library(dplyr); library(performance)
+```
+:::
 
 https://kwstat.github.io/agridat/reference/weiss.incblock.html
 
@@ -45,7 +61,6 @@ https://kwstat.github.io/agridat/reference/weiss.incblock.html
 ```
 
 ```{r, fig.height= 9}
-par(mar=c(5.1, 5, 2.1, 2.1))
  library(desplot)
   desplot(dat, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
@@ -54,7 +69,7 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 ```
 
 
-### *Data integrity checks*
+### Data integrity checks
 
 The first thing is to make sure the data is what we expect. There are two steps:
 
@@ -98,46 +113,42 @@ hist(dat$yield, main = "", xlab = "yield")
 par(mar=c(5.1, 5, 2.1, 2.1))
 hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
-::: panel-tabset
-### lme4
-
-```{r, message=FALSE}
-
-```
-
-### nlme
-
-```{r, message=FALSE}
-
-```
-:::
-
-### *Data integrity checks*
+This data set is ready for analysis!
 
 ### Model Building
 
-::: column-margin
-Recall the model:
-
-$$  $$
-:::
-
-Here is the R syntax for that statistical model:
-
 ::: panel-tabset
 ### lme4
 
 ```{r}
-
+model_icbd <- lmer(yield ~ gen + (1|block),
+                   data = dat, 
+                   na.action = na.exclude)
+tidy(model_icbd)
 ```
 
 ### nlme
 
-```{r}
-
+```{r, eval=FALSE}
+model_icbd <- lme(yield ~ gen,
+                  random = ~ 1|block,
+                  data = dat, 
+                  na.action = na.exclude)
+tidy(model_icbd)
 ```
 :::
 
-### Check Model Assumptions
 
+### Check Model Assumptions
+```{r}
+check_model(model_icbd)
+```
 ### Inference
+```{r}
+anova(model_icbd)
+```
+
+```{r}
+emmeans(model_icbd, ~ gen)
+```
+
