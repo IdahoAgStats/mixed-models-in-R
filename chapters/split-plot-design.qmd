@@ -36,9 +36,9 @@ Both the overall error and the rep effects are assumed to be normally distribute
 
 In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.
 
-![Split Plot CRD Design](images/split_plot_CRD-01.jpeg){fig-align="center" width="341"}
+![Split Plot CRD Design](/img/split_plot_CRD-01.jpeg){fig-align="center" width="341"}
 
-![Split Plot RCBD Design](images/Split_plot_RCBD.jpeg){fig-align="center" width="348"}
+![Split Plot RCBD Design](/img/Split_plot_RCBD.jpeg){fig-align="center" width="348"}
 
 ## Analysis Examples
 
@@ -46,17 +46,15 @@ In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, in
 
 1.  Load required libraries
 
-```{r,  message=FALSE}
-#| message: false
-#| warning: false
-library(dplyr)
-library(ggplot2)
+```{r,  include=FALSE}
+library(dplyr); library(ggplot2)
+
+library(lme4); library(nlme)
+library(performance)
+
 library(emmeans)
-library(lme4)
-library(nlme)
 library(multcomp)
 library(multcompView)
-library(performance)
 ```
 
 #### **Import height data and check the data integrity.**
@@ -65,7 +63,6 @@ The data (Height data) for this example involves a CRD split plot designed exper
 
 ```{r}
 height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
-
 ```
 
 -   Run a cross tabulation using `table()` to check the arrangement of whole-plots and sub-plots.
@@ -111,7 +108,7 @@ When dealing with split plot design across reps or blocks, the random effects ne
 #### lme4
 
 ```{r}
-model1<-lmer(height ~ time*manage + (1|rep/time), data=height_data)
+model1 <- lmer(height ~ time*manage + (1|rep/time), data = height_data)
 
 summary(model1)
 ```
@@ -120,7 +117,7 @@ summary(model1)
 
 ```{r}
 model1 <-lme(height ~ time*manage,
-             random=~ 1|rep/time, data=height_data)
+             random = ~ 1|rep/time, data = height_data)
 
 summary(model1)
 ```
@@ -300,7 +297,6 @@ Post-Hoc analysis
 
 ```{r}
 emm <- emmeans(model2, ~ V *N) 
-omparison <- cld(emm, Letters = LETTERS, reversed = T)
 ```
 
 ::: callout-note

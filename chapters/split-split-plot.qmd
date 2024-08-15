@@ -21,16 +21,21 @@ Both the error and the rep effects are assumed to be normally distributed with a
 ::: panel-tabset
 ### lme4
 
-```{r, message=FALSE, warning=FALSE}
-library(lme4); library(lmerTest); library(emmeans)
-library(dplyr); library(broom.mixed); library(performance)
+```{r, include=FALSE}
+library(dplyr)
+
+library(lme4); library(lmerTest); library(nlme)
+
+library(emmeans); library(performance)
 ```
 
 ### nlme
 
-```{r, message=FALSE, warning=FALSE, eval=FALSE}
-library(nlme); library(broom.mixed); library(emmeans)
-library(dplyr); library(performance)
+```{r, include=FALSE}
+library(dplyr)
+
+library(nlme); library(emmeans)
+library(broom.mixed); library(performance)
 ```
 :::
 
@@ -48,13 +53,19 @@ sub-subplot = variety (3 levels)
 
 ### *Load Data and integrity checks*
 
-Here, we are extracting the rice yield data from `agricolae` package.
+Here, we aren using rice yield data (data set from the **{[agricolae](https://CRAN.R-project.org/package=agricolae)}** package.
 
-```{r}
+```{r, eval=FALSE, echo=FALSE}
 library(agricolae)
 f <- system.file("external/ssp.csv", package="agricolae")
-rice <-read.csv(f)
+rice <- read.csv(f)
+write.csv(rice, here::here("data", "rice_ssp.csv"))
 ```
+
+```{r}
+rice <- read.csv(here::here("data", "rice_ssp.csv"))
+```
+
 
 Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
 
@@ -62,16 +73,16 @@ Look at the structure of the data, class of block, nitrogen, management and vari
 str(rice)
 ```
 
-Convert block, nitrogen, variety, and management to factors.
+Convert block, nitrogen, variety, and management to characters.
 
 ```{r}
-rice$block<-factor(rice$block)
-rice$nitrogen<-factor(rice$nitrogen)
-rice$management<-factor(rice$management)
-rice$variety<-factor(rice$variety)
+rice$block <- as.character(rice$block)
+rice$nitrogen <- as.character(rice$nitrogen)
+rice$management <- as.character(rice$management)
+rice$variety <- as.character(rice$variety)
 ```
 
-Next, run a cross tabulations to check the independent variables
+Next, run a cross tabulations to check balance of observations across independent variables:
 
 ```{r}
 table(rice$variety, rice$nitrogen, rice$management)
@@ -79,7 +90,7 @@ table(rice$variety, rice$nitrogen, rice$management)
 
 It looks perfectly balanced, with exactly 3 observation per treatment group.
 
-Last, check the distribution of the dependent variable by plotting a histogram using a `hist()`.
+Last, check the distribution of the dependent variable by plotting a histogram using  `hist()`.
 
 ```{r, eval=FALSE}
 hist(rice$yield)
@@ -102,7 +113,7 @@ The variance analysis of a split-split plot design is divided into three parts: 
 
 ```{r}
 model3 <- lmer(yield ~ nitrogen*management*variety + (1|block/nitrogen/management),
-              data=rice, 
+              data = rice, 
               na.action = na.exclude)
 
 summary(model3)
@@ -124,6 +135,7 @@ We get a message that the fit is singular. What does this mean? Some components 
 :::
 
 ### Check Model Assumptions
+
 Model Diagnostics: we are looking for a constant variance and normality of residuals.
 ```{r, eval=FALSE}
 plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
@@ -174,9 +186,3 @@ emmeans(model3, ~ nitrogen)
 emmeans(model3, ~ variety*management)
 ```
 
-If the goal is to calculate estimates and know the statistics difference, that can be evaluated by using `cld()` 
-```{r}
-emm <- emmeans(model3, ~ nitrogen*variety) 
-comparison <- cld(emm, Letters = LETTERS, reversed = T) 
-comparison
-```
