@@ -1,28 +1,26 @@
----
-title: "Lattice Design"
----
+# Lattice Design
 
-# Background
+## Background
 
-Yates (1936) proposed this method of arranging agricultural variety trials involving a large number of crop varieties. These types of arrangements were named a quasi-factorial or lattice designs. His paper contained numerical examples based on the results of a uniformity trial on orange trees. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k\^2, t = k3, or t = k(k +1).
+Yates (1936) proposed this method of arranging agricultural variety trials involving a large number of crop varieties. These types of arrangements were named a quasi-factorial or lattice designs. His paper contained numerical examples based on the results of a uniformity trial on orange trees. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k +1).
 
 Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.
 
-https://kwstat.github.io/agridat/reference/cochran.lattice.html
-
-
 Statistical model for lattice design:
 
-$Yijk = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
+$Y_{ijk} = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
 
 where, $\mu$ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
 
 ## Example Analysis
 
-First, load the libraries for analysis and estimation:
+The data used in this example is from a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the precentage of young flower buds attacked by boll weevils.
+
+Let's start the analysis firstly by loading the required libraries:
 
 ::: panel-tabset
 ### lme4
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans); library(performance)
 library(dplyr); library(broom.mixed); library(agridat); library(desplot)
@@ -34,33 +32,61 @@ library(dplyr); library(agridat); library(desplot)
 ```
 :::
 
-Import data from agridat package and create columns for row and column as factor variables. This is a balanced experiment design
+Import data from agridat package. The data contains . This is a balanced experiment design
+```{r}
+data(cochran.lattice)
+dat2 <- cochran.lattice
+head(dat2)
+str(dat2)
+
+libs(desplot)
+desplot(dat2, y~row*col|rep,
+        text=trt, # aspect unknown, should be 2 or .5
+         main="cochran.lattice")
+
+```
 
 ```{r}
 data(burgueno.rowcol)
 dat <- burgueno.rowcol
+head(dat)
 ```
-
+Here, we can use the `desplot()` function from the 'desplot' package to visualize the plot plan from lattice design.
 ```{r}
-# Two contiguous reps in 8 rows, 16 columns
+# Two contiuous reps in 8 rows, 16 columns
+desplot(dat, yield ~ col*row,
+        out1=rep, # aspect unknown
+        text=gen, shorten="none", cex=0.75,
+        main="lattice design")
 
+```
+### Data integrity checks
+```{r, echo=FALSE}
+#| label: lattice_design
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
 desplot(dat, yield ~ col*row,
         out1=rep, # aspect unknown
         text=gen, shorten="none", cex=.75,
         main="burgueno.rowcol")
-
 ```
 ### Data integrity checks
+
 ```{r}
 str(dat)
 ```
+
 ```{r}
+dat2$row <- as.factor(dat2$row)
+dat2$col <- as.factor(dat2$col)
+
 dat$row <- as.factor(dat$row)
 dat$col <- as.factor(dat$col)
 ```
 
 ```{r, eval=FALSE}
-hist(dat$yield, main = "", xlab = "yield")
+hist(dat2$y, main = "", xlab = "yield")
 ```
 
 ```{r, echo=FALSE}
@@ -75,8 +101,8 @@ hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ### lme4
 
 ```{r}
-m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), 
-           data=dat, 
+m1 <- lmer(y ~ trt + (1|rep) + (1|rep:row) + (1|rep:col), 
+           data=dat2, 
            na.action = na.exclude)
 summary(m1) 
 ```
@@ -85,7 +111,7 @@ summary(m1)
 
 ```{r, eval=FALSE}
 ## lme not working for this, need help in fixing it
-#m1 <- lme(yield ~ gen,
+m1 <- lme(yield ~ gen,
           random = ~ 1|rep + 1|rep:row + 1|rep:col,
           data = dat, 
           na.action = na.exclude)
@@ -95,11 +121,10 @@ summary(m1)
 ### Check Model Assumptions
 
 Remember those iid assumptions? Let's make sure we actually met them.
+
 ```{r, fig.height=9}
 check_model(m1)
 ```
-
-
 
 ```{r}
 #Random rep, row and col within rep
@@ -108,6 +133,7 @@ summary(m1)
 anova(m1)
 
 ```
+
 ### Inference
 
 Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
