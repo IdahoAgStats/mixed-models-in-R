@@ -524,9 +524,11 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">## lme not working for this, need help in fixing it</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep <span class="sc">+</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row <span class="sc">+</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col,</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">rep =</span> <span class="sc">~</span> <span class="dv">1</span>, rep<span class="sc">|</span><span class="at">row =</span> <span class="sc">~</span><span class="dv">1</span>, rep<span class="sc">|</span><span class="at">col =</span> <span class="sc">~</span><span class="dv">1</span>),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>          <span class="co">#random = list (~1|rep, ~1|rep:row, ~1|rep:col),</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>         <span class="co"># random = ~ 1|rep + 1|rep:row + 1|rep:col,</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
