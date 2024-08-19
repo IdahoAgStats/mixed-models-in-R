@@ -112,7 +112,9 @@ summary(m1)
 ```{r, eval=FALSE}
 ## lme not working for this, need help in fixing it
 m1 <- lme(yield ~ gen,
-          random = ~ 1|rep + 1|rep:row + 1|rep:col,
+          random = list(rep = ~ 1, rep|row = ~1, rep|col = ~1),
+          #random = list (~1|rep, ~1|rep:row, ~1|rep:col),
+         # random = ~ 1|rep + 1|rep:row + 1|rep:col,
           data = dat, 
           na.action = na.exclude)
 ```
