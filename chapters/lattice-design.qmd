@@ -101,22 +101,26 @@ hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ### lme4
 
 ```{r}
-m1 <- lmer(y ~ trt + (1|rep) + (1|rep:row) + (1|rep:col), 
-           data=dat2, 
+m1_a <- lmer(yield ~ gen + (1|row) + (1|col:rep) + (1|rep),
+           data = dat,
            na.action = na.exclude)
-summary(m1) 
+summary(m1_a) 
 ```
 
 ### nlme
 
-```{r, eval=FALSE}
-## lme not working for this, need help in fixing it
-m1 <- lme(yield ~ gen,
-          random = list(rep = ~ 1, rep|row = ~1, rep|col = ~1),
-          #random = list (~1|rep, ~1|rep:row, ~1|rep:col),
-         # random = ~ 1|rep + 1|rep:row + 1|rep:col,
+```{r}
+dat$dummy <- factor(1)
+
+m1_b <- lme(yield ~ gen,
+          random = list(dummy = pdBlocked(list(
+                                  pdIdent(~row - 1),
+                                  pdIdent(~rep - 1),
+                                  pdIdent(~col:rep)))),
           data = dat, 
           na.action = na.exclude)
+
+VarCorr(m1_b)
 ```
 :::
 
@@ -125,12 +129,12 @@ m1 <- lme(yield ~ gen,
 Remember those iid assumptions? Let's make sure we actually met them.
 
 ```{r, fig.height=9}
-check_model(m1)
+check_model(m1_a)
 ```
 
-```{r}
+```{r, eval=FALSE}
 #Random rep, row and col within rep
- m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), data=dat)
+m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), data=dat)
 summary(m1) 
 anova(m1)
 
