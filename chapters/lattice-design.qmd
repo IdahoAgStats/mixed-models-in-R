@@ -26,7 +26,7 @@ library(lme4); library(lmerTest); library(emmeans); library(performance)
 library(dplyr); library(broom.mixed); library(agridat); library(desplot)
 ```
 ### nlme
-```{r, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans); library(performance)
 library(dplyr); library(agridat); library(desplot)
 ```
@@ -132,24 +132,17 @@ Remember those iid assumptions? Let's make sure we actually met them.
 check_model(m1_a)
 ```
 
-```{r, eval=FALSE}
-#Random rep, row and col within rep
-m1 <- lmer(yield ~ gen + (1|rep) + (1|rep:row) + (1|rep:col), data=dat)
-summary(m1) 
-anova(m1)
-
-```
 
 ### Inference
 
 Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
 
 ```{r}
-anova(m1)
+anova(m1_a)
 ```
 
 Estimated marginal means
 
 ```{r}
-emmeans(m1, ~ gen)
+emmeans(m1_a, ~ gen)
 ```

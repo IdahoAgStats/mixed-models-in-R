@@ -39,13 +39,13 @@ First, load the libraries for analysis and estimation:
 
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
-library(dplyr); library(broom.mixed)
+library(dplyr); library(performance)
 ```
 
 ### nlme
 
-```{r, message=FALSE, warning=FALSE, eval=FALSE}
-library(nlme); library(broom.mixed); library(emmeans)
+```{r, message=FALSE, warning=FALSE}
+library(nlme); library(performance); library(emmeans)
 library(dplyr)
 ```
 :::
@@ -100,13 +100,18 @@ table(var_trial$variety, var_trial$block)
 
 There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
-Here is a quick check I run to count the number of missing data in each column.
+::: {.callout-tip}
+## Missing Data
+
+Here is a quick check to count the number of missing data in each column. This is not neededfor the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the level of missingness displayed in an R session is what you expect. 
 
 ```{r}
 apply(var_trial, 2, function(x) sum(is.na(x)))
 ```
 
 Alas, no missing data!
+
+:::
 
 If there were independent variables with a continuous distribution (a covariate), I would plot those data.
 
@@ -128,7 +133,7 @@ The range is roughly falling into the range we expect. I know this from talking 
 
 Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
 
-These are not complicated checks. They are designed to be done quickly and should be done for *every analysis* if you not previously already inspected the data as thus. I do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
+These are not complicated checks. They are designed to be done quickly and should be done for *every analysis* if you not previously already inspected the data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
 
 This data set is ready for analysis!
 
@@ -148,15 +153,15 @@ Here is the R syntax for the RCBD statistical model:
 ### lme4
 
 ```{r}
-model_rcbd <- lmer(yield_bu_a ~ variety + (1|block),
+model_rcbd_lmer <- lmer(yield_bu_a ~ variety + (1|block),
                    data = var_trial, 
                    na.action = na.exclude)
 ```
 
 ### nlme
 
-```{r, eval=FALSE}
-model_rcbd <- lme(yield_bu_a ~ variety,
+```{r}
+model_rcbd_lme <- lme(yield_bu_a ~ variety,
                   random = ~ 1|block,
                   data = var_trial, 
                   na.action = na.exclude)
@@ -167,69 +172,94 @@ The parentheses are used to indicate that 'block' is a random effect, and this p
 
 ### Check Model Assumptions
 
+::: column-margin
+R syntax for checking model assumptions is the same for lme4 and nlme. 
+:::
+
 Remember those iid assumptions? Let's make sure we actually met them.
 
-There is a special plotting function written for lme4 objects for checking the homoscedasticity (constant variance):
+#### Old Way {#old-iid-checks}
+
+There are special plotting function written for lme4 and nlme objects (ie.`plot(lmer_object)`) for checking the homoscedasticity (constant variance). 
 
 ```{r, eval=FALSE}
-plot(model_rcbd, resid(., scaled=TRUE) ~ fitted(.), 
+plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-rcbd_error
+#| label: fig-rcbd_error-1
 #| fig-cap: "Plot of residuals versus fitted values"
 #| column: margin
 #| 
 par(mar=c(5.1, 5, 2.1, 2.1))
-plot(model_rcbd, resid(., scaled=TRUE) ~ fitted(.), 
+plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals",
      cex.lab = 1.8, cex.axis = 1.5)
 ```
 
 We are looking for a random and uniform distribution of points. This looks good!
 
-::: column-margin
-The same code works for nlme and lme4-generated models.
-:::
-
 Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and line.
 
 ```{r, eval=FALSE}
-qqnorm(resid(model_rcbd), main = NULL); qqline(resid(model_rcbd))
+qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-rcbd_norm
+#| label: fig-rcbd_norm-1
 #| fig-cap: "QQ-plot of residuals"
 #| column: margin
 
 par(mar=c(5.1, 5, 2.1, 2.1))
-qqnorm(resid(model_rcbd), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd))
+qqnorm(resid(model_rcbd_lmer), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd_lmer))
 ```
-
 This is reasonably good. Things do tend to fall apart at the tails.
 
+#### New Way
+
+Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/) package, which provides a comprehensive suite of diagnostic plots. 
+
+```{r, fig.height=9}
+check_model(model_rcbd_lmer)
+```
+
 ### Inference
+
+::: column-margin
+R syntax for esimating model marginal means is the same for lme4 and nlme. 
+:::
 
 Estimates for each treatment level can be obtained with the 'emmeans' package.
 
 ```{r}
-# same syntax for lme4 & nlme
-rcbd_emm <- emmeans(model_rcbd, ~ variety)
+rcbd_emm <- emmeans(model_rcbd_lmer, ~ variety)
 as.data.frame(rcbd_emm) %>% arrange(desc(emmean))
 ```
 
-This table indicates the estimated marginal means ("emmean", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.
+
+This table indicates the estimated marginal means ("emmeans", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.
 
 At this point, the analysis goals have been met: we know the estimated means for each treatment and their rankings.
 
-If you want to run ANOVA, it can be done quite easily:
+If you want to run ANOVA, it can be done quite easily. By default, the Kenward-Rogers method of degrees of freedom approximation is used. 
+
+::: panel-tabset
+### lme4
 
 ```{r}
-# same syntax for lme4 & nlme
-anova(model_rcbd)
+anova(model_rcbd_lmer, type = "1")
 ```
+
+### nlme
+
+```{r}
+anova(model_rcbd_lme, type = "sequential")
+```
+
+:::
+
+
 
 ::: callout-note
 ## `na.action = na.exclude`
@@ -237,12 +267,12 @@ anova(model_rcbd)
 You may have noticed the final argument for `na.action` in the model statement:
 
 ```         
-model_rcbd <- lmer(yield_bu_a ~ variety + (1|block),
+model_rcbd_lmer <- lmer(yield_bu_a ~ variety + (1|block),
                    data = var_trial, 
                    na.action = na.exclude)
 ```
 
-I use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
+The argument `na.action = na.exclude` provides instructions for how to handle missing data. `na.exclude` removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g. predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired. 
 
 Since there are no missing data, this step was not strictly necessary, but it's a good habit to be in.
 :::
