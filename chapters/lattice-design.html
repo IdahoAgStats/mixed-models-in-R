@@ -460,101 +460,14 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col), </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data=</span>dat2, </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>col<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep),</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
 lmerModLmerTest]
-Formula: y ~ trt + (1 | rep) + (1 | rep:row) + (1 | rep:col)
-   Data: dat2
-
-REML criterion at convergence: 433.9
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--2.1384 -0.5057 -0.0117  0.4584  2.2629 
-
-Random effects:
- Groups   Name        Variance Std.Dev.
- rep:col  (Intercept)  3.17    1.781   
- rep:row  (Intercept) 10.92    3.304   
- rep      (Intercept)  0.00    0.000   
- Residual             23.86    4.885   
-Number of obs: 80, groups:  rep:col, 20; rep:row, 20; rep, 5
-
-Fixed effects:
-            Estimate Std. Error     df t value Pr(&gt;|t|)   
-(Intercept)    6.090      2.566 61.592   2.373  0.02078 * 
-trtT02         7.641      3.451 47.810   2.214  0.03163 * 
-trtT03         2.403      3.451 47.810   0.696  0.48960   
-trtT04         5.254      3.451 47.810   1.522  0.13451   
-trtT05         3.472      3.451 47.810   1.006  0.31942   
-trtT06         1.206      3.451 47.810   0.350  0.72824   
-trtT07         1.208      3.451 47.810   0.350  0.72778   
-trtT08         3.323      3.451 47.810   0.963  0.34045   
-trtT09         4.024      3.451 47.810   1.166  0.24941   
-trtT10         9.094      3.451 47.810   2.635  0.01131 * 
-trtT11        11.815      3.451 47.810   3.423  0.00128 **
-trtT12         6.756      3.451 47.810   1.958  0.05612 . 
-trtT13         4.942      3.451 47.810   1.432  0.15865   
-trtT14         8.160      3.451 47.810   2.364  0.02217 * 
-trtT15         3.205      3.451 47.810   0.929  0.35778   
-trtT16         4.537      3.451 47.810   1.315  0.19492   
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Correlation matrix not shown by default, as p = 16 &gt; 12.
-Use print(x, correlation=TRUE)  or
-    vcov(x)        if you need it</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>optimizer (nloptwrap) convergence code: 0 (OK)
-boundary (singular) fit: see help('isSingular')</code></pre>
-</div>
-</div>
-</div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">## lme not working for this, need help in fixing it</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">rep =</span> <span class="sc">~</span> <span class="dv">1</span>, rep<span class="sc">|</span><span class="at">row =</span> <span class="sc">~</span><span class="dv">1</span>, rep<span class="sc">|</span><span class="at">col =</span> <span class="sc">~</span><span class="dv">1</span>),</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>          <span class="co">#random = list (~1|rep, ~1|rep:row, ~1|rep:col),</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>         <span class="co"># random = ~ 1|rep + 1|rep:row + 1|rep:col,</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="check-model-assumptions" class="level3" data-number="9.2.3">
-<h3 data-number="9.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">9.2.3</span> Check Model Assumptions</h3>
-<p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lattice-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Random rep, row and col within rep</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a> m1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col), <span class="at">data=</span>dat)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-lmerModLmerTest]
-Formula: yield ~ gen + (1 | rep) + (1 | rep:row) + (1 | rep:col)
+Formula: yield ~ gen + (1 | row) + (1 | col:rep) + (1 | rep)
    Data: dat
 
 REML criterion at convergence: 168.7
@@ -565,11 +478,11 @@ Scaled residuals:
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- rep:col  (Intercept) 0.2189   0.4679  
- rep:row  (Intercept) 0.1646   0.4057  
+ col:rep  (Intercept) 0.2189   0.4679  
+ row      (Intercept) 0.1646   0.4057  
  rep      (Intercept) 0.1916   0.4378  
  Residual             0.1796   0.4238  
-Number of obs: 128, groups:  rep:col, 32; rep:row, 8; rep, 2
+Number of obs: 128, groups:  col:rep, 32; row, 8; rep, 2
 
 Fixed effects:
              Estimate Std. Error        df t value Pr(&gt;|t|)   
@@ -646,11 +559,85 @@ Correlation matrix not shown by default, as p = 64 &gt; 12.
 Use print(x, correlation=TRUE)  or
     vcov(x)        if you need it</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>col<span class="sc">:</span>rep)))),</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-    Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
-gen 9.5245 0.15118    63 34.322  0.8418 0.7274</code></pre>
+<pre><code>dummy = pdIdent(row - 1), pdIdent(rep - 1), pdIdent(col:rep) 
+            Variance  StdDev   
+row1        0.1645986 0.4057076
+row2        0.1645986 0.4057076
+row3        0.1645986 0.4057076
+row4        0.1645986 0.4057076
+row5        0.1645986 0.4057076
+row6        0.1645986 0.4057076
+row7        0.1645986 0.4057076
+row8        0.1645986 0.4057076
+repR1       0.1916416 0.4377688
+repR2       0.1916416 0.4377688
+(Intercept) 0.2188853 0.4678517
+col1:repR1  0.2188853 0.4678517
+col2:repR1  0.2188853 0.4678517
+col3:repR1  0.2188853 0.4678517
+col4:repR1  0.2188853 0.4678517
+col5:repR1  0.2188853 0.4678517
+col6:repR1  0.2188853 0.4678517
+col7:repR1  0.2188853 0.4678517
+col8:repR1  0.2188853 0.4678517
+col9:repR1  0.2188853 0.4678517
+col10:repR1 0.2188853 0.4678517
+col11:repR1 0.2188853 0.4678517
+col12:repR1 0.2188853 0.4678517
+col13:repR1 0.2188853 0.4678517
+col14:repR1 0.2188853 0.4678517
+col15:repR1 0.2188853 0.4678517
+col16:repR1 0.2188853 0.4678517
+col1:repR2  0.2188853 0.4678517
+col2:repR2  0.2188853 0.4678517
+col3:repR2  0.2188853 0.4678517
+col4:repR2  0.2188853 0.4678517
+col5:repR2  0.2188853 0.4678517
+col6:repR2  0.2188853 0.4678517
+col7:repR2  0.2188853 0.4678517
+col8:repR2  0.2188853 0.4678517
+col9:repR2  0.2188853 0.4678517
+col10:repR2 0.2188853 0.4678517
+col11:repR2 0.2188853 0.4678517
+col12:repR2 0.2188853 0.4678517
+col13:repR2 0.2188853 0.4678517
+col14:repR2 0.2188853 0.4678517
+col15:repR2 0.2188853 0.4678517
+col16:repR2 0.2188853 0.4678517
+Residual    0.1795838 0.4237733</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="check-model-assumptions" class="level3" data-number="9.2.3">
+<h3 data-number="9.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">9.2.3</span> Check Model Assumptions</h3>
+<p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lattice-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -658,7 +645,7 @@ gen 9.5245 0.15118    63 34.322  0.8418 0.7274</code></pre>
 <h3 data-number="9.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">9.2.4</span> Inference</h3>
 <p>Estimates for each treatment level can be obtained with the ‘emmeans’ package. And we can extract the ANOVA table from model using <code>anova()</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
     Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
@@ -667,7 +654,7 @@ gen 9.5245 0.15118    63 34.322  0.8418 0.7274</code></pre>
 </div>
 <p>Estimated marginal means</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE   df lower.CL upper.CL
  G01   2.33 0.515 4.21    0.923     3.73
