@@ -1,6 +1,6 @@
 # Split Plot Design
 
-```{r, include=FALSE}
+```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
 ```
 
@@ -42,7 +42,7 @@ In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, in
 
 ![Split Plot CRD Design](/img/split_plot_CRD-01.jpeg){fig-align="center" width="341"}
 
-![Split Plot RCBD Design](/img/Split_plot_RCBD.jpeg){fig-align="center" width="348"}
+![Split Plot RCBD Design](/img/Split_plot_RCBD.jpeg){fig-align="center" width="500"}
 
 ## Analysis Examples
 
@@ -91,7 +91,7 @@ apply(height_data, 2, function(x) sum(is.na(x)))
 
 ```{r}
 ggplot(data = height_data, aes(y = height, x = time)) +
-  geom_boxplot(aes(colour = manage))
+  geom_boxplot(aes(fill = manage), alpha = 0.6)
 ```
 
 #### **Model building**
@@ -303,10 +303,5 @@ Post-Hoc analysis
 emm <- emmeans(model2, ~ V *N) 
 ```
 
-::: callout-note
-##### RCBD Split-plot
-
-The RCBD split-plot design is also commonly called split-block Design or the strip-plot Design
-:::
 
 

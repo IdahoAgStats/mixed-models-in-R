@@ -1,11 +1,12 @@
 
 # code from https://www.r-causal.org/
 
+
 options(
   # set default colors in ggplot2 to colorblind-friendly
   # Okabe-Ito and Viridis palettes
-  ggplot2.discrete.colour = ggokabeito::palette_okabe_ito(),
-  ggplot2.discrete.fill = ggokabeito::palette_okabe_ito(),
+  ggplot2.discrete.colour = harrypotter::hp(10, option = "Always"),
+  ggplot2.discrete.fill = harrypotter::hp(10, option = "Always"),
   ggplot2.continuous.colour = "viridis",
   ggplot2.continuous.fill = "viridis",
   # set theme font and size
