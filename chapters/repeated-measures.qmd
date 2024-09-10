@@ -100,6 +100,7 @@ hist(dat$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 Let's fit the basic model first
 
 ```{r}
+
 lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
               data = dat,
               na.action = na.exclude)
@@ -137,6 +138,22 @@ Let's run a `summary()` on lm2 model to look at the estimates for random and fix
 ```{r}
 summary(lm2)
 ```
+
+```{r}
+str(dat)
+table(dat$factweek, dat$factplot)
+dat$block <- as.factor(dat$block)
+fit1 <- mmrm(y ~ variety + factweek + variety:factweek  +  ar1h(factweek|block/factplot), 
+              data = dat,
+    method='Satterthwaite')
+
+summary(fit1)
+Anova.mmrm(fit1)
+car::Anova(fit1)
+anova(fit1)
+```
+
+
 
 #### Check Model Assumptions
 
@@ -252,6 +269,7 @@ tidy(mod)
 ### mmrm
 
 ```{r}
+str(Yield)
 fit1 <- mmrm(
   formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
   data = Yield)
@@ -259,6 +277,7 @@ fit1 <- mmrm(
 tidy(fit1)
 ```
 :::
+
 
 ### Model diagnostics
 We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions. 
