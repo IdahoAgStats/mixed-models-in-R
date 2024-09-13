@@ -35,6 +35,7 @@ Packages required for this tutorial:
 #| warning: false
 library(dplyr) 
 library(ggplot2)
+library(viridis)
 library(nlme)
 library(mmrm)
 library(broom.mixed)
@@ -68,10 +69,6 @@ table(dat$variety, dat$block)
 ```
 
 ```{r}
-
-#install.packages("viridis")
-library(viridis)
-
 ggplot(data = dat, aes(y = y, x = factweek, fill = variety)) +
   geom_boxplot() +  
   #scale_fill_brewer(palette="Dark2") +
@@ -140,17 +137,17 @@ summary(lm2)
 ```
 
 ```{r}
-str(dat)
-table(dat$factweek, dat$factplot)
-dat$block <- as.factor(dat$block)
-fit1 <- mmrm(y ~ variety + factweek + variety:factweek  +  ar1h(factweek|block/factplot), 
-              data = dat,
-    method='Satterthwaite')
+#str(dat)
+#table(dat$factweek, dat$factplot)
+#dat$block <- as.factor(dat$block)
+#fit1 <- mmrm(y ~ variety + factweek + variety:factweek  +  ar1h(factweek|block/factplot), 
+#              data = dat,
+#    method='Satterthwaite')
 
-summary(fit1)
-Anova.mmrm(fit1)
-car::Anova(fit1)
-anova(fit1)
+#summary(fit1)
+#Anova.mmrm(fit1)
+#car::Anova(fit1)
+#anova(fit1)
 ```
 
 
@@ -277,6 +274,10 @@ fit1 <- mmrm(
 tidy(fit1)
 ```
 :::
+
+```{r}
+
+```
 
 
 ### Model diagnostics

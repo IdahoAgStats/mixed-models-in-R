@@ -75,7 +75,7 @@ var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 
 There are several variables present that are not useful for this analysis. The only thing we are concerned about is **block**, **variety**, **yield_bu_a**, and **test_weight**.
 
-### *Data integrity checks*
+### Data integrity checks
 
 The first thing is to make sure the data is what we expect. There are two steps:
 
@@ -118,17 +118,16 @@ Alas, no missing data!
 If there were independent variables with a continuous distribution (a covariate), I would plot those data.
 
 Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
-
-```{r, eval=FALSE}
-hist(var_trial$yield_bu_a, main = "", xlab = "yield")
-```
-
 ```{r, echo=FALSE}
 #| label: fig-rcbd_hist
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
 hist(var_trial$yield_bu_a, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+```{r, eval=FALSE}
+hist(var_trial$yield_bu_a, main = "", xlab = "yield")
 ```
 
 The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems.
@@ -183,12 +182,6 @@ Remember those iid assumptions? Let's make sure we actually met them.
 #### Old Way {#old-iid-checks}
 
 There are special plotting function written for lme4 and nlme objects (ie.`plot(lmer_object)`) for checking the homoscedasticity (constant variance). 
-
-```{r, eval=FALSE}
-plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.), 
-     xlab = "fitted values", ylab = "studentized residuals")
-```
-
 ```{r, echo=FALSE}
 #| label: fig-rcbd_error-1
 #| fig-cap: "Plot of residuals versus fitted values"
@@ -200,14 +193,14 @@ plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.),
      cex.lab = 1.8, cex.axis = 1.5)
 ```
 
+```{r, eval=FALSE}
+plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
+```
+
 We are looking for a random and uniform distribution of points. This looks good!
 
 Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and line.
-
-```{r, eval=FALSE}
-qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
-```
-
 ```{r, echo=FALSE}
 #| label: fig-rcbd_norm-1
 #| fig-cap: "QQ-plot of residuals"
@@ -216,6 +209,11 @@ qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
 par(mar=c(5.1, 5, 2.1, 2.1))
 qqnorm(resid(model_rcbd_lmer), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd_lmer))
 ```
+
+```{r, eval=FALSE}
+qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
+```
+
 This is reasonably good. Things do tend to fall apart at the tails.
 
 #### New Way
@@ -245,6 +243,10 @@ This table indicates the estimated marginal means ("emmeans", sometimes called "
 At this point, the analysis goals have been met: we know the estimated means for each treatment and their rankings.
 
 If you want to run ANOVA, it can be done quite easily. By default, the Kenward-Rogers method of degrees of freedom approximation is used. 
+
+::: column-margin
+The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the anova() function.
+:::
 
 ::: panel-tabset
 ### lme4
