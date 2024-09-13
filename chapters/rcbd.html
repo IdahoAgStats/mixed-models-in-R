@@ -282,7 +282,7 @@ window.Quarto = {
   <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">4.1</span> Background</a></li>
   <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">4.2</span> Example Analysis</a>
   <ul class="collapse">
-  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.2.1</span> <em>Data integrity checks</em></a></li>
+  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.2.1</span> Data integrity checks</a></li>
   <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">4.2.2</span> Model Building</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">4.2.3</span> Check Model Assumptions</a></li>
   <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.2.4</span> Inference</a></li>
@@ -405,7 +405,7 @@ window.Quarto = {
 </table>
 <p>There are several variables present that are not useful for this analysis. The only thing we are concerned about is <strong>block</strong>, <strong>variety</strong>, <strong>yield_bu_a</strong>, and <strong>test_weight</strong>.</p>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2.1</span> <em>Data integrity checks</em></h3>
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2.1</span> Data integrity checks</h3>
 <p>The first thing is to make sure the data is what we expect. There are two steps:</p>
 <ol type="1">
 <li>make sure data are the expected data type</li>
@@ -513,9 +513,6 @@ Missing Data
 </div>
 <p>If there were independent variables with a continuous distribution (a covariate), I would plot those data.</p>
 <p>Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -530,6 +527,9 @@ Figure&nbsp;4.1: Histogram of the dependent variable.
 </figure>
 </div>
 </div></div></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems.</p>
 <p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
 <p>These are not complicated checks. They are designed to be done quickly and should be done for <em>every analysis</em> if you not previously already inspected the data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
@@ -574,10 +574,6 @@ Figure&nbsp;4.1: Histogram of the dependent variable.
 <section id="old-iid-checks" class="level4 page-columns page-full" data-number="4.2.3.1">
 <h4 data-number="4.2.3.1" class="anchored" data-anchor-id="old-iid-checks"><span class="header-section-number">4.2.3.1</span> Old Way</h4>
 <p>There are special plotting function written for lme4 and nlme objects (ie.<code>plot(lmer_object)</code>) for checking the homoscedasticity (constant variance).</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_rcbd_lmer, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -592,11 +588,12 @@ Figure&nbsp;4.2: Plot of residuals versus fitted values
 </figure>
 </div>
 </div></div></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_rcbd_lmer, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>We are looking for a random and uniform distribution of points. This looks good!</p>
 <p>Checking normality requiring first extracting the model residuals with <code>resid()</code> and then generating a qq-plot and line.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd_lmer), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd_lmer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -611,6 +608,9 @@ Figure&nbsp;4.3: QQ-plot of residuals
 </figure>
 </div>
 </div></div></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd_lmer), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd_lmer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>This is reasonably good. Things do tend to fall apart at the tails.</p>
 </section>
 <section id="new-way" class="level4" data-number="4.2.3.2">
@@ -689,7 +689,10 @@ Confidence level used: 0.95 </code></pre>
 <p>This table indicates the estimated marginal means (“emmeans”, sometimes called “least squares means”), the standard error (“SE”) of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.</p>
 <p>At this point, the analysis goals have been met: we know the estimated means for each treatment and their rankings.</p>
 <p>If you want to run ANOVA, it can be done quite easily. By default, the Kenward-Rogers method of degrees of freedom approximation is used.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the anova() function.</p>
+</div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">

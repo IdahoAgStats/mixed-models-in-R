@@ -331,12 +331,22 @@ window.Quarto = {
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma_\epsilon)\]</span></p>
 <p><span class="math display">\[\ \delta  \sim N(0, \sigma_\delta)\]</span></p>
 <p>Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\sigma_\delta\)</span>, respectively.</p>
-<section id="iid-assumption-for-error-terms" class="level4" data-number="5.1.0.1">
-<h4 data-number="5.1.0.1" class="anchored" data-anchor-id="iid-assumption-for-error-terms"><span class="header-section-number">5.1.0.1</span> ‘iid’ assumption for error terms</h4>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+‘iid’ assumption for error terms
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>In these model, the error terms, <span class="math inline">\(\epsilon\)</span> are assumed to be “iid”, that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.</p>
+</div>
+</div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../img/split_plot_CRD-01.jpeg" class="img-fluid figure-img" width="341"></p>
+<p><img src="../img/split_plot_CRD.jpeg" class="img-fluid figure-img" width="500"></p>
 <figcaption>Split Plot CRD Design</figcaption>
 </figure>
 </div>
@@ -347,25 +357,42 @@ window.Quarto = {
 </figure>
 </div>
 </section>
-</section>
 <section id="analysis-examples" class="level2 page-columns page-full" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">5.2</span> Analysis Examples</h2>
+<p>Load required libraries</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance); <span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(multcomp); <span class="fu">library</span>(multcompView)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(ggplot2); <span class="fu">library</span>(broom.mixed)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp); <span class="fu">library</span>(multcompView)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 <section id="example-model-for-crd-split-plot-designs" class="level3 page-columns page-full" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="example-model-for-crd-split-plot-designs"><span class="header-section-number">5.2.1</span> Example model for CRD Split Plot Designs</h3>
-<ol type="1">
-<li>Load required libraries</li>
-</ol>
-<section id="import-height-data-and-check-the-data-integrity." class="level4" data-number="5.2.1.1">
-<h4 data-number="5.2.1.1" class="anchored" data-anchor-id="import-height-data-and-check-the-data-integrity."><span class="header-section-number">5.2.1.1</span> <strong>Import height data and check the data integrity.</strong></h4>
+<p>Let’s import height data. It is located <a href="https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv">here</a> if you want to download it yourself (recommended).</p>
 <p>The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are times and management represents subplot and 3 replications.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>height_data <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"height_data.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>height_data <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"height_data.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="data-integrity-checks" class="level4" data-number="5.2.1.1">
+<h4 data-number="5.2.1.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">5.2.1.1</span> Data integrity checks</h4>
 <ul>
 <li>Run a cross tabulation using <code>table()</code> to check the arrangement of whole-plots and sub-plots.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(height_data<span class="sc">$</span>time, height_data<span class="sc">$</span>manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(height_data<span class="sc">$</span>time, height_data<span class="sc">$</span>manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    
      M1 M2 M3 M4 M5 M6 M7 M8
@@ -375,11 +402,12 @@ window.Quarto = {
   T4  6  6  6  6  6  6  6  6</code></pre>
 </div>
 </div>
+<p>The levels of whole plots and subplots are balanced.</p>
 <ul>
-<li>Look at structure of the data using <code>str()</code>, this will help in identifying class of the variable. In this dataset, class of the whole-plot, sub-plot, and block should be factor/character and response variable (height) should be numeric.</li>
+<li>Look at structure of the data using <code>str()</code>, this will help in identifying class of the variable. In this data set, class of the whole-plot, sub-plot, and block should be factor/character and response variable (height) should be numeric.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(height_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(height_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tibble [192 × 5] (S3: tbl_df/tbl/data.frame)
  $ time  : chr [1:192] "T1" "T1" "T1" "T1" ...
@@ -389,11 +417,9 @@ window.Quarto = {
  $ height: num [1:192] 104.5 92.3 96.8 94.7 105.7 ...</code></pre>
 </div>
 </div>
-<ul>
-<li>Check the number of missing values in each column.</li>
-</ul>
+<p>The ‘time’, ‘manage’, and ‘rep’ are character and variable height is numeric. The structure of the data is in format as needed. - Check the number of missing values in each column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(height_data, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(height_data, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  time manage    rep sample height 
      0      0      0      0      0 </code></pre>
@@ -403,19 +429,19 @@ window.Quarto = {
 <li>Exploratory boxplot to look at the height observations at different times with variable managements.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> height_data, <span class="fu">aes</span>(<span class="at">y =</span> height, <span class="at">x =</span> time)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> manage), <span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> height_data, <span class="fu">aes</span>(<span class="at">y =</span> height, <span class="at">x =</span> time)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> manage), <span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
 <section id="model-building" class="level4 page-columns page-full" data-number="5.2.1.2">
-<h4 data-number="5.2.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">5.2.1.2</span> <strong>Model building</strong></h4>
+<h4 data-number="5.2.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">5.2.1.2</span> Model building</h4>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Recall the model:</p>
@@ -424,321 +450,67 @@ window.Quarto = {
 </div></div><p>In order to test the main effects of the treatments as well as the interaction between two factors, we can specify that in model as: <code>time + manage + time:manage</code> or <code>time*manage</code>.</p>
 <p>When dealing with split plot design across reps or blocks, the random effects needs to be nested hierarchically, from largest unit to smallest. For example, in this example the random effects will be designated as <code>(1 | rep/time)</code>. This implies that random intercepts vary with rep and time within rep.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time), <span class="at">data =</span> height_data)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time), <span class="at">data =</span> height_data)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML ['lmerMod']
-Formula: height ~ time * manage + (1 | rep/time)
-   Data: height_data
-
-REML criterion at convergence: 997.8
-
-Scaled residuals: 
-     Min       1Q   Median       3Q      Max 
--2.53183 -0.60511 -0.07333  0.62458  1.97914 
-
-Random effects:
- Groups   Name        Variance Std.Dev.
- time:rep (Intercept)  0.6118  0.7822  
- rep      (Intercept) 20.1069  4.4841  
- Residual             19.5318  4.4195  
-Number of obs: 192, groups:  time:rep, 12; rep, 3
-
-Fixed effects:
-                Estimate Std. Error t value
-(Intercept)     108.0333     3.1877  33.890
-timeT2            3.1833     2.6303   1.210
-timeT3           -2.2500     2.6303  -0.855
-timeT4            1.2833     2.6303   0.488
-manageM2         -4.4500     2.5516  -1.744
-manageM3         -5.3000     2.5516  -2.077
-manageM4         -6.1833     2.5516  -2.423
-manageM5         -5.0167     2.5516  -1.966
-manageM6         -3.4167     2.5516  -1.339
-manageM7         -9.7500     2.5516  -3.821
-manageM8         -4.6667     2.5516  -1.829
-timeT2:manageM2  -1.4167     3.6085  -0.393
-timeT3:manageM2   0.4667     3.6085   0.129
-timeT4:manageM2  -4.6667     3.6085  -1.293
-timeT2:manageM3  -1.9667     3.6085  -0.545
-timeT3:manageM3  -2.3500     3.6085  -0.651
-timeT4:manageM3  -0.8667     3.6085  -0.240
-timeT2:manageM4   3.1000     3.6085   0.859
-timeT3:manageM4   0.9000     3.6085   0.249
-timeT4:manageM4   7.8500     3.6085   2.175
-timeT2:manageM5  -1.0167     3.6085  -0.282
-timeT3:manageM5  -0.9000     3.6085  -0.249
-timeT4:manageM5  -2.4667     3.6085  -0.684
-timeT2:manageM6   0.5333     3.6085   0.148
-timeT3:manageM6  -3.9333     3.6085  -1.090
-timeT4:manageM6   1.1167     3.6085   0.309
-timeT2:manageM7  -1.9333     3.6085  -0.536
-timeT3:manageM7   1.0667     3.6085   0.296
-timeT4:manageM7  -1.3833     3.6085  -0.383
-timeT2:manageM8  -1.3167     3.6085  -0.365
-timeT3:manageM8  -0.8167     3.6085  -0.226
-timeT4:manageM8  -0.2000     3.6085  -0.055</code></pre>
+<pre><code># A tibble: 35 × 8
+   effect group term        estimate std.error statistic     df    p.value
+   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
+ 1 fixed  &lt;NA&gt;  (Intercept)   108.        3.19    33.9     4.38 0.00000181
+ 2 fixed  &lt;NA&gt;  timeT2          3.18      2.63     1.21  104.   0.229     
+ 3 fixed  &lt;NA&gt;  timeT3         -2.25      2.63    -0.855 104.   0.394     
+ 4 fixed  &lt;NA&gt;  timeT4          1.28      2.63     0.488 104.   0.627     
+ 5 fixed  &lt;NA&gt;  manageM2       -4.45      2.55    -1.74  152.   0.0832    
+ 6 fixed  &lt;NA&gt;  manageM3       -5.30      2.55    -2.08  152.   0.0395    
+ 7 fixed  &lt;NA&gt;  manageM4       -6.18      2.55    -2.42  152.   0.0166    
+ 8 fixed  &lt;NA&gt;  manageM5       -5.02      2.55    -1.97  152.   0.0511    
+ 9 fixed  &lt;NA&gt;  manageM6       -3.42      2.55    -1.34  152.   0.183     
+10 fixed  &lt;NA&gt;  manageM7       -9.75      2.55    -3.82  152.   0.000193  
+# ℹ 25 more rows</code></pre>
 </div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span><span class="fu">lme</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time, <span class="at">data =</span> height_data)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(model1)</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>
-Correlation matrix not shown by default, as p = 32 &gt; 12.
-Use print(x, correlation=TRUE)  or
-    vcov(x)        if you need it</code></pre>
+<pre><code>Warning in tidy.lme(model1): ran_pars not yet implemented for multiple levels
+of nesting</code></pre>
 </div>
-</div>
-</div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span><span class="fu">lme</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time, <span class="at">data =</span> height_data)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed-effects model fit by REML
-  Data: height_data 
-       AIC      BIC    logLik
-  1067.782 1175.413 -498.8911
-
-Random effects:
- Formula: ~1 | rep
-        (Intercept)
-StdDev:    4.483903
-
- Formula: ~1 | time %in% rep
-        (Intercept) Residual
-StdDev:   0.7822445 4.419479
-
-Fixed effects:  height ~ time * manage 
-                    Value Std.Error  DF  t-value p-value
-(Intercept)     108.03333  3.187642 152 33.89130  0.0000
-timeT2            3.18333  2.630311   6  1.21025  0.2717
-timeT3           -2.25000  2.630311   6 -0.85541  0.4252
-timeT4            1.28333  2.630311   6  0.48790  0.6429
-manageM2         -4.45000  2.551588 152 -1.74401  0.0832
-manageM3         -5.30000  2.551588 152 -2.07714  0.0395
-manageM4         -6.18333  2.551588 152 -2.42333  0.0166
-manageM5         -5.01667  2.551588 152 -1.96610  0.0511
-manageM6         -3.41667  2.551588 152 -1.33904  0.1826
-manageM7         -9.75000  2.551588 152 -3.82115  0.0002
-manageM8         -4.66667  2.551588 152 -1.82893  0.0694
-timeT2:manageM2  -1.41667  3.608490 152 -0.39259  0.6952
-timeT3:manageM2   0.46667  3.608490 152  0.12932  0.8973
-timeT4:manageM2  -4.66667  3.608490 152 -1.29325  0.1979
-timeT2:manageM3  -1.96667  3.608490 152 -0.54501  0.5865
-timeT3:manageM3  -2.35000  3.608490 152 -0.65124  0.5159
-timeT4:manageM3  -0.86667  3.608490 152 -0.24017  0.8105
-timeT2:manageM4   3.10000  3.608490 152  0.85909  0.3916
-timeT3:manageM4   0.90000  3.608490 152  0.24941  0.8034
-timeT4:manageM4   7.85000  3.608490 152  2.17543  0.0311
-timeT2:manageM5  -1.01667  3.608490 152 -0.28174  0.7785
-timeT3:manageM5  -0.90000  3.608490 152 -0.24941  0.8034
-timeT4:manageM5  -2.46667  3.608490 152 -0.68357  0.4953
-timeT2:manageM6   0.53333  3.608490 152  0.14780  0.8827
-timeT3:manageM6  -3.93333  3.608490 152 -1.09002  0.2774
-timeT4:manageM6   1.11667  3.608490 152  0.30946  0.7574
-timeT2:manageM7  -1.93333  3.608490 152 -0.53577  0.5929
-timeT3:manageM7   1.06667  3.608490 152  0.29560  0.7679
-timeT4:manageM7  -1.38333  3.608490 152 -0.38336  0.7020
-timeT2:manageM8  -1.31667  3.608490 152 -0.36488  0.7157
-timeT3:manageM8  -0.81667  3.608490 152 -0.22632  0.8213
-timeT4:manageM8  -0.20000  3.608490 152 -0.05542  0.9559
- Correlation: 
-                (Intr) timeT2 timeT3 timeT4 mangM2 mangM3 mangM4 mangM5 mangM6
-timeT2          -0.413                                                        
-timeT3          -0.413  0.500                                                 
-timeT4          -0.413  0.500  0.500                                          
-manageM2        -0.400  0.485  0.485  0.485                                   
-manageM3        -0.400  0.485  0.485  0.485  0.500                            
-manageM4        -0.400  0.485  0.485  0.485  0.500  0.500                     
-manageM5        -0.400  0.485  0.485  0.485  0.500  0.500  0.500              
-manageM6        -0.400  0.485  0.485  0.485  0.500  0.500  0.500  0.500       
-manageM7        -0.400  0.485  0.485  0.485  0.500  0.500  0.500  0.500  0.500
-manageM8        -0.400  0.485  0.485  0.485  0.500  0.500  0.500  0.500  0.500
-timeT2:manageM2  0.283 -0.686 -0.343 -0.343 -0.707 -0.354 -0.354 -0.354 -0.354
-timeT3:manageM2  0.283 -0.343 -0.686 -0.343 -0.707 -0.354 -0.354 -0.354 -0.354
-timeT4:manageM2  0.283 -0.343 -0.343 -0.686 -0.707 -0.354 -0.354 -0.354 -0.354
-timeT2:manageM3  0.283 -0.686 -0.343 -0.343 -0.354 -0.707 -0.354 -0.354 -0.354
-timeT3:manageM3  0.283 -0.343 -0.686 -0.343 -0.354 -0.707 -0.354 -0.354 -0.354
-timeT4:manageM3  0.283 -0.343 -0.343 -0.686 -0.354 -0.707 -0.354 -0.354 -0.354
-timeT2:manageM4  0.283 -0.686 -0.343 -0.343 -0.354 -0.354 -0.707 -0.354 -0.354
-timeT3:manageM4  0.283 -0.343 -0.686 -0.343 -0.354 -0.354 -0.707 -0.354 -0.354
-timeT4:manageM4  0.283 -0.343 -0.343 -0.686 -0.354 -0.354 -0.707 -0.354 -0.354
-timeT2:manageM5  0.283 -0.686 -0.343 -0.343 -0.354 -0.354 -0.354 -0.707 -0.354
-timeT3:manageM5  0.283 -0.343 -0.686 -0.343 -0.354 -0.354 -0.354 -0.707 -0.354
-timeT4:manageM5  0.283 -0.343 -0.343 -0.686 -0.354 -0.354 -0.354 -0.707 -0.354
-timeT2:manageM6  0.283 -0.686 -0.343 -0.343 -0.354 -0.354 -0.354 -0.354 -0.707
-timeT3:manageM6  0.283 -0.343 -0.686 -0.343 -0.354 -0.354 -0.354 -0.354 -0.707
-timeT4:manageM6  0.283 -0.343 -0.343 -0.686 -0.354 -0.354 -0.354 -0.354 -0.707
-timeT2:manageM7  0.283 -0.686 -0.343 -0.343 -0.354 -0.354 -0.354 -0.354 -0.354
-timeT3:manageM7  0.283 -0.343 -0.686 -0.343 -0.354 -0.354 -0.354 -0.354 -0.354
-timeT4:manageM7  0.283 -0.343 -0.343 -0.686 -0.354 -0.354 -0.354 -0.354 -0.354
-timeT2:manageM8  0.283 -0.686 -0.343 -0.343 -0.354 -0.354 -0.354 -0.354 -0.354
-timeT3:manageM8  0.283 -0.343 -0.686 -0.343 -0.354 -0.354 -0.354 -0.354 -0.354
-timeT4:manageM8  0.283 -0.343 -0.343 -0.686 -0.354 -0.354 -0.354 -0.354 -0.354
-                mangM7 mangM8 tT2:M2 tT3:M2 tT4:M2 tT2:M3 tT3:M3 tT4:M3 tT2:M4
-timeT2                                                                        
-timeT3                                                                        
-timeT4                                                                        
-manageM2                                                                      
-manageM3                                                                      
-manageM4                                                                      
-manageM5                                                                      
-manageM6                                                                      
-manageM7                                                                      
-manageM8         0.500                                                        
-timeT2:manageM2 -0.354 -0.354                                                 
-timeT3:manageM2 -0.354 -0.354  0.500                                          
-timeT4:manageM2 -0.354 -0.354  0.500  0.500                                   
-timeT2:manageM3 -0.354 -0.354  0.500  0.250  0.250                            
-timeT3:manageM3 -0.354 -0.354  0.250  0.500  0.250  0.500                     
-timeT4:manageM3 -0.354 -0.354  0.250  0.250  0.500  0.500  0.500              
-timeT2:manageM4 -0.354 -0.354  0.500  0.250  0.250  0.500  0.250  0.250       
-timeT3:manageM4 -0.354 -0.354  0.250  0.500  0.250  0.250  0.500  0.250  0.500
-timeT4:manageM4 -0.354 -0.354  0.250  0.250  0.500  0.250  0.250  0.500  0.500
-timeT2:manageM5 -0.354 -0.354  0.500  0.250  0.250  0.500  0.250  0.250  0.500
-timeT3:manageM5 -0.354 -0.354  0.250  0.500  0.250  0.250  0.500  0.250  0.250
-timeT4:manageM5 -0.354 -0.354  0.250  0.250  0.500  0.250  0.250  0.500  0.250
-timeT2:manageM6 -0.354 -0.354  0.500  0.250  0.250  0.500  0.250  0.250  0.500
-timeT3:manageM6 -0.354 -0.354  0.250  0.500  0.250  0.250  0.500  0.250  0.250
-timeT4:manageM6 -0.354 -0.354  0.250  0.250  0.500  0.250  0.250  0.500  0.250
-timeT2:manageM7 -0.707 -0.354  0.500  0.250  0.250  0.500  0.250  0.250  0.500
-timeT3:manageM7 -0.707 -0.354  0.250  0.500  0.250  0.250  0.500  0.250  0.250
-timeT4:manageM7 -0.707 -0.354  0.250  0.250  0.500  0.250  0.250  0.500  0.250
-timeT2:manageM8 -0.354 -0.707  0.500  0.250  0.250  0.500  0.250  0.250  0.500
-timeT3:manageM8 -0.354 -0.707  0.250  0.500  0.250  0.250  0.500  0.250  0.250
-timeT4:manageM8 -0.354 -0.707  0.250  0.250  0.500  0.250  0.250  0.500  0.250
-                tT3:M4 tT4:M4 tT2:M5 tT3:M5 tT4:M5 tT2:M6 tT3:M6 tT4:M6 tT2:M7
-timeT2                                                                        
-timeT3                                                                        
-timeT4                                                                        
-manageM2                                                                      
-manageM3                                                                      
-manageM4                                                                      
-manageM5                                                                      
-manageM6                                                                      
-manageM7                                                                      
-manageM8                                                                      
-timeT2:manageM2                                                               
-timeT3:manageM2                                                               
-timeT4:manageM2                                                               
-timeT2:manageM3                                                               
-timeT3:manageM3                                                               
-timeT4:manageM3                                                               
-timeT2:manageM4                                                               
-timeT3:manageM4                                                               
-timeT4:manageM4  0.500                                                        
-timeT2:manageM5  0.250  0.250                                                 
-timeT3:manageM5  0.500  0.250  0.500                                          
-timeT4:manageM5  0.250  0.500  0.500  0.500                                   
-timeT2:manageM6  0.250  0.250  0.500  0.250  0.250                            
-timeT3:manageM6  0.500  0.250  0.250  0.500  0.250  0.500                     
-timeT4:manageM6  0.250  0.500  0.250  0.250  0.500  0.500  0.500              
-timeT2:manageM7  0.250  0.250  0.500  0.250  0.250  0.500  0.250  0.250       
-timeT3:manageM7  0.500  0.250  0.250  0.500  0.250  0.250  0.500  0.250  0.500
-timeT4:manageM7  0.250  0.500  0.250  0.250  0.500  0.250  0.250  0.500  0.500
-timeT2:manageM8  0.250  0.250  0.500  0.250  0.250  0.500  0.250  0.250  0.500
-timeT3:manageM8  0.500  0.250  0.250  0.500  0.250  0.250  0.500  0.250  0.250
-timeT4:manageM8  0.250  0.500  0.250  0.250  0.500  0.250  0.250  0.500  0.250
-                tT3:M7 tT4:M7 tT2:M8 tT3:M8
-timeT2                                     
-timeT3                                     
-timeT4                                     
-manageM2                                   
-manageM3                                   
-manageM4                                   
-manageM5                                   
-manageM6                                   
-manageM7                                   
-manageM8                                   
-timeT2:manageM2                            
-timeT3:manageM2                            
-timeT4:manageM2                            
-timeT2:manageM3                            
-timeT3:manageM3                            
-timeT4:manageM3                            
-timeT2:manageM4                            
-timeT3:manageM4                            
-timeT4:manageM4                            
-timeT2:manageM5                            
-timeT3:manageM5                            
-timeT4:manageM5                            
-timeT2:manageM6                            
-timeT3:manageM6                            
-timeT4:manageM6                            
-timeT2:manageM7                            
-timeT3:manageM7                            
-timeT4:manageM7  0.500                     
-timeT2:manageM8  0.250  0.250              
-timeT3:manageM8  0.500  0.250  0.500       
-timeT4:manageM8  0.250  0.500  0.500  0.500
-
-Standardized Within-Group Residuals:
-        Min          Q1         Med          Q3         Max 
--2.53183600 -0.60511301 -0.07332633  0.62457774  1.97914273 
-
-Number of Observations: 192
-Number of Groups: 
-          rep time %in% rep 
-            3            12 </code></pre>
+<pre><code># A tibble: 32 × 7
+   effect term        estimate std.error    df statistic  p.value
+   &lt;chr&gt;  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+ 1 fixed  (Intercept)   108.        3.19   152    33.9   9.59e-73
+ 2 fixed  timeT2          3.18      2.63     6     1.21  2.72e- 1
+ 3 fixed  timeT3         -2.25      2.63     6    -0.855 4.25e- 1
+ 4 fixed  timeT4          1.28      2.63     6     0.488 6.43e- 1
+ 5 fixed  manageM2       -4.45      2.55   152    -1.74  8.32e- 2
+ 6 fixed  manageM3       -5.30      2.55   152    -2.08  3.95e- 2
+ 7 fixed  manageM4       -6.18      2.55   152    -2.42  1.66e- 2
+ 8 fixed  manageM5       -5.02      2.55   152    -1.97  5.11e- 2
+ 9 fixed  manageM6       -3.42      2.55   152    -1.34  1.83e- 1
+10 fixed  manageM7       -9.75      2.55   152    -3.82  1.93e- 4
+# ℹ 22 more rows</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-</section>
-<section id="check-model-assumptions" class="level4 page-columns page-full" data-number="5.2.1.3">
-<h4 data-number="5.2.1.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">5.2.1.3</span> <strong>Check Model Assumptions</strong></h4>
+<section id="check-model-assumptions" class="level5" data-number="5.2.1.2.1">
+<h5 data-number="5.2.1.2.1" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">5.2.1.2.1</span> Check Model Assumptions</h5>
 <p>Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.</p>
-<p>We can evaluate the assumptions in two ways: 1. By plotting model using <code>plot()</code> and residuals using <code>qqnorm()</code>.</p>
+<p>We will use <code>check_model()</code> function from ‘performance’ package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell page-columns page-full">
-
-<div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-split-plot_error" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-split-plot_error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="split-plot-design_files/figure-html/fig-split-plot_error-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-plot_error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: Plot of residuals versus fitted values
-</figcaption>
-</figure>
-</div>
-</div></div></div>
-<p>We are looking for a random and uniform distribution of points. This looks good!</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>The same code works for nlme and lme4-generated models.</p>
-</div></div><p>Checking normality requiring first extracting the model residuals with <code>resid()</code> and then generaing a qq-plot and line.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model1), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell page-columns page-full">
-
-<div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-split-plot_norm" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-split-plot_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="split-plot-design_files/figure-html/fig-split-plot_norm-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-plot_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.2: QQ-plot of residuals
-</figcaption>
-</figure>
-</div>
-</div></div></div>
-<p>Or we can use <code>check_model()</code> function from ‘performance’ package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking model assumptions</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Converting missing values (`NA`) into regular values currently not
   possible for variables of class `NULL`.</code></pre>
@@ -746,28 +518,29 @@ Figure&nbsp;5.2: QQ-plot of residuals
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>In this case the residuals fit the assumptions of the model well.</p>
 </section>
-<section id="inference" class="level4" data-number="5.2.1.4">
-<h4 data-number="5.2.1.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">5.2.1.4</span> <strong>Inference</strong></h4>
-<p>The <code>anova()</code> function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions. We observed a signficant effect if time and manage factors.</p>
+</section>
+<section id="inference" class="level4" data-number="5.2.1.3">
+<h4 data-number="5.2.1.3" class="anchored" data-anchor-id="inference"><span class="header-section-number">5.2.1.3</span> Inference</h4>
+<p>The <code>anova()</code> function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions. We observed a significant effect of manage factor only.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same syntax for lme4 &amp; nlme</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF   F-value p-value
-(Intercept)     1   152 1560.4124  &lt;.0001
-time            3     6    9.3310  0.0112
-manage          7   152   10.8425  &lt;.0001
+(Intercept)     1   152 1148.6202  &lt;.0001
+time            3     6    1.5046  0.3061
+manage          7   152    2.2727  0.0315
 time:manage    21   152    1.1588  0.2955</code></pre>
 </div>
 </div>
-<p>The estimated marginal means for each fixed effect and interaction effect can be obtained using <code>emmeans()</code>.</p>
+<p>We can further compute estimated marginal means for each fixed effect and interaction effect can be obtained using <code>emmeans()</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -785,31 +558,11 @@ Results are averaged over the levels of: manage
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span> manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> manage emmean   SE df lower.CL upper.CL
- M1      108.6 2.75  2     96.8      120
- M2      102.7 2.75  2     90.9      115
- M3      102.0 2.75  2     90.2      114
- M4      105.4 2.75  2     93.5      117
- M5      102.5 2.75  2     90.6      114
- M6      104.6 2.75  2     92.8      116
- M7       98.3 2.75  2     86.4      110
- M8      103.3 2.75  2     91.5      115
-
-Results are averaged over the levels of: time 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 </code></pre>
-</div>
-</div>
-<p>Further, a pairwise comparison or contrasts can be analyzed using estimated means.</p>
+<p>Further, a pairwise comparison or contrasts can be analyzed using estimated means. In this model, ‘time’ factor has 4 levels. We can use <code>pairs()</code> function to evaluate pairwise comparison among different ‘time’ levels.</p>
 <p>For example, if we want to compare difference in height at different time periods, this could be done using <code>pairs()</code> command from emmeans package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast estimate   SE df t.ratio p.value
  T1 - T2     -2.68 1.11  6  -2.426  0.1719
@@ -826,13 +579,13 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 <p>The letters indicating significant differences can be generated using cld() function from the ‘multcomp’ package”. In the output below, groups sharing a letter in the .group are not statistically different from each other.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">Letters=</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">Letters=</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> time emmean  SE df lower.CL upper.CL .group
- T3      100 2.7  2     88.6      112  T    
- T1      103 2.7  2     91.6      115  TR   
- T4      104 2.7  2     92.8      116   R   
- T2      106 2.7  2     94.2      118   R   
+ T3      100 2.7  2     88.6      112  a    
+ T1      103 2.7  2     91.6      115  ab   
+ T4      104 2.7  2     92.8      116   b   
+ T2      106 2.7  2     94.2      118   b   
 
 Results are averaged over the levels of: manage 
 Degrees-of-freedom method: containment 
@@ -843,45 +596,22 @@ NOTE: If two or more means share the same grouping symbol,
       then we cannot show them to be different.
       But we also did not show them to be the same. </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">Letters=</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> manage emmean   SE df lower.CL upper.CL .group
- M7       98.3 2.75  2     86.4      110  T    
- M3      102.0 2.75  2     90.2      114  TR   
- M5      102.5 2.75  2     90.6      114   R   
- M2      102.7 2.75  2     90.9      115   R   
- M8      103.3 2.75  2     91.5      115   R   
- M6      104.6 2.75  2     92.8      116   R   
- M4      105.4 2.75  2     93.5      117   RU  
- M1      108.6 2.75  2     96.8      120    U  
-
-Results are averaged over the levels of: time 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-P value adjustment: tukey method for comparing a family of 8 estimates 
-significance level used: alpha = 0.05 
-NOTE: If two or more means share the same grouping symbol,
-      then we cannot show them to be different.
-      But we also did not show them to be the same. </code></pre>
-</div>
 </div>
 </section>
 </section>
 <section id="example-model-for-rcbd-split-plot-designs" class="level3 page-columns page-full" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="example-model-for-rcbd-split-plot-designs"><span class="header-section-number">5.2.2</span> Example model for RCBD Split Plot Designs</h3>
-<p>The oats data used in this example is from the MASS package. The design with RCBD split plot with 6 blocks, 3 main plots and 4 sub-plots. The primary outcome variable was oat yield.</p>
+<p>The oats data used in this example is from the MASS package. The design with RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.</p>
 <p>Main plot = Variety (V), 3 levels</p>
 <p>Subplot = Nitrogen (N), 4 levels</p>
 <p>Number of blocks (B) = 6</p>
 <p>Dependent variable = yield (Y)</p>
 <p>The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.</p>
-<p>To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties, nutrient levels, their interaction, and the effects of plots and subplots.</p>
-<section id="import-data-and-check-the-data-structure." class="level4 page-columns page-full" data-number="5.2.2.1">
-<h4 data-number="5.2.2.1" class="anchored" data-anchor-id="import-data-and-check-the-data-structure."><span class="header-section-number">5.2.2.1</span> <strong>Import data and check the data structure.</strong></h4>
+<p>To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  B           V      N   Y
 1 I     Victory 0.0cwt 111
@@ -891,9 +621,11 @@ NOTE: If two or more means share the same grouping symbol,
 5 I Golden.rain 0.0cwt 117</code></pre>
 </div>
 </div>
-<p>Evaluate the structure of the data. The “B”, “V”, and “N” needs to be ‘factor’ and “Y” should be numeric.</p>
+<section id="data-integrity-checks-1" class="level4" data-number="5.2.2.1">
+<h4 data-number="5.2.2.1" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">5.2.2.1</span> Data integrity checks</h4>
+<p>Let’s look at the structure of the data. The “B”, “V”, and “N” needs to be ‘factor’ and “Y” should be numeric.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   72 obs. of  4 variables:
  $ B: Factor w/ 6 levels "I","II","III",..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -902,9 +634,9 @@ NOTE: If two or more means share the same grouping symbol,
  $ Y: int  111 130 157 174 117 114 161 141 105 140 ...</code></pre>
 </div>
 </div>
-<p>Running the table() command to verify the levels of main-plots and sub-plots.</p>
+<p>Next, run the table() command to verify the levels of main-plots and sub-plots.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             
               0.0cwt 0.2cwt 0.4cwt 0.6cwt
@@ -913,127 +645,171 @@ NOTE: If two or more means share the same grouping symbol,
   Victory          6      6      6      6</code></pre>
 </div>
 </div>
+</section>
+<section id="model-building-the-model" class="level4 page-columns page-full" data-number="5.2.2.2">
+<h4 data-number="5.2.2.2" class="anchored" data-anchor-id="model-building-the-model"><span class="header-section-number">5.2.2.2</span> Model Building the Model</h4>
+<p>We are evaluating the effect of V, N and their interaction on yield. The <code>1|B/V</code> implies that random intercepts vary with block and V within each block.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Recall the model:</p>
 <p><span class="math display">\[y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha_i\beta_k) + \epsilon_{ij} + \delta_{ijk}\]</span> Where:</p>
 <p><span class="math inline">\(\mu\)</span> = overall experimental mean, <span class="math inline">\(\rho\)</span> = block effect (random), <span class="math inline">\(\alpha\)</span> = main effect of whole plot (fixed), <span class="math inline">\(\beta\)</span> = main effect of subplot (fixed), <span class="math inline">\(\alpha\)</span><span class="math inline">\(\beta\)</span> = interaction between factors A and B, <span class="math inline">\(\epsilon_{ij}\)</span> = whole plot error, <span class="math inline">\(\delta_{ijk}\)</span> = subplot error.</p>
-</div></div></section>
-<section id="building-the-model" class="level4" data-number="5.2.2.2">
-<h4 data-number="5.2.2.2" class="anchored" data-anchor-id="building-the-model"><span class="header-section-number">5.2.2.2</span> <strong>Building the Model</strong></h4>
-<p>We are evaluating the effect of V, N and their interaction on yield. The <code>1|B/V</code> implies that random intercepts vary with block and V within each block.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
+</div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V), </span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> oats, </span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V), </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> oats, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML ['lmerMod']
-Formula: Y ~ V + N + V:N + (1 | B/V)
-   Data: oats
-
-REML criterion at convergence: 529
-
-Scaled residuals: 
-     Min       1Q   Median       3Q      Max 
--1.81301 -0.56145  0.01758  0.63865  1.57034 
+<pre><code># A tibble: 15 × 8
+   effect   group    term            estimate std.error statistic    df  p.value
+   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+ 1 fixed    &lt;NA&gt;     (Intercept)       80.0        9.11    8.78    16.1  1.55e-7
+ 2 fixed    &lt;NA&gt;     VMarvellous        6.67       9.72    0.686   30.2  4.98e-1
+ 3 fixed    &lt;NA&gt;     VVictory          -8.50       9.72   -0.875   30.2  3.89e-1
+ 4 fixed    &lt;NA&gt;     N0.2cwt           18.5        7.68    2.41    45.0  2.02e-2
+ 5 fixed    &lt;NA&gt;     N0.4cwt           34.7        7.68    4.51    45.0  4.58e-5
+ 6 fixed    &lt;NA&gt;     N0.6cwt           44.8        7.68    5.84    45.0  5.48e-7
+ 7 fixed    &lt;NA&gt;     VMarvellous:N0…    3.33      10.9     0.307   45.0  7.60e-1
+ 8 fixed    &lt;NA&gt;     VVictory:N0.2c…   -0.333     10.9    -0.0307  45.0  9.76e-1
+ 9 fixed    &lt;NA&gt;     VMarvellous:N0…   -4.17      10.9    -0.383   45.0  7.03e-1
+10 fixed    &lt;NA&gt;     VVictory:N0.4c…    4.67      10.9     0.430   45.0  6.70e-1
+11 fixed    &lt;NA&gt;     VMarvellous:N0…   -4.67      10.9    -0.430   45.0  6.70e-1
+12 fixed    &lt;NA&gt;     VVictory:N0.6c…    2.17      10.9     0.199   45.0  8.43e-1
+13 ran_pars V:B      sd__(Intercept)   10.3       NA      NA       NA   NA      
+14 ran_pars B        sd__(Intercept)   14.6       NA      NA       NA   NA      
+15 ran_pars Residual sd__Observation   13.3       NA      NA       NA   NA      </code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> oats, </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed-effects model fit by REML
+  Data: oats 
+       AIC      BIC    logLik
+  559.0285 590.4437 -264.5143
 
 Random effects:
- Groups   Name        Variance Std.Dev.
- V:B      (Intercept) 106.1    10.30   
- B        (Intercept) 214.5    14.65   
- Residual             177.1    13.31   
-Number of obs: 72, groups:  V:B, 18; B, 6
+ Formula: ~1 | B
+        (Intercept)
+StdDev:    14.64496
 
-Fixed effects:
-                    Estimate Std. Error t value
-(Intercept)          80.0000     9.1070   8.784
-VMarvellous           6.6667     9.7150   0.686
-VVictory             -8.5000     9.7150  -0.875
-N0.2cwt              18.5000     7.6829   2.408
-N0.4cwt              34.6667     7.6829   4.512
-N0.6cwt              44.8333     7.6829   5.835
-VMarvellous:N0.2cwt   3.3333    10.8653   0.307
-VVictory:N0.2cwt     -0.3333    10.8653  -0.031
-VMarvellous:N0.4cwt  -4.1667    10.8653  -0.383
-VVictory:N0.4cwt      4.6667    10.8653   0.430
-VMarvellous:N0.6cwt  -4.6667    10.8653  -0.430
-VVictory:N0.6cwt      2.1667    10.8653   0.199
+ Formula: ~1 | V %in% B
+        (Intercept) Residual
+StdDev:    10.29863 13.30727
 
-Correlation of Fixed Effects:
-            (Intr) VMrvll VVctry N0.2cw N0.4cw N0.6cw VM:N0.2 VV:N0.2 VM:N0.4
-VMarvellous -0.533                                                           
-VVictory    -0.533  0.500                                                    
-N0.2cwt     -0.422  0.395  0.395                                             
-N0.4cwt     -0.422  0.395  0.395  0.500                                      
-N0.6cwt     -0.422  0.395  0.395  0.500  0.500                               
-VMrvll:N0.2  0.298 -0.559 -0.280 -0.707 -0.354 -0.354                        
-VVctry:N0.2  0.298 -0.280 -0.559 -0.707 -0.354 -0.354  0.500                 
-VMrvll:N0.4  0.298 -0.559 -0.280 -0.354 -0.707 -0.354  0.500   0.250         
-VVctry:N0.4  0.298 -0.280 -0.559 -0.354 -0.707 -0.354  0.250   0.500   0.500 
-VMrvll:N0.6  0.298 -0.559 -0.280 -0.354 -0.354 -0.707  0.500   0.250   0.500 
-VVctry:N0.6  0.298 -0.280 -0.559 -0.354 -0.354 -0.707  0.250   0.500   0.250 
-            VV:N0.4 VM:N0.6
-VMarvellous                
-VVictory                   
-N0.2cwt                    
-N0.4cwt                    
-N0.6cwt                    
-VMrvll:N0.2                
-VVctry:N0.2                
-VMrvll:N0.4                
-VVctry:N0.4                
-VMrvll:N0.6  0.250         
-VVctry:N0.6  0.500   0.500 </code></pre>
+Fixed effects:  Y ~ V + N + V:N 
+                       Value Std.Error DF   t-value p-value
+(Intercept)         80.00000  9.106958 45  8.784492  0.0000
+VMarvellous          6.66667  9.715028 10  0.686222  0.5082
+VVictory            -8.50000  9.715028 10 -0.874933  0.4021
+N0.2cwt             18.50000  7.682957 45  2.407927  0.0202
+N0.4cwt             34.66667  7.682957 45  4.512152  0.0000
+N0.6cwt             44.83333  7.682957 45  5.835427  0.0000
+VMarvellous:N0.2cwt  3.33333 10.865342 45  0.306786  0.7604
+VVictory:N0.2cwt    -0.33333 10.865342 45 -0.030679  0.9757
+VMarvellous:N0.4cwt -4.16667 10.865342 45 -0.383482  0.7032
+VVictory:N0.4cwt     4.66667 10.865342 45  0.429500  0.6696
+VMarvellous:N0.6cwt -4.66667 10.865342 45 -0.429500  0.6696
+VVictory:N0.6cwt     2.16667 10.865342 45  0.199411  0.8428
+ Correlation: 
+                    (Intr) VMrvll VVctry N0.2cw N0.4cw N0.6cw VM:N0.2 VV:N0.2
+VMarvellous         -0.533                                                   
+VVictory            -0.533  0.500                                            
+N0.2cwt             -0.422  0.395  0.395                                     
+N0.4cwt             -0.422  0.395  0.395  0.500                              
+N0.6cwt             -0.422  0.395  0.395  0.500  0.500                       
+VMarvellous:N0.2cwt  0.298 -0.559 -0.280 -0.707 -0.354 -0.354                
+VVictory:N0.2cwt     0.298 -0.280 -0.559 -0.707 -0.354 -0.354  0.500         
+VMarvellous:N0.4cwt  0.298 -0.559 -0.280 -0.354 -0.707 -0.354  0.500   0.250 
+VVictory:N0.4cwt     0.298 -0.280 -0.559 -0.354 -0.707 -0.354  0.250   0.500 
+VMarvellous:N0.6cwt  0.298 -0.559 -0.280 -0.354 -0.354 -0.707  0.500   0.250 
+VVictory:N0.6cwt     0.298 -0.280 -0.559 -0.354 -0.354 -0.707  0.250   0.500 
+                    VM:N0.4 VV:N0.4 VM:N0.6
+VMarvellous                                
+VVictory                                   
+N0.2cwt                                    
+N0.4cwt                                    
+N0.6cwt                                    
+VMarvellous:N0.2cwt                        
+VVictory:N0.2cwt                           
+VMarvellous:N0.4cwt                        
+VVictory:N0.4cwt     0.500                 
+VMarvellous:N0.6cwt  0.500   0.250         
+VVictory:N0.6cwt     0.250   0.500   0.500 
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-1.81300898 -0.56144838  0.01758044  0.63864476  1.57034166 
+
+Number of Observations: 72
+Number of Groups: 
+       B V %in% B 
+       6       18 </code></pre>
 </div>
-</div>
-</div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> oats, </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 </section>
 <section id="check-model-assumptions-1" class="level4" data-number="5.2.2.3">
-<h4 data-number="5.2.2.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">5.2.2.3</span> <strong>Check Model Assumptions</strong></h4>
-<p>Normality of residuals and homogenous variance</p>
+<h4 data-number="5.2.2.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">5.2.2.3</span> Check Model Assumptions</h4>
+<p>We need to verifiy the normality of residuals and homogeneous variance. Here we are using the <code>check_model()</code> function from the performance package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking model assumptions</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
 <section id="inference-1" class="level4" data-number="5.2.2.4">
-<h4 data-number="5.2.2.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">5.2.2.4</span> <strong>Inference</strong></h4>
+<h4 data-number="5.2.2.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">5.2.2.4</span> Inference</h4>
+<p>We can evaluate the model for the analysis of variance, for V, N and their interaction effect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Variance Table
-    npar  Sum Sq Mean Sq F value
-V      2   526.1   263.0  1.4853
-N      3 20020.5  6673.5 37.6857
-V:N    6   321.7    53.6  0.3028</code></pre>
+<pre><code>            numDF denDF  F-value p-value
+(Intercept)     1    45 77.16729  &lt;.0001
+V               2    10  1.22454  0.3344
+N               3    45 13.02273  &lt;.0001
+V:N             6    45  0.30282  0.9322</code></pre>
 </div>
 </div>
-<p>Post-Hoc analysis</p>
+<p>Next, we can estimate marignal means for V, N, or their interaction (V*N) effect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2, <span class="sc">~</span> V <span class="sc">*</span>N) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>emm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> V           N      emmean   SE df lower.CL upper.CL
+ Golden.rain 0.0cwt   80.0 9.11  5     56.6    103.4
+ Marvellous  0.0cwt   86.7 9.11  5     63.3    110.1
+ Victory     0.0cwt   71.5 9.11  5     48.1     94.9
+ Golden.rain 0.2cwt   98.5 9.11  5     75.1    121.9
+ Marvellous  0.2cwt  108.5 9.11  5     85.1    131.9
+ Victory     0.2cwt   89.7 9.11  5     66.3    113.1
+ Golden.rain 0.4cwt  114.7 9.11  5     91.3    138.1
+ Marvellous  0.4cwt  117.2 9.11  5     93.8    140.6
+ Victory     0.4cwt  110.8 9.11  5     87.4    134.2
+ Golden.rain 0.6cwt  124.8 9.11  5    101.4    148.2
+ Marvellous  0.6cwt  126.8 9.11  5    103.4    150.2
+ Victory     0.6cwt  118.5 9.11  5     95.1    141.9
+
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
 </div>
 
 
