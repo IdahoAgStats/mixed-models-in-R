@@ -282,7 +282,7 @@ window.Quarto = {
   <li><a href="#details-for-split-split-plot-designs" id="toc-details-for-split-split-plot-designs" class="nav-link active" data-scroll-target="#details-for-split-split-plot-designs"><span class="header-section-number">6.1</span> Details for split-split plot designs</a></li>
   <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">6.2</span> Example Analysis</a>
   <ul class="collapse">
-  <li><a href="#load-data-and-integrity-checks" id="toc-load-data-and-integrity-checks" class="nav-link" data-scroll-target="#load-data-and-integrity-checks"><span class="header-section-number">6.2.1</span> <em>Load Data and integrity checks</em></a></li>
+  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">6.2.1</span> Data integrity checks</a></li>
   <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">6.2.2</span> Model Building</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">6.2.3</span> Check Model Assumptions</a></li>
   <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">6.2.4</span> Inference</a></li>
@@ -328,10 +328,18 @@ window.Quarto = {
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(broom.mixed)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(emmeans)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -341,15 +349,15 @@ window.Quarto = {
 <p>Whole plot factor = Nitrogen (5 levels)</p>
 <p>Sub plot = management (3 levels)</p>
 <p>sub-subplot = variety (3 levels)</p>
-<section id="load-data-and-integrity-checks" class="level3 page-columns page-full" data-number="6.2.1">
-<h3 data-number="6.2.1" class="anchored" data-anchor-id="load-data-and-integrity-checks"><span class="header-section-number">6.2.1</span> <em>Load Data and integrity checks</em></h3>
-<p>Here, we aren using rice yield data (data set from the <strong>{<a href="https://CRAN.R-project.org/package=agricolae">agricolae</a>}</strong> package.</p>
+<p>Here, we are using rice yield data from the (<a href="https://CRAN.R-project.org/package=agricolae">agricolae</a>) package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_ssp.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_ssp.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="data-integrity-checks" class="level3 page-columns page-full" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">6.2.1</span> Data integrity checks</h3>
 <p>Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   135 obs. of  6 variables:
  $ X         : int  1 2 3 4 5 6 7 8 9 10 ...
@@ -362,14 +370,14 @@ window.Quarto = {
 </div>
 <p>Convert block, nitrogen, variety, and management to characters.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>block)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>nitrogen <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>nitrogen)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>management <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>management)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>variety <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>block)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>nitrogen <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>nitrogen)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>management <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>management)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>variety <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, run a cross tabulations to check balance of observations across independent variables:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(rice<span class="sc">$</span>variety, rice<span class="sc">$</span>nitrogen, rice<span class="sc">$</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(rice<span class="sc">$</span>variety, rice<span class="sc">$</span>nitrogen, rice<span class="sc">$</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>, ,  = m1
 
@@ -399,7 +407,7 @@ window.Quarto = {
 <p>It looks perfectly balanced, with exactly 3 observation per treatment group.</p>
 <p>Last, check the distribution of the dependent variable by plotting a histogram using <code>hist()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rice<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rice<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -424,13 +432,13 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> nitrogen<span class="sc">*</span>management<span class="sc">*</span>variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management),</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> rice, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> nitrogen<span class="sc">*</span>management<span class="sc">*</span>variety <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> rice, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
 lmerModLmerTest]
@@ -563,11 +571,11 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> nitrogen<span class="sc">*</span>management<span class="sc">*</span>variety,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> rice, </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> nitrogen<span class="sc">*</span>management<span class="sc">*</span>variety,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> rice, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in tidy.lme(model3): ran_pars not yet implemented for multiple levels
 of nesting</code></pre>
@@ -601,8 +609,8 @@ of nesting</code></pre>
 <h3 data-number="6.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">6.2.3</span> Check Model Assumptions</h3>
 <p>Model Diagnostics: we are looking for a constant variance and normality of residuals.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -620,7 +628,7 @@ Figure&nbsp;6.2: Plot of residuals versus fitted values
 </div></div></div>
 <p>Checking normality requiring first extracting the model residuals with <code>resid()</code> and then generating a qq-plot and qq-line.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model3), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model3), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -638,7 +646,7 @@ Figure&nbsp;6.3: QQ-plot of residuals
 </div></div></div>
 <p>Or we can do all at one using one function <code>check_model()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Converting missing values (`NA`) into regular values currently not
   possible for variables of class `NULL`.</code></pre>
@@ -656,7 +664,7 @@ Figure&nbsp;6.3: QQ-plot of residuals
 <h3 data-number="6.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">6.2.4</span> Inference</h3>
 <p>Analysis of variance</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            numDF denDF   F-value p-value
 (Intercept)                     1    60 11188.781  &lt;.0001
@@ -671,7 +679,7 @@ nitrogen:management:variety    16    60     0.529  0.9210</code></pre>
 </div>
 <p>Determining the estimates for each treatment factor (variety, nitrogen, management)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -687,7 +695,7 @@ Results are averaged over the levels of: management, variety
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>

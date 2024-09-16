@@ -367,14 +367,13 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance); <span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(multcomp); <span class="fu">library</span>(multcompView)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(ggplot2); <span class="fu">library</span>(broom.mixed)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp); <span class="fu">library</span>(multcompView)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(ggplot2); <span class="fu">library</span>(broom.mixed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -577,26 +576,6 @@ Degrees-of-freedom method: containment
 P value adjustment: tukey method for comparing a family of 4 estimates </code></pre>
 </div>
 </div>
-<p>The letters indicating significant differences can be generated using cld() function from the ‘multcomp’ package”. In the output below, groups sharing a letter in the .group are not statistically different from each other.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">Letters=</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> time emmean  SE df lower.CL upper.CL .group
- T3      100 2.7  2     88.6      112  a    
- T1      103 2.7  2     91.6      115  ab   
- T4      104 2.7  2     92.8      116   b   
- T2      106 2.7  2     94.2      118   b   
-
-Results are averaged over the levels of: manage 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 
-P value adjustment: tukey method for comparing a family of 4 estimates 
-significance level used: alpha = 0.05 
-NOTE: If two or more means share the same grouping symbol,
-      then we cannot show them to be different.
-      But we also did not show them to be the same. </code></pre>
-</div>
-</div>
 </section>
 </section>
 <section id="example-model-for-rcbd-split-plot-designs" class="level3 page-columns page-full" data-number="5.2.2">
@@ -609,9 +588,18 @@ NOTE: If two or more means share the same grouping symbol,
 <p>The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.</p>
 <p>To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'MASS'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    select</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  B           V      N   Y
 1 I     Victory 0.0cwt 111
@@ -625,7 +613,7 @@ NOTE: If two or more means share the same grouping symbol,
 <h4 data-number="5.2.2.1" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">5.2.2.1</span> Data integrity checks</h4>
 <p>Let’s look at the structure of the data. The “B”, “V”, and “N” needs to be ‘factor’ and “Y” should be numeric.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   72 obs. of  4 variables:
  $ B: Factor w/ 6 levels "I","II","III",..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -636,7 +624,7 @@ NOTE: If two or more means share the same grouping symbol,
 </div>
 <p>Next, run the table() command to verify the levels of main-plots and sub-plots.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             
               0.0cwt 0.2cwt 0.4cwt 0.6cwt
@@ -659,10 +647,10 @@ NOTE: If two or more means share the same grouping symbol,
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V), </span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> oats, </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V), </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> oats, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 15 × 8
    effect   group    term            estimate std.error statistic    df  p.value
@@ -687,11 +675,11 @@ NOTE: If two or more means share the same grouping symbol,
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> oats, </span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> oats, </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed-effects model fit by REML
   Data: oats 
@@ -765,11 +753,11 @@ Number of Groups:
 <h4 data-number="5.2.2.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">5.2.2.3</span> Check Model Assumptions</h4>
 <p>We need to verifiy the normality of residuals and homogeneous variance. Here we are using the <code>check_model()</code> function from the performance package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -779,7 +767,7 @@ Number of Groups:
 <h4 data-number="5.2.2.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">5.2.2.4</span> Inference</h4>
 <p>We can evaluate the model for the analysis of variance, for V, N and their interaction effect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1    45 77.16729  &lt;.0001
@@ -790,8 +778,8 @@ V:N             6    45  0.30282  0.9322</code></pre>
 </div>
 <p>Next, we can estimate marignal means for V, N, or their interaction (V*N) effect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>emm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>emm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> V           N      emmean   SE df lower.CL upper.CL
  Golden.rain 0.0cwt   80.0 9.11  5     56.6    103.4
