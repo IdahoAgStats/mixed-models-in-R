@@ -24,20 +24,14 @@ Both the error and the rep effects are assumed to be normally distributed with a
 
 ::: panel-tabset
 ### lme4
-
-```{r, include=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(dplyr)
-
-library(lme4); library(lmerTest); library(nlme)
-
+library(lme4); library(lmerTest); library(broom.mixed)
 library(emmeans); library(performance)
 ```
-
 ### nlme
-
-```{r, include=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(dplyr)
-
 library(nlme); library(emmeans)
 library(broom.mixed); library(performance)
 ```
@@ -55,9 +49,7 @@ Sub plot = management (3 levels)
 
 sub-subplot = variety (3 levels)
 
-### *Load Data and integrity checks*
-
-Here, we aren using rice yield data (data set from the **{[agricolae](https://CRAN.R-project.org/package=agricolae)}** package.
+Here, we are using rice yield data from the ([agricolae](https://CRAN.R-project.org/package=agricolae)) package.
 
 ```{r, eval=FALSE, echo=FALSE}
 library(agricolae)
@@ -70,7 +62,7 @@ write.csv(rice, here::here("data", "rice_ssp.csv"))
 rice <- read.csv(here::here("data", "rice_ssp.csv"))
 ```
 
-
+### Data integrity checks
 Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
 
 ```{r}
