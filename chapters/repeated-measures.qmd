@@ -35,6 +35,7 @@ Packages required for this tutorial:
 #| warning: false
 library(dplyr) 
 library(ggplot2)
+library(viridis)
 library(nlme)
 library(mmrm)
 library(broom.mixed)
@@ -68,10 +69,6 @@ table(dat$variety, dat$block)
 ```
 
 ```{r}
-
-#install.packages("viridis")
-library(viridis)
-
 ggplot(data = dat, aes(y = y, x = factweek, fill = variety)) +
   geom_boxplot() +  
   #scale_fill_brewer(palette="Dark2") +
@@ -100,6 +97,7 @@ hist(dat$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 Let's fit the basic model first
 
 ```{r}
+
 lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
               data = dat,
               na.action = na.exclude)
@@ -137,6 +135,22 @@ Let's run a `summary()` on lm2 model to look at the estimates for random and fix
 ```{r}
 summary(lm2)
 ```
+
+```{r}
+#str(dat)
+#table(dat$factweek, dat$factplot)
+#dat$block <- as.factor(dat$block)
+#fit1 <- mmrm(y ~ variety + factweek + variety:factweek  +  ar1h(factweek|block/factplot), 
+#              data = dat,
+#    method='Satterthwaite')
+
+#summary(fit1)
+#Anova.mmrm(fit1)
+#car::Anova(fit1)
+#anova(fit1)
+```
+
+
 
 #### Check Model Assumptions
 
@@ -252,6 +266,7 @@ tidy(mod)
 ### mmrm
 
 ```{r}
+str(Yield)
 fit1 <- mmrm(
   formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
   data = Yield)
@@ -265,10 +280,10 @@ We will use `check_model()` from 'performance()' package to evaluate the model f
 
 ::: panel-tabset
 ### nlme
-```{r}
+```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(mod)
+check_model(mod, check = c('normality', 'linearity'))
 ```
 ### mmrm
 ```{r}
