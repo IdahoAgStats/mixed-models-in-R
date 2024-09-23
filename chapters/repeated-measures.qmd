@@ -275,20 +275,15 @@ tidy(fit1)
 ```
 :::
 
-```{r}
-
-```
-
-
 ### Model diagnostics
 We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions. 
 
 ::: panel-tabset
 ### nlme
-```{r}
+```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(mod)
+check_model(mod, check = c('normality', 'linearity'))
 ```
 ### mmrm
 ```{r}

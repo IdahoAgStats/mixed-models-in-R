@@ -20,17 +20,14 @@ First step is to load the libraries required for the analysis:
 
 ::: panel-tabset
 ### lme4
-
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(broom.mixed); library(performance)
 ```
-
 ### nlme
-
-```{r, message=FALSE, warning=FALSE, eval=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans)
-library(dplyr)
+library(dplyr); library(performance)
 ```
 :::
 Next, we will load the data set named 'cochran.factorial' from the 'agridat' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.
@@ -46,6 +43,22 @@ data1 <- agridat::cochran.factorial %>%
          p = as.factor(p),
          k = as.factor(k))
 ```
+|                        |                                                                                  |
+|------------------|------------------------------------------------------|
+| block                  | blocking unit                                                                    |
+| rep                  | replication unit                                               |
+| trt                    | treatment factor, 16 levels                                                     |
+| d                | dung treatment, 2 levels                                    |
+| n              | nitrogen treatment, 2 levels                        |
+| p | phosphorus treatment, 2 levels     |
+| k                | potassium treatment, 2 levels |
+| yield            | yield (lbs)                                                         |
+
+: Table of variables in the data set {tbl-factorial}
+
+In this example, we will be evaluating the individual and interactive effect of "d", "n", "p", and "k" treatments on yield.
+
+
 ### Data Integrity Checks
 Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer. 
 ```{r}
@@ -84,7 +97,6 @@ which can be abbreviated as:
 
 ::: panel-tabset
 ### lme4
-
 ```{r, warning=FALSE}
 model1 <- lmer(yield ~ d*n*p*k + (1|block),
                    data = data1, 
@@ -93,11 +105,11 @@ tidy(model1)
 ```
 ### nlme
 ```{r}
-#model2 <- lme(yield ~ d*n*p*k,
- #                 random = ~ 1|block,
-  #                data = data1, 
-   #               na.action = na.exclude)
-#tidy(model2)
+model2 <- lme(yield ~ d*n*p*k,
+              random = ~ 1|block,
+              data = data1, 
+              na.action = na.exclude)
+tidy(model2)
 ```   
 :::
 
@@ -108,17 +120,23 @@ Instead of `summary()` function, we used `tidy()` function from 'broom.mixed' pa
 :::
 ### Check Model Assumptions
 
-
-
-```{r fig.height=9, message=FALSE}
-check_model(model1)
+::: panel-tabset
+### lme4
+```{r, fig.height=3}
+check_model(model1, check = c('normality', 'linearity'))
 ```
+### nlme
+```{r, fig.height=3}
+check_model(model2, check = c('normality', 'linearity'))
+```   
+:::
+
 The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects all fall nearly on a straight line so we can be satisfied with that.
 
 ### Inference
 We can get an ANOVA table for the linear mixed model using the function `anova()`, which works for both `lmer()` and `lme()` models..
 ```{r}
-anova(model1)
+anova(model2, type = "marginal")
 ```
 Let’s find estimates for some of the factors such as n, p, and n:k interaction. We will try the random intercept model first.
 ```{r}

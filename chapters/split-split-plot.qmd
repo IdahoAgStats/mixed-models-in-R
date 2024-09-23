@@ -38,17 +38,7 @@ library(broom.mixed); library(performance)
 :::
 
 In this example, we have a rice yield data from 'agricolae' package.
-
-This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design, levels of each factor are outlined below:
-
-blocks = block (3 blocks),
-
-Whole plot factor = Nitrogen (5 levels)
-
-Sub plot = management (3 levels)
-
-sub-subplot = variety (3 levels)
-
+This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design.
 Here, we are using rice yield data from the ([agricolae](https://CRAN.R-project.org/package=agricolae)) package.
 
 ```{r, eval=FALSE, echo=FALSE}
@@ -61,6 +51,16 @@ write.csv(rice, here::here("data", "rice_ssp.csv"))
 ```{r}
 rice <- read.csv(here::here("data", "rice_ssp.csv"))
 ```
+
+|                        |                                                                                  |
+|------------------|------------------------------------------------------|
+| block                  | blocking unit                                                                    |
+| nitrogen                  | different nitrogen fertilizer rates as main plot with 5 levels                                                    |
+| management                   |  management practices as subplot with 3 levels                                                      |
+| variety                | crop variety being a sub-subplot with 3 levels                                    |
+| yield             | yield (bushels per acre)                                                         |
+
+: Table of variables in the rice data set {tbl-split_split}
 
 ### Data integrity checks
 Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
@@ -114,7 +114,6 @@ model3 <- lmer(yield ~ nitrogen*management*variety + (1|block/nitrogen/managemen
 
 summary(model3)
 ```
-
 ### nlme
 ```{r}
 model3 <- lme(yield ~ nitrogen*management*variety,
@@ -126,57 +125,28 @@ tidy(model3)
 :::
 
 ::: column-margin
-#### boundary (singular) fit:
+**boundary (singular) fit**:
 We get a message that the fit is singular. What does this mean? Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one. OK what about in English? Basically it means that the algorithm that fits the model parameters doesn’t have enough data to get a good estimate. This often happens when we are trying to fit a model that is too complex for the amount of data we have, or when the random effects are very small and can’t be distinguished from zero. We still get some output but this message should make us take a close look at the random effects and their variances.
 :::
 
 ### Check Model Assumptions
 
 Model Diagnostics: we are looking for a constant variance and normality of residuals.
-```{r, eval=FALSE}
-plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
-     xlab = "fitted values", ylab = "studentized residuals")
+Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line.
+we can do all at one using one function `check_model()`. 
+```{r,  fig.height=3}
+check_model(model3, check = c('normality', 'linearity'))
 ```
-
-```{r, echo=FALSE}
-#| label: fig-split-split-plot_error
-#| fig-cap: "Plot of residuals versus fitted values"
-#| column: margin
-#| 
-par(mar=c(5.1, 5, 2.1, 2.1))
-plot(model3, resid(., scaled=TRUE) ~ fitted(.), 
-     xlab = "fitted values", ylab = "studentized residuals",
-     cex.lab = 1.8, cex.axis = 1.5)
-```
-
-Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and qq-line.
-
-```{r, eval=FALSE}
-qqnorm(resid(model3), main = NULL); qqline(resid(model3))
-```
-
-```{r, echo=FALSE}
-#| label: fig-split-split-plot_norm
-#| fig-cap: "QQ-plot of residuals"
-#| column: margin
-
-par(mar=c(5.1, 5, 2.1, 2.1))
-qqnorm(resid(model3), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model3))
-```
-
-Or we can do all at one using one function `check_model()`. 
-```{r}
-check_model(model3)
-```
+Here, we didn't observe any anomaly in model assumptions.
 
 ### Inference
 Analysis of variance
 
 ```{r}
-anova(model3)
+anova(model3, type = "marginal")
 ```
 
-Determining the estimates for each treatment factor (variety, nitrogen, management)
+Determining the estimated marginal means for each treatment factor (variety, nitrogen, management) and their interaction.
 ```{r}
 emmeans(model3, ~ nitrogen)
 emmeans(model3, ~ variety*management)
