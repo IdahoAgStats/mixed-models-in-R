@@ -229,8 +229,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/lattice-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lattice Design</span></span></a>
+  <a href="../chapters/strip-plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Strip Plot Design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -365,8 +365,8 @@ window.Quarto = {
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
 <colgroup>
-<col style="width: 22%">
-<col style="width: 77%">
+<col style="width: 25%">
+<col style="width: 75%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -613,11 +613,14 @@ Figure&nbsp;4.3: QQ-plot of residuals
 </div>
 <p>This is reasonably good. Things do tend to fall apart at the tails.</p>
 </section>
-<section id="new-way" class="level4" data-number="4.2.3.2">
+<section id="new-way" class="level4 page-columns page-full" data-number="4.2.3.2">
 <h4 data-number="4.2.3.2" class="anchored" data-anchor-id="new-way"><span class="header-section-number">4.2.3.2</span> New Way</h4>
 <p>Nowadays, we can take advantage of the <a href="https://easystats.github.io/performance/">performance</a> package, which provides a comprehensive suite of diagnostic plots.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_rcbd_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Please look for <code>check_model()</code> in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use check = “all”.</p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_rcbd_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

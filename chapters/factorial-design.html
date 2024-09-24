@@ -229,8 +229,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/lattice-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lattice Design</span></span></a>
+  <a href="../chapters/strip-plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Strip Plot Design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -333,7 +333,7 @@ window.Quarto = {
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -349,6 +349,48 @@ window.Quarto = {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">p =</span> <span class="fu">as.factor</span>(p),</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">k =</span> <span class="fu">as.factor</span>(k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<table class="caption-top table">
+<caption>Table of variables in the data set</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 75%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>block</td>
+<td>blocking unit</td>
+</tr>
+<tr class="even">
+<td>rep</td>
+<td>replication unit</td>
+</tr>
+<tr class="odd">
+<td>trt</td>
+<td>treatment factor, 16 levels</td>
+</tr>
+<tr class="even">
+<td>d</td>
+<td>dung treatment, 2 levels</td>
+</tr>
+<tr class="odd">
+<td>n</td>
+<td>nitrogen treatment, 2 levels</td>
+</tr>
+<tr class="even">
+<td>p</td>
+<td>phosphorus treatment, 2 levels</td>
+</tr>
+<tr class="odd">
+<td>k</td>
+<td>potassium treatment, 2 levels</td>
+</tr>
+<tr class="even">
+<td>yield</td>
+<td>yield (lbs)</td>
+</tr>
+</tbody>
+</table>
+<p>In this example, we will be evaluating the individual and interactive effect of “d”, “n”, “p”, and “k” treatments on yield.</p>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="7.2.1">
 <h3 data-number="7.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">7.2.1</span> Data Integrity Checks</h3>
 <p>Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.</p>
@@ -463,11 +505,34 @@ Figure&nbsp;7.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#model2 &lt;- lme(yield ~ d*n*p*k,</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a> <span class="co">#                 random = ~ 1|block,</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                data = data1, </span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>   <span class="co">#               na.action = na.exclude)</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#tidy(model2)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> d<span class="sc">*</span>n<span class="sc">*</span>p<span class="sc">*</span>k,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> data1, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 18 × 8
+   effect   group    term           estimate std.error    df statistic   p.value
+   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 fixed    &lt;NA&gt;     (Intercept)      49          4.79    15   10.2      3.66e-8
+ 2 fixed    &lt;NA&gt;     d1               -9.5        6.77    15   -1.40     1.81e-1
+ 3 fixed    &lt;NA&gt;     n1                0.500      6.77    15    0.0739   9.42e-1
+ 4 fixed    &lt;NA&gt;     p1              -11.5        6.77    15   -1.70     1.10e-1
+ 5 fixed    &lt;NA&gt;     k1                1.00       6.77    15    0.148    8.85e-1
+ 6 fixed    &lt;NA&gt;     d1:n1            13.5       11.6     15    1.16     2.63e-1
+ 7 fixed    &lt;NA&gt;     d1:p1            15.5       11.6     15    1.34     2.02e-1
+ 8 fixed    &lt;NA&gt;     n1:p1             9.50      11.6     15    0.818    4.26e-1
+ 9 fixed    &lt;NA&gt;     d1:k1             4.00      11.6     15    0.345    7.35e-1
+10 fixed    &lt;NA&gt;     n1:k1             0.500     11.6     15    0.0431   9.66e-1
+11 fixed    &lt;NA&gt;     p1:k1             3.00      11.6     15    0.258    8.00e-1
+12 fixed    &lt;NA&gt;     d1:n1:p1        -14.5       21.0     15   -0.690    5.01e-1
+13 fixed    &lt;NA&gt;     d1:n1:k1        -17.0       21.0     15   -0.809    4.31e-1
+14 fixed    &lt;NA&gt;     d1:p1:k1         -7.00      21.0     15   -0.333    7.44e-1
+15 fixed    &lt;NA&gt;     n1:p1:k1         -4.50      21.0     15   -0.214    8.33e-1
+16 fixed    &lt;NA&gt;     d1:n1:p1:k1      25.0       39.7     15    0.630    5.38e-1
+17 ran_pars block    sd_(Intercept)    3.28      NA       NA   NA       NA      
+18 ran_pars Residual sd_Observation    4.92      NA       NA   NA       NA      </code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -490,13 +555,32 @@ Note
 </div></div></section>
 <section id="check-model-assumptions" class="level3" data-number="7.2.3">
 <h3 data-number="7.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">7.2.3</span> Check Model Assumptions</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="factorial-design_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="factorial-design_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -506,32 +590,30 @@ Note
 <h3 data-number="7.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">7.2.4</span> Inference</h3>
 <p>We can get an ANOVA table for the linear mixed model using the function <code>anova()</code>, which works for both <code>lmer()</code> and <code>lme()</code> models..</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-        Sum Sq Mean Sq NumDF DenDF F value   Pr(&gt;F)   
-d         2.00    2.00     1    16  0.0825 0.777658   
-n       325.12  325.12     1    16 13.4072 0.002107 **
-p         6.12    6.12     1    16  0.2526 0.622113   
-k         4.50    4.50     1    16  0.1856 0.672379   
-d:n      32.00   32.00     1    16  1.3196 0.267550   
-d:p     242.00  242.00     1    16  9.9794 0.006079 **
-n:p      78.12   78.12     1    16  3.2216 0.091583 . 
-d:k       6.12    6.12     1    16  0.2526 0.622113   
-n:k      32.00   32.00     1    16  1.3196 0.267550   
-p:k      24.50   24.50     1    16  1.0103 0.329789   
-d:n:p     2.00    2.00     1    16  0.0825 0.777658   
-d:n:k    10.13   10.13     1    16  0.4175 0.527334   
-d:p:k    15.13   15.13     1    16  0.6237 0.441219   
-n:p:k    32.00   32.00     1    16  1.3196 0.267550   
-d:n:p:k  38.26   38.26     1    16  1.5778 0.227113   
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+<pre><code>            numDF denDF   F-value p-value
+(Intercept)     1    15 104.83445  &lt;.0001
+d               1    15   1.97029  0.1808
+n               1    15   0.00546  0.9421
+p               1    15   2.88720  0.1099
+k               1    15   0.02183  0.8845
+d:n             1    15   1.35278  0.2630
+d:p             1    15   1.78330  0.2017
+n:p             1    15   0.66990  0.4259
+d:k             1    15   0.11876  0.7352
+n:k             1    15   0.00186  0.9662
+p:k             1    15   0.06680  0.7996
+d:n:p           1    15   0.47580  0.5009
+d:n:k           1    15   0.65401  0.4313
+d:p:k           1    15   0.11089  0.7437
+n:p:k           1    15   0.04583  0.8334
+d:n:p:k         1    15   0.39719  0.5380</code></pre>
 </div>
 </div>
 <p>Let’s find estimates for some of the factors such as n, p, and n:k interaction. We will try the random intercept model first.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -544,7 +626,7 @@ Results are averaged over the levels of: d, p, k
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -557,7 +639,7 @@ Results are averaged over the levels of: d, n, k
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>

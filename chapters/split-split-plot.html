@@ -229,8 +229,8 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/lattice-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lattice Design</span></span></a>
+  <a href="../chapters/strip-plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Strip Plot Design</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -343,16 +343,39 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>In this example, we have a rice yield data from ‘agricolae’ package.</p>
-<p>This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design, levels of each factor are outlined below:</p>
-<p>blocks = block (3 blocks),</p>
-<p>Whole plot factor = Nitrogen (5 levels)</p>
-<p>Sub plot = management (3 levels)</p>
-<p>sub-subplot = variety (3 levels)</p>
-<p>Here, we are using rice yield data from the (<a href="https://CRAN.R-project.org/package=agricolae">agricolae</a>) package.</p>
+<p>In this example, we have a rice yield data from ‘agricolae’ package. This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design. Here, we are using rice yield data from the (<a href="https://CRAN.R-project.org/package=agricolae">agricolae</a>) package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_ssp.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<table class="caption-top table">
+<caption>Table of variables in the rice data set</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 75%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>block</td>
+<td>blocking unit</td>
+</tr>
+<tr class="even">
+<td>nitrogen</td>
+<td>different nitrogen fertilizer rates as main plot with 5 levels</td>
+</tr>
+<tr class="odd">
+<td>management</td>
+<td>management practices as subplot with 3 levels</td>
+</tr>
+<tr class="even">
+<td>variety</td>
+<td>crop variety being a sub-subplot with 3 levels</td>
+</tr>
+<tr class="odd">
+<td>yield</td>
+<td>yield (bushels per acre)</td>
+</tr>
+</tbody>
+</table>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="6.2.1">
 <h3 data-number="6.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">6.2.1</span> Data integrity checks</h3>
 <p>Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.</p>
@@ -601,85 +624,44 @@ of nesting</code></pre>
 </div>
 </div>
 
-<div class="no-row-height column-margin column-container"><section id="boundary-singular-fit" class="level4" data-number="6.2.2.1">
-<h4 data-number="6.2.2.1" class="anchored" data-anchor-id="boundary-singular-fit"><span class="header-section-number">6.2.2.1</span> boundary (singular) fit:</h4>
-<p>We get a message that the fit is singular. What does this mean? Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one. OK what about in English? Basically it means that the algorithm that fits the model parameters doesn’t have enough data to get a good estimate. This often happens when we are trying to fit a model that is too complex for the amount of data we have, or when the random effects are very small and can’t be distinguished from zero. We still get some output but this message should make us take a close look at the random effects and their variances.</p>
-</section></div></section>
-<section id="check-model-assumptions" class="level3 page-columns page-full" data-number="6.2.3">
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>boundary (singular) fit</strong>: We get a message that the fit is singular. What does this mean? Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one. OK what about in English? Basically it means that the algorithm that fits the model parameters doesn’t have enough data to get a good estimate. This often happens when we are trying to fit a model that is too complex for the amount of data we have, or when the random effects are very small and can’t be distinguished from zero. We still get some output but this message should make us take a close look at the random effects and their variances.</p>
+</div></div></section>
+<section id="check-model-assumptions" class="level3" data-number="6.2.3">
 <h3 data-number="6.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">6.2.3</span> Check Model Assumptions</h3>
-<p>Model Diagnostics: we are looking for a constant variance and normality of residuals.</p>
+<p>Model Diagnostics: we are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function <code>check_model()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell page-columns page-full">
-
-<div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-split-split-plot_error" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-split-split-plot_error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="split-split-plot_files/figure-html/fig-split-split-plot_error-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-split-plot_error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.2: Plot of residuals versus fitted values
-</figcaption>
-</figure>
-</div>
-</div></div></div>
-<p>Checking normality requiring first extracting the model residuals with <code>resid()</code> and then generating a qq-plot and qq-line.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model3), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell page-columns page-full">
-
-<div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-split-split-plot_norm" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-split-split-plot_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="split-split-plot_files/figure-html/fig-split-split-plot_norm-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-split-plot_norm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.3: QQ-plot of residuals
-</figcaption>
-</figure>
-</div>
-</div></div></div>
-<p>Or we can do all at one using one function <code>check_model()</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Converting missing values (`NA`) into regular values currently not
-  possible for variables of class `NULL`.</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model3, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-split-plot_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-split-plot_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Here, we didn’t observe any anomaly in model assumptions.</p>
 </section>
 <section id="inference" class="level3" data-number="6.2.4">
 <h3 data-number="6.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">6.2.4</span> Inference</h3>
 <p>Analysis of variance</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model3, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            numDF denDF   F-value p-value
-(Intercept)                     1    60 11188.781  &lt;.0001
-nitrogen                        4     8    29.730  0.0001
-management                      2    20    49.114  &lt;.0001
-variety                         2    60   235.654  &lt;.0001
-nitrogen:management             8    20     0.315  0.9509
-nitrogen:variety                8    60     4.045  0.0007
-management:variety              4    60     2.203  0.0794
-nitrogen:management:variety    16    60     0.529  0.9210</code></pre>
+(Intercept)                     1    60 102.12108  &lt;.0001
+nitrogen                        4     8   1.91603  0.2012
+management                      2    20   3.69617  0.0431
+variety                         2    60   4.91295  0.0106
+nitrogen:management             8    20   0.21177  0.9850
+nitrogen:variety                8    60   2.66810  0.0141
+management:variety              4    60   2.21929  0.0775
+nitrogen:management:variety    16    60   0.52893  0.9210</code></pre>
 </div>
 </div>
-<p>Determining the estimates for each treatment factor (variety, nitrogen, management)</p>
+<p>Determining the estimated marginal means for each treatment factor (variety, nitrogen, management) and their interaction.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -695,7 +677,7 @@ Results are averaged over the levels of: management, variety
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model3, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
