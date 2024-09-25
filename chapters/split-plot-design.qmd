@@ -134,18 +134,17 @@ When dealing with split plot design across reps or blocks, the random effects ne
 #### lme4
 
 ```{r}
-model1 <- lmer(height ~ time*manage + (1|rep/time), data = height_data)
-tidy(model1)
+model_lmer <- lmer(height ~ time*manage + (1|rep/time), data = height_data)
+tidy(model_lmer)
 ```
 
 #### nlme
 
 ```{r}
-model1 <-lme(height ~ time*manage,
+model_lme <-lme(height ~ time*manage,
              random = ~ 1|rep/time, data = height_data)
 
-#summary(model1)
-tidy(model1)
+tidy(model_lme)
 ```
 :::
 
@@ -155,9 +154,19 @@ Before interpreting the model we should investigate the assumptions of the model
 
 We will use `check_model()` function from 'performance' package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.
 
+::: panel-tabset
+#### lme4
+
 ```{r, fig.height=3}
-check_model(model1, check = c('normality', 'linearity'))
+check_model(model_lmer, check = c('normality', 'linearity'))
 ```
+
+#### nlme
+
+```{r, fig.height=3}
+check_model(model_lme, check = c('normality', 'linearity'))
+```
+:::
 
 In this case the residuals fit the assumptions of the model well.
 
@@ -165,25 +174,65 @@ In this case the residuals fit the assumptions of the model well.
 
 The `anova()` function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions. We observed a significant effect of manage factor only.
 
+::: panel-tabset
+#### lme4
+
 ```{r}
-# same syntax for lme4 & nlme
-anova(model1, type = "marginal")
+anova(model_lmer)
+anova(model_lmer, type = "marginal")
+anova(model_lmer, type = 'III')
 ```
+
+#### nlme
+
+```{r}
+anova(model_lme, type = "marginal")
+```
+:::
 
 We can further compute estimated marginal means for each fixed effect and interaction effect can be obtained using `emmeans()`.
 
+::: panel-tabset
+#### lme4
+
 ```{r}
-m1 <- emmeans(model1, ~ time)
+m1 <- emmeans(model_lmer, ~ time)
 m1
 ```
 
+#### nlme
+
+```{r}
+m2 <- emmeans(model_lme, ~ time)
+m2
+```
+:::
+
 Further, a pairwise comparison or contrasts can be analyzed using estimated means. In this model, 'time' factor has 4 levels. We can use `pairs()` function to evaluate pairwise comparison among different 'time' levels.
 
-For example, if we want to compare difference in height at different time periods, this could be done using `pairs()` command from emmeans package.
+Here's a example using `pairs()` function to compare difference in height among different time points. 
+
+::: panel-tabset
+#### lme4
 
 ```{r}
 pairs(m1)
 ```
+
+#### nlme
+
+```{r}
+pairs(m2)
+```
+:::
+
+::: callout-note
+## `pairs()`
+
+The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”.
+In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts **please check this link**.
+
+:::
 
 ### Example model for RCBD Split Plot Designs
 
@@ -238,42 +287,71 @@ $\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = ma
 ### lme4
 
 ```{r}
-model2 <- lmer(Y ~  V + N + V:N + (1|B/V), 
+model2_lmer <- lmer(Y ~  V + N + V:N + (1|B/V), 
                    data = oats, 
                    na.action = na.exclude)
-tidy(model2)
+tidy(model2_lmer)
 ```
 
 ### nlme
 
 ```{r}
-model2 <- lme(Y ~  V + N + V:N ,
+model2_lme <- lme(Y ~  V + N + V:N ,
                   random = ~1|B/V,
                   data = oats, 
                   na.action = na.exclude)
-summary(model2)
+summary(model2_lme)
 ```
 :::
 
 #### Check Model Assumptions
 
-We need to verifiy the normality of residuals and homogeneous variance. Here we are using the `check_model()` function from the performance package.
+We need to verify the normality of residuals and homogeneous variance. Here we are using the `check_model()` function from the performance package.
+::: panel-tabset
+### lme4
 
 ```{r,  fig.height=3}
-check_model(model2, check = c('normality', 'linearity'))
+check_model(model2_lmer, check = c('normality', 'linearity'))
 ```
+
+### nlme
+
+```{r,  fig.height=3}
+check_model(model2_lme, check = c('normality', 'linearity'))
+```
+:::
 
 #### Inference
 
 We can evaluate the model for the analysis of variance, for V, N and their interaction effect.
+::: panel-tabset
+### lme4
 
 ```{r}
-anova(model2, type = "marginal")
+anova(model2_lmer, type = "marginal")
 ```
 
-Next, we can estimate marignal means for V, N, or their interaction (V\*N) effect.
+### nlme
 
 ```{r}
-emm <- emmeans(model2, ~ V *N) 
-emm
+anova(model2_lme, type = "marginal")
 ```
+:::
+
+Next, we can estimate marginal means for V, N, or their interaction (V\*N) effect.
+::: panel-tabset
+### lme4
+
+```{r}
+emm1 <- emmeans(model2_lmer, ~ V *N) 
+emm1
+```
+
+### nlme
+
+```{r}
+emm1 <- emmeans(model2_lme, ~ V *N) 
+emm1
+```
+:::
+
