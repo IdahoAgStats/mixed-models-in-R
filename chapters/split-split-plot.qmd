@@ -108,19 +108,20 @@ The variance analysis of a split-split plot design is divided into three parts: 
 ### lme4
 
 ```{r}
-model3 <- lmer(yield ~ nitrogen*management*variety + (1|block/nitrogen/management),
-              data = rice, 
-              na.action = na.exclude)
+model_lmer <- lmer(yield ~ nitrogen * management * variety +
+                     (1 | block / nitrogen / management),
+                   data = rice,
+                   na.action = na.exclude)
 
-summary(model3)
+tidy(model_lmer)
 ```
 ### nlme
 ```{r}
-model3 <- lme(yield ~ nitrogen*management*variety,
+model_lme <- lme(yield ~ nitrogen*management*variety,
                   random = ~ 1|block/nitrogen/management,
                   data = rice, 
                   na.action = na.exclude)
-tidy(model3)
+tidy(model_lme)
 ```
 :::
 
@@ -133,22 +134,46 @@ We get a message that the fit is singular. What does this mean? Some components 
 
 Model Diagnostics: we are looking for a constant variance and normality of residuals.
 Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line.
-we can do all at one using one function `check_model()`. 
+we can do all at one using one function `check_model()`.
+::: panel-tabset
+### lme4
 ```{r,  fig.height=3}
-check_model(model3, check = c('normality', 'linearity'))
+check_model(model_lmer, check = c('normality', 'linearity'))
+
 ```
+### nlme
+```{r,  fig.height=3}
+check_model(model_lme, check = c('normality', 'linearity'))
+
+```
+:::
+
 Here, we didn't observe any anomaly in model assumptions.
 
 ### Inference
 Analysis of variance
 
+::: panel-tabset
+### lme4
 ```{r}
-anova(model3, type = "marginal")
+car::Anova(model_lmer, type = 'III', test.statistic="F")
+anova(model_lmer, type = 'III')
 ```
+### nlme
+```{r}
+anova(model_lme, type = "marginal")
+```
+:::
 
 Determining the estimated marginal means for each treatment factor (variety, nitrogen, management) and their interaction.
-```{r}
-emmeans(model3, ~ nitrogen)
-emmeans(model3, ~ variety*management)
-```
 
+::: panel-tabset
+### lme4
+```{r}
+emmeans(model_lmer, ~ variety*management)
+```
+### nlme
+```{r}
+emmeans(model_lme, ~ variety*management)
+```
+:::
