@@ -285,8 +285,7 @@ window.Quarto = {
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">6.2.1</span> Data integrity checks</a></li>
   <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">6.2.2</span> Model Building</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">6.2.3</span> Check Model Assumptions</a></li>
-  <li><a href="#nlme-2" id="toc-nlme-2" class="nav-link" data-scroll-target="#nlme-2"><span class="header-section-number">6.2.4</span> nlme</a></li>
-  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">6.2.5</span> Inference</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">6.2.4</span> Inference</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -321,7 +320,7 @@ window.Quarto = {
 <p><span class="math inline">\(\mu\)</span>= overall experimental mean, <span class="math inline">\(\alpha\)</span> = main effect of whole plot (fixed), <span class="math inline">\(\beta\)</span> = main effect of subplot (fixed), <span class="math inline">\(\tau\)</span> = main effect of sub-subplot, <span class="math inline">\(\epsilon_{ij}\)</span> = whole plot error, <span class="math inline">\(\delta_{ijk}\)</span> = subplot error.</p>
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma_\epsilon)\]</span></p>
 <p><span class="math display">\[\ \delta  \sim N(0, \sigma_\delta)\]</span></p>
-<p>Both the error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma_\epsilon\)</span> and <span class="math inline">\(\sigma_\delta\)</span>, respectively.</p>
+<p>The assumptions of the model includes normal distribution of both the error and the rep effects with a mean of zero and standard deviations of <span class="math inline">\(\sigma_\epsilon\)</span> and <span class="math inline">\(\sigma_\delta\)</span>, respectively.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">6.2</span> Example Analysis</h2>
@@ -351,8 +350,8 @@ window.Quarto = {
 <table class="caption-top table">
 <caption>Table of variables in the rice data set</caption>
 <colgroup>
-<col style="width: 25%">
-<col style="width: 75%">
+<col style="width: 26%">
+<col style="width: 73%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -519,7 +518,11 @@ levels of nesting</code></pre>
 </div></div></section>
 <section id="check-model-assumptions" class="level3" data-number="6.2.3">
 <h3 data-number="6.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">6.2.3</span> Check Model Assumptions</h3>
-<p>Model Diagnostics: we are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function <code>check_model()</code>. ::: panel-tabset ### lme4</p>
+<p>Model Diagnostics: we are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function <code>check_model()</code>.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -530,9 +533,8 @@ levels of nesting</code></pre>
 </div>
 </div>
 </div>
-</section>
-<section id="nlme-2" class="level3" data-number="6.2.4">
-<h3 data-number="6.2.4" class="anchored" data-anchor-id="nlme-2"><span class="header-section-number">6.2.4</span> nlme</h3>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -543,16 +545,18 @@ levels of nesting</code></pre>
 </div>
 </div>
 </div>
-<p>:::</p>
+</div>
+</div>
+</div>
 <p>Here, we didn’t observe any anomaly in model assumptions.</p>
 </section>
-<section id="inference" class="level3" data-number="6.2.5">
-<h3 data-number="6.2.5" class="anchored" data-anchor-id="inference"><span class="header-section-number">6.2.5</span> Inference</h3>
+<section id="inference" class="level3" data-number="6.2.4">
+<h3 data-number="6.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">6.2.4</span> Inference</h3>
 <p>Analysis of variance</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer, <span class="at">type =</span> <span class="st">'III'</span>, <span class="at">test.statistic=</span><span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -571,25 +575,11 @@ nitrogen:management:variety   0.5289 16 60.000 0.92105
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer, <span class="at">type =</span> <span class="st">'III'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-                             Sum Sq Mean Sq NumDF DenDF  F value    Pr(&gt;F)    
-nitrogen                     51.982  12.995     4    10  29.7303 1.576e-05 ***
-management                   42.936  21.468     2    80  49.1136 1.215e-14 ***
-variety                     206.013 103.007     2    80 235.6534 &lt; 2.2e-16 ***
-nitrogen:management           1.103   0.138     8    80   0.3154 0.9580761    
-nitrogen:variety             14.145   1.768     8    80   4.0449 0.0004459 ***
-management:variety            3.852   0.963     4    80   2.2030 0.0760336 .  
-nitrogen:management:variety   3.699   0.231    16    80   0.5289 0.9240996    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            numDF denDF   F-value p-value
 (Intercept)                     1    60 102.12108  &lt;.0001
@@ -605,53 +595,163 @@ nitrogen:management:variety    16    60   0.52893  0.9210</code></pre>
 </div>
 </div>
 </div>
-<p>Determining the estimated marginal means for each treatment factor (variety, nitrogen, management) and their interaction.</p>
+<p>We can estimated the marginal means for each treatment factor (variety, nitrogen, management) which will averaged across other factors. and their interaction.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> variety management emmean    SE   df lower.CL upper.CL
- 1       m1           4.41 0.172 56.1     4.07     4.76
- 2       m1           6.05 0.172 56.1     5.71     6.40
- 3       m1           7.23 0.172 56.1     6.89     7.58
- 1       m2           5.05 0.172 56.1     4.71     5.40
- 2       m2           6.22 0.172 56.1     5.88     6.57
- 3       m2           8.18 0.172 56.1     7.84     8.53
- 1       m3           5.91 0.172 56.1     5.57     6.26
- 2       m3           6.91 0.172 56.1     6.56     7.26
- 3       m3           9.01 0.172 56.1     8.66     9.35
+<pre><code> nitrogen emmean    SE df lower.CL upper.CL
+ 0          5.38 0.139 10     5.08     5.69
+ 110        6.94 0.139 10     6.63     7.25
+ 140        7.23 0.139 10     6.93     7.54
+ 50         6.22 0.139 10     5.91     6.53
+ 80         7.00 0.139 10     6.69     7.30
 
-Results are averaged over the levels of: nitrogen 
+Results are averaged over the levels of: management, variety 
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety<span class="sc">|</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>management = m1:
+ nitrogen variety emmean    SE   df lower.CL upper.CL
+ 0        1         3.90 0.386 89.7     3.13     4.66
+ 110      1         4.65 0.386 89.7     3.88     5.42
+ 140      1         4.06 0.386 89.7     3.30     4.83
+ 50       1         4.23 0.386 89.7     3.47     5.00
+ 80       1         5.23 0.386 89.7     4.46     5.99
+ 0        2         5.35 0.386 89.7     4.58     6.11
+ 110      2         6.25 0.386 89.7     5.49     7.02
+ 140      2         6.78 0.386 89.7     6.01     7.54
+ 50       2         5.92 0.386 89.7     5.16     6.69
+ 80       2         5.98 0.386 89.7     5.21     6.75
+ 0        3         5.38 0.386 89.7     4.61     6.14
+ 110      3         7.45 0.386 89.7     6.69     8.22
+ 140      3         8.62 0.386 89.7     7.85     9.38
+ 50       3         6.78 0.386 89.7     6.02     7.55
+ 80       3         7.93 0.386 89.7     7.17     8.70
+
+management = m2:
+ nitrogen variety emmean    SE   df lower.CL upper.CL
+ 0        1         4.32 0.386 89.7     3.55     5.08
+ 110      1         5.45 0.386 89.7     4.68     6.21
+ 140      1         5.20 0.386 89.7     4.43     5.97
+ 50       1         4.58 0.386 89.7     3.81     5.34
+ 80       1         5.73 0.386 89.7     4.97     6.50
+ 0        2         4.71 0.386 89.7     3.95     5.48
+ 110      2         7.00 0.386 89.7     6.24     7.77
+ 140      2         7.08 0.386 89.7     6.32     7.85
+ 50       2         5.82 0.386 89.7     5.05     6.58
+ 80       2         6.50 0.386 89.7     5.73     7.27
+ 0        3         6.50 0.386 89.7     5.73     7.26
+ 110      3         8.62 0.386 89.7     7.86     9.39
+ 140      3         9.40 0.386 89.7     8.63    10.17
+ 50       3         7.82 0.386 89.7     7.05     8.58
+ 80       3         8.57 0.386 89.7     7.80     9.33
+
+management = m3:
+ nitrogen variety emmean    SE   df lower.CL upper.CL
+ 0        1         5.33 0.386 89.7     4.56     6.09
+ 110      1         6.24 0.386 89.7     5.47     7.00
+ 140      1         5.97 0.386 89.7     5.21     6.74
+ 50       1         5.48 0.386 89.7     4.72     6.25
+ 80       1         6.55 0.386 89.7     5.78     7.31
+ 0        2         5.43 0.386 89.7     4.66     6.20
+ 110      2         7.52 0.386 89.7     6.75     8.28
+ 140      2         8.01 0.386 89.7     7.24     8.77
+ 50       2         6.31 0.386 89.7     5.55     7.08
+ 80       2         7.29 0.386 89.7     6.52     8.05
+ 0        3         7.56 0.386 89.7     6.79     8.33
+ 110      3         9.25 0.386 89.7     8.49    10.02
+ 140      3         9.99 0.386 89.7     9.22    10.76
+ 50       3         9.05 0.386 89.7     8.28     9.81
+ 80       3         9.19 0.386 89.7     8.42     9.96
+
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> variety<span class="sc">*</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> variety management emmean    SE df lower.CL upper.CL
- 1       m1           4.41 0.172  2     3.67     5.16
- 2       m1           6.05 0.172  2     5.31     6.80
- 3       m1           7.23 0.172  2     6.49     7.97
- 1       m2           5.05 0.172  2     4.31     5.80
- 2       m2           6.22 0.172  2     5.48     6.97
- 3       m2           8.18 0.172  2     7.44     8.92
- 1       m3           5.91 0.172  2     5.17     6.65
- 2       m3           6.91 0.172  2     6.17     7.65
- 3       m3           9.01 0.172  2     8.27     9.75
+<pre><code> nitrogen emmean    SE df lower.CL upper.CL
+ 0          5.38 0.139  2     4.79     5.98
+ 110        6.94 0.139  2     6.34     7.53
+ 140        7.23 0.139  2     6.64     7.83
+ 50         6.22 0.139  2     5.62     6.82
+ 80         7.00 0.139  2     6.40     7.59
 
-Results are averaged over the levels of: nitrogen 
+Results are averaged over the levels of: management, variety 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety<span class="sc">|</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>management = m1:
+ nitrogen variety emmean    SE df lower.CL upper.CL
+ 0        1         3.90 0.386  2     2.24     5.56
+ 110      1         4.65 0.386  2     2.99     6.31
+ 140      1         4.06 0.386  2     2.40     5.72
+ 50       1         4.23 0.386  2     2.57     5.89
+ 80       1         5.23 0.386  2     3.57     6.89
+ 0        2         5.35 0.386  2     3.69     7.01
+ 110      2         6.25 0.386  2     4.59     7.91
+ 140      2         6.78 0.386  2     5.12     8.43
+ 50       2         5.92 0.386  2     4.26     7.58
+ 80       2         5.98 0.386  2     4.32     7.64
+ 0        3         5.38 0.386  2     3.72     7.04
+ 110      3         7.45 0.386  2     5.79     9.11
+ 140      3         8.62 0.386  2     6.96    10.28
+ 50       3         6.78 0.386  2     5.12     8.44
+ 80       3         7.93 0.386  2     6.27     9.59
+
+management = m2:
+ nitrogen variety emmean    SE df lower.CL upper.CL
+ 0        1         4.32 0.386  2     2.66     5.98
+ 110      1         5.45 0.386  2     3.79     7.11
+ 140      1         5.20 0.386  2     3.54     6.86
+ 50       1         4.58 0.386  2     2.92     6.24
+ 80       1         5.73 0.386  2     4.07     7.39
+ 0        2         4.71 0.386  2     3.05     6.37
+ 110      2         7.00 0.386  2     5.34     8.66
+ 140      2         7.08 0.386  2     5.43     8.74
+ 50       2         5.82 0.386  2     4.16     7.47
+ 80       2         6.50 0.386  2     4.84     8.16
+ 0        3         6.50 0.386  2     4.84     8.16
+ 110      3         8.62 0.386  2     6.97    10.28
+ 140      3         9.40 0.386  2     7.74    11.06
+ 50       3         7.82 0.386  2     6.16     9.48
+ 80       3         8.57 0.386  2     6.91    10.23
+
+management = m3:
+ nitrogen variety emmean    SE df lower.CL upper.CL
+ 0        1         5.33 0.386  2     3.67     6.98
+ 110      1         6.24 0.386  2     4.58     7.90
+ 140      1         5.97 0.386  2     4.31     7.63
+ 50       1         5.48 0.386  2     3.82     7.14
+ 80       1         6.55 0.386  2     4.89     8.21
+ 0        2         5.43 0.386  2     3.77     7.09
+ 110      2         7.52 0.386  2     5.86     9.18
+ 140      2         8.01 0.386  2     6.35     9.66
+ 50       2         6.31 0.386  2     4.65     7.97
+ 80       2         7.29 0.386  2     5.63     8.95
+ 0        3         7.56 0.386  2     5.90     9.22
+ 110      3         9.25 0.386  2     7.59    10.91
+ 140      3         9.99 0.386  2     8.33    11.65
+ 50       3         9.05 0.386  2     7.39    10.70
+ 80       3         9.19 0.386  2     7.53    10.85
+
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -659,6 +759,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
+<p>Notice we get a message that the estimated means for ‘nitrogen’ are averaged over the levels of ‘management’ and ‘variety’. So we need to be careful about how we interpret these estimates.</p>
 
 
 </section>
