@@ -286,7 +286,6 @@ window.Quarto = {
   <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">8.2.2</span> Model fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">8.2.3</span> Check Model Assumptions</a></li>
   <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">8.2.4</span> Inference</a></li>
-  <li><a href="#data-integrity" id="toc-data-integrity" class="nav-link" data-scroll-target="#data-integrity"><span class="header-section-number">8.2.5</span> *Data integrity</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -315,7 +314,7 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="background"><span class="header-section-number">8.1</span> Background</h2>
-<p>Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: <span class="math display">\[y_{ij} = \mu +  \tau_i+ \beta_j + \epsilon_{ij}\]</span> Where: <span class="math inline">\(\mu\)</span> = experiment mean, <span class="math inline">\(\tau\)</span> = effect of factor A, <span class="math inline">\(\beta\)</span> = effect of factor B, and <span class="math inline">\(\tau\beta\)</span> = interaction effect of factor A and B.</p>
+<p>Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: <span class="math display">\[y_{ij} = \mu +  \tau_i+ \beta_j + \tau_i\beta_j + \epsilon_{ij}\]</span> Where: <span class="math inline">\(\mu\)</span> = experiment mean, <span class="math inline">\(\tau\)</span> = effect of factor A, <span class="math inline">\(\beta\)</span> = effect of factor B, and <span class="math inline">\(\tau\beta\)</span> = interaction effect of factor A and B.</p>
 <p>Assumptions of this model includes: independent and identically distributed error terms with a constant variance.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="8.2">
@@ -338,16 +337,15 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Next, we will load the data set named ‘cochran.factorial’ from the ‘agridat’ package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.</p>
-<p>While importing the data, d, n, p, and k were converted into factor variables using the <code>mutate()</code> function.</p>
+<p>Next, we will load the dataset named ‘cochran.factorial’ from the ‘<strong>agridat</strong>’ package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.</p>
+<p>Note, while importing the data, d, n, p, and k were converted into factor variables using the <code>mutate()</code> function from dplyr package. This helps in reducing the extra steps of converting each single variable to factor manually.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agridat)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.factorial <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d =</span> <span class="fu">as.factor</span>(d),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="fu">as.factor</span>(n),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">p =</span> <span class="fu">as.factor</span>(p),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">k =</span> <span class="fu">as.factor</span>(k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.factorial <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">d =</span> <span class="fu">as.factor</span>(d),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="fu">as.factor</span>(n),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">p =</span> <span class="fu">as.factor</span>(p),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">k =</span> <span class="fu">as.factor</span>(k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -386,7 +384,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>In this example, we will be evaluating the individual and interactive effect of “d”, “n”, “p”, and “k” treatments on yield.</p>
+<p>The objective of this example is evaluate the individual and interactive effect of “d”, “n”, “p”, and “k” treatments on yield.</p>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="8.2.1">
 <h3 data-number="8.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">8.2.1</span> Data Integrity Checks</h3>
 <p>Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.</p>
@@ -405,7 +403,7 @@ window.Quarto = {
 </div>
 </div>
 <p>This looks good.</p>
-<p>Next, inspect the independent variables and make sure the expected levels are present in the data.</p>
+<p>Next step is to inspect the independent variables and make sure the expected levels are present in the data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>d, data1<span class="sc">$</span>n, data1<span class="sc">$</span>p, data1<span class="sc">$</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -439,7 +437,7 @@ window.Quarto = {
 </div>
 </div>
 <p>The design looks well balanced.</p>
-<p>Last step is to inspect the dependent variable to ensure its distribution is following expectations</p>
+<p>Last step is to inspect the dependent variable to ensure its distribution follows the bell-shaped curve and no skewness is there.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -457,7 +455,7 @@ Figure&nbsp;8.1: Histogram of the dependent variable.
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data1<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The range is roughly falling into the expected range. I don’t see any extreme values (high or low) which might indicate issues with data.</p>
+<p>The range is roughly falling into the expected range. I didn’t observe any extreme observations (too high/low), indicating no issues with data. don’t see</p>
 </section>
 <section id="model-fitting" class="level3 page-columns page-full" data-number="8.2.2">
 <h3 data-number="8.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">8.2.2</span> Model fitting</h3>
@@ -615,33 +613,11 @@ d:n:p:k       1.5778  1 66.709   0.21346
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-        Sum Sq Mean Sq NumDF DenDF F value   Pr(&gt;F)   
-d         2.00    2.00     1    16  0.0825 0.777658   
-n       325.12  325.12     1    16 13.4072 0.002107 **
-p         6.12    6.12     1    16  0.2526 0.622113   
-k         4.50    4.50     1    16  0.1856 0.672379   
-d:n      32.00   32.00     1    16  1.3196 0.267550   
-d:p     242.00  242.00     1    16  9.9794 0.006079 **
-n:p      78.12   78.12     1    16  3.2216 0.091583 . 
-d:k       6.12    6.12     1    16  0.2526 0.622113   
-n:k      32.00   32.00     1    16  1.3196 0.267550   
-p:k      24.50   24.50     1    16  1.0103 0.329789   
-d:n:p     2.00    2.00     1    16  0.0825 0.777658   
-d:n:k    10.13   10.13     1    16  0.4175 0.527334   
-d:p:k    15.13   15.13     1    16  0.6237 0.441219   
-n:p:k    32.00   32.00     1    16  1.3196 0.267550   
-d:n:p:k  38.26   38.26     1    16  1.5778 0.227113   
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF   F-value p-value
 (Intercept)     1    15 104.83445  &lt;.0001
@@ -671,7 +647,7 @@ d:n:p:k         1    15   0.39719  0.5380</code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -684,7 +660,7 @@ Results are averaged over the levels of: d, p, k
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -697,7 +673,7 @@ Results are averaged over the levels of: d, n, k
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -716,7 +692,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -729,7 +705,7 @@ Results are averaged over the levels of: d, p, k
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -742,7 +718,7 @@ Results are averaged over the levels of: d, n, k
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -764,9 +740,6 @@ Confidence level used: 0.95 </code></pre>
 <ol start="2" type="1">
 <li>Unbalanced factorial design</li>
 </ol>
-</section>
-<section id="data-integrity" class="level3" data-number="8.2.5">
-<h3 data-number="8.2.5" class="anchored" data-anchor-id="data-integrity"><span class="header-section-number">8.2.5</span> *Data integrity</h3>
 
 
 </section>
