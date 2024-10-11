@@ -1,4 +1,61 @@
-# Strip Plot Design
+
+#Strip Plot Design
+
+```{r, include=FALSE, echo=FALSE}
+source(here::here("settings.r"))
+
+par(mar=c(5.1, 6, 4.1, 2.1))
+```
+
+## Background
+
+It is very common design where experimental treatments are applied at random to experimental units within each block. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes.
+
+The statistical model:
+
+::: panel-tabset
+### lme4
+```{r, message=FALSE, warning=FALSE}
+library(lme4); library(lmerTest); library(emmeans)
+library(dplyr); library(performance); library(ggplot2)
+library(broom.mixed)
+```
+### nlme
+
+```{r, message=FALSE, warning=FALSE}
+library(nlme); library(performance); library(emmeans)
+library(dplyr); library(ggplot2); library(broom.mixed)
+```
+:::
+
+
+A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
+```{r}
+data1 <- agridat::gomez.stripplot
+
+```
+
+```{r}
+str(data1)
+```
+
+```{r}
+library(desplot)
+desplot(data1, gen ~ col*row,
+        # aspect unknown
+        out1=rep, out2=nitro, num=nitro, cex=1,
+        main="Strip Plot Design")
+```
+
+
+```{r}
+data1$nitro <- as.factor(data1$nitro)
+```
+
+
+```{r}
+
+```
 
 
 

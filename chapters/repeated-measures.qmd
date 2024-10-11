@@ -34,12 +34,10 @@ For examples used in this chapter we will fitting model using `mmrm` and `lme` p
 
 ::: panel-tabset
 ### nlme
-
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
 ```
-
 ### mmrm
 
 ```{r, message=FALSE, warning=FALSE}
@@ -48,11 +46,11 @@ library(dplyr); library(broom.mixed); library(ggplot2)
 ```
 :::
 
-## Example Analysis
+# Example Analysis
 
-First, we will start the example with repeated measures data from a randomized complete block design.
+First, we will start with the first example from a randomized complete block design with repeated measures. 
 
-### RCBD Repeated Measures
+## RCBD Repeated Measures
 
 The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable 'y' is the leaf area index assessed in five consecutive weeks on each plot.
 
@@ -75,7 +73,7 @@ dat <- agriTutorial::sorghum %>%
 
 : Table of variables in the data set {tbl-rcbd-rp}
 
-#### Data Integrity Checks
+### Data Integrity Checks
 
 Let's do preliminary data check including evaluating data structure, distribution of treatments, number of missing values, and distribution of response variable.
 
@@ -115,7 +113,7 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 hist(dat$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
-#### Model Building
+### Model Building
 
 Let's fit the basic model first using `lme()` from the nlme package.
 
@@ -167,7 +165,7 @@ Let's run a `tidy()` on lm2 model to look at the estimates for random and fixed 
 tidy(lm2)
 ```
 
-#### Check Model Assumptions
+### Check Model Assumptions
 
 ```{r, fig.height=3}
 #| message: false
@@ -175,7 +173,7 @@ tidy(lm2)
 check_model(lm2, check = c('normality', 'linearity'))
 ```
 
-#### Inference
+### Inference
 
 The ANOVA table suggests a highly significant effect of the variety, week, and variety x week interaction effect.
 
@@ -199,7 +197,7 @@ mean_2
 Here is a quick step to make sure your fitting model correctly: make sure to have two time variables in your data one being numeric (e.g. 'day' as number) and other being factor/character(e.g. 'day_factor' as a factor/character). Where, numeric variable is used for fitting correlation matrix and factor/character variable used in model statement to evaluate the time variable effect on response variable.
 :::
 
-### Split Plot Repeated Measures
+## Split Plot Repeated Measures
 
 Recall, we have evaluated split plot design [**Chapter 5**](split-plot-design.qmd). In this example we will use the same methodology used in Chapter 5 and update it with repeated measures component.
 
@@ -221,7 +219,7 @@ This example contains yield data in a split-plot design. The yield data was coll
 
 : Table of variables in the data set {tbl-split-plot-rp}
 
-#### Data Integrity Checks
+### Data Integrity Checks
 
 Firstly, we need to look at the class of variables in the data set.
 
@@ -269,13 +267,11 @@ hist(Yield$Yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```{r, eval=FALSE}
 hist(Yield$Yield)
 ```
-#### Model fit
+### Model fit
 
 This data can be analyze either using `nlme` or `mmrm`.
 
 **using lme() from nlme package.**
-
-## Model fit
 
 Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from nlme package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the mmrm package. In addition, instead of `summary()` function we will use `tidy()`  function from the 'broom.mixed' packageto look at estimates of mixed and random effects. In this model we used `tidy()`. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
@@ -307,7 +303,7 @@ tidy(fit1)
 ```
 :::
 
-#### Model diagnostics
+### Model diagnostics
 
 We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions.
 
@@ -331,7 +327,7 @@ qqnorm(residuals(fit1)); qqline(residuals(fit1))
 
 These diagnostic plots look great! The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects all fall on a straight line so we can be satisfied with that.
 
-#### Inference
+### Inference
 
 ::: panel-tabset
 ### nlme
@@ -345,8 +341,8 @@ anova(mod, type = "marginal")
 ### mmrm
 
 ```{r}
-car::Anova(fit1, type = "III")
-Anova.mmrm(fit1, type = "III")
+#car::Anova(fit1, type = "III")
+#Anova.mmrm(fit1, type = "III")
 ```
 :::
 
@@ -372,9 +368,9 @@ emmeans(fit1,~ Fertilizer)
 Add a link for further exploring emmeans and contrast statements.
 :::
 
-### Split-split plot repeated measures
+## Split-split plot repeated measures
 
-Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures statement
+Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures statement.
 
 ```{r}
 agridat::caribbean.maize
@@ -401,6 +397,17 @@ table(data2$nitro, data2$loc, data2$year)
 As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously
 
 https://search.r-project.org/CRAN/refmans/agridat/html/gregory.cotton.html
+
+```{r}
+data3 <- agridat::gregory.cotton
+str(data3)
+```
+
+```{r}
+table(data3$nitrogen, data3$date)
+```
+
+
 
 The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed random factors](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested
 

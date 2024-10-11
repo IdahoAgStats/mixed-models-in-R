@@ -1,8 +1,16 @@
 # Split Plot Design
 
+
+
+
+
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
 ```
+
+
+
+
 
 Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD), and Latin square designs. The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
 
@@ -52,17 +60,33 @@ Load required libraries
 
 ::: panel-tabset
 ### lme4
+
+
+
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(performance); library(ggplot2)
 library(broom.mixed)
 ```
+
+
+
+
 ### nlme
+
+
+
+
 
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(ggplot2); library(broom.mixed)
 ```
+
+
+
+
 :::
 
 ### Example model for CRD Split Plot Designs
@@ -71,9 +95,17 @@ Let's import height data. It is located [here](https://raw.githubusercontent.com
 
 The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are times and management represents subplot and 3 replications.
 
+
+
+
+
 ```{r}
 height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
 ```
+
+
+
+
 
 |        |                                 |
 |--------|---------------------------------|
@@ -89,30 +121,62 @@ height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
 
 -   Run a cross tabulation using `table()` to check the arrangement of whole-plots and sub-plots.
 
+
+
+
+
 ```{r}
 table(height_data$time, height_data$manage)
 ```
+
+
+
+
 
 The levels of whole plots and subplots are balanced.
 
 -   Look at structure of the data using `str()`, this will help in identifying class of the variable. In this data set, class of the whole-plot, sub-plot, and block should be factor/character and response variable (height) should be numeric.
 
+
+
+
+
 ```{r}
 str(height_data)
 ```
 
+
+
+
+
 The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed. - Check the number of missing values in each column.
+
+
+
+
 
 ```{r}
 apply(height_data, 2, function(x) sum(is.na(x)))
 ```
 
+
+
+
+
 -   Exploratory boxplot to look at the height observations at different times with variable managements.
+
+
+
+
 
 ```{r}
 ggplot(data = height_data, aes(y = height, x = time)) +
   geom_boxplot(aes(fill = manage), alpha = 0.6)
 ```
+
+
+
+
 
 #### Model building
 
@@ -131,12 +195,24 @@ When dealing with split plot design across reps or blocks, the random effects ne
 ::: panel-tabset
 #### lme4
 
+
+
+
+
 ```{r}
 model_lmer <- lmer(height ~ time*manage + (1|rep/time), data = height_data)
 tidy(model_lmer)
 ```
 
+
+
+
+
 #### nlme
+
+
+
+
 
 ```{r}
 model_lme <-lme(height ~ time*manage,
@@ -144,6 +220,10 @@ model_lme <-lme(height ~ time*manage,
 
 tidy(model_lme)
 ```
+
+
+
+
 :::
 
 #### Check Model Assumptions
@@ -155,15 +235,31 @@ We will use `check_model()` function from 'performance' package. The plots gener
 ::: panel-tabset
 #### lme4
 
+
+
+
+
 ```{r, fig.height=3}
 check_model(model_lmer, check = c('normality', 'linearity'))
 ```
 
+
+
+
+
 #### nlme
+
+
+
+
 
 ```{r, fig.height=3}
 check_model(model_lme, check = c('normality', 'linearity'))
 ```
+
+
+
+
 :::
 
 In this case the residuals fit the assumptions of the model well.
@@ -175,15 +271,31 @@ The `anova()` function prints the the rows of analysis of variance table for who
 ::: panel-tabset
 #### lme4
 
+
+
+
+
 ```{r}
 car::Anova(model_lmer, type = 'III', test.statistics = "F")
 ```
 
+
+
+
+
 #### nlme
+
+
+
+
 
 ```{r}
 anova(model_lme, type = "marginal")
 ```
+
+
+
+
 :::
 
 We can further compute estimated marginal means for each fixed effect and interaction effect can be obtained using `emmeans()`.
@@ -191,17 +303,33 @@ We can further compute estimated marginal means for each fixed effect and intera
 ::: panel-tabset
 #### lme4
 
+
+
+
+
 ```{r}
 m1 <- emmeans(model_lmer, ~ time)
 m1
 ```
 
+
+
+
+
 #### nlme
+
+
+
+
 
 ```{r}
 m2 <- emmeans(model_lme, ~ time)
 m2
 ```
+
+
+
+
 :::
 
 Further, a pairwise comparison or contrasts can be analyzed using estimated means. In this model, 'time' factor has 4 levels. We can use `pairs()` function to evaluate pairwise comparison among different 'time' levels.
@@ -211,15 +339,31 @@ Here's a example using `pairs()` function to compare difference in height among 
 ::: panel-tabset
 #### lme4
 
+
+
+
+
 ```{r}
 pairs(m1)
 ```
 
+
+
+
+
 #### nlme
+
+
+
+
 
 ```{r}
 pairs(m2)
 ```
+
+
+
+
 :::
 
 ::: callout-note
@@ -245,25 +389,49 @@ The objective of this analysis is to study the impact of different varieties and
 
 To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.
 
+
+
+
+
 ```{r, message=FALSE}
 library(MASS)
 data("oats")
 head(oats,5)
 ```
 
+
+
+
+
 #### Data integrity checks
 
 Let's look at the structure of the data. The "B", "V", and "N" needs to be 'factor' and "Y" should be numeric.
+
+
+
+
 
 ```{r}
 str(oats)
 ```
 
+
+
+
+
 Next, run the table() command to verify the levels of main-plots and sub-plots.
+
+
+
+
 
 ```{r}
 table(oats$V, oats$N)
 ```
+
+
+
+
 
 #### Model Building the Model
 
@@ -280,6 +448,10 @@ $\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = ma
 ::: panel-tabset
 ### lme4
 
+
+
+
+
 ```{r}
 model2_lmer <- lmer(Y ~  V + N + V:N + (1|B/V), 
                    data = oats, 
@@ -287,7 +459,15 @@ model2_lmer <- lmer(Y ~  V + N + V:N + (1|B/V),
 tidy(model2_lmer)
 ```
 
+
+
+
+
 ### nlme
+
+
+
+
 
 ```{r}
 model2_lme <- lme(Y ~  V + N + V:N ,
@@ -296,6 +476,10 @@ model2_lme <- lme(Y ~  V + N + V:N ,
                   na.action = na.exclude)
 tidy(model2_lme)
 ```
+
+
+
+
 :::
 
 #### Check Model Assumptions
@@ -305,15 +489,31 @@ As shown in example 1, We need to verify the normality of residuals and homogene
 ::: panel-tabset
 ### lme4
 
+
+
+
+
 ```{r,  fig.height=3}
 check_model(model2_lmer, check = c('normality', 'linearity'))
 ```
 
+
+
+
+
 ### nlme
+
+
+
+
 
 ```{r,  fig.height=3}
 check_model(model2_lme, check = c('normality', 'linearity'))
 ```
+
+
+
+
 :::
 
 #### Inference
@@ -323,15 +523,31 @@ We can evaluate the model for the analysis of variance, for V, N and their inter
 ::: panel-tabset
 ### lme4
 
+
+
+
+
 ```{r}
 car::Anova(model2_lmer, type = "III", test.statistics = "F")
 ```
 
+
+
+
+
 ### nlme
+
+
+
+
 
 ```{r}
 anova(model2_lme, type = "marginal")
 ```
+
+
+
+
 :::
 
 Next, we can estimate marginal means for V, N, or their interaction (V\*N) effect.
@@ -339,17 +555,34 @@ Next, we can estimate marginal means for V, N, or their interaction (V\*N) effec
 ::: panel-tabset
 ### lme4
 
+
+
+
+
 ```{r}
 emm1 <- emmeans(model2_lmer, ~ V *N) 
 emm1
 ```
 
+
+
+
+
 ### nlme
+
+
+
+
 
 ```{r}
 emm1 <- emmeans(model2_lme, ~ V *N) 
 emm1
 ```
+
+
+
+
 :::
 
 In the next chapter we will continue with extension of split plot design called split-split plot design.
+
