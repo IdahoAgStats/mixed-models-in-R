@@ -43,18 +43,20 @@ A strip-plot experiment with three reps, variety as the horizontal strip and nit
 data1 <- agridat::gomez.stripplot
 ```
 
-### Data integrity checks
-
-```{r}
-str(data1)
-```
-
+In this design, nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and were replicated over 3 times. 
 ```{r, echo=FALSE}
 library(desplot)
 desplot(data1, gen ~ col*row,
         # aspect unknown
         out1=rep, out2=nitro, num=nitro, cex=1,
         main="Strip Plot Design")
+```
+
+
+### Data integrity checks
+
+```{r}
+str(data1)
 ```
 
 
@@ -79,7 +81,7 @@ model_lmer <- lmer(yield ~  nitro*gen +
 
 
 model_lmer1 <- lmer(yield ~  nitro*gen + 
-                  (1|rep) + (1|rep:row) + (1|rep:col), 
+                   (1|rep:row) + (1|rep:col), 
                    data = data1)
 
 
@@ -94,9 +96,16 @@ tidy(model_lmer1)
 
 ```{r}
 model_lme <-lme(yield ~  nitro*gen,
-                 random = list (~1|row, ~1|col), 
+                 random = list (~1|rep, ~1|row, ~1|col), 
              #random = ~ 1|rep/time,
              data = data1)
+
+model_lme1 <-lme(yield ~  nitro*gen,
+                 random = list(~1|row, ~1|col), 
+             #random = ~ 1|rep/time,
+             data = data1)
+
+anova(model_lme, model_lme1)
 
 tidy(model_lme)
 ```
