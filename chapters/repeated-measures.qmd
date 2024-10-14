@@ -6,46 +6,51 @@ source(here::here("settings.r"))
 
 In the previous chapters we covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures random effects.
 
-Studies that involve repeated observations of the exact same experimental units require a repeated measures component to properly model correlations across time with the experiment unit. This is common in any perennial crop that is evaluated across years, hay crops subject to repeat cuttings, and many other circumstances. In these models, the 'iid' assumption (idependently and identically distributed) is being violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
+Studies that involve repeated observations of the exact same experimental units require a repeated measures component to properly model correlations across time with the experiment unit. This is common in any studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to repeated measures effect while analyzing the main effects.
 
-***ADD STATISTICAL Model here***
-
-\*\*add table for R codes for different covariance structures\*\*
+In these models, the 'iid' assumption (idependently and identically distributed) is being violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
 There are several types of covariance structures:
 
-| Structure name       | nlme          | Assumption                                                                                    |
+| Structure name | R function | Assumption |
 |------------------------|------------------------|------------------------|
-| Autoregressive (AR1) | `corAR1()`      | observations which are more proximate are more correlated than measures that are more distant |
-| Compound symmetry    | `corCompSymm()` | Correlation is equal for all time gaps between observations                                   |
-| Unstructured         | `CorSymm()`     | Correlations are different for the various time gaps                                          |
+| Autoregressive (AR1) | `corAR1()` | observations which are more proximate are more correlated than measures that are more distant |
+| Compound symmetry | `corCompSymm()` | Correlation is equal for all time gaps between observations |
+| Unstructured | `CorSymm()` | Correlations are different for the various time gaps |
+
+::: column-margin
+To read more about selecting appropriate covariance structure based on your data, please refer to this [link](https://www.ars.usda.gov/ARSUserFiles/80000000/StatisticsGroupWebinars/Appendix%20E%20-%20Selecting%20a%20Covariance%20Structure.pdf).
+:::
 
 The repeated measures syntax in ***nlme*** follow this convention: `form = ~ time|grouping`. You can also use `1|group` and the observation order for each group will be. The default starting value (`value`) is zero, and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process.
 
 There are several other options in the **nlme** machinery (search "cor" for more options and details on the syntax).
 
-Fitting models with correlated observations requires new libraries including mmrm and nlme. lmer allows random effects only.
+Fitting models with correlated observations requires new libraries including 'mmrm' and 'nlme'. The 'lmer' package allows random effects only.
 
-### Talk about different covariance structures and provide reference for details
+In this tutorial we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.
 
-Packages required for this tutorial:
+For examples used in this chapter we will fitting model using `mmrm` and `lme` packages. So, let's start with loading the required libraries for this analysis
 
-```{r}
-#| message: false
-#| warning: false
-library(dplyr) 
-library(ggplot2)
-library(viridis)
-library(nlme)
-library(mmrm)
-library(broom.mixed)
-library(emmeans)
-library(performance)
+::: panel-tabset
+### nlme
+```{r, message=FALSE, warning=FALSE}
+library(nlme); library(performance); library(emmeans)
+library(dplyr); library(broom.mixed); library(ggplot2)
 ```
+### mmrm
 
-## Example Analysis
+```{r, message=FALSE, warning=FALSE}
+library(mmrm); library(performance); library(emmeans)
+library(dplyr); library(broom.mixed); library(ggplot2)
+```
+:::
 
-### Repeated Measures RCBD
+# Example Analysis
+
+First, we will start with the first example from a randomized complete block design with repeated measures. 
+
+## RCBD Repeated Measures
 
 The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable 'y' is the leaf area index assessed in five consecutive weeks on each plot.
 
@@ -58,15 +63,31 @@ dat <- agriTutorial::sorghum %>%
 
 ```
 
-#### Data Integrity Checks
+|           |                                     |
+|-----------|-------------------------------------|
+| block     | blocking unit                       |
+| Replicate | replication unit                    |
+| Week      | Time points when data was collected |
+| variety   | treatment factor, 4 levels          |
+| y         | yield (lbs)                         |
+
+: Table of variables in the data set {tbl-rcbd-rp}
+
+### Data Integrity Checks
+
+Let's do preliminary data check including evaluating data structure, distribution of treatments, number of missing values, and distribution of response variable.
 
 ```{r}
 str(dat)
 ```
 
+In this data, we have block, factplot, factweek as factor variables and y & week as numeric.
+
 ```{r}
 table(dat$variety, dat$block)
 ```
+
+The cross tabulation shows a equal number of varieties in each block.
 
 ```{r}
 ggplot(data = dat, aes(y = y, x = factweek, fill = variety)) +
@@ -92,80 +113,72 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 hist(dat$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
-#### Model Building
+### Model Building
 
-Let's fit the basic model first
+Let's fit the basic model first using `lme()` from the nlme package.
 
 ```{r}
-
 lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
               data = dat,
               na.action = na.exclude)
 
 ```
 
-The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject (plot).
+The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject which is plot (factor variable) in this case.
 
-By adding this correlation structure, what we are implying is to keep each plot independent, but to allowing AR1 or compound symmetry correlations between responses for a given subject, here time factor is `week`.
+By adding this correlation structure, what we are implying is to keep each plot independent, but to allowing AR1 or compound symmetry correlations between responses for a given subject, here time variable is `week` and it must be numeric.
 
 ```{r}
 cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
 cs2 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
-
-lm2 <- update(lm1, corr = cs1)
-lm3 <- update(lm1, corr= cs2)
-
 ```
 
-We can compare the performance of these models (lm1, lm2, lm3) either by using `anova()` or by `compare_performance()` function from the 'performance' library.
+In the code chunk above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model lm1, with these two matrices. In nlme, please search the help tool to know more about functions for different correlation structure classes.
+
+```{r}
+lm2 <- update(lm1, corr = cs1)
+lm3 <- update(lm1, corr= cs2)
+```
+
+Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by `compare_performance()` function from the 'performance' library.
+
+::: panel-tabset
+### anova
 
 ```{r}
 anova(lm1, lm2, lm3)
-## or
+```
+
+### performance
+
+```{r}
 result <- compare_performance(lm1, lm2, lm3)
 print_md(result)
-
-##model with AR1 correaltion matrix is better
 ```
+:::
 
 We prefer to chose model with lower AIC and BIC values. In this scenario, we will move forward with lm2 model containing AR1 structure.
 
-Let's run a `summary()` on lm2 model to look at the estimates for random and fixed effects.
+Let's run a `tidy()` on lm2 model to look at the estimates for random and fixed effects.
 
 ```{r}
-summary(lm2)
+tidy(lm2)
 ```
 
-```{r}
-#str(dat)
-#table(dat$factweek, dat$factplot)
-#dat$block <- as.factor(dat$block)
-#fit1 <- mmrm(y ~ variety + factweek + variety:factweek  +  ar1h(factweek|block/factplot), 
-#              data = dat,
-#    method='Satterthwaite')
+### Check Model Assumptions
 
-#summary(fit1)
-#Anova.mmrm(fit1)
-#car::Anova(fit1)
-#anova(fit1)
-```
-
-
-
-#### Check Model Assumptions
-
-```{r}
+```{r, fig.height=3}
 #| message: false
 #| warning: false
-check_model(lm2)
+check_model(lm2, check = c('normality', 'linearity'))
 ```
 
-#### Inference
+### Inference
 
 The ANOVA table suggests a highly significant effect of the variety, week, and variety x week interaction effect.
 
 ```{r}
-anova(lm2)
+anova(lm2, type = "marginal")
 ```
 
 We can estimate the marginal means for variety and week effect and their interaction using `emmeans()` function.
@@ -178,31 +191,48 @@ mean_2 <- emmeans(lm2, ~ variety*factweek)
 mean_2
 ```
 
-### Split plot repeated measures
+::: callout-tip
+## Time variable
 
-The example shown below contains yield data in a split-plot design. In this data set, we have:
+Here is a quick step to make sure your fitting model correctly: make sure to have two time variables in your data one being numeric (e.g. 'day' as number) and other being factor/character(e.g. 'day_factor' as a factor/character). Where, numeric variable is used for fitting correlation matrix and factor/character variable used in model statement to evaluate the time variable effect on response variable.
+:::
 
-Variety: 2 levels
+## Split Plot Repeated Measures
 
-Fertilizer: 3 levels
+Recall, we have evaluated split plot design [**Chapter 5**](split-plot-design.qmd). In this example we will use the same methodology used in Chapter 5 and update it with repeated measures component.
 
-Replications: 4
-
-The yield data was collected repeatedly from the same Reps over 5 'Sample_times'.
-
-This can be analyze either using `nlme` or `mmrm`.
+Next, let's load "Yield" data. It is located [here](https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/Yield.csv).
 
 ```{r}
 Yield <- read.csv(here::here("data/Yield.csv"))
-head(Yield, 5)
 ```
 
-#### Data Integrity Checks
-The class of the variety, fertilizer, and Rep should be character. 
+This example contains yield data in a split-plot design. The yield data was collected repeatedly from the same Reps over 5 Sample_times. In this data set, we have:
+
+|             |                                 |
+|-------------|---------------------------------|
+| Rep         | replication unit                |
+| Variety     | Main plot, 2 levels             |
+| Fertilizer  | Split plot, 3 levels            |
+| Yield       | crop yield                      |
+| Sample_time | time points for data collection |
+
+: Table of variables in the data set {tbl-split-plot-rp}
+
+### Data Integrity Checks
+
+Firstly, we need to look at the class of variables in the data set.
+
 ```{r}
 str(Yield)
 ```
-We will now convert the fertilizer and Rep into character. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
+
+We will now convert the fertilizer and Rep into factor. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
+
+::: column-margin
+For lme(), independent variables in a character/factor form works fine. But, for mmrm() independent variables must be a factor. Thus, for sake of consistancy, we will be using independent variables in factor class.
+:::
+
 ```{r}
 Yield$Variety <- factor(Yield$Variety) 
 Yield$Fertilizer <- factor(Yield$Fertilizer) 
@@ -210,18 +240,22 @@ Yield$Sample_time1 <- factor(Yield$Sample_time)
 Yield$Rep <- factor(Yield$Rep)  
 ```
 
-In addition, we need a create variable for each subject which is plot in this case. The plot variable is needed to model the variation in each plot over the sampling time.
+
+To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. In addition, we need a create variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
+
 ```{r}
 ##creating a plot variable 
 Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-')) 
 Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-')) 
 table(Yield$plot) 
 ```
-Before fitting a model, let's check the distribution of the response variable.
-```{r, eval=FALSE}
-hist(Yield$Yield)
-```
 
+```{r}
+table(Yield$Fertilizer, Yield$Variety) 
+```
+Looks like a well balanced design with 2 variety treatments and 3 fertilizer treatments.
+
+Before fitting a model, let's check the distribution of the response variable.
 ```{r, echo=FALSE}
 #| label: fig-split-split-plot_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -230,21 +264,16 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 hist(Yield$Yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
+```{r, eval=FALSE}
+hist(Yield$Yield)
+```
+### Model fit
 
-## Model fit
+This data can be analyze either using `nlme` or `mmrm`.
 
 **using lme() from nlme package.**
 
-To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
-
-```{r}
-table(Yield$Fertilizer, Yield$Variety) 
-```
-
-## Model fit
-
-Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from nlme package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the mmrm package. 
-In addition, instead of `summary()` function to look at estimates of mixed and random effects. In this model we used `tidy()` function from the 'broom.mixed' package. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
+Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from nlme package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the mmrm package. In addition, instead of `summary()` function we will use `tidy()`  function from the 'broom.mixed' packageto look at estimates of mixed and random effects. In this model we used `tidy()`. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
 ::: panel-tabset
 ### nlme
@@ -266,7 +295,6 @@ tidy(mod)
 ### mmrm
 
 ```{r}
-str(Yield)
 fit1 <- mmrm(
   formula = Yield ~ Sample_time1*Variety*Fertilizer +  ar1(Sample_time1|Rep/plot),
   data = Yield)
@@ -276,47 +304,60 @@ tidy(fit1)
 :::
 
 ### Model diagnostics
-We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions. 
+
+We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions.
 
 ::: panel-tabset
 ### nlme
+
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
 check_model(mod, check = c('normality', 'linearity'))
 ```
+
 ### mmrm
+
 ```{r}
 ## performance package doesn't work with mmrm model class.
 plot(residuals(fit1)) 
 qqnorm(residuals(fit1)); qqline(residuals(fit1))
 ```
 :::
+
 These diagnostic plots look great! The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects all fall on a straight line so we can be satisfied with that.
 
 ### Inference
+
 ::: panel-tabset
 ### nlme
+
 ```{r}
 #| warning: false
 #| message: false
-anova(mod)
+anova(mod, type = "marginal")
 ```
+
 ### mmrm
+
 ```{r}
-car::Anova(fit1)
+#car::Anova(fit1, type = "III")
+#Anova.mmrm(fit1, type = "III")
 ```
 :::
 
-Next, we can estimate marginal means and confidence intervals for the independent variables using `emmeans()`. 
+Next, we can estimate marginal means and confidence intervals for the independent variables using `emmeans()`.
 
 ::: panel-tabset
 ### nlme
+
 ```{r}
 emmeans(mod,~ Fertilizer)
 emmeans(mod,~ Variety)
 ```
+
 ### mmrm
+
 ```{r}
 emmeans(fit1,~ Fertilizer)
  emmeans(fit1,~ Variety)
@@ -327,9 +368,9 @@ emmeans(fit1,~ Fertilizer)
 Add a link for further exploring emmeans and contrast statements.
 :::
 
-3.  **Split-split plot repeated measures**
+## Split-split plot repeated measures
 
-Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures statement 
+Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures statement.
 
 ```{r}
 agridat::caribbean.maize
@@ -353,10 +394,20 @@ table(data2$nitro, data2$loc, data2$year)
 
 4.  **Factorial design repeated measures**
 
-As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously 
-
+As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously
 
 https://search.r-project.org/CRAN/refmans/agridat/html/gregory.cotton.html
+
+```{r}
+data3 <- agridat::gregory.cotton
+str(data3)
+```
+
+```{r}
+table(data3$nitrogen, data3$date)
+```
+
+
 
 The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed random factors](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested
 

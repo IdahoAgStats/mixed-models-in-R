@@ -52,13 +52,11 @@ Load required libraries
 
 ::: panel-tabset
 ### lme4
-
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(performance); library(ggplot2)
 library(broom.mixed)
 ```
-
 ### nlme
 
 ```{r, message=FALSE, warning=FALSE}
@@ -148,7 +146,7 @@ tidy(model_lme)
 ```
 :::
 
-##### Check Model Assumptions
+#### Check Model Assumptions
 
 Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.
 
@@ -178,9 +176,7 @@ The `anova()` function prints the the rows of analysis of variance table for who
 #### lme4
 
 ```{r}
-anova(model_lmer)
-anova(model_lmer, type = "marginal")
-anova(model_lmer, type = 'III')
+car::Anova(model_lmer, type = 'III', test.statistics = "F")
 ```
 
 #### nlme
@@ -210,7 +206,7 @@ m2
 
 Further, a pairwise comparison or contrasts can be analyzed using estimated means. In this model, 'time' factor has 4 levels. We can use `pairs()` function to evaluate pairwise comparison among different 'time' levels.
 
-Here's a example using `pairs()` function to compare difference in height among different time points. 
+Here's a example using `pairs()` function to compare difference in height among different time points.
 
 ::: panel-tabset
 #### lme4
@@ -229,9 +225,7 @@ pairs(m2)
 ::: callout-note
 ## `pairs()`
 
-The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”.
-In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts **please check this link**.
-
+The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts **please check this link**.
 :::
 
 ### Example model for RCBD Split Plot Designs
@@ -251,7 +245,7 @@ The objective of this analysis is to study the impact of different varieties and
 
 To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.
 
-```{r}
+```{r, message=FALSE}
 library(MASS)
 data("oats")
 head(oats,5)
@@ -300,13 +294,14 @@ model2_lme <- lme(Y ~  V + N + V:N ,
                   random = ~1|B/V,
                   data = oats, 
                   na.action = na.exclude)
-summary(model2_lme)
+tidy(model2_lme)
 ```
 :::
 
 #### Check Model Assumptions
 
-We need to verify the normality of residuals and homogeneous variance. Here we are using the `check_model()` function from the performance package.
+As shown in example 1, We need to verify the normality of residuals and homogeneous variance. Here we are using the `check_model()` function from the performance package.
+
 ::: panel-tabset
 ### lme4
 
@@ -324,11 +319,12 @@ check_model(model2_lme, check = c('normality', 'linearity'))
 #### Inference
 
 We can evaluate the model for the analysis of variance, for V, N and their interaction effect.
+
 ::: panel-tabset
 ### lme4
 
 ```{r}
-anova(model2_lmer, type = "marginal")
+car::Anova(model2_lmer, type = "III", test.statistics = "F")
 ```
 
 ### nlme
@@ -339,6 +335,7 @@ anova(model2_lme, type = "marginal")
 :::
 
 Next, we can estimate marginal means for V, N, or their interaction (V\*N) effect.
+
 ::: panel-tabset
 ### lme4
 
@@ -355,3 +352,4 @@ emm1
 ```
 :::
 
+In the next chapter we will continue with extension of split plot design called split-split plot design.

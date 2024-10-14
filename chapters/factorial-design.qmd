@@ -8,7 +8,7 @@ source(here::here("settings.r"))
 
 ## Background
 
-Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: $$y_{ij} = \mu +  \tau_i+ \beta_j + \epsilon_{ij}$$ Where: $\mu$ = experiment mean, $\tau$ = effect of factor A, $\beta$ = effect of factor B, and $\tau\beta$ = interaction effect of factor A and B.
+Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: $$y_{ij} = \mu +  \tau_i+ \beta_j + \tau_i\beta_j + \epsilon_{ij}$$ Where: $\mu$ = experiment mean, $\tau$ = effect of factor A, $\beta$ = effect of factor B, and $\tau\beta$ = interaction effect of factor A and B.
 
 Assumptions of this model includes: independent and identically distributed error terms with a constant variance.
 
@@ -32,13 +32,12 @@ library(dplyr); library(performance)
 ```
 :::
 
-Next, we will load the data set named 'cochran.factorial' from the 'agridat' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.
+Next, we will load the dataset named 'cochran.factorial' from the '**agridat**' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.
 
-While importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function.
+Note, while importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function from dplyr package. This helps in reducing the extra steps of converting each single variable to factor manually.
 
 ```{r}
 library(agridat)
-
 data1 <- agridat::cochran.factorial %>% 
   mutate(d = as.factor(d),
          n = as.factor(n),
@@ -59,7 +58,7 @@ data1 <- agridat::cochran.factorial %>%
 
 : Table of variables in the data set {tbl-factorial}
 
-In this example, we will be evaluating the individual and interactive effect of "d", "n", "p", and "k" treatments on yield.
+The objective of this example is evaluate the individual and interactive effect of "d", "n", "p", and "k" treatments on yield.
 
 ### Data Integrity Checks
 
@@ -71,7 +70,7 @@ str(data1)
 
 This looks good.
 
-Next, inspect the independent variables and make sure the expected levels are present in the data.
+Next step is to inspect the independent variables and make sure the expected levels are present in the data.
 
 ```{r}
 table(data1$d, data1$n, data1$p, data1$k)
@@ -79,7 +78,7 @@ table(data1$d, data1$n, data1$p, data1$k)
 
 The design looks well balanced.
 
-Last step is to inspect the dependent variable to ensure its distribution is following expectations
+Last step is to inspect the dependent variable to ensure its distribution follows the bell-shaped curve and no skewness is there.
 
 ```{r, echo=FALSE}
 #| label: fig-factorial_hist
@@ -93,7 +92,7 @@ hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 hist(data1$yield)
 ```
 
-The range is roughly falling into the expected range. I don't see any extreme values (high or low) which might indicate issues with data.
+The range is roughly falling into the expected range. I didn't observe any extreme observations (too high/low), indicating no issues with data. don't see 
 
 ### Model fitting
 
@@ -114,9 +113,7 @@ model1_lmer <- lmer(yield ~ d*n*p*k + (1|block),
                    na.action = na.exclude)
 tidy(model1_lmer)
 ```
-
 ### nlme
-
 ```{r}
 model2_lme <- lme(yield ~ d*n*p*k,
               random = ~ 1|block,
@@ -159,11 +156,8 @@ We can get an ANOVA table for the linear mixed model using the function `anova()
 
 ```{r}
 car::Anova(model1_lmer, type = 'III', test.statistic="F")
-anova(model1_lmer)
 ```
-
 ### nlme
-
 ```{r, fig.height=3}
 anova(model2_lme, type = "marginal")
 ```
@@ -173,7 +167,6 @@ Let’s find estimates for some of the factors such as n, p, and n:k interaction
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 emmeans(model1_lmer, specs = ~ n)
 emmeans(model1_lmer, specs = ~ p)
@@ -181,7 +174,6 @@ emmeans(model1_lmer, specs = ~ n:k)
 ```
 
 ### nlme
-
 ```{r}
 emmeans(model2_lme, specs = ~ n)
 emmeans(model2_lme, specs = ~ p)
@@ -191,4 +183,4 @@ emmeans(model2_lme, specs = ~ n:k)
 
 2.  Unbalanced factorial design
 
-### \*Data integrity
+

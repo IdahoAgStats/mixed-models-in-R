@@ -1,153 +1,174 @@
+
 # Strip Plot Design
+
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
+
+par(mar=c(5.1, 6, 4.1, 2.1))
 ```
 
 ## Background
 
-Yates (1936) proposed this method of arranging agricultural variety trials involving a large number of crop varieties. These types of arrangements were named a quasi-factorial or lattice designs. His paper contained numerical examples based on the results of a uniformity trial on orange trees. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k +1).
+In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors.
+ 1. Vertical strip plot for the first factor – vertical factor 
+ 2. Horizontal strip plot for the second factor – horizontal factor 
 
-Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.
 
-Statistical model for lattice design:
+Divide the experimental area into a horizontal strips and b vertical strips.  Each level of , factor E is assigned to all the plots in one row, and each level of column.
+Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.
 
-$Y_{ijk} = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
 
-where, $\mu$ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
+The statistical model:
+
+::: panel-tabset
+### lme4
+```{r, message=FALSE, warning=FALSE}
+library(lme4); library(lmerTest); library(emmeans)
+library(dplyr); library(performance); library(ggplot2)
+library(broom.mixed)
+```
+### nlme
+
+```{r, message=FALSE, warning=FALSE}
+library(nlme); library(performance); library(emmeans)
+library(dplyr); library(ggplot2); library(broom.mixed)
+```
+:::
 
 ## Example Analysis
 
-The data used in this example is from a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the precentage of young flower buds attacked by boll weevils.
+A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
+```{r}
+data1 <- agridat::gomez.stripplot
+```
 
-Let's start the analysis firstly by loading the required libraries:
+In this design, nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and were replicated over 3 times. 
+```{r, echo=FALSE}
+library(desplot)
+desplot(data1, gen ~ col*row,
+        # aspect unknown
+        out1=rep, out2=nitro, num=nitro, cex=1,
+        main="Strip Plot Design")
+```
+
+
+### Data integrity checks
+
+```{r}
+str(data1)
+```
+
+
+```{r}
+data1$nitro <- as.factor(data1$nitro)
+```
+
+
+```{r}
+table(data1$col, data1$row, data1$rep)
+
+table(data1$col, data1$nitro, data1$rep)
+```
+
+### Model Building
+
+::: panel-tabset
+#### lme4
+
+```{r}
+model_lmer <- lmer(yield ~  nitro*gen + 
+                  (1|rep) + (1|row) + (1|col), 
+                   data = data1)
+
+
+model_lmer1 <- lmer(yield ~  nitro*gen + 
+                   (1|rep:row) + (1|rep:col), 
+                   data = data1)
+
+model_lmer2 <- lmer(yield ~  nitro*gen + 
+                   (1|rep:gen) + (1|rep:nitro), 
+                   data = data1)
+
+
+anova(model_lmer1, model_lmer2)
+
+
+
+tidy(model_lmer1)
+```
+
+#### nlme
+
+```{r}
+model_lme <-lme(yield ~  nitro*gen,
+                 random = list (~1|rep, ~1|row, ~1|col), 
+             data = data1)
+
+model_lme1 <-lme(yield ~  nitro*gen,
+                 random = list(~1|row, ~1|col), 
+             data = data1)
+
+anova(model_lme, model_lme1)
+
+tidy(model_lme)
+```
+:::
+
+
+#### Check Model Assumptions
+
+
+
+::: panel-tabset
+#### lme4
+
+```{r, fig.height=3}
+check_model(model_lmer1, check = c('normality', 'linearity'))
+```
+
+#### nlme
+
+```{r, fig.height=3}
+check_model(model_lme, check = c('normality', 'linearity'))
+```
+:::
+
+The residuals fit the assumptions of the model well.
+
+#### Inference
+
+We can evaluate the model for the analysis of variance, for main and interaction effects.
 
 ::: panel-tabset
 ### lme4
 
-```{r, message=FALSE, warning=FALSE}
-library(lme4); library(lmerTest); library(emmeans); library(performance)
-library(dplyr); library(broom.mixed); library(agridat); library(desplot)
+```{r}
+car::Anova(model_lmer1, type = "III", test.statistics = "F")
 ```
 
 ### nlme
-```{r, message=FALSE, warning=FALSE}
-library(nlme); library(broom.mixed); library(emmeans); library(performance)
-library(dplyr); library(agridat); library(desplot)
+
+```{r}
+anova(model_lme, type = "marginal")
 ```
 :::
 
-Import data from agridat package. The data contains . This is a balanced experiment design
-```{r}
-data(cochran.lattice)
-dat2 <- cochran.lattice
-head(dat2)
-str(dat2)
 
-libs(desplot)
-desplot(dat2, y~row*col|rep,
-        text=trt, # aspect unknown, should be 2 or .5
-         main="cochran.lattice")
-
-```
-
-```{r}
-data(burgueno.rowcol)
-dat <- burgueno.rowcol
-head(dat)
-```
-Here, we can use the `desplot()` function from the 'desplot' package to visualize the plot plan from lattice design.
-```{r}
-# Two contiuous reps in 8 rows, 16 columns
-desplot(dat, yield ~ col*row,
-        out1=rep, # aspect unknown
-        text=gen, shorten="none", cex=0.75,
-        main="lattice design")
-
-```
-### Data integrity checks
-```{r, echo=FALSE}
-#| label: lattice_design
-#| fig-cap: "Histogram of the dependent variable."
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-desplot(dat, yield ~ col*row,
-        out1=rep, # aspect unknown
-        text=gen, shorten="none", cex=.75,
-        main="burgueno.rowcol")
-```
-### Data integrity checks
-
-```{r}
-str(dat)
-```
-
-```{r}
-dat2$row <- as.factor(dat2$row)
-dat2$col <- as.factor(dat2$col)
-
-dat$row <- as.factor(dat$row)
-dat$col <- as.factor(dat$col)
-```
-
-```{r, eval=FALSE}
-hist(dat2$y, main = "", xlab = "yield")
-```
-
-```{r, echo=FALSE}
-#| label: fig-rcbd_hist
-#| fig-cap: "Histogram of the dependent variable."
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
-```
+estimate marginal means 
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-m1_a <- lmer(yield ~ gen + (1|row) + (1|col:rep) + (1|rep),
-           data = dat,
-           na.action = na.exclude)
-summary(m1_a) 
+emm1 <- emmeans(model_lmer1, ~ nitro*gen) 
+emm1
 ```
 
 ### nlme
 
 ```{r}
-dat$dummy <- factor(1)
-
-m1_b <- lme(yield ~ gen,
-          random = list(dummy = pdBlocked(list(
-                                  pdIdent(~row - 1),
-                                  pdIdent(~rep - 1),
-                                  pdIdent(~col:rep)))),
-          data = dat, 
-          na.action = na.exclude)
-
-VarCorr(m1_b)
+emm1 <- emmeans(model_lme, ~ nitro*gen) 
+emm1
 ```
 :::
-
-### Check Model Assumptions
-
-Remember those iid assumptions? Let's make sure we actually met them.
-
-```{r, fig.height=9}
-check_model(m1_a)
-```
-
-
-### Inference
-
-Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
-
-```{r}
-anova(m1_a)
-```
-
-Estimated marginal means
-
-```{r}
-emmeans(m1_a, ~ gen)
-```
