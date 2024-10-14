@@ -212,26 +212,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/special-conditions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Combining Scenarios</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../chapters/variance-components.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Variance Components</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Variance Components</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/summary.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/resources.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -383,6 +377,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   8 1 1 1 1 1 1
   9 1 1 1 1 1 1</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>col, data1<span class="sc">$</span>nitro, data1<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, ,  = R1
+
+   
+    0 60 120
+  1 6  0   0
+  2 0  0   6
+  3 0  6   0
+  4 0  0   0
+  5 0  0   0
+  6 0  0   0
+  7 0  0   0
+  8 0  0   0
+  9 0  0   0
+
+, ,  = R2
+
+   
+    0 60 120
+  1 0  0   0
+  2 0  0   0
+  3 0  0   0
+  4 0  0   6
+  5 0  6   0
+  6 6  0   0
+  7 0  0   0
+  8 0  0   0
+  9 0  0   0
+
+, ,  = R3
+
+   
+    0 60 120
+  1 0  0   0
+  2 0  0   0
+  3 0  0   0
+  4 0  0   0
+  5 0  0   0
+  6 0  0   0
+  7 0  0   6
+  8 6  0   0
+  9 0  6   0</code></pre>
+</div>
 </div>
 </section>
 <section id="model-building" class="level3" data-number="7.2.2">
@@ -392,17 +430,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>col), </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>model_lmer1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col), </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer, model_lmer1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>col), </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>model_lmer1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col), </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>model_lmer2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>gen) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>nitro), </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer1, model_lmer2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>refitting model(s) with ML (instead of REML)</code></pre>
 </div>
@@ -410,12 +452,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Data: data1
 Models:
 model_lmer1: yield ~ nitro * gen + (1 | rep:row) + (1 | rep:col)
-model_lmer: yield ~ nitro * gen + (1 | rep) + (1 | row) + (1 | col)
+model_lmer2: yield ~ nitro * gen + (1 | rep:gen) + (1 | rep:nitro)
             npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)
 model_lmer1   21 902.86 944.63 -430.43   860.86                    
-model_lmer    22 910.55 954.31 -433.28   866.55     0  1          1</code></pre>
+model_lmer2   21 902.86 944.63 -430.43   860.86     0  0           </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lmer1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lmer1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 21 × 8
    effect group term           estimate std.error statistic    df    p.value
@@ -436,23 +478,21 @@ model_lmer    22 910.55 954.31 -433.28   866.55     0  1          1</code></pre>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random =</span> <span class="fu">list</span> (<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>rep, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col), </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>             <span class="co">#random = ~ 1|rep/time,</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data1)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>model_lme1 <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col), </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>             <span class="co">#random = ~ 1|rep/time,</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data1)</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, model_lme1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random =</span> <span class="fu">list</span> (<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>rep, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col), </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data1)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>model_lme1 <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col), </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data1)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, model_lme1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           Model df     AIC      BIC    logLik   Test L.Ratio p-value
 model_lme      1 22 652.082 686.9194 -304.0410                       
 model_lme1     2 21 660.329 693.5829 -309.1645 1 vs 2  10.247  0.0014</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in tidy.lme(model_lme): ran_pars not yet implemented for multiple
 levels of nesting</code></pre>
@@ -491,7 +531,7 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -503,7 +543,7 @@ levels of nesting</code></pre>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -525,7 +565,7 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer1, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer1, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
 
@@ -542,7 +582,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1    24 38.97255  &lt;.0001
@@ -560,8 +600,8 @@ nitro:gen      10    24  5.11314  0.0005</code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer1, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer1, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> nitro gen emmean  SE   df lower.CL upper.CL
  0     G1    3572 562 24.3     2413     4730
@@ -590,8 +630,8 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> nitro gen emmean  SE df lower.CL upper.CL
  0     G1    3572 572  2   1110.0     6033
