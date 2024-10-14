@@ -67,6 +67,8 @@ data1$nitro <- as.factor(data1$nitro)
 
 ```{r}
 table(data1$col, data1$row, data1$rep)
+
+table(data1$col, data1$nitro, data1$rep)
 ```
 
 ### Model Building
@@ -84,8 +86,12 @@ model_lmer1 <- lmer(yield ~  nitro*gen +
                    (1|rep:row) + (1|rep:col), 
                    data = data1)
 
+model_lmer2 <- lmer(yield ~  nitro*gen + 
+                   (1|rep:gen) + (1|rep:nitro), 
+                   data = data1)
 
-anova(model_lmer, model_lmer1)
+
+anova(model_lmer1, model_lmer2)
 
 
 
@@ -97,12 +103,10 @@ tidy(model_lmer1)
 ```{r}
 model_lme <-lme(yield ~  nitro*gen,
                  random = list (~1|rep, ~1|row, ~1|col), 
-             #random = ~ 1|rep/time,
              data = data1)
 
 model_lme1 <-lme(yield ~  nitro*gen,
                  random = list(~1|row, ~1|col), 
-             #random = ~ 1|rep/time,
              data = data1)
 
 anova(model_lme, model_lme1)
