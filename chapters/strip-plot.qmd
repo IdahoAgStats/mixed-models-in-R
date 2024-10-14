@@ -1,5 +1,6 @@
 
-#Strip Plot Design
+# Strip Plot Design
+
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
@@ -9,7 +10,14 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-It is very common design where experimental treatments are applied at random to experimental units within each block. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes.
+In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors.
+ 1. Vertical strip plot for the first factor – vertical factor 
+ 2. Horizontal strip plot for the second factor – horizontal factor 
+
+
+Divide the experimental area into a horizontal strips and b vertical strips.  Each level of , factor E is assigned to all the plots in one row, and each level of column.
+Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.
+
 
 The statistical model:
 
@@ -28,18 +36,20 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 ```
 :::
 
+## Example Analysis
 
 A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
 ```{r}
 data1 <- agridat::gomez.stripplot
-
 ```
+
+### Data integrity checks
 
 ```{r}
 str(data1)
 ```
 
-```{r}
+```{r, echo=FALSE}
 library(desplot)
 desplot(data1, gen ~ col*row,
         # aspect unknown
@@ -54,8 +64,98 @@ data1$nitro <- as.factor(data1$nitro)
 
 
 ```{r}
-
+table(data1$col, data1$row, data1$rep)
 ```
 
+### Model Building
+
+::: panel-tabset
+#### lme4
+
+```{r}
+model_lmer <- lmer(yield ~  nitro*gen + 
+                  (1|rep) + (1|row) + (1|col), 
+                   data = data1)
 
 
+model_lmer1 <- lmer(yield ~  nitro*gen + 
+                  (1|rep) + (1|rep:row) + (1|rep:col), 
+                   data = data1)
+
+
+anova(model_lmer, model_lmer1)
+
+
+
+tidy(model_lmer1)
+```
+
+#### nlme
+
+```{r}
+model_lme <-lme(yield ~  nitro*gen,
+                 random = list (~1|row, ~1|col), 
+             #random = ~ 1|rep/time,
+             data = data1)
+
+tidy(model_lme)
+```
+:::
+
+
+#### Check Model Assumptions
+
+
+
+::: panel-tabset
+#### lme4
+
+```{r, fig.height=3}
+check_model(model_lmer1, check = c('normality', 'linearity'))
+```
+
+#### nlme
+
+```{r, fig.height=3}
+check_model(model_lme, check = c('normality', 'linearity'))
+```
+:::
+
+The residuals fit the assumptions of the model well.
+
+#### Inference
+
+We can evaluate the model for the analysis of variance, for main and interaction effects.
+
+::: panel-tabset
+### lme4
+
+```{r}
+car::Anova(model_lmer1, type = "III", test.statistics = "F")
+```
+
+### nlme
+
+```{r}
+anova(model_lme, type = "marginal")
+```
+:::
+
+
+estimate marginal means 
+
+::: panel-tabset
+### lme4
+
+```{r}
+emm1 <- emmeans(model_lmer1, ~ nitro*gen) 
+emm1
+```
+
+### nlme
+
+```{r}
+emm1 <- emmeans(model_lme, ~ nitro*gen) 
+emm1
+```
+:::
