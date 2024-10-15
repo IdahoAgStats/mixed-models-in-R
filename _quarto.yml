@@ -1,6 +1,9 @@
 project:
   type: book
   output-dir: docs
+  render:
+    - "*.qmd"
+    - "!WIP/"
 
 book:
   editor: source
@@ -10,36 +13,42 @@ book:
     foreground: "#000101"
   title: "Field Guide to the R Mixed Model Wilderness"
   author: ["Harpreet Kaur", "Julia Piaskowski"]
-  date: "August, 2024"
+  date: "October, 2024"
   image: "img/cover.jpg"
   sidebar:
     style: docked
     background: light
+    search: true
     logo: "img/hexLogo.png"
     
   chapters:
-    - index.qmd # required as the homepage
-    - chapters/intro.qmd
-    - chapters/analysis-tips.qmd
-    - chapters/background.qmd
+    - index.qmd
+    - href: chapters/intro.qmd
+      text: Introduction
+    - href: chapters/analysis-tips.qmd
+      text: Tao of Analysis
+    - href: chapters/background.qmd
+      text: Mixed Model Background
     - chapters/rcbd.qmd
+    - href: chapters/factorial-design.qmd
+      text: Factorial RCBD Design
     - chapters/split-plot-design.qmd
     - chapters/split-split-plot.qmd
     - chapters/strip-plot.qmd
-    - chapters/factorial-design.qmd
+
     - chapters/incomplete-block-design.qmd
-    #- chapters/Lattice-design.qmd
-    - chapters/repeated-measures.qmd
-    #- chapters/glmm.qmd
-    #- chapters/special-conditions.qmd
-    - chapters/variance-components.qmd
-    - chapters/summary.qmd
-    - chapters/resources.qmd
+    - chapters/lattice-design.qmd
+    - href: chapters/repeated-measures.qmd
+      text: Repeated Measures
+    - href: chapters/advanced-analytical-options.qmd
+      text: Advanced Analysis
+    - chapters/additional-resources.qmd
     - references.qmd
 
 bibliography: references.bib
-reference-location: margin
-citation-location: margin
+bibliographystyle: nature.csl
+reference-location: document
+citation-location: document
 
 format:
   html:
