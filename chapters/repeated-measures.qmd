@@ -373,24 +373,20 @@ Add a link for further exploring emmeans and contrast statements.
 Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures statement.
 
 ```{r}
-agridat::caribbean.maize
+phos <- read.csv(here::here("data", "split_split_repeated.csv"))
 ```
 
-```{r}
-library(agridat)
-data("durban.splitplot")
-data("brandle.rape")
+|             |                                 |
+|-------------|---------------------------------|
+| plot        | experimental unit                |
+| block     | replication unit            |
+| Ptrt  | Main plot, 2 levels           |
+| Inoc       | Split plot, 2 levels         |
+| Cv    | Split-split plot, 5 levels
+| time | time points for data collection |
+| P_leaf | leaf phosphorous content  |
 
-data1 <- brandle.rape
-table(data1$gen, data1$loc)
-```
 
-```{r}
-data("hunter.corn")
-data2 <- hunter.corn
-
-table(data2$nitro, data2$loc, data2$year)
-```
 
 4.  **Factorial design repeated measures**
 
