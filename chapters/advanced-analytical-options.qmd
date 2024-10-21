@@ -1,4 +1,15 @@
-# Advanced Analysis
+---
+title: Advanced Analysis
+execute: 
+  eval: false
+---
+
+```{r}
+library(nlme); library(emmeans); library(performance)
+library(lme4)
+```
+
+
 
 ## Estimated Marginal Means
 
@@ -17,6 +28,134 @@ The letters indicating significant differences can be generated using cld() func
 
 
 ## Variance Components
+
+### Unequal Variance
+
+#### Case 1: Unequal Variance Due to a Factor
+
+```{r}
+var_ex1 <- here::here(read.csv("data", "MET_trial_variance.csv"))
+```
+
+```{r}
+var_ex1$block <- as.character(var_ex1$block)
+hist(var_ex1$yield)
+boxplot(yield ~ site, data = var_ex1)
+```
+
+```{r}
+m1_a <- lme(yield ~ site:variety + variety, 
+                random = ~ 1 |site/block, 
+                na.action = na.exclude, 
+                data = var_ex1)
+
+```
+
+
+```{r}
+m1_b <- update(m1_a, weights = varIdent(form = ~1|site))
+```
+
+::: {.note}
+
+
+```{r eval=FALSE}
+m1_b <- update(m1_a, weights = varIdent(form = ~1|site))
+```
+
+is equivalent to
+
+```{r eval=FALSE}
+m1_b <- lme(yield ~ site:variety + variety, 
+                random = ~ 1 |site/block,
+                weights = varIdent(form = ~1|site), 
+                na.action = na.exclude, 
+                data = var_ex1)
+```
+
+:::
+
+#### Case 2: Variance is related to the fitted values
+
+```{r}
+var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv"))
+```
+
+```{r}
+var_ex1$block <- as.character(var_ex1$block)
+hist(var_ex2$yield)
+```
+
+
+```{r}
+m2_a <- lme(yield ~ variety, 
+               random = ~ 1 |block, 
+               na.action = na.exclude, 
+               data = var_ex2)
+```
+
+```{r}
+m2_b <- update(m2_a, weights = varPower())
+```
+
+## Estimate CV
+
+```{r}
+m2_ave <- fixef(m2_b)[1]
+names(m2_b) <- NULL
+```
+
+```{r}
+m2_cv = sigma(m2_b)/m2_ave*100
+m2_cv
+```
+
+
+## Estimate LSD
+
+```{r}
+# source: https://github.com/stats4sd/LSDer/blob/master/R/LSDer.R
+
+LSDer <- function(m, term, level = 0.95) {
+  # browser() # for troubleshooting
+  # m = model object from lme4 or nlme
+  # term = independent variable in reference grid
+  # level = confidence interval
+  
+  if(class(m) == "lme") {
+    t1 <- table(m$data[term])
+  } else {
+    t1 <- table(m@frame[term])
+  }
+  
+  ns <- cbind(median(t1), median(t1))
+  rownames(ns) <- NULL
+  
+  MS <- sigma(m) ** 2
+  
+  if(class(m) == "lme") {
+    DF <- anova(m)[term, "denDF"]
+  } else {
+    DF <- suppressWarnings((car::Anova(m, test = "F"))[term, "Df.res"])
+  }
+  
+  NREP1 <- ns[, 1]
+  NREP2 <- ns[, 2]
+  LSD <- qt(1-((1-level)/2),DF)*sqrt(MS*(1/NREP1+1/NREP2))
+  
+  return(LSD)
+}
+
+```
+
+
+
+### Looking at Variance Components
+
+```{r}
+var_comps <- read.csv(here::here("data", "potato_tuber_size.csv"))
+```
+
 
 
 
