@@ -70,47 +70,31 @@ table(data1$col, data1$row, data1$rep)
 table(data1$col, data1$nitro, data1$rep)
 ```
 
+
 ### Model Building
 
 ::: panel-tabset
 #### lme4
 
 ```{r}
-model_lmer <- lmer(yield ~  nitro*gen + 
-                  (1|rep) + (1|row) + (1|col), 
-                   data = data1)
-
-
-model_lmer1 <- lmer(yield ~  nitro*gen + 
+model_lmer <- lmer(yield ~  nitro*gen +  (1|rep) + 
                    (1|rep:row) + (1|rep:col), 
                    data = data1)
 
-model_lmer2 <- lmer(yield ~  nitro*gen + 
-                   (1|rep:gen) + (1|rep:nitro), 
-                   data = data1)
-
-
-anova(model_lmer1, model_lmer2)
-
-
-
-tidy(model_lmer1)
+tidy(model_lmer)
 ```
-
 #### nlme
 
 ```{r}
+
 model_lme <-lme(yield ~  nitro*gen,
-                 random = list (~1|rep, ~1|row, ~1|col), 
-             data = data1)
-
-model_lme1 <-lme(yield ~  nitro*gen,
-                 random = list(~1|row, ~1|col), 
-             data = data1)
-
-anova(model_lme, model_lme1)
-
-tidy(model_lme)
+                random = list(one = pdBlocked(list(
+        pdIdent(~ 0 + rep), 
+         pdIdent(~ 0 + rep:row), 
+        pdIdent(~ 0 + rep:col)))),
+        data = data1 %>% mutate(one = factor(1)))
+summary(model_lme)
+#tidy(model_lme)
 ```
 :::
 
@@ -123,13 +107,18 @@ tidy(model_lme)
 #### lme4
 
 ```{r, fig.height=3}
-check_model(model_lmer1, check = c('normality', 'linearity'))
+check_model(model_lmer, check = c('normality', 'linearity'))
 ```
 
 #### nlme
 
-```{r, fig.height=3}
-check_model(model_lme, check = c('normality', 'linearity'))
+```{r, layout="[[1,1], [1]]"}
+plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
+
+qqnorm(residuals(model_lme))
+qqline(residuals(model_lme))
+
 ```
 :::
 
@@ -143,7 +132,7 @@ We can evaluate the model for the analysis of variance, for main and interaction
 ### lme4
 
 ```{r}
-car::Anova(model_lmer1, type = "III", test.statistics = "F")
+car::Anova(model_lmer, type = "III", test.statistics = "F")
 ```
 
 ### nlme
@@ -160,14 +149,14 @@ estimate marginal means
 ### lme4
 
 ```{r}
-emm1 <- emmeans(model_lmer1, ~ nitro*gen) 
+emm1 <- emmeans(model_lmer, ~ nitro*gen) 
 emm1
 ```
 
 ### nlme
 
 ```{r}
-emm1 <- emmeans(model_lme, ~ nitro*gen) 
+emm1 <- emmeans(model_lme, ~ nitro)
 emm1
 ```
 :::
