@@ -286,7 +286,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="background" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="background"><span class="header-section-number">8.1</span> Background</h2>
 <p>In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors. 1. Vertical strip plot for the first factor – vertical factor 2. Horizontal strip plot for the second factor – horizontal factor</p>
-<p>Divide the experimental area into a horizontal strips and b vertical strips. Each level of , factor E is assigned to all the plots in one row, and each level of column. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.</p>
+<p>Divide the experimental area into ‘A’ horizontal strips and ‘B’ vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.</p>
 <p>The statistical model:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
@@ -309,11 +309,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="example-analysis" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">8.2</span> Example Analysis</h2>
+<p>The example used here is comprised of 3 nitrogen fertilizer levels and 6 varieties applied in a strip-plot design. The nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and they were replicated over 3 times. For the sake of analysis, ‘row’ and ‘col’ variables are used to represent ‘nitrogen’ and ‘Gen’ factors.</p>
 <p>A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>gomez.stripplot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>In this design, nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and were replicated over 3 times.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -385,50 +385,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   8 1 1 1 1 1 1
   9 1 1 1 1 1 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>col, data1<span class="sc">$</span>nitro, data1<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>, ,  = R1
-
-   
-    0 60 120
-  1 6  0   0
-  2 0  0   6
-  3 0  6   0
-  4 0  0   0
-  5 0  0   0
-  6 0  0   0
-  7 0  0   0
-  8 0  0   0
-  9 0  0   0
-
-, ,  = R2
-
-   
-    0 60 120
-  1 0  0   0
-  2 0  0   0
-  3 0  0   0
-  4 0  0   6
-  5 0  6   0
-  6 6  0   0
-  7 0  0   0
-  8 0  0   0
-  9 0  0   0
-
-, ,  = R3
-
-   
-    0 60 120
-  1 0  0   0
-  2 0  0   0
-  3 0  0   0
-  4 0  0   0
-  5 0  0   0
-  6 0  0   0
-  7 0  0   6
-  8 6  0   0
-  9 0  6   0</code></pre>
-</div>
 </div>
 </section>
 <section id="model-building" class="level3" data-number="8.2.2">
@@ -438,96 +394,131 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>col), </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>model_lmer1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col), </span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>model_lmer2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span> </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>gen) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>nitro), </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer1, model_lmer2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen <span class="sc">+</span>  (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                   (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col), </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Data: data1
-Models:
-model_lmer1: yield ~ nitro * gen + (1 | rep:row) + (1 | rep:col)
-model_lmer2: yield ~ nitro * gen + (1 | rep:gen) + (1 | rep:nitro)
-            npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)
-model_lmer1   21 902.86 944.63 -430.43   860.86                    
-model_lmer2   21 902.86 944.63 -430.43   860.86     0  0           </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lmer1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 21 × 8
-   effect group term           estimate std.error statistic    df    p.value
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
- 1 fixed  &lt;NA&gt;  (Intercept)       3572.      562.     6.36   24.2 0.00000136
- 2 fixed  &lt;NA&gt;  nitro60           1560.      573.     2.72   17.4 0.0143    
- 3 fixed  &lt;NA&gt;  nitro120          3976.      573.     6.94   17.4 0.00000215
- 4 fixed  &lt;NA&gt;  genG2             1363.      756.     1.80   17.8 0.0886    
- 5 fixed  &lt;NA&gt;  genG3              678       756.     0.896  17.8 0.382     
- 6 fixed  &lt;NA&gt;  genG4              487.      756.     0.644  17.8 0.528     
- 7 fixed  &lt;NA&gt;  genG5              530.      756.     0.701  17.8 0.493     
- 8 fixed  &lt;NA&gt;  genG6             -364.      756.    -0.482  17.8 0.636     
- 9 fixed  &lt;NA&gt;  nitro60:genG2      219.      734.     0.298  20.8 0.768     
-10 fixed  &lt;NA&gt;  nitro120:genG2   -1699.      734.    -2.31   20.8 0.0310    
-# ℹ 11 more rows</code></pre>
+<pre><code># A tibble: 22 × 8
+   effect group term           estimate std.error statistic    df     p.value
+   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+ 1 fixed  &lt;NA&gt;  (Intercept)       3572.      572.     6.24   17.8 0.00000732 
+ 2 fixed  &lt;NA&gt;  nitro60           1560.      558.     2.80   22.4 0.0104     
+ 3 fixed  &lt;NA&gt;  nitro120          3976.      558.     7.13   22.4 0.000000341
+ 4 fixed  &lt;NA&gt;  genG2             1363.      717.     1.90   20.9 0.0714     
+ 5 fixed  &lt;NA&gt;  genG3              678.      717.     0.945  20.9 0.355      
+ 6 fixed  &lt;NA&gt;  genG4              487.      717.     0.679  20.9 0.504      
+ 7 fixed  &lt;NA&gt;  genG5              530.      717.     0.739  20.9 0.468      
+ 8 fixed  &lt;NA&gt;  genG6             -364.      717.    -0.508  20.9 0.617      
+ 9 fixed  &lt;NA&gt;  nitro60:genG2      219.      741.     0.296  20.0 0.771      
+10 fixed  &lt;NA&gt;  nitro120:genG2   -1699.      741.    -2.29   20.0 0.0328     
+# ℹ 12 more rows</code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random =</span> <span class="fu">list</span> (<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>rep, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col), </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data1)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>model_lme1 <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col), </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> data1)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, model_lme1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span>  nitro<span class="sc">*</span>gen,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="fu">list</span>(<span class="at">one =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> rep), </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> rep<span class="sc">:</span>row), </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> rep<span class="sc">:</span>col)))),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> data1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">one =</span> <span class="fu">factor</span>(<span class="dv">1</span>)))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>           Model df     AIC      BIC    logLik   Test L.Ratio p-value
-model_lme      1 22 652.082 686.9194 -304.0410                       
-model_lme1     2 21 660.329 693.5829 -309.1645 1 vs 2  10.247  0.0014</code></pre>
+<pre><code>Linear mixed-effects model fit by REML
+  Data: data1 %&gt;% mutate(one = factor(1)) 
+       AIC      BIC    logLik
+  653.1252 687.9627 -304.5626
+
+Random effects:
+ Composite Structure: Blocked
+
+ Block 1: repR1, repR2, repR3
+ Formula: ~0 + rep | one
+ Structure: Multiple of an Identity
+            repR1     repR2     repR3
+StdDev: 0.2921713 0.2921713 0.2921713
+
+ Block 2: repR1:row, repR2:row, repR3:row
+ Formula: ~0 + rep:row | one
+ Structure: Multiple of an Identity
+        repR1:row repR2:row repR3:row
+StdDev:  213.0671  213.0671  213.0671
+
+ Block 3: repR1:col, repR2:col, repR3:col
+ Formula: ~0 + rep:col | one
+ Structure: Multiple of an Identity
+        repR1:col repR2:col repR3:col Residual
+StdDev:  120.3633  120.3633  120.3633 754.7183
+
+Fixed effects:  yield ~ nitro * gen 
+                   Value Std.Error DF   t-value p-value
+(Intercept)     2875.162  520.2572 36  5.526425  0.0000
+nitro60         1515.188  620.8460 36  2.440521  0.0197
+nitro120        4041.826  619.7277 36  6.521939  0.0000
+genG2            973.891  646.6847 36  1.505975  0.1408
+genG3            465.595  636.8847 36  0.731050  0.4695
+genG4             33.189  635.9573 36  0.052188  0.9587
+genG5            486.865  658.4776 36  0.739380  0.4645
+genG6           -743.510  644.6572 36 -1.153341  0.2564
+nitro60:genG2    219.000  871.4737 36  0.251298  0.8030
+nitro120:genG2 -1699.333  871.4737 36 -1.949954  0.0590
+nitro60:genG3    312.333  871.4737 36  0.358397  0.7221
+nitro120:genG3  -357.667  871.4737 36 -0.410416  0.6839
+nitro60:genG4    -65.667  871.4737 36 -0.075351  0.9404
+nitro120:genG4  -941.000  871.4737 36 -1.079780  0.2874
+nitro60:genG5    -28.667  871.4737 36 -0.032894  0.9739
+nitro120:genG5 -2066.000  871.4737 36 -2.370697  0.0232
+nitro60:genG6  -1053.333  871.4737 36 -1.208681  0.2347
+nitro120:genG6 -4691.667  871.4737 36 -5.383601  0.0000
+ Correlation: 
+               (Intr) nitr60 ntr120 genG2  genG3  genG4  genG5  genG6  n60:G2
+nitro60        -0.568                                                        
+nitro120       -0.627  0.500                                                 
+genG2          -0.534  0.472  0.476                                          
+genG3          -0.528  0.474  0.475  0.533                                   
+genG4          -0.553  0.486  0.489  0.530  0.515                            
+genG5          -0.503  0.450  0.453  0.532  0.536  0.496                     
+genG6          -0.481  0.470  0.465  0.526  0.527  0.517  0.520              
+nitro60:genG2   0.419 -0.702 -0.352 -0.674 -0.342 -0.343 -0.331 -0.338       
+nitro120:genG2  0.419 -0.351 -0.703 -0.674 -0.342 -0.343 -0.331 -0.338  0.500
+nitro60:genG3   0.419 -0.702 -0.352 -0.337 -0.684 -0.343 -0.331 -0.338  0.500
+nitro120:genG3  0.419 -0.351 -0.703 -0.337 -0.684 -0.343 -0.331 -0.338  0.250
+nitro60:genG4   0.419 -0.702 -0.352 -0.337 -0.342 -0.685 -0.331 -0.338  0.500
+nitro120:genG4  0.419 -0.351 -0.703 -0.337 -0.342 -0.685 -0.331 -0.338  0.250
+nitro60:genG5   0.419 -0.702 -0.352 -0.337 -0.342 -0.343 -0.662 -0.338  0.500
+nitro120:genG5  0.419 -0.351 -0.703 -0.337 -0.342 -0.343 -0.662 -0.338  0.250
+nitro60:genG6   0.419 -0.702 -0.352 -0.337 -0.342 -0.343 -0.331 -0.676  0.500
+nitro120:genG6  0.419 -0.351 -0.703 -0.337 -0.342 -0.343 -0.331 -0.676  0.250
+               n120:G2 n60:G3 n120:G3 n60:G4 n120:G4 n60:G5 n120:G5 n60:G6
+nitro60                                                                   
+nitro120                                                                  
+genG2                                                                     
+genG3                                                                     
+genG4                                                                     
+genG5                                                                     
+genG6                                                                     
+nitro60:genG2                                                             
+nitro120:genG2                                                            
+nitro60:genG3   0.250                                                     
+nitro120:genG3  0.500   0.500                                             
+nitro60:genG4   0.250   0.500  0.250                                      
+nitro120:genG4  0.500   0.250  0.500   0.500                              
+nitro60:genG5   0.250   0.500  0.250   0.500  0.250                       
+nitro120:genG5  0.500   0.250  0.500   0.250  0.500   0.500               
+nitro60:genG6   0.250   0.500  0.250   0.500  0.250   0.500  0.250        
+nitro120:genG6  0.500   0.250  0.500   0.250  0.500   0.250  0.500   0.500
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-1.55534424 -0.51887363  0.04037623  0.64567030  1.67178221 
+
+Number of Observations: 54
+Number of Groups: 1 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in tidy.lme(model_lme): ran_pars not yet implemented for multiple
-levels of nesting</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 18 × 7
-   effect term           estimate std.error    df statistic     p.value
-   &lt;chr&gt;  &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
- 1 fixed  (Intercept)      3572.       572.    24    6.24   0.00000188 
- 2 fixed  nitro60          1560.       558.    24    2.80   0.0100     
- 3 fixed  nitro120         3976.       558.    24    7.13   0.000000229
- 4 fixed  genG2            1363.       734.    10    1.86   0.0932     
- 5 fixed  genG3             678.       734.    10    0.923  0.378      
- 6 fixed  genG4             487.       734.    10    0.664  0.522      
- 7 fixed  genG5             530        734.    10    0.722  0.487      
- 8 fixed  genG6            -364.       734.    10   -0.496  0.630      
- 9 fixed  nitro60:genG2     219.       789.    24    0.278  0.784      
-10 fixed  nitro120:genG2  -1699.       789.    24   -2.15   0.0415     
-11 fixed  nitro60:genG3     312.       789.    24    0.396  0.696      
-12 fixed  nitro120:genG3   -358.       789.    24   -0.453  0.654      
-13 fixed  nitro60:genG4     -65.7      789.    24   -0.0832 0.934      
-14 fixed  nitro120:genG4   -941        789.    24   -1.19   0.245      
-15 fixed  nitro60:genG5     -28.7      789.    24   -0.0363 0.971      
-16 fixed  nitro120:genG5  -2066.       789.    24   -2.62   0.0151     
-17 fixed  nitro60:genG6   -1053.       789.    24   -1.33   0.194      
-18 fixed  nitro120:genG6  -4692.       789.    24   -5.95   0.00000389 </code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#tidy(model_lme)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -539,7 +530,7 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -550,13 +541,17 @@ levels of nesting</code></pre>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_lme, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(model_lme))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">residuals</span>(model_lme))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout="[[1,1], [1]]">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -573,16 +568,16 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer1, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
 
 Response: yield
               Chisq Df Pr(&gt;Chisq)    
-(Intercept) 40.4229  1  2.045e-10 ***
-nitro       48.8489  2  2.469e-11 ***
-gen          6.1466  5     0.2922    
-nitro:gen   59.0350 10  5.516e-09 ***
+(Intercept) 38.9728  1  4.298e-10 ***
+nitro       51.5701  2  6.334e-12 ***
+gen          6.8343  5     0.2333    
+nitro:gen   58.0064 10  8.621e-09 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -590,13 +585,13 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>            numDF denDF  F-value p-value
-(Intercept)     1    24 38.97255  &lt;.0001
-nitro           2    24 25.78512  &lt;.0001
-gen             5    10  1.30451  0.3360
-nitro:gen      10    24  5.11314  0.0005</code></pre>
+<pre><code>            numDF denDF   F-value p-value
+(Intercept)     1    36 30.541371  &lt;.0001
+nitro           2    36 21.713558  &lt;.0001
+gen             5    36  1.705969  0.1583
+nitro:gen      10    36  4.192063  0.0007</code></pre>
 </div>
 </div>
 </div>
@@ -608,28 +603,28 @@ nitro:gen      10    24  5.11314  0.0005</code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer1, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> nitro gen emmean  SE   df lower.CL upper.CL
- 0     G1    3572 562 24.3     2413     4730
- 60    G1    5132 562 24.3     3973     6291
- 120   G1    7548 562 24.3     6389     8707
- 0     G2    4934 562 24.3     3776     6093
- 60    G2    6714 562 24.3     5555     7872
- 120   G2    7211 562 24.3     6053     8370
- 0     G3    4250 562 24.3     3091     5408
- 60    G3    6122 562 24.3     4964     7281
- 120   G3    7868 562 24.3     6710     9027
- 0     G4    4059 562 24.3     2900     5218
- 60    G4    5554 562 24.3     4395     6712
- 120   G4    7094 562 24.3     5936     8253
- 0     G5    4102 562 24.3     2943     5260
- 60    G5    5633 562 24.3     4475     6792
- 120   G5    6012 562 24.3     4853     7171
- 0     G6    3207 562 24.3     2049     4366
- 60    G6    3714 562 24.3     2556     4873
- 120   G6    2492 562 24.3     1333     3651
+ 0     G1    3572 572 17.8     2368     4775
+ 60    G1    5132 572 17.8     3929     6335
+ 120   G1    7548 572 17.8     6345     8751
+ 0     G2    4934 572 17.8     3731     6138
+ 60    G2    6714 572 17.8     5510     7917
+ 120   G2    7211 572 17.8     6008     8415
+ 0     G3    4250 572 17.8     3046     5453
+ 60    G3    6122 572 17.8     4919     7326
+ 120   G3    7868 572 17.8     6665     9072
+ 0     G4    4059 572 17.8     2856     5262
+ 60    G4    5554 572 17.8     4350     6757
+ 120   G4    7094 572 17.8     5891     8298
+ 0     G5    4102 572 17.8     2898     5305
+ 60    G5    5633 572 17.8     4430     6837
+ 120   G5    6012 572 17.8     4809     7215
+ 0     G6    3207 572 17.8     2004     4411
+ 60    G6    3714 572 17.8     2511     4918
+ 120   G6    2492 572 17.8     1289     3695
 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
@@ -638,29 +633,27 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in model.matrix.default(trms, m, contrasts.arg = contrasts): variable
+'rep' is absent, its contrast will be ignored
+Warning in model.matrix.default(trms, m, contrasts.arg = contrasts): variable
+'rep' is absent, its contrast will be ignored</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in qt((1 - level)/adiv, df): NaNs produced</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
-<pre><code> nitro gen emmean  SE df lower.CL upper.CL
- 0     G1    3572 572  2   1110.0     6033
- 60    G1    5132 572  2   2670.3     7594
- 120   G1    7548 572  2   5086.3    10010
- 0     G2    4934 572  2   2472.7     7396
- 60    G2    6714 572  2   4252.0     9175
- 120   G2    7211 572  2   4749.7     9673
- 0     G3    4250 572  2   1788.0     6711
- 60    G3    6122 572  2   3660.7     8584
- 120   G3    7868 572  2   5406.7    10330
- 0     G4    4059 572  2   1597.3     6521
- 60    G4    5554 572  2   3092.0     8015
- 120   G4    7094 572  2   4632.7     9556
- 0     G5    4102 572  2   1640.0     6563
- 60    G5    5633 572  2   3171.7     8095
- 120   G5    6012 572  2   3550.3     8474
- 0     G6    3207 572  2    745.7     5669
- 60    G6    3714 572  2   1252.7     6176
- 120   G6    2492 572  2     30.3     4954
+<pre><code> nitro emmean  SE df lower.CL upper.CL
+ 0       3078 398  0      NaN      NaN
+ 60      4490 418  0      NaN      NaN
+ 120     5494 368  0      NaN      NaN
 
+Results are averaged over the levels of: gen 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
