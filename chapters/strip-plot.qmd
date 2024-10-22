@@ -14,8 +14,7 @@ In strip plot design each block or replication is divided into number of vertica
  2. Horizontal strip plot for the second factor – horizontal factor 
 
 
-Divide the experimental area into a horizontal strips and b vertical strips.  Each level of , factor E is assigned to all the plots in one row, and each level of column.
-Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.
+Divide the experimental area into 'A' horizontal strips and 'B' vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column. 
 
 
 The statistical model:
@@ -37,12 +36,16 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 
 ## Example Analysis
 
+The example used here is comprised of 3 nitrogen fertilizer levels and 6 varieties applied in a strip-plot design. The nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and they were replicated over 3 times.
+For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors.
+
+
 A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
 ```{r}
 data1 <- agridat::gomez.stripplot
 ```
 
-In this design, nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and were replicated over 3 times. 
+ 
 ```{r, echo=FALSE}
 library(desplot)
 desplot(data1, gen ~ col*row,
@@ -66,8 +69,6 @@ data1$nitro <- as.factor(data1$nitro)
 
 ```{r}
 table(data1$col, data1$row, data1$rep)
-
-table(data1$col, data1$nitro, data1$rep)
 ```
 
 
@@ -118,7 +119,6 @@ plot(model_lme, resid(., scaled=TRUE) ~ fitted(.),
 
 qqnorm(residuals(model_lme))
 qqline(residuals(model_lme))
-
 ```
 :::
 
