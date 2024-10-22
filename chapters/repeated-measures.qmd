@@ -60,7 +60,6 @@ We need to have time as numeric and factor variable. In the model, to assess the
 dat <- agriTutorial::sorghum %>%   
   mutate(week = as.numeric(factweek),
          block = as.character(varblock)) 
-
 ```
 
 |           |                                     |
@@ -121,7 +120,6 @@ Let's fit the basic model first using `lme()` from the nlme package.
 lm1 <- lme(y ~ variety + factweek + variety:factweek, random = ~1|block/factplot,
               data = dat,
               na.action = na.exclude)
-
 ```
 
 The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject which is plot (factor variable) in this case.
@@ -305,7 +303,7 @@ tidy(fit1)
 
 ### Model diagnostics
 
-We will use `check_model()` from 'performance()' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions.
+We will use `check_model()` from 'performance' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions.
 
 ::: panel-tabset
 ### nlme
@@ -316,13 +314,32 @@ We will use `check_model()` from 'performance()' package to evaluate the model f
 check_model(mod, check = c('normality', 'linearity'))
 ```
 
+
 ### mmrm
 
-```{r, layout="[[1,1], [1]]"\}
-## performance package doesn't work with mmrm model class.
-plot(residuals(fit1)) 
+```{r eval=FALSE, echo=TRUE}
+plot(residuals(fit1), xlab = "fitted values", ylab = "residuals")
 qqnorm(residuals(fit1)); qqline(residuals(fit1))
 ```
+
+
+::: {layout-ncol=2 .column-body}
+
+```{r echo=FALSE}
+par(mar=c(5.1, 5, 2.1, 2.1))
+plot(residuals(fit1), xlab = "fitted values", ylab = "residuals",
+     cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
+```
+
+
+```{r echo=FALSE}
+par(mar=c(5.1, 5, 2.1, 2.1))
+qqvals <- qqnorm(residuals(fit1), plot.it=FALSE)
+qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(fit1))
+```
+
+::: 
+
 :::
 
 These diagnostic plots look great! The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects all fall on a straight line so we can be satisfied with that.
