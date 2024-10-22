@@ -1,6 +1,5 @@
 # Strip Plot Design
 
-
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
 
@@ -9,23 +8,33 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors.
- 1. Vertical strip plot for the first factor – vertical factor 
- 2. Horizontal strip plot for the second factor – horizontal factor 
+In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors. 1. Vertical strip plot for the first factor – vertical factor 2. Horizontal strip plot for the second factor – horizontal factor
 
+Divide the experimental area into 'A' horizontal strips and 'B' vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.
 
-Divide the experimental area into 'A' horizontal strips and 'B' vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column. 
+The statistical model: The statistical model structure this design:
 
+$$y_{ijk} = \mu + \alpha_j + \beta_k + \alpha_j\beta_k + b_i + r_{ij} + c_{ik} + \epsilon_{ijk}$$ Where:
 
-The statistical model:
+$\mu$= overall experimental mean, $\alpha$ and $\beta$ are the main effects applied in a horizontal and vertical direction, and $\alpha$$\beta$ represents the interaction between main factors. The random effects in above equation are $$b_i$$, the rep effect, $$r_{ij}$$, the row within rep random effect, $$c_{ik}$$, the column within rep random effect.
+
+$$ b_i \sim N(0, \sigma_1^2)$$
+
+$$ r_{ij}  \sim N(0, \sigma_2^2)$$
+
+$$ c_{ik} \sim N(0, \sigma_3^2)$$
+
+$$ \epsilon_{ijk} \sim N(0, \sigma^2)$$
 
 ::: panel-tabset
 ### lme4
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(performance); library(ggplot2)
 library(broom.mixed)
 ```
+
 ### nlme
 
 ```{r, message=FALSE, warning=FALSE}
@@ -36,16 +45,14 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 
 ## Example Analysis
 
-The example used here is comprised of 3 nitrogen fertilizer levels and 6 varieties applied in a strip-plot design. The nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and they were replicated over 3 times.
-For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors.
-
+The example used here is comprised of 3 nitrogen fertilizer levels and 6 varieties applied in a strip-plot design. The nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and they were replicated over 3 times. For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors.
 
 A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
+
 ```{r}
 data1 <- agridat::gomez.stripplot
 ```
 
- 
 ```{r, echo=FALSE}
 library(desplot)
 desplot(data1, gen ~ col*row,
@@ -54,23 +61,19 @@ desplot(data1, gen ~ col*row,
         main="Strip Plot Design")
 ```
 
-
 ### Data integrity checks
 
 ```{r}
 str(data1)
 ```
 
-
 ```{r}
 data1$nitro <- as.factor(data1$nitro)
 ```
 
-
 ```{r}
 table(data1$col, data1$row, data1$rep)
 ```
-
 
 ### Model Building
 
@@ -84,6 +87,7 @@ model_lmer <- lmer(yield ~  nitro*gen +  (1|rep) +
 
 tidy(model_lmer)
 ```
+
 #### nlme
 
 ```{r}
@@ -99,10 +103,7 @@ summary(model_lme)
 ```
 :::
 
-
 #### Check Model Assumptions
-
-
 
 ::: panel-tabset
 #### lme4
@@ -142,8 +143,7 @@ anova(model_lme, type = "marginal")
 ```
 :::
 
-
-estimate marginal means 
+estimate marginal means
 
 ::: panel-tabset
 ### lme4
