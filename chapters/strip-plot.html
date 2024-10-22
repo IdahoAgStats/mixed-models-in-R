@@ -103,6 +103,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -287,7 +316,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="8.1" class="anchored" data-anchor-id="background"><span class="header-section-number">8.1</span> Background</h2>
 <p>In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors. 1. Vertical strip plot for the first factor – vertical factor 2. Horizontal strip plot for the second factor – horizontal factor</p>
 <p>Divide the experimental area into ‘A’ horizontal strips and ‘B’ vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.</p>
-<p>The statistical model:</p>
+<p>The statistical model: The statistical model structure this design:</p>
+<p><span class="math display">\[y_{ijk} = \mu + \alpha_j + \beta_k + \alpha_j\beta_k + b_i + r_{ij} + c_{ik} + \epsilon_{ijk}\]</span> Where:</p>
+<p><span class="math inline">\(\mu\)</span>= overall experimental mean, <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are the main effects applied in a horizontal and vertical direction, and <span class="math inline">\(\alpha\)</span><span class="math inline">\(\beta\)</span> represents the interaction between main factors. The random effects in above equation are <span class="math display">\[b_i\]</span>, the rep effect, <span class="math display">\[r_{ij}\]</span>, the row within rep random effect, <span class="math display">\[c_{ik}\]</span>, the column within rep random effect.</p>
+<p><span class="math display">\[ b_i \sim N(0, \sigma_1^2)\]</span></p>
+<p><span class="math display">\[ r_{ij}  \sim N(0, \sigma_2^2)\]</span></p>
+<p><span class="math display">\[ c_{ik} \sim N(0, \sigma_3^2)\]</span></p>
+<p><span class="math display">\[ \epsilon_{ijk} \sim N(0, \sigma^2)\]</span></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
