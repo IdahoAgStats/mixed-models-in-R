@@ -4,17 +4,27 @@
     "href": "index.html",
     "title": "Field Guide to the R Mixed Model Wilderness",
     "section": "",
-    "text": "Preface\n“Path in the Wilderness” by Erich Taeubel, Jr.\nRunning mixed models in R is no easy task. There are dozens of packages supporting these aims, each with varying functionality, syntax, and conventions. The linear mixed model ecosystem in R consists of over 80 libraries that either construct and solve mixed model equations or helper packages the process the results from mixed model analysis. These libraries provide a patchwork of overlapping and unique functionality regarding the fundamental structure of mixed models: allowable distributions, nested and crossed random effects, heterogeneous error structures and other facets. No single library has all possible functionality enabled.\nThis patchwork of packages makes it very challenging for statisticians to conduct mixed model analysis and to teach others how to run mixed models in R. The purpose of this guide to to provide some recipes for handling common analytical scenario’s that require mixed models. As a field guide, it is intended to be succinct, and help researchers meet their analytic goals.\nIn general, the content from this website may not be copied or reproduced. However, the example code and required data sets to run the code are MIT licensed. These can be accessed on GitHub.",
+    "text": "Preface\n“Path in the Wilderness” by Erich Taeubel, Jr.\nRunning mixed models in R is no easy task. There are dozens of packages supporting these aims, each with varying functionality, syntax, and conventions. The linear mixed model ecosystem in R consists of over 80 libraries that either construct and solve mixed model equations or helper packages the process the results from mixed model analysis. These libraries provide a patchwork of overlapping and unique functionality regarding the fundamental structure of mixed models: allowable distributions, nested and crossed random effects, heterogeneous error structures and other facets. No single library has all possible functionality enabled.\nThis patchwork of packages makes it very challenging for statisticians to conduct mixed model analysis and to teach others how to run mixed models in R. The purpose of this guide to to provide some recipes for handling common analytical scenario’s that require mixed models. As a field guide, it is intended to be succinct, and help researchers meet their analytic goals.\nIn general, the content from this website may not be copied or reproduced without attribution. However, the example code and required data sets to run the code are MIT licensed. These can be accessed on GitHub.",
     "crumbs": [
       "Preface"
     ]
   },
   {
-    "objectID": "index.html#recent-updates",
-    "href": "index.html#recent-updates",
+    "objectID": "index.html#what-this-does-not-cover",
+    "href": "index.html#what-this-does-not-cover",
     "title": "Field Guide to the R Mixed Model Wilderness",
-    "section": "Recent Updates",
-    "text": "Recent Updates\nThis is a work-in-progress and will be updated over time.\n\nRCBD lesson has been completed.",
+    "section": "What This Does Not Cover",
+    "text": "What This Does Not Cover\n\nGeneralized linear models. We do address cases of unequal variance, but if another distribution and/or a link function is required for the model, that is not addressed in this guide.\nBasic principles of experimental design. We assume you know this, but if you do not, please check out the Grammar of Experimental Design.\nInstructions in using R. We assume familiarity with R. If you need help in learning R, there are numerous guides, including our introductory R course.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#notice",
+    "href": "index.html#notice",
+    "title": "Field Guide to the R Mixed Model Wilderness",
+    "section": "Notice!",
+    "text": "Notice!\nThis is a work-in-progress and will be updated over time.",
     "crumbs": [
       "Preface"
     ]
@@ -310,73 +320,83 @@
     ]
   },
   {
-    "objectID": "chapters/advanced-analytical-options.html",
-    "href": "chapters/advanced-analytical-options.html",
-    "title": "12  Advanced Analysis",
+    "objectID": "chapters/means-and-contrasts.html",
+    "href": "chapters/means-and-contrasts.html",
+    "title": "12  Marginal Means & Contrasts",
     "section": "",
-    "text": "12.1 Estimated Marginal Means\nCompact letter display\n#library(multcomp); library(multcompView)\nThe letters indicating significant differences can be generated using cld() function from the ‘multcomp’ package”. In the output below, groups sharing a letter in the .group are not statistically different from each other.\n#cld(m1, Letters= letters)",
+    "text": "12.1 Estimated Marginal Means\nCompact letter display\n#library(multcomp); library(multcompView)\n#cld(m1, Letters= letters)\nThe letters indicating significant differences can be generated using cld() function from the ‘multcomp’ package”. In the output below, groups sharing a letter in the .group are not statistically different from each other.",
     "crumbs": [
-      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Advanced Analysis</span>"
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Marginal Means and Contrasts</span>"
     ]
   },
   {
-    "objectID": "chapters/advanced-analytical-options.html#variance-components",
-    "href": "chapters/advanced-analytical-options.html#variance-components",
-    "title": "12  Advanced Analysis",
-    "section": "12.2 Variance Components",
-    "text": "12.2 Variance Components\n\n12.2.1 Unequal Variance\n\n12.2.1.1 Case 1: Unequal Variance Due to a Factor\n\nvar_ex1 &lt;- here::here(read.csv(\"data\", \"MET_trial_variance.csv\"))\n\n\nvar_ex1$block &lt;- as.character(var_ex1$block)\nhist(var_ex1$yield)\nboxplot(yield ~ site, data = var_ex1)\n\n\nm1_a &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block, \n                na.action = na.exclude, \n                data = var_ex1)\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\nis equivalent to\n\nm1_b &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block,\n                weights = varIdent(form = ~1|site), \n                na.action = na.exclude, \n                data = var_ex1)\n\n\n\n\n12.2.1.2 Case 2: Variance is related to the fitted values\n\nvar_ex2 &lt;- read.csv(here::here(\"data\", \"single_trial_variance.csv\"))\n\n\nvar_ex1$block &lt;- as.character(var_ex1$block)\nhist(var_ex2$yield)\n\n\nm2_a &lt;- lme(yield ~ variety, \n               random = ~ 1 |block, \n               na.action = na.exclude, \n               data = var_ex2)\n\n\nm2_b &lt;- update(m2_a, weights = varPower())",
+    "objectID": "chapters/means-and-contrasts.html#estimated-marginal-means",
+    "href": "chapters/means-and-contrasts.html#estimated-marginal-means",
+    "title": "12  Marginal Means & Contrasts",
+    "section": "",
+    "text": "Cautionary Note about CLD\n\n\n\nIt’s important to note that we cannot conclude that treatment levels with the same letter are the same. We can only conclude that they are not different.\nThere is a separate branch of statistics, “equivalence testing” that is for ascertaining if things are sufficiently similar to conclude they are equivalent.\nSee (cld-warning?) for additional warnings about problems with using compact letter display.",
     "crumbs": [
-      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Advanced Analysis</span>"
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Marginal Means and Contrasts</span>"
     ]
   },
   {
-    "objectID": "chapters/advanced-analytical-options.html#estimate-cv",
-    "href": "chapters/advanced-analytical-options.html#estimate-cv",
-    "title": "12  Advanced Analysis",
-    "section": "12.3 Estimate CV",
-    "text": "12.3 Estimate CV\n\nm2_ave &lt;- fixef(m2_b)[1]\nnames(m2_b) &lt;- NULL\n\n\nm2_cv = sigma(m2_b)/m2_ave*100\nm2_cv",
+    "objectID": "chapters/variance-components.html",
+    "href": "chapters/variance-components.html",
+    "title": "13  Variance & Variance Components",
+    "section": "",
+    "text": "13.1 Unequal Variance",
     "crumbs": [
-      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Advanced Analysis</span>"
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
     ]
   },
   {
-    "objectID": "chapters/advanced-analytical-options.html#estimate-lsd",
-    "href": "chapters/advanced-analytical-options.html#estimate-lsd",
-    "title": "12  Advanced Analysis",
-    "section": "12.4 Estimate LSD",
-    "text": "12.4 Estimate LSD\n\n# source: https://github.com/stats4sd/LSDer/blob/master/R/LSDer.R\n\nLSDer &lt;- function(m, term, level = 0.95) {\n  # browser() # for troubleshooting\n  # m = model object from lme4 or nlme\n  # term = independent variable in reference grid\n  # level = confidence interval\n  \n  if(class(m) == \"lme\") {\n    t1 &lt;- table(m$data[term])\n  } else {\n    t1 &lt;- table(m@frame[term])\n  }\n  \n  ns &lt;- cbind(median(t1), median(t1))\n  rownames(ns) &lt;- NULL\n  \n  MS &lt;- sigma(m) ** 2\n  \n  if(class(m) == \"lme\") {\n    DF &lt;- anova(m)[term, \"denDF\"]\n  } else {\n    DF &lt;- suppressWarnings((car::Anova(m, test = \"F\"))[term, \"Df.res\"])\n  }\n  \n  NREP1 &lt;- ns[, 1]\n  NREP2 &lt;- ns[, 2]\n  LSD &lt;- qt(1-((1-level)/2),DF)*sqrt(MS*(1/NREP1+1/NREP2))\n  \n  return(LSD)\n}\n\n\n12.4.1 Looking at Variance Components\n\nvar_comps &lt;- read.csv(here::here(\"data\", \"potato_tuber_size.csv\"))",
+    "objectID": "chapters/variance-components.html#unequal-variance",
+    "href": "chapters/variance-components.html#unequal-variance",
+    "title": "13  Variance & Variance Components",
+    "section": "",
+    "text": "13.1.1 Case 1: Unequal Variance Due to a Factor\n\nvar_ex1 &lt;- here::here(read.csv(\"data\", \"MET_trial_variance.csv\"))\n\n\nvar_ex1$block &lt;- as.character(var_ex1$block)\nhist(var_ex1$yield)\nboxplot(yield ~ site, data = var_ex1)\n\n\nm1_a &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block, \n                na.action = na.exclude, \n                data = var_ex1)\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\nis equivalent to\n\nm1_b &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block,\n                weights = varIdent(form = ~1|site), \n                na.action = na.exclude, \n                data = var_ex1)\n\n\n\n\n13.1.2 Case 2: Variance is related to the fitted values\n\nvar_ex2 &lt;- read.csv(here::here(\"data\", \"single_trial_variance.csv\"))\n\n\nvar_ex1$block &lt;- as.character(var_ex1$block)\nhist(var_ex2$yield)\n\n\nm2_a &lt;- lme(yield ~ variety, \n               random = ~ 1 |block, \n               na.action = na.exclude, \n               data = var_ex2)\n\n\nm2_b &lt;- update(m2_a, weights = varPower())",
     "crumbs": [
-      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Advanced Analysis</span>"
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/variance-components.html#coefficient-of-variation",
+    "href": "chapters/variance-components.html#coefficient-of-variation",
+    "title": "13  Variance & Variance Components",
+    "section": "13.2 Coefficient of Variation",
+    "text": "13.2 Coefficient of Variation\n\nm2_ave &lt;- fixef(m2_b)[1]\nnames(m2_b) &lt;- NULL\n\n\nm2_cv = sigma(m2_b)/m2_ave*100\nm2_cv\n\n\n13.2.1 Looking at Variance Components\n\nvar_comps &lt;- read.csv(here::here(\"data\", \"potato_tuber_size.csv\"))",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
     ]
   },
   {
     "objectID": "chapters/additional-resources.html",
     "href": "chapters/additional-resources.html",
-    "title": "13  Additional Resources",
+    "title": "14  Additional Resources",
     "section": "",
-    "text": "13.1 Further Reading",
+    "text": "14.1 Further Reading",
     "crumbs": [
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Additional Resources</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Additional Resources</span>"
     ]
   },
   {
     "objectID": "chapters/additional-resources.html#further-reading",
     "href": "chapters/additional-resources.html#further-reading",
-    "title": "13  Additional Resources",
+    "title": "14  Additional Resources",
     "section": "",
-    "text": "lme4 vignette for fitting linear mixed models\nMixed-Effects Models in S and S-PLUS thee book for nlme, by José C. Pinheiro and Douglas M. Bates\nMixed Effects Models and Extensions in Ecology with R by Alain F. Zuur, Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, and Graham M. Smith",
+    "text": "lme4 vignette for fitting linear mixed models\nMixed-Effects Models in S and S-PLUS thee book for nlme, by José C. Pinheiro and Douglas M. Bates. We used this book extensively for developing this guide. Sadly, it’s both out of print and we could not find a free copy online. However, there are affordable used copies available.\nMixed Effects Models and Extensions in Ecology with R by Alain F. Zuur, Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, and Graham M. Smith.",
     "crumbs": [
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Additional Resources</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Additional Resources</span>"
     ]
   },
   {
     "objectID": "chapters/additional-resources.html#other-resources",
     "href": "chapters/additional-resources.html#other-resources",
-    "title": "13  Additional Resources",
-    "section": "13.2 Other Resources",
-    "text": "13.2 Other Resources\n\nEasy Stats a collection of R packages to assist in statistical modelling, with a big focus on linear models\nMixed Model CRAN Task View a curated list of R packages relevant to mixed modelling\nR-SIG-mixed-models mailing list for help and discussion of mixed-model-related questions, course announcements, etc",
+    "title": "14  Additional Resources",
+    "section": "14.2 Other Resources",
+    "text": "14.2 Other Resources\n\nEasy Stats a collection of R packages to assist in statistical modelling, with a big focus on linear models.\nMixed Model CRAN Task View a curated list of R packages relevant to mixed modelling. This is a great place to start\nR-SIG-mixed-models mailing list for help and discussion of mixed-model-related questions, course announcements, etc\nGrammar of Experimental Designs by Emi Tanaka. This has a great description of basic principles of experimental design.",
     "crumbs": [
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Additional Resources</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Additional Resources</span>"
     ]
   },
   {
