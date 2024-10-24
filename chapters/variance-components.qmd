@@ -1,5 +1,5 @@
 ---
-title: Advanced Analysis
+title: Variance & Variance Components
 execute: 
   eval: false
 ---
@@ -10,28 +10,9 @@ library(lme4)
 ```
 
 
+## Unequal Variance
 
-## Estimated Marginal Means
-
-
-Compact letter display
-```{r}
-#library(multcomp); library(multcompView)
-```
-
-
-The letters indicating significant differences can be generated using cld() function from the 'multcomp' package". In the output below, groups sharing a letter in the .group are not statistically different from each other.
-
-```{r}
-#cld(m1, Letters= letters)
-```
-
-
-## Variance Components
-
-### Unequal Variance
-
-#### Case 1: Unequal Variance Due to a Factor
+### Case 1: Unequal Variance Due to a Factor
 
 ```{r}
 var_ex1 <- here::here(read.csv("data", "MET_trial_variance.csv"))
@@ -75,7 +56,7 @@ m1_b <- lme(yield ~ site:variety + variety,
 
 :::
 
-#### Case 2: Variance is related to the fitted values
+### Case 2: Variance is related to the fitted values
 
 ```{r}
 var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv"))
@@ -98,7 +79,7 @@ m2_a <- lme(yield ~ variety,
 m2_b <- update(m2_a, weights = varPower())
 ```
 
-## Estimate CV
+## Coefficient of Variation
 
 ```{r}
 m2_ave <- fixef(m2_b)[1]
@@ -108,44 +89,6 @@ names(m2_b) <- NULL
 ```{r}
 m2_cv = sigma(m2_b)/m2_ave*100
 m2_cv
-```
-
-
-## Estimate LSD
-
-```{r}
-# source: https://github.com/stats4sd/LSDer/blob/master/R/LSDer.R
-
-LSDer <- function(m, term, level = 0.95) {
-  # browser() # for troubleshooting
-  # m = model object from lme4 or nlme
-  # term = independent variable in reference grid
-  # level = confidence interval
-  
-  if(class(m) == "lme") {
-    t1 <- table(m$data[term])
-  } else {
-    t1 <- table(m@frame[term])
-  }
-  
-  ns <- cbind(median(t1), median(t1))
-  rownames(ns) <- NULL
-  
-  MS <- sigma(m) ** 2
-  
-  if(class(m) == "lme") {
-    DF <- anova(m)[term, "denDF"]
-  } else {
-    DF <- suppressWarnings((car::Anova(m, test = "F"))[term, "Df.res"])
-  }
-  
-  NREP1 <- ns[, 1]
-  NREP2 <- ns[, 2]
-  LSD <- qt(1-((1-level)/2),DF)*sqrt(MS*(1/NREP1+1/NREP2))
-  
-  return(LSD)
-}
-
 ```
 
 
