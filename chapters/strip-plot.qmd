@@ -16,7 +16,7 @@ The statistical model: The statistical model structure this design:
 
 $$y_{ijk} = \mu + \alpha_j + \beta_k + \alpha_j\beta_k + b_i + r_{ij} + c_{ik} + \epsilon_{ijk}$$ Where:
 
-$\mu$= overall experimental mean, $\alpha$ and $\beta$ are the main effects applied in a horizontal and vertical direction, and $\alpha$$\beta$ represents the interaction between main factors. The random effects in above equation are $$b_i$$, the rep effect, $$r_{ij}$$, the row within rep random effect, $$c_{ik}$$, the column within rep random effect.
+$\mu$= overall experimental mean, $\alpha$ and $\beta$ are the main effects applied in a horizontal and vertical direction, and $\alpha$$\beta$ represents the interaction between main factors. The random effects in above equation are $b_i$, the random rep effect, $r_{ij}$, the row within rep random effect, $c_{ik}$, the column within rep random effect.
 
 $$ b_i \sim N(0, \sigma_1^2)$$
 
@@ -24,14 +24,18 @@ $$ r_{ij}  \sim N(0, \sigma_2^2)$$
 
 $$ c_{ik} \sim N(0, \sigma_3^2)$$
 
-$$ \epsilon_{ijk} \sim N(0, \sigma^2)$$
+$$ \epsilon_{ijk} \sim N(0, \sigma^2)$$\
+
+## Example Analysis
+
+We will start by loading the required libraries for this analysis for `lme` and `lmer` models, respectively.
 
 ::: panel-tabset
 ### lme4
 
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
-library(dplyr); library(performance); library(ggplot2)
+library(dplyr); library(performance); library(desplot)
 library(broom.mixed)
 ```
 
@@ -39,22 +43,30 @@ library(broom.mixed)
 
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(performance); library(emmeans)
-library(dplyr); library(ggplot2); library(broom.mixed)
+library(dplyr); library(desplot); library(broom.mixed)
 ```
 :::
 
-## Example Analysis
-
-The example used here is comprised of 3 nitrogen fertilizer levels and 6 varieties applied in a strip-plot design. The nitrogen rates were applied in a vertical strip and different varieties (Gen) were planted in a horizontal strips and they were replicated over 3 times. For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors.
-
-A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
+For this example, we will use Rice strip-plot experiment data from the`agridat` package. A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
 
 ```{r}
 data1 <- agridat::gomez.stripplot
 ```
 
+|       |                              |
+|-------|------------------------------|
+| rep   | replication unit             |
+| nitro | nitrogen fertilizer in kg/ha |
+| gen   | rice variety                 |
+| row   | row (represents gen)         |
+| col   | column (represents nitro)    |
+| yield | grain yield in kg/ha         |
+
+: Table of variables in the data set {tbl-strip_plot}
+
+For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors. The plot below shows the application of treatments in horizontal and vertical direction in a strip plot design.
+
 ```{r, echo=FALSE}
-library(desplot)
 desplot(data1, gen ~ col*row,
         # aspect unknown
         out1=rep, out2=nitro, num=nitro, cex=1,
@@ -63,28 +75,52 @@ desplot(data1, gen ~ col*row,
 
 ### Data integrity checks
 
+First thing we need to verify is the data types of the variables in data1. The 'rep', 'nitro', and 'gen' needs to be a factor/character variables and 'yield' should be numeric.
+
 ```{r}
 str(data1)
 ```
+
+Let's convert 'nitro' from numeric to factor.
 
 ```{r}
 data1$nitro <- as.factor(data1$nitro)
 ```
 
+Let's have a look at the balance of treatment factors by running a a cross tabulation, and it looks well balanced.
+
 ```{r}
-table(data1$col, data1$row, data1$rep)
+table(data1$gen, data1$nitro)
 ```
 
-### Model Building
+```{r}
+apply(data1, 2, function(x) sum(is.na(x)))
+```
 
+We don't have any missing values in this data set.
+
+Lastly, let's check the dependent variable by plotting.
+```{r, eval=FALSE}
+hist(data1$yield, main = "", xlab = "yield")
+```
+```{r, echo=FALSE}
+#| label: fig-strip_plot_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+No extreme values or skewness is present in the yield values.
+
+### Model Building
+The impact of nitro, gen, and their interaction was evaluated on rice yield. The rep, gen nested in rep, and nitro nested in rep were random effects in the model.
 ::: panel-tabset
 #### lme4
 
 ```{r}
 model_lmer <- lmer(yield ~  nitro*gen +  (1|rep) + 
-                   (1|rep:row) + (1|rep:col), 
+                   (1|rep:gen) + (1|rep:nitro), 
                    data = data1)
-
 tidy(model_lmer)
 ```
 
@@ -95,15 +131,16 @@ tidy(model_lmer)
 model_lme <-lme(yield ~  nitro*gen,
                 random = list(one = pdBlocked(list(
         pdIdent(~ 0 + rep), 
-         pdIdent(~ 0 + rep:row), 
-        pdIdent(~ 0 + rep:col)))),
+         pdIdent(~ 0 + rep:gen), 
+        pdIdent(~ 0 + rep:nitro)))),
         data = data1 %>% mutate(one = factor(1)))
+
 summary(model_lme)
 #tidy(model_lme)
 ```
 :::
 
-#### Check Model Assumptions
+### Check Model Assumptions
 
 ::: panel-tabset
 #### lme4
@@ -125,25 +162,23 @@ qqline(residuals(model_lme))
 
 The residuals fit the assumptions of the model well.
 
-#### Inference
-
+### Inference
 We can evaluate the model for the analysis of variance, for main and interaction effects.
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 car::Anova(model_lmer, type = "III", test.statistics = "F")
 ```
 
 ### nlme
-
 ```{r}
 anova(model_lme, type = "marginal")
 ```
 :::
+Analysis of variance showed a significant interaction impact of gen and nitro on rice grain yield.
 
-estimate marginal means
+Next, We estimate marginal means for nitro and gen interaction effects using `emmeans` package.
 
 ::: panel-tabset
 ### lme4
@@ -156,7 +191,15 @@ emm1
 ### nlme
 
 ```{r}
-emm1 <- emmeans(model_lme, ~ nitro)
+emm1 <- emmeans(model_lme, ~ nitro*gen)
 emm1
 ```
 :::
+
+Note that, confidence intervals were not estimated through emmeans from lme model. 
+
+::: callout-note
+## `lme vs lmer`
+For strip plot experiment deisgn, fitting nested and crossed random effects is more complicated through nlme. Therefore, it's more convinent to use lmer in this case as both models yielded same results in the example shown above.
+:::
+
