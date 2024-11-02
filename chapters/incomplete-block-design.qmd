@@ -41,7 +41,8 @@ Because the blocks are incomplete, the Type I and Type III sums of squares will 
 :::
 
 ## Example Analysis
-We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries for analysis and estimation:
+We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries required for analysis and estimation.
+
 ::: panel-tabset
 ### lme4
 
@@ -56,17 +57,37 @@ library(dplyr); library(performance)
 ```
 :::
 
-https://kwstat.github.io/agridat/reference/weiss.incblock.html
+The data used for this example analysis was extracted from the `agridat` package. This example is comprised of soybean balanced incomplete block experiment.
 
 ```{r}
- library(agridat)
-  data(weiss.incblock)
-  dat <- weiss.incblock
+dat <- agridat::weiss.incblock
+
+data1 <- agridat::burgueno.alpha
 ```
+|       |                              |
+|-------|------------------------------|
+| block   | blocking unit             |
+| gen   | genotype (variety) factor                |
+| row   | row position for each plot        |
+| col   | column position for each plot    |
+| yield | grain yield in bu/ac         |
+
+: Table of variables in the data set {tbl-incom_blk}
 
 ```{r, fig.height= 9, echo=FALSE}
  library(desplot)
-  desplot(dat, yield~col*row,
+ desplot(data1, yield~col*row,
+          out1=rep, out2=block, # aspect unknown
+          text=gen, cex=1,shorten="none",
+          main='burgueno.alpha')
+
+
+ 
+table(data1$gen, data1$block)
+ 
+ 
+ 
+  desplot(data1, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
           aspect=252/96, # true aspect
           main="weiss.incblock")
@@ -128,8 +149,9 @@ This data set is ready for analysis!
 ### lme4
 
 ```{r}
-model_icbd <- lmer(yield ~ gen + (1|block),
-                   data = dat, 
+
+model_icbd1 <- lmer(yield ~ gen + (1|rep/block),
+                   data = data1, 
                    na.action = na.exclude)
 tidy(model_icbd)
 ```
@@ -143,19 +165,29 @@ tidy(model_icbd)
 ### nlme
 
 ```{r, eval=FALSE}
-model_icbd <- lme(yield ~ gen,
-                  random = ~ 1|block,
-                  data = dat, 
+model_icbd2 <- lme(yield ~ gen,
+                  random = ~ 1|rep/block,
+                  data = data1, 
                   na.action = na.exclude)
 tidy(model_icbd)
 ```
 :::
 
-
 ### Check Model Assumptions
-```{r}
-check_model(model_icbd)
+
+::: panel-tabset
+#### lme4
+```{r, fig.height=3}
+check_model(model_icbd1, check = c('normality', 'linearity'))
 ```
+
+#### nlme
+```{r, layout="[[1,1], [1]]"}
+check_model(model_icbd2, check = c('normality', 'linearity'))
+```
+:::
+
+
 ### Inference
 ```{r}
 anova(model_icbd)
