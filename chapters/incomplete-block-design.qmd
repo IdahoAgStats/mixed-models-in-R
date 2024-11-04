@@ -80,12 +80,6 @@ data1 <- agridat::burgueno.alpha
           out1=rep, out2=block, # aspect unknown
           text=gen, cex=1,shorten="none",
           main='burgueno.alpha')
-
-
- 
-table(data1$gen, data1$block)
- 
- 
  
   desplot(data1, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
@@ -105,17 +99,20 @@ The first thing is to make sure the data is what we expect. There are two steps:
 
 ```{r}
 str(dat)
+str(data1)
 ```
 
-These look okay with block and gen being factor variables and yield, row, and col being numeric variables.
+The variables we need for the model are block, gen  and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we don't need to change class of any of the required variables.
 
-Next, check the independent variables. Running a cross tabulations is often sufficient to ascertain this.
+Next, check the independent variables. We can look at the 
+Running a cross tabulations is often sufficient to ascertain this.
 ```{r}
 dat$row <- as.factor(dat$row)
 ```
 
 ```{r}
 table(dat$gen, dat$block)
+table(data1$gen, data1$block)
 ```
 
 There are 31 varieties and it is perfectly balanced, with exactly one observation per treatment per block.
@@ -153,7 +150,7 @@ This data set is ready for analysis!
 model_icbd1 <- lmer(yield ~ gen + (1|rep/block),
                    data = data1, 
                    na.action = na.exclude)
-tidy(model_icbd)
+tidy(model_icbd1)
 ```
 
 ```{r}
@@ -165,7 +162,7 @@ tidy(model_icbd)
 ### nlme
 
 ```{r, eval=FALSE}
-model_icbd2 <- lme(yield ~ gen,
+model_icbd <- lme(yield ~ gen,
                   random = ~ 1|rep/block,
                   data = data1, 
                   na.action = na.exclude)
@@ -182,18 +179,18 @@ check_model(model_icbd1, check = c('normality', 'linearity'))
 ```
 
 #### nlme
-```{r, layout="[[1,1], [1]]"}
-check_model(model_icbd2, check = c('normality', 'linearity'))
+```{r}
+check_model(model_icbd, check = c('normality', 'linearity'))
 ```
 :::
 
 
 ### Inference
 ```{r}
-anova(model_icbd)
+anova(model_icbd1)
 ```
 
 ```{r}
-emmeans(model_icbd, ~ gen)
+emmeans(model_icbd1, ~ gen)
 ```
 

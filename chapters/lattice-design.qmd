@@ -2,11 +2,13 @@
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
+
+par(mar=c(5.1, 6, 4.1, 2.1))
 ```
 
 ## Background
 
-Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates [-@yates_1936] and later, alpha lattice designs were developed as an extension [@patterson_1976]. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k + 1).
+Lattice designs are a well-known type of resolvable incomplete block design. Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates [-@yates_1936] and later, alpha lattice designs were developed as an extension [@patterson_1976]. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k + 1).
 
 Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.
 
@@ -17,8 +19,6 @@ $Y_{ijk} = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
 where, $\mu$ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
 
 ## Example Analysis
-
-The data used in this example is from a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
 
 Let's start the analysis firstly by loading the required libraries:
 
@@ -37,14 +37,29 @@ library(dplyr); library(agridat); library(desplot)
 ```
 :::
 
-Import data from agridat package. The data contains . This is a balanced experiment design
+The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
 ```{r}
 data(cochran.lattice)
-dat2 <- cochran.lattice
+dat2 <- agridat::cochran.lattice
 head(dat2)
-str(dat2)
+```
+|       |                              |
+|-------|------------------------------|
+| rep   | replication unit             |
+| trt   | treatment factor                |
+| row   | row position for each plot        |
+| col   | column position for each plot    |
+| y | % of young flower buds attacked        |
 
-libs(desplot)
+: Table of variables in the data set {tbl-lattice}
+
+
+```{r}
+str(dat2)
+```
+
+```{r}
+library(desplot)
 desplot(dat2, y~row*col|rep,
         text=trt, # aspect unknown, should be 2 or .5
          main="cochran.lattice")
@@ -56,7 +71,9 @@ data(burgueno.rowcol)
 dat <- burgueno.rowcol
 head(dat)
 ```
+
 Here, we can use the `desplot()` function from the 'desplot' package to visualize the plot plan from lattice design.
+
 ```{r}
 # Two contiuous reps in 8 rows, 16 columns
 desplot(dat, yield ~ col*row,
@@ -65,6 +82,7 @@ desplot(dat, yield ~ col*row,
         main="lattice design")
 
 ```
+
 ### Data integrity checks
 ```{r, echo=FALSE}
 #| label: lattice_design
