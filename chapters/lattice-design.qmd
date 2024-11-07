@@ -8,6 +8,8 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
+alpha lattice design 
+
 Lattice designs are a well-known type of resolvable incomplete block design. Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates [-@yates_1936] and later, alpha lattice designs were developed as an extension [@patterson_1976]. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k + 1).
 
 Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.
@@ -40,7 +42,7 @@ library(dplyr); library(agridat); library(desplot)
 The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
 ```{r}
 data(cochran.lattice)
-dat2 <- agridat::cochran.lattice
+dat3 <- agridat::cochran.lattice
 head(dat2)
 ```
 |       |                              |
@@ -55,12 +57,12 @@ head(dat2)
 
 
 ```{r}
-str(dat2)
+str(dat3)
 ```
 
 ```{r}
 library(desplot)
-desplot(dat2, y~row*col|rep,
+desplot(dat3, y~row*col|rep,
         text=trt, # aspect unknown, should be 2 or .5
          main="cochran.lattice")
 

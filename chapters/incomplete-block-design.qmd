@@ -14,6 +14,8 @@ The block design in [**Chapter 4**](rcbd.qmd) was complete, meaning that every b
 
 In such cases, incomplete block designs are used where we have to decide what subset of treatments to be used in an individual block. This will work well if we enough blocks. However, if we only have small number of blocks, there would be the risk that certain quantities are not estimable anymore.
 
+Incomplete block designs are grouped into balanced lattice design and partially balanced (or alpha-lattice) designs. 
+
 To avoid having a disconnected design, a balanced incomplete block design can be used
 
 The statistical model for balanced incomplete block design is:
@@ -33,6 +35,9 @@ $$ \beta \sim N(0, \sigma_b)$$ There are few key points that we need to keep in 
 -   No treatment should appear twice in any block as they contributes nothing no within block comparisons.
 
 An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html) is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier) by Lukas Meier. 
+
+
+The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on); number of replicates must be equal to no. of blocks +1;  
 
 ::: callout-note
 ## A note
@@ -62,7 +67,11 @@ The data used for this example analysis was extracted from the `agridat` package
 ```{r}
 dat <- agridat::weiss.incblock
 
+
 data1 <- agridat::burgueno.alpha
+
+
+dat2 <- agridat::damesa.maize
 ```
 |       |                              |
 |-------|------------------------------|
@@ -100,6 +109,8 @@ The first thing is to make sure the data is what we expect. There are two steps:
 ```{r}
 str(dat)
 str(data1)
+
+str(dat2)
 ```
 
 The variables we need for the model are block, gen  and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we don't need to change class of any of the required variables.
@@ -175,12 +186,12 @@ tidy(model_icbd)
 ::: panel-tabset
 #### lme4
 ```{r, fig.height=3}
-check_model(model_icbd1, check = c('normality', 'linearity'))
+#check_model(model_icbd1, check = c('normality', 'linearity'))
 ```
 
 #### nlme
 ```{r}
-check_model(model_icbd, check = c('normality', 'linearity'))
+#check_model(model_icbd, check = c('normality', 'linearity'))
 ```
 :::
 
