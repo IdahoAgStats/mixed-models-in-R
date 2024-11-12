@@ -30,9 +30,9 @@ $$ \beta \sim N(0, \sigma_b)$$ There are few key points that we need to keep in 
 
 -   A drawback of this design is that block effect and treatment effects are confounded.
 
--   To eliminate of block effects, better compare treatments within a block.
+-   To eliminate the block effects, better compare treatments within a block.
 
--   No treatment should appear twice in any block as they contributes nothing no within block comparisons.
+-   No treatment should appear twice in any block as they contributes nothing to within block comparisons.
 
 An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html) is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier) by Lukas Meier. 
 
@@ -45,7 +45,8 @@ The balanced incomplete block designs are guided by strict principles and guidel
 Because the blocks are incomplete, the Type I and Type III sums of squares will be different. That is, the missing treatments in each block represent missing observations (but not missing ‘at random’).
 :::
 
-## Example Analysis
+## Balanced Incomplete Block Design
+### Example Analysis
 We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries required for analysis and estimation.
 
 ::: panel-tabset
@@ -64,14 +65,9 @@ library(dplyr); library(performance)
 
 The data used for this example analysis was extracted from the `agridat` package. This example is comprised of soybean balanced incomplete block experiment.
 
+
 ```{r}
 dat <- agridat::weiss.incblock
-
-
-data1 <- agridat::burgueno.alpha
-
-
-dat2 <- agridat::damesa.maize
 ```
 |       |                              |
 |-------|------------------------------|
@@ -84,64 +80,42 @@ dat2 <- agridat::damesa.maize
 : Table of variables in the data set {tbl-incom_blk}
 
 ```{r, fig.height= 9, echo=FALSE}
- library(desplot)
- desplot(data1, yield~col*row,
-          out1=rep, out2=block, # aspect unknown
-          text=gen, cex=1,shorten="none",
-          main='burgueno.alpha')
- 
-  desplot(data1, yield~col*row,
+
+desplot::desplot(dat, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
           aspect=252/96, # true aspect
           main="weiss.incblock")
+  
+
 ```
 
 
-### Data integrity checks
+#### Data integrity checks
 
-The first thing is to make sure the data is what we expect. There are two steps:
-
-1.  make sure data are the expected data type
-2.  check the extent of missing data
-3.  inspect the independent variables and make sure the expected levels are present in the data
-4.  inspect the dependent variable to ensure its distribution is following expectations
+We will start inspecting the data set firstly by looking at the class of variables:
 
 ```{r}
 str(dat)
-str(data1)
-
-str(dat2)
 ```
 
 The variables we need for the model are block, gen  and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we don't need to change class of any of the required variables.
 
-Next, check the independent variables. We can look at the 
-Running a cross tabulations is often sufficient to ascertain this.
-```{r}
-dat$row <- as.factor(dat$row)
-```
+Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
 ```{r}
 table(dat$gen, dat$block)
-table(data1$gen, data1$block)
 ```
 
-There are 31 varieties and it is perfectly balanced, with exactly one observation per treatment per block.
+There are 31 varieties (gen) and it is perfectly balanced, with exactly one observation per treatment per block.
 
-Here is a quick check I run to count the number of missing data in each column.
+We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables
 
 ```{r}
 apply(dat, 2, function(x) sum(is.na(x)))
 ```
-
 We observed no missing data!
 
-Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
-
-```{r, eval=FALSE}
-hist(dat$yield, main = "", xlab = "yield")
-```
-
+Last, let's plot a histogram of the dependent variable. This is a quick check before analysis to see if there is any strong deviation in values.
 ```{r, echo=FALSE}
 #| label: fig-ibd_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -149,59 +123,247 @@ hist(dat$yield, main = "", xlab = "yield")
 par(mar=c(5.1, 5, 2.1, 2.1))
 hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
+
+```{r, eval=FALSE}
+hist(dat$yield, main = "", xlab = "yield")
+```
+Response variable values fall within expected range, with few extreme values on right tail.
 This data set is ready for analysis!
 
-### Model Building
+#### Model Building
+We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect).
+
+::: column-margin
+Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.
+:::
+::: panel-tabset
+### lme4
+
+```{r}
+model_icbd <- lmer(log(yield) ~ gen + (1|block),
+                   data = dat, 
+                   na.action = na.exclude)
+tidy(model_icbd)
+```
+
+### nlme
+```{r}
+model_icbd1 <- lme(yield ~ gen,
+                  random = ~ 1|block,
+                  data = dat, 
+                  na.action = na.exclude)
+tidy(model_icbd1)
+```
+:::
+
+#### Check Model Assumptions
+Let's verify the assumption of linear mixed models including normal distribution and constant variance of residuals. 
+
+::: panel-tabset
+#### lme4
+```{r, fig.height=3}
+check_model(model_icbd, check = c('normality', 'linearity'))
+```
+
+#### nlme
+```{r, fig.height=3}
+check_model(model_icbd1, check = c('normality', 'linearity'))
+```
+:::
+::: column-margin
+Here we observed a right skewness in residuals, this can be resolved by using data transformation e.g. log transformation of response variable. Please refer to **chapter** to read more about data transformation. 
+:::
+
+#### Inference
+
+We can extract information about ANOVA using `anova()` from lmer and lme models, respectively. 
+::: panel-tabset
+#### lme4
+```{r}
+anova(model_icbd, type = "1")
+```
+
+#### nlme
+```{r}
+anova(model_icbd1, type = "sequential")
+```
+:::
+
+Let's look at the estimated marginal means of yield for each variety (gen).
+::: panel-tabset
+#### lme4
+```{r}
+emmeans(model_icbd, ~ gen)
+```
+
+#### nlme
+```{r}
+emmeans(model_icbd1, ~ gen)
+```
+:::
+
+
+##data2
+
+The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
+```{r}
+dat3 <- agridat::cochran.lattice
+head(dat3)
+```
+|       |                              |
+|-------|------------------------------|
+| rep   | replication unit             |
+| trt   | treatment factor                |
+| row   | row position for each plot        |
+| col   | column position for each plot    |
+| y | % of young flower buds attacked        |
+
+: Table of variables in the data set {tbl-lattice}
+
+
+```{r}
+str(dat3)
+```
+
+```{r}
+library(desplot)
+desplot(dat3, y~row*col|rep,
+        text=trt, # aspect unknown, should be 2 or .5
+         main="cochran.lattice")
+
+```
+
+
+Here, we can use the `desplot()` function from the 'desplot' package to visualize the plot plan from lattice design.
+
+```{r}
+desplot::desplot(dat3, y~row*col|rep,
+                 text=trt, shorten='none', cex=.6,
+                 aspect=252/96, # true aspect
+                 main="Balanced incomplete block")
+
+```
+
+### Data integrity checks
+```{r, echo=FALSE}
+#| label: lattice_design
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+desplot(dat3,  y~row*col|rep,
+                 text=trt, shorten='none', cex=.6,
+                 aspect=252/96, # true aspect
+                 main="Balanced incomplete block")
+```
+### Data integrity checks
+
+```{r}
+str(dat3)
+```
+
+```{r}
+#dat2$row <- as.factor(dat2$row)
+#dat2$col <- as.factor(dat2$col)
+
+dat3$row <- as.factor(dat3$row)
+dat3$col <- as.factor(dat3$col)
+```
+
+```{r, eval=FALSE}
+hist(dat3$y, main = "", xlab = "yield")
+```
+
+```{r, echo=FALSE}
+#| label: fig-rcbd_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(dat3$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-
-model_icbd1 <- lmer(yield ~ gen + (1|rep/block),
-                   data = data1, 
-                   na.action = na.exclude)
-tidy(model_icbd1)
+m1_a <- lmer(y ~ trt + (1|rep) + (1|rep:row:rep) + (1|rep:col),
+           data = dat3,
+           na.action = na.exclude)
+tidy(m1_a) 
 ```
 
-```{r}
-#model_icbd1 <- lmer(yield ~ gen + (1|block) +  (1|row:block),
-#                   data = dat, 
-#                   na.action = na.exclude)
-#tidy(model_icbd1)
-```
 ### nlme
 
-```{r, eval=FALSE}
-model_icbd <- lme(yield ~ gen,
-                  random = ~ 1|rep/block,
-                  data = data1, 
-                  na.action = na.exclude)
-tidy(model_icbd)
+```{r}
+dat3$dummy <- factor(1)
+
+m1_b <- lme(y ~ trt,
+          random = list(dummy = pdBlocked(list(
+                                  pdIdent(~rep - 1),
+                                  pdIdent(~rep:row - 1),
+                                  pdIdent(~rep:col)))),
+          data = dat3, 
+          na.action = na.exclude)
+
+VarCorr(m1_b)
 ```
 :::
 
 ### Check Model Assumptions
 
-::: panel-tabset
-#### lme4
-```{r, fig.height=3}
-#check_model(model_icbd1, check = c('normality', 'linearity'))
+Remember those iid assumptions? Let's make sure we actually met them.
+
+```{r, fig.height=5}
+check_model(m1_a, check = c("linearity", "normality"))
 ```
 
-#### nlme
+
+### Inference
+
+Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
+
 ```{r}
-#check_model(model_icbd, check = c('normality', 'linearity'))
+anova(m1_a)
+```
+
+Estimated marginal means
+
+```{r}
+emmeans(m1_a, ~ trt)
+```
+
+## Aplha Lattice Design (partially-balanced)
+### Example Analysis
+
+::: panel-tabset
+### lme4
+
+```{r, message=FALSE, warning=FALSE}
+library(lme4); library(lmerTest); library(emmeans)
+library(dplyr); library(broom.mixed); library(performance)
+```
+### nlme
+```{r, message=FALSE, warning=FALSE}
+library(nlme); library(broom.mixed); library(emmeans)
+library(dplyr); library(performance)
 ```
 :::
 
 
-### Inference
+https://kwstat.github.io/agridat/reference/john.alpha.html 
 ```{r}
-anova(model_icbd1)
+dat4 <- agridat::john.alpha
 ```
+|       |                              |
+|-------|------------------------------|
+| block   | blocking unit             |
+| gen   | genotype (variety) factor                |
+| row   | row position for each plot        |
+| col   | column position for each plot    |
+| yield | grain yield in bu/ac         |
 
-```{r}
-emmeans(model_icbd1, ~ gen)
-```
+: Table of variables in the data set {tbl-incom_blk1}
+
+
+
+
 

@@ -1,4 +1,4 @@
-# Lattice Design
+# Latin Design
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
@@ -8,17 +8,17 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-alpha lattice design 
+Latin square design
 
-Lattice designs are a well-known type of resolvable incomplete block design. Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates [-@yates_1936] and later, alpha lattice designs were developed as an extension [@patterson_1976]. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k + 1).
+Latin designs are a well-known type of resolvable incomplete block design. Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates [-@yates_1936] and later, alpha lattice designs were developed as an extension [@patterson_1976]. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k + 1).
 
 Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.
 
-Statistical model for lattice design:
+Statistical model for latin square design:
 
-$Y_{ijk} = \mu + \alpha_i + \gamma_j + \tau_t  + \beta_k + \epsilon_ijk$
+$Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}$
 
-where, $\mu$ is the experiment mean, 𝛽 is the row effect, 𝛾 is the column effect, and 𝜏 is the treatment effect.
+where, $\mu$ is the experiment mean, $\alpha_i's$ are treatment effects, $\beta$ and $\gamma$ are the row- and column specific block effects.
 
 ## Example Analysis
 
@@ -41,9 +41,8 @@ library(dplyr); library(agridat); library(desplot)
 
 The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
 ```{r}
-data(cochran.lattice)
 dat3 <- agridat::cochran.lattice
-head(dat2)
+head(dat3)
 ```
 |       |                              |
 |-------|------------------------------|
@@ -69,7 +68,6 @@ desplot(dat3, y~row*col|rep,
 ```
 
 ```{r}
-data(burgueno.rowcol)
 dat <- burgueno.rowcol
 head(dat)
 ```
@@ -103,15 +101,15 @@ str(dat)
 ```
 
 ```{r}
-dat2$row <- as.factor(dat2$row)
-dat2$col <- as.factor(dat2$col)
+#dat2$row <- as.factor(dat2$row)
+#dat2$col <- as.factor(dat2$col)
 
 dat$row <- as.factor(dat$row)
 dat$col <- as.factor(dat$col)
 ```
 
 ```{r, eval=FALSE}
-hist(dat2$y, main = "", xlab = "yield")
+hist(dat$yield, main = "", xlab = "yield")
 ```
 
 ```{r, echo=FALSE}
