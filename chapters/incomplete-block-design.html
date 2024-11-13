@@ -253,7 +253,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/latin-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -316,6 +316,7 @@ window.Quarto = {
   <li><a href="#aplha-lattice-design-partially-balanced" id="toc-aplha-lattice-design-partially-balanced" class="nav-link" data-scroll-target="#aplha-lattice-design-partially-balanced"><span class="header-section-number">9.3</span> Aplha Lattice Design (partially-balanced)</a>
   <ul class="collapse">
   <li><a href="#example-analysis-1" id="toc-example-analysis-1" class="nav-link" data-scroll-target="#example-analysis-1"><span class="header-section-number">9.3.1</span> Example Analysis</a></li>
+  <li><a href="#nlme-6" id="toc-nlme-6" class="nav-link" data-scroll-target="#nlme-6"><span class="header-section-number">9.3.2</span> nlme</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -451,80 +452,140 @@ A note
 <p>The variables we need for the model are block, gen and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we don’t need to change class of any of the required variables.</p>
 <p>Next, let’s check the independent variables. We can look at this by running a cross tabulations among block and gen factors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>gen, dat<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>block, dat<span class="sc">$</span>gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     
-      B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18
-  G01   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   0   1   1
-  G02   0   0   0   0   0   0   1   1   0   0   0   0   0   0   0   1   0   0
-  G03   0   0   1   0   0   0   0   1   1   1   0   0   1   0   0   0   0   0
-  G04   0   0   0   1   0   0   0   1   0   0   1   0   0   0   0   0   0   0
-  G05   0   0   0   0   1   1   0   1   0   0   0   0   0   1   1   0   0   0
-  G06   0   0   0   0   0   0   0   0   0   1   0   0   0   1   0   0   0   0
-  G07   0   0   1   1   0   0   1   0   0   0   0   0   0   0   0   0   0   0
-  G08   0   0   0   0   0   1   0   0   0   0   0   0   1   0   0   0   1   0
-  G09   0   0   0   0   0   0   0   0   1   0   0   0   0   0   1   0   0   0
-  G10   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   1   0   1
-  G11   0   1   1   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0
-  G12   0   1   0   0   0   0   1   0   0   0   0   0   0   1   0   0   0   0
-  G13   0   1   0   0   0   0   0   0   0   0   0   0   1   0   1   1   0   0
-  G14   0   1   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   1
-  G15   0   1   0   1   1   0   0   0   1   0   0   0   0   0   0   0   1   0
-  G16   0   0   0   0   0   0   0   0   1   0   0   1   0   0   0   1   0   0
-  G17   0   0   0   0   0   0   1   0   0   1   1   1   0   0   1   0   1   0
-  G18   0   0   0   1   0   0   0   0   0   0   0   1   1   1   0   0   0   1
-  G19   0   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0   0
-  G20   0   0   1   0   1   0   0   0   0   0   0   1   0   0   0   0   0   0
-  G21   1   0   0   1   0   0   0   0   0   0   0   0   0   0   1   0   0   0
-  G22   1   0   0   0   0   1   1   0   1   0   0   0   0   0   0   0   0   1
-  G23   1   0   0   0   0   0   0   0   0   0   1   0   1   0   0   0   0   0
-  G24   1   0   1   0   0   0   0   0   0   0   0   0   0   1   0   1   1   0
-  G25   1   0   0   0   1   0   0   0   0   1   0   0   0   0   0   0   0   0
-  G26   1   1   0   0   0   0   0   1   0   0   0   1   0   0   0   0   0   0
-  G27   0   0   0   0   1   0   1   0   0   0   0   0   1   0   0   0   0   0
-  G28   0   0   1   0   0   0   0   0   0   0   0   0   0   0   1   0   0   1
-  G29   0   0   0   1   0   1   0   0   0   1   0   0   0   0   0   1   0   0
-  G30   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   0
-  G31   0   0   0   0   0   0   0   0   1   0   1   0   0   1   0   0   0   0
+      G01 G02 G03 G04 G05 G06 G07 G08 G09 G10 G11 G12 G13 G14 G15 G16 G17 G18
+  B01   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+  B02   0   0   0   0   0   0   0   0   0   0   1   1   1   1   1   0   0   0
+  B03   0   0   1   0   0   0   1   0   0   0   1   0   0   0   0   0   0   0
+  B04   0   0   0   1   0   0   1   0   0   0   0   0   0   0   1   0   0   1
+  B05   0   0   0   0   1   0   0   0   0   1   0   0   0   0   1   0   0   0
+  B06   0   0   0   0   1   0   0   1   0   0   1   0   0   0   0   0   0   0
+  B07   0   1   0   0   0   0   1   0   0   0   0   1   0   0   0   0   1   0
+  B08   1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0
+  B09   0   0   1   0   0   0   0   0   1   0   0   0   0   0   1   1   0   0
+  B10   0   0   1   0   0   1   0   0   0   0   0   0   0   1   0   0   1   0
+  B11   0   0   0   1   0   0   0   0   0   1   1   0   0   0   0   0   1   0
+  B12   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   1   1   1
+  B13   0   0   1   0   0   0   0   1   0   0   0   0   1   0   0   0   0   1
+  B14   0   0   0   0   1   1   0   0   0   0   0   1   0   0   0   0   0   1
+  B15   0   0   0   0   1   0   0   0   1   0   0   0   1   0   0   0   1   0
+  B16   0   1   0   0   0   0   0   0   0   1   0   0   1   0   0   1   0   0
+  B17   1   0   0   0   0   0   0   1   0   0   0   0   0   0   1   0   1   0
+  B18   1   0   0   0   0   0   0   0   0   1   0   0   0   1   0   0   0   1
+  B19   1   0   0   0   0   1   0   0   0   0   1   0   0   0   0   1   0   0
+  B20   0   1   0   0   0   1   0   0   0   0   0   0   0   0   1   0   0   0
+  B21   0   0   0   1   0   0   0   1   0   0   0   1   0   0   0   1   0   0
+  B22   0   0   0   0   0   1   1   1   1   1   0   0   0   0   0   0   0   0
+  B23   0   0   1   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0
+  B24   0   0   0   0   1   0   1   0   0   0   0   0   0   1   0   1   0   0
+  B25   0   0   0   1   0   0   0   0   1   0   0   0   0   1   0   0   0   0
+  B26   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+  B27   0   1   0   0   0   0   0   0   1   0   1   0   0   0   0   0   0   1
+  B28   0   1   0   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0
+  B29   1   0   0   0   0   0   1   0   0   0   0   0   1   0   0   0   0   0
+  B30   1   0   0   0   0   0   0   0   1   0   0   1   0   0   0   0   0   0
+  B31   0   0   0   1   0   1   0   0   0   0   0   0   1   0   0   0   0   0
      
-      B19 B20 B21 B22 B23 B24 B25 B26 B27 B28 B29 B30 B31
-  G01   1   0   0   0   0   0   0   0   0   0   1   1   0
-  G02   0   1   0   0   0   0   0   0   1   1   0   0   0
-  G03   0   0   0   0   1   0   0   0   0   0   0   0   0
-  G04   0   0   1   0   0   0   1   0   0   0   0   0   1
-  G05   0   0   0   0   0   1   0   0   0   0   0   0   0
-  G06   1   1   0   1   0   0   0   0   0   0   0   0   1
-  G07   0   0   0   1   0   1   0   0   0   0   1   0   0
-  G08   0   0   1   1   0   0   0   0   0   1   0   0   0
-  G09   0   0   0   1   0   0   1   0   1   0   0   1   0
-  G10   0   0   0   1   1   0   0   0   0   0   0   0   0
-  G11   1   0   0   0   0   0   0   0   1   0   0   0   0
-  G12   0   0   1   0   1   0   0   0   0   0   0   1   0
-  G13   0   0   0   0   0   0   0   0   0   0   1   0   1
-  G14   0   0   0   0   0   1   1   0   0   1   0   0   0
-  G15   0   1   0   0   0   0   0   0   0   0   0   0   0
-  G16   1   0   1   0   0   1   0   0   0   0   0   0   0
-  G17   0   0   0   0   0   0   0   0   0   0   0   0   0
-  G18   0   0   0   0   0   0   0   0   1   0   0   0   0
-  G19   0   1   0   0   1   0   1   0   0   0   1   0   0
-  G20   0   0   0   0   0   0   0   0   0   1   0   1   1
-  G21   1   0   0   0   1   0   0   0   0   1   0   0   0
-  G22   0   0   0   0   0   0   0   0   0   0   0   0   1
-  G23   0   1   0   0   0   1   0   0   0   0   0   1   0
-  G24   0   0   0   0   0   0   1   0   0   0   0   0   0
-  G25   0   0   1   0   0   0   0   0   1   0   1   0   0
-  G26   0   0   0   1   0   0   0   1   0   0   0   0   0
-  G27   1   0   0   0   0   0   1   1   0   0   0   0   0
-  G28   0   1   1   0   0   0   0   1   0   0   0   0   0
-  G29   0   0   0   0   0   0   0   1   0   0   0   1   0
-  G30   0   0   0   0   1   1   0   1   1   0   0   0   1
-  G31   0   0   0   0   0   0   0   1   0   1   1   0   0</code></pre>
+      G19 G20 G21 G22 G23 G24 G25 G26 G27 G28 G29 G30 G31
+  B01   0   0   1   1   1   1   1   1   0   0   0   0   0
+  B02   0   0   0   0   0   0   0   1   0   0   0   0   0
+  B03   0   1   0   0   0   1   0   0   0   1   0   0   0
+  B04   0   0   1   0   0   0   0   0   0   0   1   0   0
+  B05   0   1   0   0   0   0   1   0   1   0   0   0   0
+  B06   1   0   0   1   0   0   0   0   0   0   1   0   0
+  B07   0   0   0   1   0   0   0   0   1   0   0   0   0
+  B08   0   0   0   0   0   0   0   1   0   0   0   0   0
+  B09   0   0   0   1   0   0   0   0   0   0   0   0   1
+  B10   0   0   0   0   0   0   1   0   0   0   1   0   0
+  B11   0   0   0   0   1   0   0   0   0   0   0   0   1
+  B12   1   1   0   0   0   0   0   1   0   0   0   0   0
+  B13   0   0   0   0   1   0   0   0   1   0   0   0   0
+  B14   0   0   0   0   0   1   0   0   0   0   0   0   1
+  B15   0   0   1   0   0   0   0   0   0   1   0   0   0
+  B16   0   0   0   0   0   1   0   0   0   0   1   0   0
+  B17   0   0   0   0   0   1   0   0   0   0   0   1   0
+  B18   0   0   0   1   0   0   0   0   0   1   0   0   0
+  B19   0   0   1   0   0   0   0   0   1   0   0   0   0
+  B20   1   0   0   0   1   0   0   0   0   1   0   0   0
+  B21   0   0   0   0   0   0   1   0   0   1   0   0   0
+  B22   0   0   0   0   0   0   0   1   0   0   0   0   0
+  B23   1   0   1   0   0   0   0   0   0   0   0   1   0
+  B24   0   0   0   0   1   0   0   0   0   0   0   1   0
+  B25   1   0   0   0   0   1   0   0   1   0   0   0   0
+  B26   0   0   0   0   0   0   0   1   1   1   1   1   1
+  B27   0   0   0   0   0   0   1   0   0   0   0   1   0
+  B28   0   1   1   0   0   0   0   0   0   0   0   0   1
+  B29   1   0   0   0   0   0   1   0   0   0   0   0   1
+  B30   0   1   0   0   1   0   0   0   0   0   1   0   0
+  B31   0   1   0   1   0   0   0   0   0   0   0   1   0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 31 × 2
+   gen   total_count
+   &lt;fct&gt;       &lt;int&gt;
+ 1 G01             6
+ 2 G02             6
+ 3 G03             6
+ 4 G04             6
+ 5 G05             6
+ 6 G06             6
+ 7 G07             6
+ 8 G08             6
+ 9 G09             6
+10 G10             6
+# ℹ 21 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>agg_df <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(dat<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(dat<span class="sc">$</span>block), <span class="at">FUN=</span>length)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>agg_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Group.1 x
+1      B01 6
+2      B02 6
+3      B03 6
+4      B04 6
+5      B05 6
+6      B06 6
+7      B07 6
+8      B08 6
+9      B09 6
+10     B10 6
+11     B11 6
+12     B12 6
+13     B13 6
+14     B14 6
+15     B15 6
+16     B16 6
+17     B17 6
+18     B18 6
+19     B19 6
+20     B20 6
+21     B21 6
+22     B22 6
+23     B23 6
+24     B24 6
+25     B25 6
+26     B26 6
+27     B27 6
+28     B28 6
+29     B29 6
+30     B30 6
+31     B31 6</code></pre>
 </div>
 </div>
 <p>There are 31 varieties (gen) and it is perfectly balanced, with exactly one observation per treatment per block.</p>
 <p>We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>block   gen yield   row   col 
     0     0     0     0     0 </code></pre>
@@ -547,7 +608,7 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Response variable values fall within expected range, with few extreme values on right tail. This data set is ready for analysis!</p>
 </section>
@@ -562,10 +623,10 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_icbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(yield) <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dat, </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model_icbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(yield) <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dat, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 33 × 8
    effect group term        estimate std.error statistic    df   p.value
@@ -586,11 +647,11 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model_icbd1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat, </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model_icbd1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 33 × 8
    effect group term        estimate std.error    df statistic  p.value
@@ -620,11 +681,11 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -632,11 +693,11 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -652,7 +713,7 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <h4 data-number="9.2.1.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">9.2.1.4</span> Inference</h4>
 <p>We can extract information about ANOVA using <code>anova()</code> from lmer and lme models, respectively. ::: panel-tabset #### lme4</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd, <span class="at">type =</span> <span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd, <span class="at">type =</span> <span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type I Analysis of Variance Table with Satterthwaite's method
     Sum Sq  Mean Sq NumDF  DenDF F value    Pr(&gt;F)    
@@ -665,7 +726,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="nlme-3" class="level4" data-number="9.2.1.5">
 <h4 data-number="9.2.1.5" class="anchored" data-anchor-id="nlme-3"><span class="header-section-number">9.2.1.5</span> nlme</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1   125 4042.016  &lt;.0001
@@ -675,7 +736,7 @@ gen            30   125   17.675  &lt;.0001</code></pre>
 <p>:::</p>
 <p>Let’s look at the estimated marginal means of yield for each variety (gen). ::: panel-tabset #### lme4</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean     SE  df lower.CL upper.CL
  G01   3.20 0.0335 153     3.13     3.27
@@ -719,7 +780,7 @@ Confidence level used: 0.95 </code></pre>
 <section id="nlme-4" class="level4" data-number="9.2.1.6">
 <h4 data-number="9.2.1.6" class="anchored" data-anchor-id="nlme-4"><span class="header-section-number">9.2.1.6</span> nlme</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE df lower.CL upper.CL
  G01   24.6 0.922 30     22.7     26.5
@@ -762,17 +823,8 @@ Confidence level used: 0.95 </code></pre>
 <p>##data2</p>
 <p>The data used in this example is extracted from the <code>agridat</code> package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.lattice</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     y rep row col trt
-1  9.0  R1   1   1 T10
-2 20.3  R1   1   2 T12
-3 17.7  R1   1   3 T09
-4 26.3  R1   1   4 T11
-5  4.7  R1   2   1 T02
-6  9.0  R1   2   2 T04</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.lattice</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#head(dat3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -800,7 +852,7 @@ Confidence level used: 0.95 </code></pre>
 </tbody>
 </table>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   80 obs. of  5 variables:
  $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
@@ -809,30 +861,51 @@ Confidence level used: 0.95 </code></pre>
  $ col: int  1 2 3 4 1 2 3 4 1 2 ...
  $ trt: Factor w/ 16 levels "T01","T02","T03",..: 10 12 9 11 2 4 1 3 14 16 ...</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat3<span class="sc">$</span>trt, dat3<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+      R1 R2 R3 R4 R5
+  T01  1  1  1  1  1
+  T02  1  1  1  1  1
+  T03  1  1  1  1  1
+  T04  1  1  1  1  1
+  T05  1  1  1  1  1
+  T06  1  1  1  1  1
+  T07  1  1  1  1  1
+  T08  1  1  1  1  1
+  T09  1  1  1  1  1
+  T10  1  1  1  1  1
+  T11  1  1  1  1  1
+  T12  1  1  1  1  1
+  T13  1  1  1  1  1
+  T14  1  1  1  1  1
+  T15  1  1  1  1  1
+  T16  1  1  1  1  1</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot)</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>trt, <span class="co"># aspect unknown, should be 2 or .5</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">main=</span><span class="st">"cochran.lattice"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>trt, <span class="co"># aspect unknown, should be 2 or .5</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">main=</span><span class="st">"cochran.lattice"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Here, we can use the <code>desplot()</code> function from the ‘desplot’ package to visualize the plot plan from lattice design.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">text=</span>trt, <span class="at">shorten=</span><span class="st">'none'</span>, <span class="at">cex=</span>.<span class="dv">6</span>,</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">aspect=</span><span class="dv">252</span><span class="sc">/</span><span class="dv">96</span>, <span class="co"># true aspect</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main=</span><span class="st">"Balanced incomplete block"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">text=</span>trt, <span class="at">shorten=</span><span class="st">'none'</span>, <span class="at">cex=</span>.<span class="dv">6</span>,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">aspect=</span><span class="dv">252</span><span class="sc">/</span><span class="dv">96</span>, <span class="co"># true aspect</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main=</span><span class="st">"Balanced incomplete block"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -855,7 +928,7 @@ Confidence level used: 0.95 </code></pre>
 <section id="data-integrity-checks-2" class="level3 page-columns page-full" data-number="9.2.3">
 <h3 data-number="9.2.3" class="anchored" data-anchor-id="data-integrity-checks-2"><span class="header-section-number">9.2.3</span> Data integrity checks</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   80 obs. of  5 variables:
  $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
@@ -866,14 +939,14 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$row &lt;- as.factor(dat2$row)</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$col &lt;- as.factor(dat2$col)</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>row <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>row)</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$row &lt;- as.factor(dat2$row)</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$col &lt;- as.factor(dat2$col)</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>row <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>row)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat3<span class="sc">$</span>y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat3<span class="sc">$</span>y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -894,13 +967,13 @@ Figure&nbsp;9.2: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col),</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat3,</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col),</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat3,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 8
    effect   group       term         estimate std.error statistic    df  p.value
@@ -930,17 +1003,17 @@ Figure&nbsp;9.2: Histogram of the dependent variable.
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt,</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>col)))),</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat3, </span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>col)))),</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat3, </span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>dummy = pdIdent(rep - 1), pdIdent(rep:row - 1), pdIdent(rep:col) 
             Variance     StdDev      
@@ -1001,11 +1074,11 @@ Residual    2.385960e+01 4.8846291738</code></pre>
 <h3 data-number="9.2.4" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">9.2.4</span> Check Model Assumptions</h3>
 <p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"linearity"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"linearity"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1015,7 +1088,7 @@ Residual    2.385960e+01 4.8846291738</code></pre>
 <h3 data-number="9.2.5" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">9.2.5</span> Inference</h3>
 <p>Estimates for each treatment level can be obtained with the ‘emmeans’ package. And we can extract the ANOVA table from model using <code>anova()</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
     Sum Sq Mean Sq NumDF DenDF F value Pr(&gt;F)  
@@ -1026,7 +1099,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>Estimated marginal means</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> trt emmean   SE df lower.CL upper.CL
  T01   6.09 2.68 50     0.70     11.5
@@ -1056,26 +1129,22 @@ Confidence level used: 0.95 </code></pre>
 <h2 data-number="9.3" class="anchored" data-anchor-id="aplha-lattice-design-partially-balanced"><span class="header-section-number">9.3</span> Aplha Lattice Design (partially-balanced)</h2>
 <section id="example-analysis-1" class="level3" data-number="9.3.1">
 <h3 data-number="9.3.1" class="anchored" data-anchor-id="example-analysis-1"><span class="header-section-number">9.3.1</span> Example Analysis</h3>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
-<div class="tab-content">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p>https://schmidtpaul.github.io/DSFAIR/alpha_JohnWilliams1995.html ::: panel-tabset ### lme4</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+</section>
+<section id="nlme-6" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="nlme-6"><span class="header-section-number">9.3.2</span> nlme</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
-</div>
+<p>:::</p>
 <p>https://kwstat.github.io/agridat/reference/john.alpha.html</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>dat4 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>john.alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>dat4 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>john.alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -1535,8 +1604,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/latin-design.html" class="pagination-link" aria-label="Latin Design">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Design</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/latin-design.html" class="pagination-link" aria-label="Latin Square Design">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

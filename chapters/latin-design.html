@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; Latin Design – Field Guide to the R Mixed Model Wilderness</title>
+<title>10&nbsp; Latin Square Design – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,27 +54,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -176,7 +156,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/rcbd.html">Experiment designs</a></li><li class="breadcrumb-item"><a href="../chapters/latin-design.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Design</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/rcbd.html">Experiment designs</a></li><li class="breadcrumb-item"><a href="../chapters/latin-design.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -273,7 +253,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/latin-design.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -328,9 +308,8 @@ window.Quarto = {
   <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">10.2</span> Example Analysis</a>
   <ul class="collapse">
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">10.2.1</span> Data integrity checks</a></li>
-  <li><a href="#data-integrity-checks-1" id="toc-data-integrity-checks-1" class="nav-link" data-scroll-target="#data-integrity-checks-1"><span class="header-section-number">10.2.2</span> Data integrity checks</a></li>
+  <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">10.2.2</span> Model fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">10.2.3</span> Check Model Assumptions</a></li>
-  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">10.2.4</span> Inference</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -338,9 +317,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content page-columns page-full column-body" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/rcbd.html">Experiment designs</a></li><li class="breadcrumb-item"><a href="../chapters/latin-design.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Design</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/rcbd.html">Experiment designs</a></li><li class="breadcrumb-item"><a href="../chapters/latin-design.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Design</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></h1>
 </div>
 
 
@@ -359,12 +338,21 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="background"><span class="header-section-number">10.1</span> Background</h2>
-<p>Latin square design</p>
-<p>Latin designs are a well-known type of resolvable incomplete block design. Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates <span class="citation" data-cites="yates_1936">(<a href="../references.html#ref-yates_1936" role="doc-biblioref">1936</a>)</span> and later, alpha lattice designs were developed as an extension <span class="citation" data-cites="patterson_1976">(<a href="../references.html#ref-patterson_1976" role="doc-biblioref">Patterson and Williams 1976</a>)</span>. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k<sup>2</sup>, t = k<sup>3</sup>, or t = k(k + 1).</p>
-<p>Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.</p>
-<p>Statistical model for latin square design:</p>
+<p>Latin square design In the Latin Square design, two blocking factors are arranged across the row and the column of the square. This allows blocking of two nuisance factors across rows and columns to reduce even more experimental error. The requirement of Latin square design is that all t treatments appears only once in each row and column and number of replications is equal to number of treatments.</p>
+<p>Advantages of Latin square design are:</p>
+<ol type="1">
+<li>The design is particularly appropriate for comparing t treatment means in the presence of two sources of extraneous variation, each measured at t levels.</li>
+<li>The analysis is quite simple.</li>
+</ol>
+<p>Disadvantage: 1. A Latin square can be constructed for any value of t, however, it is best suited for comparing t treatments when 5≤t≤10.</p>
+<ol start="2" type="1">
+<li><p>Any additional extraneous sources of variability tend to inflate the error term, making it more difficult to detect differences among the treatment means.</p></li>
+<li><p>The effect of each treatment on the response must be approximately the same across rows and columns.</p></li>
+</ol>
+<p>Statistical model for a response in Latin square design is:</p>
 <p><span class="math inline">\(Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}\)</span></p>
-<p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i's\)</span> are treatment effects, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column specific block effects.</p>
+<p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i's\)</span> are treatment effects, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column specific effects.</p>
+<p>Assumptions of this design includes normality and independent distribution of error (<span class="math inline">\(\epsilon_{ijk}\)</span>) terms. And there is no interaction between two blocking (rows &amp; columns) factors and treatments.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">10.2</span> Example Analysis</h2>
@@ -386,99 +374,78 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used in this example is extracted from the <code>agridat</code> package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.</p>
+<p>The data used in this example is extracted from the <code>agridat</code> package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.lattice</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     y rep row col trt
-1  9.0  R1   1   1 T10
-2 20.3  R1   1   2 T12
-3 17.7  R1   1   3 T09
-4 26.3  R1   1   4 T11
-5  4.7  R1   2   1 T02
-6  9.0  R1   2   2 T04</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> agridat<span class="sc">::</span>goulden.latin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
 <tbody>
 <tr class="odd">
-<td>rep</td>
-<td>replication unit</td>
+<td>trt</td>
+<td>treatment factor, 5 levels</td>
 </tr>
 <tr class="even">
-<td>trt</td>
-<td>treatment factor</td>
-</tr>
-<tr class="odd">
 <td>row</td>
 <td>row position for each plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>col</td>
 <td>column position for each plot</td>
 </tr>
-<tr class="odd">
-<td>y</td>
-<td>% of young flower buds attacked</td>
+<tr class="even">
+<td>yield</td>
+<td>wheat yield</td>
 </tr>
 </tbody>
 </table>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   80 obs. of  5 variables:
- $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
- $ rep: Factor w/ 5 levels "R1","R2","R3",..: 1 1 1 1 1 1 1 1 1 1 ...
- $ row: int  1 1 1 1 2 2 2 2 3 3 ...
- $ col: int  1 2 3 4 1 2 3 4 1 2 ...
- $ trt: Factor w/ 16 levels "T01","T02","T03",..: 10 12 9 11 2 4 1 3 14 16 ...</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>trt, <span class="co"># aspect unknown, should be 2 or .5</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">main=</span><span class="st">"cochran.lattice"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> burgueno.rowcol</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  rep row col gen  yield
-1  R1   1   1 G05 1.5318
-2  R1   1   2 G19 2.2211
-3  R1   1   3 G55 1.4589
-4  R1   1   4 G23 1.2436
-5  R1   1   5 G27 1.8989
-6  R1   1   6 G38 1.3366</code></pre>
-</div>
-</div>
-<p>Here, we can use the <code>desplot()</code> function from the ‘desplot’ package to visualize the plot plan from lattice design.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Two contiuous reps in 8 rows, 16 columns</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat, yield <span class="sc">~</span> col<span class="sc">*</span>row,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">out1=</span>rep, <span class="co"># aspect unknown</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>gen, <span class="at">shorten=</span><span class="st">"none"</span>, <span class="at">cex=</span><span class="fl">0.75</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">main=</span><span class="st">"lattice design"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="10.2.1">
 <h3 data-number="10.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">10.2.1</span> Data integrity checks</h3>
+<p>Firstly, let’s verify the class of variables in the dataset using <code>str()</code> function in base R</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   25 obs. of  4 variables:
+ $ trt  : Factor w/ 5 levels "A","B","C","D",..: 2 3 4 5 1 4 1 3 2 5 ...
+ $ yield: num  4.9 9.3 7.6 5.3 9.3 6.4 4 15.4 7.6 6.3 ...
+ $ row  : int  5 4 3 2 1 5 4 3 2 1 ...
+ $ col  : int  1 1 1 1 1 2 2 2 2 2 ...</code></pre>
+</div>
+</div>
+<p>Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change ‘row’ and ‘col’ from integer t factor/character.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">row =</span> <span class="fu">as.factor</span>(row),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">col =</span> <span class="fu">as.factor</span>(col))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, to verify if the data meets the assumption of the Latin square design let’s plot the field layout for this experiment.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(<span class="at">data =</span> dat, <span class="at">flip =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">form =</span> yield <span class="sc">~</span> row <span class="sc">+</span> col, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">out1 =</span> row, <span class="at">out1.gpar=</span><span class="fu">list</span>(<span class="at">col=</span><span class="st">"black"</span>, <span class="at">lwd=</span><span class="dv">3</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">out2 =</span> col, <span class="at">out2.gpar=</span><span class="fu">list</span>(<span class="at">col=</span><span class="st">"black"</span>, <span class="at">lwd=</span><span class="dv">3</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> trt, <span class="at">cex =</span> <span class="dv">1</span>, <span class="at">shorten =</span> <span class="st">"no"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Field layout"</span>, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">show.key =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="latin-design_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This looks great! Here we can see that there are equal number of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn’t appear more than once in each row and column.</p>
+<p>Next step is to check if there are any missing values in response variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  trt yield   row   col 
+    0     0     0     0 </code></pre>
+</div>
+</div>
+<p>And we do not have any missing values in the data.</p>
+<p>Before fitting the model, let’s create a histogram of response variable to see if there are extreme values.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -489,211 +456,90 @@ window.Quarto = {
 </figure>
 </div>
 </div></div></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
-<section id="data-integrity-checks-1" class="level3 page-columns page-full" data-number="10.2.2">
-<h3 data-number="10.2.2" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">10.2.2</span> Data integrity checks</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   128 obs. of  5 variables:
- $ rep  : Factor w/ 2 levels "R1","R2": 1 1 1 1 1 1 1 1 1 1 ...
- $ row  : int  1 1 1 1 1 1 1 1 1 1 ...
- $ col  : int  1 2 3 4 5 6 7 8 9 10 ...
- $ gen  : Factor w/ 64 levels "G01","G02","G03",..: 5 19 55 23 27 38 64 44 14 13 ...
- $ yield: num  1.53 2.22 1.46 1.24 1.9 ...</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$row &lt;- as.factor(dat2$row)</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$col &lt;- as.factor(dat2$col)</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>row <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>row)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat<span class="sc">$</span>col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell page-columns page-full">
-
-<div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-rcbd_hist" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-rcbd_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="latin-design_files/figure-html/fig-rcbd_hist-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rcbd_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10.1: Histogram of the dependent variable.
-</figcaption>
-</figure>
-</div>
-</div></div></div>
+<section id="model-fitting" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">10.2.2</span> Model fitting</h3>
+<p>Here we will fit a model to evalute the impact of fungicide treatments on wheat yield with trt as a fixed effect and row &amp; col as a random effect.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>col<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep),</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>row) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>col),</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-lmerModLmerTest]
-Formula: yield ~ gen + (1 | row) + (1 | col:rep) + (1 | rep)
-   Data: dat
-
-REML criterion at convergence: 168.7
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--1.1392 -0.4036  0.0000  0.4036  1.1392 
-
-Random effects:
- Groups   Name        Variance Std.Dev.
- col:rep  (Intercept) 0.2189   0.4679  
- row      (Intercept) 0.1646   0.4057  
- rep      (Intercept) 0.1916   0.4378  
- Residual             0.1796   0.4238  
-Number of obs: 128, groups:  col:rep, 32; row, 8; rep, 2
-
-Fixed effects:
-             Estimate Std. Error        df t value Pr(&gt;|t|)   
-(Intercept)  2.325589   0.509444  4.216418   4.565   0.0091 **
-genG02       0.349182   0.523392 38.995063   0.667   0.5086   
-genG03       0.371260   0.531293 41.034622   0.699   0.4886   
-genG04       0.475842   0.527614 43.470779   0.902   0.3721   
-genG05      -0.601225   0.513762 38.892580  -1.170   0.2490   
-genG06       0.574869   0.527284 40.643852   1.090   0.2820   
-genG07       0.244490   0.534996 42.592433   0.457   0.6500   
-genG08       0.606486   0.527879 43.602192   1.149   0.2569   
-genG09       0.010630   0.525899 42.747488   0.020   0.9840   
-genG10       0.509855   0.527357 43.301826   0.967   0.3390   
-genG11       0.463014   0.535708 42.977451   0.864   0.3922   
-genG12       0.340678   0.517892 43.399748   0.658   0.5141   
-genG13      -0.041178   0.483241 34.257292  -0.085   0.9326   
-genG14       0.132480   0.523679 39.142513   0.253   0.8016   
-genG15       0.385104   0.526349 43.013937   0.732   0.4683   
-genG16      -0.148379   0.483194 34.227894  -0.307   0.7606   
-genG17      -0.016143   0.536067 42.926995  -0.030   0.9761   
-genG18       0.358218   0.526325 42.993175   0.681   0.4998   
-genG19       0.734743   0.533892 41.978194   1.376   0.1761   
-genG20       0.212299   0.521319 40.753106   0.407   0.6860   
-genG21       0.150212   0.525313 39.814746   0.286   0.7764   
-genG22      -0.039713   0.497948 37.586406  -0.080   0.9369   
-genG23       0.325771   0.484472 34.701705   0.672   0.5058   
-genG24      -0.194686   0.524899 39.587776  -0.371   0.7127   
-genG25       0.202462   0.514979 39.325398   0.393   0.6963   
-genG26       0.089411   0.483188 34.221812   0.185   0.8543   
-genG27       0.218244   0.536631 43.262734   0.407   0.6862   
-genG28      -0.284235   0.524825 39.538457  -0.542   0.5911   
-genG29       0.047110   0.515184 39.470339   0.091   0.9276   
-genG30      -0.213561   0.484574 34.769665  -0.441   0.6621   
-genG31      -0.034873   0.535702 42.734026  -0.065   0.9484   
-genG32       1.000827   0.535020 42.606153   1.871   0.0683 . 
-genG33       0.252960   0.507660 40.377683   0.498   0.6210   
-genG34       0.242054   0.537217 43.562588   0.451   0.6545   
-genG35       0.213005   0.515262 39.472578   0.413   0.6816   
-genG36       0.362633   0.525014 42.290855   0.691   0.4935   
-genG37       0.282612   0.530472 40.615244   0.533   0.5971   
-genG38      -0.125437   0.537059 43.462082  -0.234   0.8164   
-genG39       1.261824   0.537018 43.466180   2.350   0.0234 * 
-genG40       0.346211   0.536855 43.369657   0.645   0.5224   
-genG41      -0.255692   0.522110 41.202626  -0.490   0.6269   
-genG42       0.744461   0.483144 34.195322   1.541   0.1326   
-genG43       0.489907   0.535381 42.795749   0.915   0.3653   
-genG44       0.445400   0.527076 43.156823   0.845   0.4027   
-genG45       0.728849   0.531497 41.172558   1.371   0.1777   
-genG46       0.008386   0.527720 43.541892   0.016   0.9874   
-genG47      -0.173693   0.525585 42.635003  -0.330   0.7427   
-genG48       0.364422   0.523287 41.600011   0.696   0.4900   
-genG49       0.283642   0.535631 42.924562   0.530   0.5992   
-genG50      -0.160189   0.534315 42.227391  -0.300   0.7658   
-genG51       0.127042   0.526978 43.139993   0.241   0.8106   
-genG52      -0.277455   0.534469 42.326672  -0.519   0.6064   
-genG53      -0.401069   0.525510 42.532998  -0.763   0.4496   
-genG54      -0.221400   0.533965 42.027349  -0.415   0.6805   
-genG55       0.479012   0.524627 42.079587   0.913   0.3664   
-genG56       0.232007   0.536959 43.388811   0.432   0.6678   
-genG57      -0.153493   0.526605 42.888008  -0.291   0.7721   
-genG58       0.545562   0.523508 41.715186   1.042   0.3034   
-genG59       0.691577   0.536175 43.006805   1.290   0.2040   
-genG60      -0.221321   0.517482 37.741262  -0.428   0.6713   
-genG61       0.205307   0.514087 39.066489   0.399   0.6918   
-genG62       0.341897   0.534904 42.530411   0.639   0.5261   
-genG63       0.701913   0.517290 40.377937   1.357   0.1823   
-genG64       0.066248   0.526946 40.462383   0.126   0.9006   
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Correlation matrix not shown by default, as p = 64 &gt; 12.
-Use print(x, correlation=TRUE)  or
-    vcov(x)        if you need it</code></pre>
+<pre><code># A tibble: 8 × 8
+  effect   group    term            estimate std.error statistic    df   p.value
+  &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1 fixed    &lt;NA&gt;     (Intercept)        6.84      0.942     7.26   11.9   1.03e-5
+2 fixed    &lt;NA&gt;     trtB              -0.380     0.967    -0.393  12.0   7.01e-1
+3 fixed    &lt;NA&gt;     trtC               6.28      0.967     6.50   12.0   2.96e-5
+4 fixed    &lt;NA&gt;     trtD               1.12      0.967     1.16   12.0   2.69e-1
+5 fixed    &lt;NA&gt;     trtE              -1.92      0.967    -1.99   12.0   7.04e-2
+6 ran_pars row      sd__(Intercept)    1.37     NA        NA      NA    NA      
+7 ran_pars col      sd__(Intercept)    0.483    NA        NA      NA    NA      
+8 ran_pars Residual sd__Observation    1.53     NA        NA      NA    NA      </code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>col<span class="sc">:</span>rep)))),</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> trt,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>col <span class="sc">-</span> <span class="dv">1</span>)))),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>dummy = pdIdent(row - 1), pdIdent(rep - 1), pdIdent(col:rep) 
-            Variance  StdDev   
-row1        0.1645986 0.4057076
-row2        0.1645986 0.4057076
-row3        0.1645986 0.4057076
-row4        0.1645986 0.4057076
-row5        0.1645986 0.4057076
-row6        0.1645986 0.4057076
-row7        0.1645986 0.4057076
-row8        0.1645986 0.4057076
-repR1       0.1916416 0.4377688
-repR2       0.1916416 0.4377688
-(Intercept) 0.2188853 0.4678517
-col1:repR1  0.2188853 0.4678517
-col2:repR1  0.2188853 0.4678517
-col3:repR1  0.2188853 0.4678517
-col4:repR1  0.2188853 0.4678517
-col5:repR1  0.2188853 0.4678517
-col6:repR1  0.2188853 0.4678517
-col7:repR1  0.2188853 0.4678517
-col8:repR1  0.2188853 0.4678517
-col9:repR1  0.2188853 0.4678517
-col10:repR1 0.2188853 0.4678517
-col11:repR1 0.2188853 0.4678517
-col12:repR1 0.2188853 0.4678517
-col13:repR1 0.2188853 0.4678517
-col14:repR1 0.2188853 0.4678517
-col15:repR1 0.2188853 0.4678517
-col16:repR1 0.2188853 0.4678517
-col1:repR2  0.2188853 0.4678517
-col2:repR2  0.2188853 0.4678517
-col3:repR2  0.2188853 0.4678517
-col4:repR2  0.2188853 0.4678517
-col5:repR2  0.2188853 0.4678517
-col6:repR2  0.2188853 0.4678517
-col7:repR2  0.2188853 0.4678517
-col8:repR2  0.2188853 0.4678517
-col9:repR2  0.2188853 0.4678517
-col10:repR2 0.2188853 0.4678517
-col11:repR2 0.2188853 0.4678517
-col12:repR2 0.2188853 0.4678517
-col13:repR2 0.2188853 0.4678517
-col14:repR2 0.2188853 0.4678517
-col15:repR2 0.2188853 0.4678517
-col16:repR2 0.2188853 0.4678517
-Residual    0.1795838 0.4237733</code></pre>
+<pre><code>Linear mixed-effects model fit by REML
+  Data: dat 
+       AIC      BIC    logLik
+  105.2465 113.2124 -44.62327
+
+Random effects:
+ Composite Structure: Blocked
+
+ Block 1: row
+ Formula: ~row - 1 | dummy
+              row
+StdDev: 0.7529153
+
+ Block 2: col
+ Formula: ~col - 1 | dummy
+                 col Residual
+StdDev: 2.708423e-05 1.737645
+
+Fixed effects:  yield ~ trt 
+                Value Std.Error DF   t-value p-value
+(Intercept)  8.987259  1.046448 20  8.588351  0.0000
+trtB        -0.380000  1.098983 20 -0.345774  0.7331
+trtC         6.280000  1.098983 20  5.714374  0.0000
+trtD         1.120000  1.098983 20  1.019124  0.3203
+trtE        -1.920000  1.098983 20 -1.747070  0.0960
+ Correlation: 
+     (Intr) trtB   trtC   trtD  
+trtB -0.525                     
+trtC -0.525  0.500              
+trtD -0.525  0.500  0.500       
+trtE -0.525  0.500  0.500  0.500
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-1.78646821 -0.20717699 -0.07394724  0.26228203  2.35462748 
+
+Number of Observations: 25
+Number of Groups: 1 </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#VarCorr(m1_b)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -701,98 +547,67 @@ Residual    0.1795838 0.4237733</code></pre>
 </section>
 <section id="check-model-assumptions" class="level3" data-number="10.2.3">
 <h3 data-number="10.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">10.2.3</span> Check Model Assumptions</h3>
-<p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"linearity"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="inference" class="level3" data-number="10.2.4">
-<h3 data-number="10.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">10.2.4</span> Inference</h3>
-<p>Estimates for each treatment level can be obtained with the ‘emmeans’ package. And we can extract the ANOVA table from model using <code>anova()</code> function.</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check_model(m1_b, check = c("linearity", "normality"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>check_model(m1_b, check = c(“linearity”, “normality”)) ### Inference</p>
+<p>Estimates for each treatment level can be obtained with the ‘emmeans’ package. And we can extract the ANOVA table from model using <code>anova()</code> function.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-    Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
-gen 9.5245 0.15118    63 34.322  0.8418 0.7274</code></pre>
+    Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
+trt 196.61  49.152     4    12  21.032 2.366e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            numDF denDF   F-value p-value
+(Intercept)     1    20 163.65015  &lt;.0001
+trt             4    20  16.27868  &lt;.0001</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <p>Estimated marginal means</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> gen emmean    SE   df lower.CL upper.CL
- G01   2.33 0.515 4.21    0.923     3.73
- G02   2.67 0.515 4.21    1.272     4.08
- G03   2.70 0.515 4.21    1.294     4.10
- G04   2.80 0.515 4.21    1.399     4.20
- G05   1.72 0.515 4.21    0.322     3.13
- G06   2.90 0.515 4.20    1.497     4.30
- G07   2.57 0.515 4.21    1.167     3.97
- G08   2.93 0.515 4.21    1.529     4.33
- G09   2.34 0.515 4.20    0.933     3.74
- G10   2.84 0.515 4.20    1.432     4.24
- G11   2.79 0.515 4.20    1.385     4.19
- G12   2.67 0.515 4.19    1.263     4.07
- G13   2.28 0.515 4.21    0.882     3.69
- G14   2.46 0.515 4.20    1.055     3.86
- G15   2.71 0.515 4.20    1.307     4.11
- G16   2.18 0.515 4.21    0.775     3.58
- G17   2.31 0.515 4.19    0.906     3.71
- G18   2.68 0.515 4.21    1.281     4.09
- G19   3.06 0.514 4.18    1.657     4.46
- G20   2.54 0.515 4.20    1.135     3.94
- G21   2.48 0.515 4.19    1.072     3.88
- G22   2.29 0.515 4.21    0.883     3.69
- G23   2.65 0.515 4.21    1.249     4.05
- G24   2.13 0.515 4.19    0.727     3.53
- G25   2.53 0.515 4.20    1.125     3.93
- G26   2.42 0.515 4.21    1.013     3.82
- G27   2.54 0.515 4.20    1.141     3.95
- G28   2.04 0.515 4.20    0.638     3.44
- G29   2.37 0.515 4.20    0.970     3.78
- G30   2.11 0.515 4.19    0.708     3.52
- G31   2.29 0.514 4.18    0.887     3.69
- G32   3.33 0.515 4.20    1.923     4.73
- G33   2.58 0.514 4.19    1.175     3.98
- G34   2.57 0.515 4.21    1.165     3.97
- G35   2.54 0.515 4.20    1.136     3.94
- G36   2.69 0.515 4.20    1.285     4.09
- G37   2.61 0.515 4.20    1.205     4.01
- G38   2.20 0.515 4.21    0.797     3.60
- G39   3.59 0.515 4.20    2.184     4.99
- G40   2.67 0.515 4.21    1.269     4.07
- G41   2.07 0.514 4.18    0.666     3.47
- G42   3.07 0.515 4.21    1.668     4.47
- G43   2.82 0.515 4.20    1.412     4.22
- G44   2.77 0.515 4.20    1.368     4.17
- G45   3.05 0.515 4.20    1.651     4.46
- G46   2.33 0.515 4.21    0.931     3.74
- G47   2.15 0.515 4.20    0.749     3.56
- G48   2.69 0.515 4.19    1.286     4.09
- G49   2.61 0.515 4.22    1.207     4.01
- G50   2.17 0.514 4.19    0.762     3.57
- G51   2.45 0.514 4.19    1.049     3.86
- G52   2.05 0.514 4.19    0.644     3.45
- G53   1.92 0.515 4.19    0.521     3.33
- G54   2.10 0.514 4.18    0.700     3.51
- G55   2.80 0.514 4.18    1.401     4.21
- G56   2.56 0.515 4.20    1.155     3.96
- G57   2.17 0.515 4.19    0.769     3.58
- G58   2.87 0.514 4.18    1.467     4.28
- G59   3.02 0.514 4.19    1.613     4.42
- G60   2.10 0.516 4.22    0.702     3.51
- G61   2.53 0.515 4.21    1.128     3.93
- G62   2.67 0.514 4.18    1.264     4.07
- G63   3.03 0.514 4.19    1.624     4.43
- G64   2.39 0.515 4.19    0.988     3.80
+<pre><code> trt emmean    SE   df lower.CL upper.CL
+ A     6.84 0.942 11.9     4.79     8.89
+ B     6.46 0.942 11.9     4.41     8.51
+ C    13.12 0.942 11.9    11.07    15.17
+ D     7.96 0.942 11.9     5.91    10.01
+ E     4.92 0.942 11.9     2.87     6.97
 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
@@ -800,14 +615,6 @@ Confidence level used: 0.95 </code></pre>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-patterson_1976" class="csl-entry" role="listitem">
-Patterson, H. D., and E. R. Williams. 1976. <span>“A <span>New</span> <span>Class</span> of <span>Resolvable</span> <span>Incomplete</span> <span>Block</span> <span>Designs</span>.”</span> <em>Biometrika</em> 63 (1): 83–92. <a href="https://doi.org/10.2307/2335087">https://doi.org/10.2307/2335087</a>.
-</div>
-<div id="ref-yates_1936" class="csl-entry" role="listitem">
-Yates, F. 1936. <span>“A New Method of Arranging Variety Trials Involving a Large Number of Varieties.”</span> <em>J Agric Sci</em> 26: 424–55.
-</div>
-</div>
 </section>
 </section>
 
