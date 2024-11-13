@@ -85,8 +85,6 @@ desplot::desplot(dat, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
           aspect=252/96, # true aspect
           main="weiss.incblock")
-  
-
 ```
 
 
@@ -103,8 +101,21 @@ The variables we need for the model are block, gen  and yield. The block and gen
 Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
 ```{r}
-table(dat$gen, dat$block)
+table(dat$block, dat$gen)
 ```
+
+```{r}
+agg_tbl <- dat %>% group_by(gen) %>% 
+  summarise(total_count=n(),
+            .groups = 'drop')
+agg_tbl
+```
+
+```{r}
+agg_df <- aggregate(dat$gen, by=list(dat$block), FUN=length)
+agg_df
+```
+
 
 There are 31 varieties (gen) and it is perfectly balanced, with exactly one observation per treatment per block.
 
@@ -208,7 +219,7 @@ emmeans(model_icbd1, ~ gen)
 The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
 ```{r}
 dat3 <- agridat::cochran.lattice
-head(dat3)
+#head(dat3)
 ```
 |       |                              |
 |-------|------------------------------|
@@ -223,6 +234,7 @@ head(dat3)
 
 ```{r}
 str(dat3)
+table(dat3$trt, dat3$rep)
 ```
 
 ```{r}
@@ -334,6 +346,8 @@ emmeans(m1_a, ~ trt)
 ## Aplha Lattice Design (partially-balanced)
 ### Example Analysis
 
+
+https://schmidtpaul.github.io/DSFAIR/alpha_JohnWilliams1995.html 
 ::: panel-tabset
 ### lme4
 

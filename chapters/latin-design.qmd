@@ -1,4 +1,4 @@
-# Latin Design
+# Latin Square Design
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
@@ -8,17 +8,26 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-Latin square design
+Latin square design In the Latin Square design, two blocking factors are arranged across the row and the column of the square. This allows blocking of two nuisance factors across rows and columns to reduce even more experimental error. The requirement of Latin square design is that all t treatments appears only once in each row and column and number of replications is equal to number of treatments.
 
-Latin designs are a well-known type of resolvable incomplete block design. Lattice designs are convenient for when there is a large number of treatments so that the block size is too big to control for spatial variation effectively. These lattice designs were first developed by Yates [-@yates_1936] and later, alpha lattice designs were developed as an extension [@patterson_1976]. A special feature of lattice designs is that the number of treatments, t, is related to the block size, k, in one of three forms: t = k^2^, t = k^3^, or t = k(k + 1).
+Advantages of Latin square design are:
 
-Even though the number of possible treatments is limited, a lattice design may be an ideal design for field experiments with a large number of treatments.
+1.  The design is particularly appropriate for comparing t treatment means in the presence of two sources of extraneous variation, each measured at t levels.
+2.  The analysis is quite simple.
 
-Statistical model for latin square design:
+Disadvantage: 1. A Latin square can be constructed for any value of t, however, it is best suited for comparing t treatments when 5≤t≤10.
+
+2.  Any additional extraneous sources of variability tend to inflate the error term, making it more difficult to detect differences among the treatment means.
+
+3.  The effect of each treatment on the response must be approximately the same across rows and columns.
+
+Statistical model for a response in Latin square design is:
 
 $Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}$
 
-where, $\mu$ is the experiment mean, $\alpha_i's$ are treatment effects, $\beta$ and $\gamma$ are the row- and column specific block effects.
+where, $\mu$ is the experiment mean, $\alpha_i's$ are treatment effects, $\beta$ and $\gamma$ are the row- and column specific effects.
+
+Assumptions of this design includes normality and independent distribution of error ($\epsilon_{ijk}$) terms. And there is no interaction between two blocking (rows & columns) factors and treatments.
 
 ## Example Analysis
 
@@ -33,139 +42,143 @@ library(dplyr); library(broom.mixed); library(agridat); library(desplot)
 ```
 
 ### nlme
+
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans); library(performance)
 library(dplyr); library(agridat); library(desplot)
 ```
 :::
 
-The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
-```{r}
-dat3 <- agridat::cochran.lattice
-head(dat3)
-```
-|       |                              |
-|-------|------------------------------|
-| rep   | replication unit             |
-| trt   | treatment factor                |
-| row   | row position for each plot        |
-| col   | column position for each plot    |
-| y | % of young flower buds attacked        |
-
-: Table of variables in the data set {tbl-lattice}
-
+The data used in this example is extracted from the `agridat` package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.
 
 ```{r}
-str(dat3)
+dat <- agridat::goulden.latin
 ```
 
-```{r}
-library(desplot)
-desplot(dat3, y~row*col|rep,
-        text=trt, # aspect unknown, should be 2 or .5
-         main="cochran.lattice")
+|       |                               |
+|-------|-------------------------------|
+| trt   | treatment factor, 5 levels    |
+| row   | row position for each plot    |
+| col   | column position for each plot |
+| yield | wheat yield                   |
 
-```
-
-```{r}
-dat <- burgueno.rowcol
-head(dat)
-```
-
-Here, we can use the `desplot()` function from the 'desplot' package to visualize the plot plan from lattice design.
-
-```{r}
-# Two contiuous reps in 8 rows, 16 columns
-desplot(dat, yield ~ col*row,
-        out1=rep, # aspect unknown
-        text=gen, shorten="none", cex=0.75,
-        main="lattice design")
-
-```
+: Table of variables in the data set {tbl-latin}
 
 ### Data integrity checks
+Firstly, let's verify the class of variables in the dataset using `str()` function in base R
+```{r}
+str(dat)
+```
+Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer t factor/character.
+
+```{r}
+dat1 <- dat |> 
+        mutate(row = as.factor(row),
+               col = as.factor(col))
+```
+
+Next, to verify if the data meets the assumption of the Latin square design let's plot the field layout for this experiment. 
+```{r}
+desplot::desplot(data = dat, flip = TRUE,
+        form = yield ~ row + col, 
+        out1 = row, out1.gpar=list(col="black", lwd=3),
+        out2 = col, out2.gpar=list(col="black", lwd=3),
+        text = trt, cex = 1, shorten = "no",
+        main = "Field layout", 
+        show.key = FALSE)
+
+```
+
+This looks great! Here we can see that there are equal number of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn't appear more than once in each row and column. 
+
+
+Next step is to check if there are any missing values in response variable.
+```{r}
+apply(dat, 2, function(x) sum(is.na(x)))
+```
+And we do not have any missing values in the data.
+
+Before fitting the model, let's create a histogram of response variable to see if there are extreme values.
 ```{r, echo=FALSE}
 #| label: lattice_design
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-desplot(dat, yield ~ col*row,
-        out1=rep, # aspect unknown
-        text=gen, shorten="none", cex=.75,
-        main="burgueno.rowcol")
-```
-### Data integrity checks
-
-```{r}
-str(dat)
-```
-
-```{r}
-#dat2$row <- as.factor(dat2$row)
-#dat2$col <- as.factor(dat2$col)
-
-dat$row <- as.factor(dat$row)
-dat$col <- as.factor(dat$col)
+hist(dat$yield, main = "", xlab = "yield")
 ```
 
 ```{r, eval=FALSE}
 hist(dat$yield, main = "", xlab = "yield")
 ```
 
-```{r, echo=FALSE}
-#| label: fig-rcbd_hist
-#| fig-cap: "Histogram of the dependent variable."
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
-```
+
+### Model fitting
+Here we will fit a model to evalute the impact of fungicide treatments on wheat yield with trt as a fixed effect and row & col as a random effect.
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-m1_a <- lmer(yield ~ gen + (1|row) + (1|col:rep) + (1|rep),
+m1_a <- lmer(yield ~ trt + (1|row) + (1|col),
            data = dat,
            na.action = na.exclude)
-summary(m1_a) 
+tidy(m1_a) 
 ```
 
 ### nlme
-
 ```{r}
 dat$dummy <- factor(1)
 
-m1_b <- lme(yield ~ gen,
+m1_b <- lme(yield ~ trt,
           random = list(dummy = pdBlocked(list(
                                   pdIdent(~row - 1),
-                                  pdIdent(~rep - 1),
-                                  pdIdent(~col:rep)))),
+                                  pdIdent(~col - 1)))),
           data = dat, 
           na.action = na.exclude)
 
-VarCorr(m1_b)
+summary(m1_b)
+#VarCorr(m1_b)
 ```
 :::
 
 ### Check Model Assumptions
 
-Remember those iid assumptions? Let's make sure we actually met them.
-
-```{r, fig.height=9}
-check_model(m1_a)
+::: panel-tabset
+#### lme4
+```{r, fig.height=3}
+check_model(m1_a, check = c("linearity", "normality"))
 ```
 
+#### nlme
+```{r, fig.height=3}
+#check_model(m1_b, check = c("linearity", "normality"))
+```
+:::
 
+
+check_model(m1_b, check = c("linearity", "normality"))
 ### Inference
 
 Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
 
-```{r}
+::: panel-tabset
+#### lme4
+```{r, fig.height=3}
 anova(m1_a)
+```
+
+#### nlme
+```{r, fig.height=3}
+anova(m1_b)
+```
+:::
+
+```{r}
+
 ```
 
 Estimated marginal means
 
 ```{r}
-emmeans(m1_a, ~ gen)
+emmeans(m1_a, ~ trt)
 ```
