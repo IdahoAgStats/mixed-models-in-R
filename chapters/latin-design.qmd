@@ -11,11 +11,11 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 Latin square design In the Latin Square design, two blocking factors are arranged across the row and the column of the square. This allows blocking of two nuisance factors across rows and columns to reduce even more experimental error. The requirement of Latin square design is that all t treatments appears only once in each row and column and number of replications is equal to number of treatments.
 
 Advantages of Latin square design are:
-
 1.  The design is particularly appropriate for comparing t treatment means in the presence of two sources of extraneous variation, each measured at t levels.
 2.  The analysis is quite simple.
 
-Disadvantage: 1. A Latin square can be constructed for any value of t, however, it is best suited for comparing t treatments when 5≤t≤10.
+Disadvantage: 
+1. A Latin square can be constructed for any value of t, however, it is best suited for comparing t treatments when 5≤t≤10.
 
 2.  Any additional extraneous sources of variability tend to inflate the error term, making it more difficult to detect differences among the treatment means.
 
@@ -40,7 +40,6 @@ Let's start the analysis firstly by loading the required libraries:
 library(lme4); library(lmerTest); library(emmeans); library(performance)
 library(dplyr); library(broom.mixed); library(agridat); library(desplot)
 ```
-
 ### nlme
 
 ```{r, message=FALSE, warning=FALSE}
@@ -54,7 +53,6 @@ The data used in this example is extracted from the `agridat` package. In this e
 ```{r}
 dat <- agridat::goulden.latin
 ```
-
 |       |                               |
 |-------|-------------------------------|
 | trt   | treatment factor, 5 levels    |
@@ -111,16 +109,15 @@ hist(dat$yield, main = "", xlab = "yield")
 hist(dat$yield, main = "", xlab = "yield")
 ```
 
-
 ### Model fitting
-Here we will fit a model to evalute the impact of fungicide treatments on wheat yield with trt as a fixed effect and row & col as a random effect.
+Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row & col as a random effect.
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-m1_a <- lmer(yield ~ trt + (1|row) + (1|col),
-           data = dat,
+m1_a <- lmer(yield ~ trt + (1|row) + (1|col) + (1|row:col),
+           data = dat1,
            na.action = na.exclude)
 tidy(m1_a) 
 ```
@@ -128,11 +125,11 @@ tidy(m1_a)
 ### nlme
 ```{r}
 dat$dummy <- factor(1)
-
 m1_b <- lme(yield ~ trt,
-          random = list(dummy = pdBlocked(list(
-                                  pdIdent(~row - 1),
-                                  pdIdent(~col - 1)))),
+          random =list(~1|row, ~1|col),
+                  #list(dummy = pdBlocked(list(
+                   #               pdIdent(~row - 1),
+                    #              pdIdent(~col - 1)))),
           data = dat, 
           na.action = na.exclude)
 
@@ -150,35 +147,53 @@ check_model(m1_a, check = c("linearity", "normality"))
 ```
 
 #### nlme
+
+::: {layout-ncol=2 .column-body}
+
+```{r echo=FALSE}
+par(mar=c(5.1, 5, 2.1, 2.1))
+plot(residuals(m1_b), xlab = "fitted values", ylab = "residuals",
+     cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
+```
+
+
+```{r echo=FALSE}
+par(mar=c(5.1, 5, 2.1, 2.1))
+qqvals <- qqnorm(residuals(m1_b), plot.it=FALSE)
+qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(m1_b))
+```
+::: 
+
 ```{r, fig.height=3}
-#check_model(m1_b, check = c("linearity", "normality"))
+check_model(m1_b, check = c("linearity", "normality"))
 ```
 :::
 
-
-check_model(m1_b, check = c("linearity", "normality"))
 ### Inference
-
-Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
+We can look look at the analysis of variance for treatment effect on yield using `anova()` function.
 
 ::: panel-tabset
 #### lme4
 ```{r, fig.height=3}
-anova(m1_a)
+anova(m1_a, type = "1")
 ```
 
 #### nlme
 ```{r, fig.height=3}
-anova(m1_b)
+anova(m1_b, type = "sequential")
 ```
 :::
 
-```{r}
+Here we observed a significant impact on fungicide treatment on crop yield. Let's have a look at the estimated marginal means of wheat yield with each treatment using `emmeans()` function.
 
-```
-
-Estimated marginal means
-
-```{r}
+::: panel-tabset
+#### lme4
+```{r, fig.height=3}
 emmeans(m1_a, ~ trt)
 ```
+
+#### nlme
+```{r, fig.height=3}
+emmeans(m1_b, ~ trt)
+```
+:::
