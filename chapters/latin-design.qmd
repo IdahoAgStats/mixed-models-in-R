@@ -116,7 +116,7 @@ Here we will fit a model to evaluate the impact of fungicide treatments on wheat
 ### lme4
 
 ```{r}
-m1_a <- lmer(yield ~ trt + (1|row) + (1|col) + (1|row:col),
+m1_a <- lmer(yield ~ trt + (1|row) + (1|col),
            data = dat1,
            na.action = na.exclude)
 tidy(m1_a) 
@@ -150,14 +150,14 @@ check_model(m1_a, check = c("linearity", "normality"))
 
 ::: {layout-ncol=2 .column-body}
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 par(mar=c(5.1, 5, 2.1, 2.1))
 plot(residuals(m1_b), xlab = "fitted values", ylab = "residuals",
      cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
 ```
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 par(mar=c(5.1, 5, 2.1, 2.1))
 qqvals <- qqnorm(residuals(m1_b), plot.it=FALSE)
 qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(m1_b))
