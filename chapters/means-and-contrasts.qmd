@@ -4,19 +4,91 @@ execute:
   eval: false
 ---
 
-```{r}
-library(nlme); library(emmeans); library(performance)
-library(lme4)
-```
+## Background
 
-
-
-## Estimated Marginal Means
 
 Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
 model predictions over the grid comprising all factor combinations – called the reference grid
 
 In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.
+
+
+To demonstrate the use of the emmeans() package. We will pull the model from split plot lesson ([**Chapter 6**](split-plot-design.qmd)), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield.
+To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 6**](split-plot-design.qmd).
+
+
+::: callout-note
+#### Marginal means using lmer and nlme
+
+For demonstration of the `emmeans` package, we are fitting model with `nlme` package. Please note that code below calculating marginal means works for both `lmer` and `nlme` models.
+:::
+
+Let's start the analysis by loading the required libraries for fitting linear mixed models using `nlme` package.
+
+## Analysis Examples
+
+```{r, warning=FALSE, message=FALSE}
+library(nlme); library(performance); library(emmeans)
+library(dplyr); library(broom.mixed)
+```
+
+
+### Import data
+```{r}
+data1 <- MASS::oats
+```
+
+
+### Model fitting
+```{r}
+model1 <- lme(Y ~  V + N + V:N ,
+                  random = ~1|B/V,
+                  data = data1, 
+                  na.action = na.exclude)
+tidy(model1)
+```
+
+
+
+### Check Model Assumptions
+
+```{r,  fig.height=3}
+check_model(model1, check = c('normality', 'linearity'))
+```
+
+### Model Inference
+
+```{r}
+anova(model1, type = "marginal")
+```
+
+### Estimated Marginal Means
+
+Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let's use the `emmeans()` function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects. 
+
+#### Main effects
+
+```{r}
+m1 <- emmeans(model1, ~V, level = 0.95)
+m1
+
+m2 <- emmeans(model1, ~N)
+m2
+```
+
+
+#### Interaction effects
+
+```{r}
+m3 <- emmeans(model1, ~V*N)
+m3
+
+
+m4 <- emmeans(model1, ~V|N)
+m4
+
+```
+
 
 
 
@@ -228,7 +300,27 @@ Compact letter display
 
 The letters indicating significant differences can be generated using cld() function from the 'multcomp' package". In the output below, groups sharing a letter in the .group are not statistically different from each other.
 
-::: {.callout-tip}
+
+
+## using adjusted P-values
+
+P values, “significance”, and recommendations : https://cran.r-project.org/web/packages/emmeans/vignettes/basics.html#emms
+
+Summary of main points
+  EMMs are derived from a model. A different model for the same data may lead to different EMMs.
+  EMMs are based on a reference grid consisting of all combinations of factor levels, with each covariate set to its average (by default).
+  For purposes of defining the reference grid, dimensions of a multivariate response are treated as levels of a factor.
+  EMMs are then predictions on this reference grid, or marginal averages thereof (equally weighted by default).
+  Reference grids may be modified using at or other arguments for ref_grid()
+  Reference grids and emmeans() results may be plotted via plot() (for parallel confidence intervals) or emmip() (for an interaction-style plot).
+  Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “nonsignificant” result as saying that there is no effect.
+  Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
+
+
+
+
+
+::: {.callout-caution}
 ## Cautionary Note about CLD
 
 It's important to note that we cannot conclude that treatment levels with the same letter are the same. We can only conclude that they are not different. 
@@ -238,5 +330,11 @@ There is a separate branch of statistics, "[equivalence testing](https://en.wiki
 See @sec-cld_warning for additional warnings about problems with using compact letter display. 
 :::
 
+
+::: {.callout-note}
+## More details on emmeans
+
+If you want to read more about emmeans, please refer to vignettes on this [CRAN page](https://cran.r-project.org/web/packages/emmeans/index.html).
+:::
 
 
