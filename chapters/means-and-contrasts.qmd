@@ -13,6 +13,208 @@ library(lme4)
 
 ## Estimated Marginal Means
 
+Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
+model predictions over the grid comprising all factor combinations – called the reference grid
+
+In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.
+
+
+
+```{r, eval=FALSE}
+One-way estimated marginal means and plot
+
+library(multcomp)
+library(emmeans)
+
+marginal = emmeans(model,
+                   ~ Location)
+
+CLD = cld(marginal,
+          alpha=0.05,
+          Letters=letters,
+          adjust="tukey")
+
+CLD
+
+
+Location        emmean        SE df  lower.CL upper.CL .group
+ Olympia      8.333333 0.6718548 16  6.449596 10.21707  a   
+ Northampton 11.833333 0.6718548 16  9.949596 13.71707   b  
+ Ventura     13.333333 0.6718548 16 11.449596 15.21707   b  
+ Burlington  21.833333 0.6718548 16 19.949596 23.71707    c 
+
+
+
+### Order the levels for printing
+
+CLD$Location = factor(CLD$Location,
+                       levels=c("Olympia", "Ventura", "Northampton", "Burlington"))
+
+###  Remove spaces in .group 
+
+CLD$.group=gsub(" ", "", CLD$.group)
+
+
+### Plot
+
+library(ggplot2)
+
+ggplot(CLD,
+       aes(x     = Location,
+           y     = emmean,
+           label = .group)) +
+
+    geom_point(shape  = 15,
+               size   = 4) +
+
+    geom_errorbar(aes(ymin  =  lower.CL,
+                      ymax  =  upper.CL),
+                      width =  0.2,
+                      size  =  0.7) +
+
+    theme_bw() +
+    theme(axis.title   = element_text(face = "bold"),
+          axis.text    = element_text(face = "bold"),
+          plot.caption = element_text(hjust = 0)) +
+
+    ylab("Estimated marginal mean\nmidichlorian count") +
+    ggtitle ("Midichlorian counts",
+
+             subtitle = "In four U.S. cities") +
+
+            labs(caption  = paste0("\nMidichlorian counts for four locations. ",
+                                   "Boxes indicate the EM mean. \n",
+                                   "Error bars indicate the 95% ",
+                                   "confidence interval of the EM mean. \n",
+                                   "Means sharing a letter are not ",
+                                   "significantly different (Tukey-adjusted \n",
+                                   "comparisons)."),
+                            hjust=0.5) +
+
+  geom_text(nudge_x = c(0, 0, 0, 0),
+            nudge_y = c(4, 4, 4, 4),
+            color   = "black")
+```
+
+
+### Interactions using Emmeans
+
+```{r}
+
+```
+
+```{r, eval=FALSE}
+Interaction plot of estimated marginal means
+
+library(multcomp)
+library(emmeans)
+
+marginal = emmeans(model,
+                   ~ Tribe:Location)
+
+CLD = cld(marginal,
+          alpha=0.05,
+          Letters=letters,
+          adjust="tukey")
+
+CLD
+
+
+Tribe  Location       emmean        SE df  lower.CL upper.CL .group
+ Sith  Olympia      4.333333 0.9501462 16  1.354477  7.31219  a   
+ Jedi  Northampton  8.666667 0.9501462 16  5.687810 11.64552  ab  
+ Sith  Ventura     10.666667 0.9501462 16  7.687810 13.64552   bc 
+ Jedi  Olympia     12.333333 0.9501462 16  9.354477 15.31219   bcd
+ Sith  Northampton 15.000000 0.9501462 16 12.021143 17.97886    cd
+ Jedi  Ventura     16.000000 0.9501462 16 13.021143 18.97886     d
+ Jedi  Burlington  20.666667 0.9501462 16 17.687810 23.64552      e
+ Sith  Burlington  23.000000 0.9501462 16 20.021143 25.97886      e
+
+
+
+### Order the levels for printing
+
+CLD$Location = factor(CLD$Location,
+                       levels=c("Olympia", "Ventura", "Northampton", "Burlington"))
+
+CLD$Tribe = factor(CLD$Tribe,
+                       levels=c("Jedi", "Sith"))
+
+###  Remove spaces in .group 
+
+CLD$.group=gsub(" ", "", CLD$.group)
+
+
+CLD
+
+
+### Plot
+
+library(ggplot2)
+
+pd = position_dodge(0.4)    ### How much to jitter the points on the plot
+
+ggplot(CLD,
+       aes(x     = Location,
+           y     = emmean,
+           color = Tribe,
+           label = .group)) +
+
+    geom_point(shape  = 15,
+               size   = 4,
+             position = pd) +
+
+    geom_errorbar(aes(ymin  =  lower.CL,
+                      ymax  =  upper.CL),
+                      width =  0.2,
+                      size  =  0.7,
+                      position = pd) +
+
+    theme_bw() +
+    theme(axis.title   = element_text(face = "bold"),
+          axis.text    = element_text(face = "bold"),
+          plot.caption = element_text(hjust = 0)) +
+
+    ylab("Estimated marginal mean\nmidichlorian count") +
+     ggtitle ("Midichlorian counts for Jedi and Sith",
+            subtitle = "In four U.S. cities") +
+ 
+            labs(caption  = paste0("\nMidichlorian counts for two tribes across ",
+                                   "four locations. Boxes indicate \n",
+                                   "the EM mean. ",
+                                   "Error bars indicate the 95% confidence ",
+                                   "interval ",
+                                    "of the EM \n",
+                                   "mean. Means sharing a letter are ",
+                                   "not significantly different \n",
+                                   "(Tukey-adjusted comparisons)."),
+                            hjust=0.5) +
+ 
+  geom_text(nudge_x = c(0.1, -0.1, 0.1, -0.1, 0.1, -0.1, -0.1, 0.1),
+            nudge_y = c(4.5,  4.5, 4.5,  4.5, 4.5 , 4.5,  4.5, 4.5),
+            color   = "black") +
+ 
+  scale_color_manual(values = c("blue", "red"))
+
+
+```
+
+### Contrasts using Emmeans
+```{r, eval=FALSE}
+(warp.emm <- emmeans(warp.lm, ~ tension | wool))
+
+contrast(warp.emm, "poly")
+```
+
+
+
+```{r}
+
+```
+
+
+
+
 
 Compact letter display
 ```{r}
