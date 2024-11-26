@@ -6,12 +6,11 @@ execute:
 
 ## Background
 
+To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
 
-Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
-model predictions over the grid comprising all factor combinations – called the reference grid
+The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs(mixed models). This is a flexible package has a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
 
 In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.
-
 
 To demonstrate the use of the emmeans() package. We will pull the model from split plot lesson ([**Chapter 6**](split-plot-design.qmd)), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield.
 To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 6**](split-plot-design.qmd).
@@ -26,18 +25,16 @@ For demonstration of the `emmeans` package, we are fitting model with `nlme` pac
 Let's start the analysis by loading the required libraries for fitting linear mixed models using `nlme` package.
 
 ## Analysis Examples
-
 ```{r, warning=FALSE, message=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed)
 ```
 
-
 ### Import data
+Let's import oats data from the MASS package.
 ```{r}
 data1 <- MASS::oats
 ```
-
 
 ### Model fitting
 ```{r}
@@ -48,8 +45,6 @@ model1 <- lme(Y ~  V + N + V:N ,
 tidy(model1)
 ```
 
-
-
 ### Check Model Assumptions
 
 ```{r,  fig.height=3}
@@ -57,40 +52,34 @@ check_model(model1, check = c('normality', 'linearity'))
 ```
 
 ### Model Inference
-
 ```{r}
 anova(model1, type = "marginal")
 ```
 
 ### Estimated Marginal Means
 
+Now that we have a good model, let’s use the emmeans() function to obtain EMMs.
+
 Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let's use the `emmeans()` function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects. 
 
 #### Main effects
-
 ```{r}
 m1 <- emmeans(model1, ~V, level = 0.95)
 m1
+```
 
+```{r}
 m2 <- emmeans(model1, ~N)
 m2
 ```
 
-
 #### Interaction effects
-
 ```{r}
 m3 <- emmeans(model1, ~V*N)
 m3
-
-
 m4 <- emmeans(model1, ~V|N)
 m4
-
 ```
-
-
-
 
 ```{r, eval=FALSE}
 One-way estimated marginal means and plot
