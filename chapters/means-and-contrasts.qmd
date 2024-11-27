@@ -8,7 +8,7 @@ execute:
 
 To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
 
-The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs(mixed models). This is a flexible package has a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
+The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs(mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
 
 In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.
 
@@ -29,13 +29,15 @@ Let's start the analysis by loading the required libraries for fitting linear mi
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed)
 ```
-
 ### Import data
 Let's import oats data from the MASS package.
+
+::: column-margin
+To read more about data and model fitting explanation please refer to [**Chapter 6**](split-plot-design.qmd).
+:::
 ```{r}
 data1 <- MASS::oats
 ```
-
 ### Model fitting
 ```{r}
 model1 <- lme(Y ~  V + N + V:N ,
@@ -44,13 +46,10 @@ model1 <- lme(Y ~  V + N + V:N ,
                   na.action = na.exclude)
 tidy(model1)
 ```
-
 ### Check Model Assumptions
-
 ```{r,  fig.height=3}
 check_model(model1, check = c('normality', 'linearity'))
 ```
-
 ### Model Inference
 ```{r}
 anova(model1, type = "marginal")
@@ -77,18 +76,45 @@ m2
 ```{r}
 m3 <- emmeans(model1, ~V*N)
 m3
+```
+
+```{r}
 m4 <- emmeans(model1, ~V|N)
 m4
 ```
 
+## Compact letter displays
+Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. 
+The R package `multcompView` (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.
+
+The `cld()` function from the multcomp package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
+
+Let's start evaluating CLDs for main effects. We will use emmean objects m1 and m2 for this. 
+
+
+```{r}
+cld(m1, alpha=0.05, Letters=letters)
+```
+```{r}
+cld(m2, alpha=0.05, Letters=letters)
+```
+Let's have a look at the CLDs for the interaction effect:
+
+```{r}
+cld(m3, alpha=0.05, Letters=letters)
+```
+Interpreation of these letters is: Here we have a significant difference in grain yield with varieties "victory", with N treatments of 0.0cwt, 0.2cwt, 0.4cwt, and 0.6wt. Grain yield for Golden.rain variety was significantly lower with 0.0cwt N treatment compared to the 0.2cwt, 0.4cwt, and 0.6wt treatments.
+
+
+
+## Alternatives to CLD
 ```{r, eval=FALSE}
 One-way estimated marginal means and plot
 
 library(multcomp)
 library(emmeans)
 
-marginal = emmeans(model,
-                   ~ Location)
+marginal = emmeans(model, ~ Location)
 
 CLD = cld(marginal,
           alpha=0.05,
