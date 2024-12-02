@@ -1,7 +1,5 @@
 ---
 title: Marginal Means & Contrasts
-execute: 
-  eval: false
 ---
 
 ## Background
@@ -27,7 +25,8 @@ Let's start the analysis by loading the required libraries for fitting linear mi
 ## Analysis Examples
 ```{r, warning=FALSE, message=FALSE}
 library(nlme); library(performance); library(emmeans)
-library(dplyr); library(broom.mixed)
+library(dplyr); library(broom.mixed); library(multcompView)
+library(multcomp)
 ```
 ### Import data
 Let's import oats data from the MASS package.
@@ -71,8 +70,10 @@ m1
 m2 <- emmeans(model1, ~N)
 m2
 ```
+Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects for V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it's N treatments, respectively.
 
 #### Interaction effects
+Now let's evaluate the interaction effect EMMs for V and N. These can be calculated either using `V*N` or `V|N`. 
 ```{r}
 m3 <- emmeans(model1, ~V*N)
 m3
@@ -82,6 +83,56 @@ m3
 m4 <- emmeans(model1, ~V|N)
 m4
 ```
+
+## Pairwise comparison using emmeans
+
+Firstly, the `pairs()` function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through `pairs()` function which will provide a p-value adjustment equivalent to the Tukey test.
+
+```{r}
+pairs(m1, adjust = "tukey")
+```
+
+### Custom contrasts 
+
+1. Treatment 
+
+Firstly, let's run emmean object 'm1' for variety compariosn.
+
+```{r}
+m1
+```
+```{r}
+coef(pairs(m1))
+```
+
+
+
+```{r}
+A1 = c(1, 0, 0)
+A2 = c(0, 1, 0)
+A3 = c(0, 0, 1)
+```
+
+These vectors (A1, A2, A3) represent each variety in an order as presented in m1 emmean object. A1, A2, and A3 vectors represent Golden.rain, Marvellous, and Victor varieties, respectively. 
+
+
+
+
+```{r}
+m1
+
+
+emmeans(m1, specs = pairwise ~ V, 
+         at = list(sub.rate = c("Golden.rain", "Victory") ) )
+```
+
+
+::: {.callout-caution}
+## `pairs()`
+Remember!! 
+The `pairs()` function can be used to calculate pairwise comparison when treatment groups are less than equal to 3. 
+:::
+
 
 ## Compact letter displays
 Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. 
@@ -103,7 +154,7 @@ Let's have a look at the CLDs for the interaction effect:
 ```{r}
 cld(m3, alpha=0.05, Letters=letters)
 ```
-Interpreation of these letters is: Here we have a significant difference in grain yield with varieties "victory", with N treatments of 0.0cwt, 0.2cwt, 0.4cwt, and 0.6wt. Grain yield for Golden.rain variety was significantly lower with 0.0cwt N treatment compared to the 0.2cwt, 0.4cwt, and 0.6wt treatments.
+Interpretation of these letters is: Here we have a significant difference in grain yield with varieties "victory", with N treatments of 0.0cwt, 0.2cwt, 0.4cwt, and 0.6wt. Grain yield for Golden.rain variety was significantly lower with 0.0cwt N treatment compared to the 0.2cwt, 0.4cwt, and 0.6wt treatments.
 
 
 
@@ -190,7 +241,7 @@ ggplot(CLD,
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=FALSE}
 Interaction plot of estimated marginal means
 
 library(multcomp)
@@ -321,12 +372,7 @@ The letters indicating significant differences can be generated using cld() func
 
 P values, “significance”, and recommendations : https://cran.r-project.org/web/packages/emmeans/vignettes/basics.html#emms
 
-Summary of main points
-  EMMs are derived from a model. A different model for the same data may lead to different EMMs.
-  EMMs are based on a reference grid consisting of all combinations of factor levels, with each covariate set to its average (by default).
-  For purposes of defining the reference grid, dimensions of a multivariate response are treated as levels of a factor.
-  EMMs are then predictions on this reference grid, or marginal averages thereof (equally weighted by default).
-  Reference grids may be modified using at or other arguments for ref_grid()
+
   Reference grids and emmeans() results may be plotted via plot() (for parallel confidence intervals) or emmip() (for an interaction-style plot).
   Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “nonsignificant” result as saying that there is no effect.
   Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
