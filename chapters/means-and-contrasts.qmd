@@ -84,13 +84,18 @@ m4 <- emmeans(model1, ~V|N)
 m4
 ```
 
-## Pairwise comparison using emmeans
+## Contrasts using emmeans
 
 Firstly, the `pairs()` function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through `pairs()` function which will provide a p-value adjustment equivalent to the Tukey test.
 
 ```{r}
 pairs(m1, adjust = "tukey")
 ```
+```{r}
+pairs(m2)
+```
+Here if we look at the results from code chunk above, it's easy to interpret results from `pairs()` function in case of varietey comparison becuase there were only 3 groups. It's bit confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.
+
 
 ### Custom contrasts 
 
@@ -99,32 +104,49 @@ pairs(m1, adjust = "tukey")
 Firstly, let's run emmean object 'm1' for variety compariosn.
 
 ```{r}
-m1
+m2
 ```
+```{r, echo=FALSE}
+#emmeans(model1, specs = trt.vs.ctrlk ~ N)
+```
+
+
+
 ```{r}
 coef(pairs(m1))
 ```
 
-
+Now, lets a create a vector for each variety in the same order as presented in output from m1. 
 
 ```{r}
 A1 = c(1, 0, 0)
 A2 = c(0, 1, 0)
 A3 = c(0, 0, 1)
+
 ```
 
-These vectors (A1, A2, A3) represent each variety in an order as presented in m1 emmean object. A1, A2, and A3 vectors represent Golden.rain, Marvellous, and Victor varieties, respectively. 
 
+```{r, echo =FALSE}
+A1 = c(1, 0, 0, 0)
+A2 = c(0, 1, 0, 0)
+A3 = c(0, 0, 1, 0)
+A4 = c(0, 0, 0, 1)
+```
+These vectors (A1, A2, A3, A4) represent each Nitrogen treatment in an order as presented in m2 emmeans object. A1, A2, and A3, A4 vectors represents 0.0cwt, 0.2cwt, 0.4cwt, and 0.6cwt treatments, respectively. 
 
-
-
+Let's create custom contrasts for comparing '0.0cwt' (A1) treatment to  '0.2cwt' (A2), '0.4cwt' (A3), and '0.6cwt' (A4) treatments. 
+This can be evaluated as shown below:
+Here the output shows the difference in mean yield between these two varieties
 ```{r}
-m1
+pairs(m2, adjust = "tukey")
+contrast(m2, method = list(A1 - A2) )
+contrast(m2, method = list(A1 - A3) )
+contrast(m2, method = list(A1 - A4) )
 
-
-emmeans(m1, specs = pairwise ~ V, 
-         at = list(sub.rate = c("Golden.rain", "Victory") ) )
 ```
+::: column-margin
+Using custom contrasts is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
+:::
 
 
 ::: {.callout-caution}
@@ -149,6 +171,7 @@ cld(m1, alpha=0.05, Letters=letters)
 ```{r}
 cld(m2, alpha=0.05, Letters=letters)
 ```
+
 Let's have a look at the CLDs for the interaction effect:
 
 ```{r}
