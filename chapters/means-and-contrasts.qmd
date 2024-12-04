@@ -26,7 +26,7 @@ Let's start the analysis by loading the required libraries for fitting linear mi
 ```{r, warning=FALSE, message=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(multcompView)
-library(multcomp)
+library(multcomp); library(ggplot2)
 ```
 ### Import data
 Let's import oats data from the MASS package.
@@ -151,7 +151,8 @@ cld(m2, alpha=0.05, Letters=letters)
 Let's have a look at the CLDs for the interaction effect:
 
 ```{r}
-cld(m3, alpha=0.05, Letters=letters)
+cld3 <- cld(m3, alpha=0.05, Letters=letters)
+cld3
 ```
 Interpretation of these letters is: Here we have a significant difference in grain yield with varieties "victory", with N treatments of 0.0cwt, 0.2cwt, 0.4cwt, and 0.6wt. Grain yield for Golden.rain variety was significantly lower with 0.0cwt N treatment compared to the 0.2cwt, 0.4cwt, and 0.6wt treatments.
 
@@ -180,21 +181,42 @@ cld(m2, signif = TRUE)
 
 The emmean objects can be directly exported 
 
-### start from here 
 ```{r}
 result_n <- as.data.frame(summary(m1))
 ```
-
 
 ```{r}
 library(writexl)
 write_xlsx(result_n)
 ```
+## Graphical display of emmeans 
 
+The results of emmeans() object can be plotted in two different ways.
+
+Firstly, we can use base `plot()` function in R. 
 
 ```{r}
-
+plot(m1)
+plot(m4)
 ```
+Or we can use 'ggplot2' library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.
+
+```{r}
+ggplot(cld3) +
+  aes(x = V, y = emmean, color = N) +
+  geom_point(position = position_dodge(width = 0.9)) +
+  geom_errorbar(mapping = aes(ymin = lower.CL, ymax = upper.CL), 
+                              position = position_dodge(width = 1),
+                width = 0.1) +
+  geom_text(mapping = aes(label = .group, y = upper.CL * 1.05), 
+            position = position_dodge(width = 0.8), 
+            show.legend = F)+
+  theme_bw()+
+  theme(axis.text= element_text(color = "black",
+                                size =12))
+```
+Recall: groups that do not differ significantly from each other share the same letter. 
+
 
 
 
