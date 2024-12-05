@@ -55,9 +55,6 @@ anova(model1, type = "marginal")
 ```
 
 ### Estimated Marginal Means
-
-Now that we have a good model, let’s use the emmeans() function to obtain EMMs.
-
 Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let's use the `emmeans()` function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects. 
 
 #### Main effects
@@ -70,7 +67,7 @@ m1
 m2 <- emmeans(model1, ~N)
 m2
 ```
-Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects for V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it's N treatments, respectively.
+Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it's N treatments, respectively.
 
 #### Interaction effects
 Now let's evaluate the interaction effect EMMs for V and N. These can be calculated either using `V*N` or `V|N`. 
@@ -131,23 +128,19 @@ contrast(m2, method = list(A1 - A4) )
 Using custom contrasts is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
 :::
 
-
 ## Compact letter displays
 Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. 
 The R package `multcompView` (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.
 
-The `cld()` function from the multcomp package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
+The `cld()` function from the *multcomp* package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
 
-Let's start evaluating CLDs for main effects. We will use emmean objects m1 and m2 for this. 
-
-
+Let's start evaluating CLDs for main effects. We will use emmean objects m1 and m2 for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.
 ```{r}
 cld(m1, alpha=0.05, Letters=letters)
 ```
 ```{r}
 cld(m2, alpha=0.05, Letters=letters)
 ```
-
 Let's have a look at the CLDs for the interaction effect:
 
 ```{r}
@@ -177,22 +170,29 @@ Another alternative is to simply reverse all the boolean flags we used in constr
 ```{r}
 cld(m2, signif = TRUE)
 ```
-## Export emmeans to excel sheet
 
-The emmean objects can be directly exported 
+::: {.callout-caution}
+## Cautionary Note about CLD
+
+It's important to note that we cannot conclude that treatment levels with the same letter are the same. We can only conclude that they are not different. 
+
+There is a separate branch of statistics, "[equivalence testing](https://en.wikipedia.org/wiki/Equivalence_test)" that is for ascertaining if things are sufficiently similar to conclude they are equivalent. 
+
+See @sec-cld_warning for additional warnings about problems with using compact letter display. 
+:::
+
+## Export emmeans to excel sheet
+The outputs from `emmeans()` or `cld()` objects can exported by firstly converting outputs to a data frame and then using writexlsx() function from the 'writexl' package to export the outputs.
 
 ```{r}
 result_n <- as.data.frame(summary(m1))
 ```
 
 ```{r}
-library(writexl)
-write_xlsx(result_n)
+writexl::write_xlsx(result_n)
 ```
 ## Graphical display of emmeans 
-
 The results of emmeans() object can be plotted in two different ways.
-
 Firstly, we can use base `plot()` function in R. 
 
 ```{r}
@@ -201,7 +201,7 @@ plot(m4)
 ```
 Or we can use 'ggplot2' library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.
 
-```{r}
+```{r, warning = FALSE}
 ggplot(cld3) +
   aes(x = V, y = emmean, color = N) +
   geom_point(position = position_dodge(width = 0.9)) +
@@ -217,229 +217,10 @@ ggplot(cld3) +
 ```
 Recall: groups that do not differ significantly from each other share the same letter. 
 
-
-
-
-```{r, eval=FALSE, echo = FALSE}
-One-way estimated marginal means and plot
-
-library(multcomp)
-library(emmeans)
-
-marginal = emmeans(model, ~ Location)
-
-CLD = cld(marginal,
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
-
-CLD
-
-
-### Order the levels for printing
-
-CLD$Location = factor(CLD$Location,
-                       levels=c("Olympia", "Ventura", "Northampton", "Burlington"))
-
-###  Remove spaces in .group 
-
-CLD$.group=gsub(" ", "", CLD$.group)
-
-
-### Plot
-
-library(ggplot2)
-
-ggplot(CLD,
-       aes(x     = Location,
-           y     = emmean,
-           label = .group)) +
-
-    geom_point(shape  = 15,
-               size   = 4) +
-
-    geom_errorbar(aes(ymin  =  lower.CL,
-                      ymax  =  upper.CL),
-                      width =  0.2,
-                      size  =  0.7) +
-
-    theme_bw() +
-    theme(axis.title   = element_text(face = "bold"),
-          axis.text    = element_text(face = "bold"),
-          plot.caption = element_text(hjust = 0)) +
-
-    ylab("Estimated marginal mean\nmidichlorian count") +
-    ggtitle ("Midichlorian counts",
-
-             subtitle = "In four U.S. cities") +
-
-            labs(caption  = paste0("\nMidichlorian counts for four locations. ",
-                                   "Boxes indicate the EM mean. \n",
-                                   "Error bars indicate the 95% ",
-                                   "confidence interval of the EM mean. \n",
-                                   "Means sharing a letter are not ",
-                                   "significantly different (Tukey-adjusted \n",
-                                   "comparisons)."),
-                            hjust=0.5) +
-
-  geom_text(nudge_x = c(0, 0, 0, 0),
-            nudge_y = c(4, 4, 4, 4),
-            color   = "black")
-```
-
-
-
-
-## creating plots with emmeans
-
-
-
-### Interactions using Emmeans
-
-```{r, eval=FALSE, echo=FALSE}
-Interaction plot of estimated marginal means
-
-library(multcomp)
-library(emmeans)
-
-marginal = emmeans(model,
-                   ~ Tribe:Location)
-
-CLD = cld(marginal,
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
-
-CLD
-
-
-Tribe  Location       emmean        SE df  lower.CL upper.CL .group
- Sith  Olympia      4.333333 0.9501462 16  1.354477  7.31219  a   
- Jedi  Northampton  8.666667 0.9501462 16  5.687810 11.64552  ab  
- Sith  Ventura     10.666667 0.9501462 16  7.687810 13.64552   bc 
- Jedi  Olympia     12.333333 0.9501462 16  9.354477 15.31219   bcd
- Sith  Northampton 15.000000 0.9501462 16 12.021143 17.97886    cd
- Jedi  Ventura     16.000000 0.9501462 16 13.021143 18.97886     d
- Jedi  Burlington  20.666667 0.9501462 16 17.687810 23.64552      e
- Sith  Burlington  23.000000 0.9501462 16 20.021143 25.97886      e
-
-
-
-### Order the levels for printing
-
-CLD$Location = factor(CLD$Location,
-                       levels=c("Olympia", "Ventura", "Northampton", "Burlington"))
-
-CLD$Tribe = factor(CLD$Tribe,
-                       levels=c("Jedi", "Sith"))
-
-###  Remove spaces in .group 
-
-CLD$.group=gsub(" ", "", CLD$.group)
-
-
-CLD
-
-
-### Plot
-
-library(ggplot2)
-
-pd = position_dodge(0.4)    ### How much to jitter the points on the plot
-
-ggplot(CLD,
-       aes(x     = Location,
-           y     = emmean,
-           color = Tribe,
-           label = .group)) +
-
-    geom_point(shape  = 15,
-               size   = 4,
-             position = pd) +
-
-    geom_errorbar(aes(ymin  =  lower.CL,
-                      ymax  =  upper.CL),
-                      width =  0.2,
-                      size  =  0.7,
-                      position = pd) +
-
-    theme_bw() +
-    theme(axis.title   = element_text(face = "bold"),
-          axis.text    = element_text(face = "bold"),
-          plot.caption = element_text(hjust = 0)) +
-
-    ylab("Estimated marginal mean\nmidichlorian count") +
-     ggtitle ("Midichlorian counts for Jedi and Sith",
-            subtitle = "In four U.S. cities") +
- 
-            labs(caption  = paste0("\nMidichlorian counts for two tribes across ",
-                                   "four locations. Boxes indicate \n",
-                                   "the EM mean. ",
-                                   "Error bars indicate the 95% confidence ",
-                                   "interval ",
-                                    "of the EM \n",
-                                   "mean. Means sharing a letter are ",
-                                   "not significantly different \n",
-                                   "(Tukey-adjusted comparisons)."),
-                            hjust=0.5) +
- 
-  geom_text(nudge_x = c(0.1, -0.1, 0.1, -0.1, 0.1, -0.1, -0.1, 0.1),
-            nudge_y = c(4.5,  4.5, 4.5,  4.5, 4.5 , 4.5,  4.5, 4.5),
-            color   = "black") +
- 
-  scale_color_manual(values = c("blue", "red"))
-
-
-```
-
-### Contrasts using Emmeans
-```{r, eval=FALSE}
-(warp.emm <- emmeans(warp.lm, ~ tension | wool))
-
-contrast(warp.emm, "poly")
-```
-
-
-
+we can also use `emmip()` built in emmeans package to look at the trend in interaction of variety and nitrogen factors.
 ```{r}
-
+emmip(model1, N ~ V)
 ```
-
-
-
-
-
-Compact letter display
-```{r}
-#library(multcomp); library(multcompView)
-```
-
-```{r}
-#cld(m1, Letters= letters)
-```
-
-
-The letters indicating significant differences can be generated using cld() function from the 'multcomp' package". In the output below, groups sharing a letter in the .group are not statistically different from each other.
-
-
-
-## using adjusted P-values
-
-P values, “significance”, and recommendations : https://cran.r-project.org/web/packages/emmeans/vignettes/basics.html#emms
-
-
-Reference grids and emmeans() results may be plotted via plot() (for parallel confidence intervals) or emmip() (for an interaction-style plot). Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “nonsignificant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
-
-
-::: {.callout-caution}
-## Cautionary Note about CLD
-
-It's important to note that we cannot conclude that treatment levels with the same letter are the same. We can only conclude that they are not different. 
-
-There is a separate branch of statistics, "[equivalence testing](https://en.wikipedia.org/wiki/Equivalence_test)" that is for ascertaining if things are sufficiently similar to conclude they are equivalent. 
-
-See @sec-cld_warning for additional warnings about problems with using compact letter display. 
-:::
 
 
 ::: {.callout-note}
@@ -448,4 +229,13 @@ See @sec-cld_warning for additional warnings about problems with using compact l
 If you want to read more about emmeans, please refer to vignettes on this [CRAN page](https://cran.r-project.org/web/packages/emmeans/index.html).
 :::
 
+## Conclusion
+Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “nonsignificant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
 
+::: {.callout-note}
+## P values, “significance”, and recommendations
+
+P values are often misinterpreted, and the term “statistical significance” can be misleading. Please refer to this [link](https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e167) to read more about basic principles outlined by the American Statistical Association when considering p-values.
+
+If you want to read more about emmeans, please refer to vignettes on this [CRAN page](https://cran.r-project.org/web/packages/emmeans/index.html).
+:::
