@@ -1,10 +1,10 @@
 # Mixed model theory and background
 
-Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects (e.g. treatments) represent population-level (i.e., average) effects that should persist across experiments. Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares. Random effects are discrete units sampled from some population (e.g. plots, participants), and thus they are inherently categorical.
+Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects (e.g. treatments) represent population-level (average) effects that should persist across experiments. Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares. Random effects are discrete units sampled from some population (e.g. plots, participants), and thus they are inherently categorical.
 
 ## Model
 
-Recall simple linear regression with intercept ($\beta_0$) and slope ($\beta_1$) effect for subject *i*. The slope and intercept are chosen in a way so that the residual sum of squares is minimized.
+Recall simple linear regression with intercept ($\beta_0$) and slope ($\beta_1$) effect for subject $i$. The slope and intercept are chosen in a way so that the residual sum of squares is minimized.
 
 $$  Y = \beta_0 + \beta_1 X + \epsilon $$
 
@@ -24,7 +24,7 @@ In second case, we can have a fixed intercept and a random slope. The model will
 
 $$  Y = \beta_0 + (\beta_1 + b_i)(X) + \epsilon$$
 
-In this model, the *bi* is a random effect for subject *i* applied to the slope. Predictions would vary with random slope term, but the intercept will be the same:
+In this model, the $\beta_i$ is a random effect for subject $i$. Predictions would vary with random slope term, but the intercept will be the same:
 
 ::: column-margin
 ![Mixed model with random slopes but identical intercepts.](/img/fixed_intercept_random_slope.png)
@@ -34,7 +34,7 @@ Third case would be the mixed model with random slope and intercept:
 
 $$  Y = (\beta_0 + a_i) + (\beta_1 + b_i)(X) + \epsilon$$
 
-In this model, $a_i$ and $b_i$ are random effects for subject *i* applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:
+In this model, $a_i$ and $b_i$ are random effects for subject $i$ applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:
 
 ::: column-margin
 ![Mixed Model with random intercept and slope](/img/random_intercept_and_slope.png)
@@ -42,19 +42,26 @@ In this model, $a_i$ and $b_i$ are random effects for subject *i* applied to the
 
 ## R Formula Syntax for Random and Fixed Effects {#formula-notation}
 
-Formula notation is often used in the R syntax for linear models. It looks like this: $Y ~ X$, where Y is the dependent variable (the response) and X is/are the independent variable(s) (e.g. the experimental treatments).
+Formula notation is often used in the R syntax for linear models. It looks like this: $Y ~ X$, where $Y$ is the dependent variable (the response) and $X$ is/are the independent variable(s) that is, the experimental treatments or interventions. 
 
 ```{r}
 my_formula <- formula(Y ~ treatment1 + treatment2)
 class(my_formula)
 ```
 
-The package 'lme4' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of grouping factors are denoted g, g1, and g2, and covariate as x.
+The package '**lme4**' has some additional conventions regarding the formula. Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of grouping factors are denoted `g`, `g1`, and `g2`, and covariates as `x`.
 
 | Formula                 | Alternative                     | Meaning                                      |
 |-------------------------|---------------------------------|----------------------------------------------|
-| (1 \| g)                | 1 + (1 \| g)                    | Random intercept with a fixed mean           |
-| (1 \| g1/g2)            | (1 \| g1) + (1 \| g1:g2)        | Intercept varying among g1 and g2 within g1. |
-| (1 \| g1) + (1 \| g2)   | 1 + (1 \| g1) + (1\| g2)        | Intercept varying among g1 and g2.           |
-| x + (x \| g)            | 1 + x + (1 + x \| g)            | Correlated random intercept and slope        |
-| x + (x \|\| g)          | 1 + x + (1 \| g) + (0 + x \| g) | Uncorrelated random intercept and slope.     |
+| `(1|g)`               | `1 + (1|g)`                    | Random intercept with a fixed mean           |
+| `(1|g1/g2)  `          | `(1| 1) + (1|g1:g2)`        | Intercept varying among g1 and g2 within g1 |
+| `(1|g1) + (1|g2)`   | `1 + (1|g1) + (1|g2)`        | Intercept varying among g1 and g2           |
+| `x + (x|g)`            | `1 + x + (1 + x|g)`            | Correlated random intercept and slope        |
+| `x + (x||g)`          | `1 + x + (1|g) + (0 + x|g)` | Uncorrelated random intercept and slope     |
+
+
+The first example, `(1|g)` suffices for most models and is the only structure used in this guide.
+
+
+
+

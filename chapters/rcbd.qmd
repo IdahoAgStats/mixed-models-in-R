@@ -8,7 +8,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 This is a simple model that can serve as a good entrance point to mixed models.
 
-It is very common design where experimental treatments are applied at random to experimental units within each block. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes.
+Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks. 
 
 ## Background
 
@@ -54,7 +54,7 @@ library(dplyr)
 
 Next, let's load some data. It is located [here](https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv) if you want to download it yourself (recommended).
 
-This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield and test weight of each variety and the determine the rankings of each variety with regard to yield.
+This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the rankings of each variety for the variable.
 
 ```{r}
 var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
@@ -88,7 +88,7 @@ The first thing is to make sure the data is what we expect. There are two steps:
 str(var_trial)
 ```
 
-These look okay except for block, which is currently coded as integer (numeric). We don't want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but I find character easier to work with, and ultimately, equivalent to factor conversion
+These look okay except for block, which is currently coded as integer (numeric). We don't want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion
 
 ```{r}
 var_trial$block <- as.character(var_trial$block)
@@ -100,7 +100,7 @@ Next, check the independent variables. Running a cross tabulations is often suff
 table(var_trial$variety, var_trial$block)
 ```
 
-There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
+There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
 ::: callout-tip
 ## Missing Data
@@ -114,7 +114,7 @@ apply(var_trial, 2, function(x) sum(is.na(x)))
 Alas, no missing data!
 :::
 
-If there were independent variables with a continuous distribution (a covariate), I would plot those data.
+If there were independent variables with a continuous distribution (a covariate), plot those data.
 
 Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
 
@@ -130,7 +130,7 @@ hist(var_trial$yield_bu_a, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 
 hist(var_trial$yield_bu_a, main = "", xlab = "yield")
 ```
 
-The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems.
+The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are mp large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.
 
 Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
 
@@ -169,7 +169,9 @@ model_rcbd_lme <- lme(yield_bu_a ~ variety,
 ```
 :::
 
-The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. I use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
+The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. 
+
+We use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
 
 ### Check Model Assumptions
 
@@ -216,14 +218,14 @@ qqnorm(resid(model_rcbd_lmer), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqli
 qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
 ```
 
-This is reasonably good. Things do tend to fall apart at the tails.
+This is reasonably good. Things do tend to fall apart at the tails a little, so this is not concerning. 
 
-#### New Way
+#### New Way {#new-iid-checks}
 
 Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/) package, which provides a comprehensive suite of diagnostic plots.
 
 ::: column-margin
-Please look for `check_model()` in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use check = "all".
+Please look for `check_model()` in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use the argument `check = "all"`.
 :::
 
 ```{r, fig.height=3}
@@ -233,7 +235,7 @@ check_model(model_rcbd_lmer, check = c('normality', 'linearity'))
 ### Inference
 
 ::: column-margin
-R syntax for esimating model marginal means is the same for lme4 and nlme.
+R syntax for estimating model marginal means is the same for lme4 and nlme.
 :::
 
 Estimates for each treatment level can be obtained with the 'emmeans' package.
@@ -250,7 +252,7 @@ At this point, the analysis goals have been met: we know the estimated means for
 If you want to run ANOVA, it can be done quite easily. By default, the Kenward-Rogers method of degrees of freedom approximation is used.
 
 ::: column-margin
-The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the anova() function.
+The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the `anova()` function. This only matters when a data set is unbalanced across treatments, either due to design or missing data points. 
 :::
 
 ::: panel-tabset

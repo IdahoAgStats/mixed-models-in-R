@@ -4,29 +4,26 @@ A set of tutorial for running mixed models in R
 
 #### Not ready for public consumption. 
 
-### Tutorials done
+### Sections done
 
+- index/intr9o
+- background
+- analysis tips
 - RCBD
 
 
 ### Tutorials in progress
 
-- intro
-- tips
-- special conditions
+- factorial
 - resources
-- split plot, split-split plot
-- lattice
+- split plot
+- split-split plot
+- latin
 - IBD
-
-### Tutorials TODO
-
-
-- multi random effects
-- repeated measures - AR1, CS structures
-- glmm: non binary
-- glmm: log normal
-
+- strip plot
+- multiple random effects
+- repeated measures 
+- means-and-contrasts
 
 ### Other TODO
 
