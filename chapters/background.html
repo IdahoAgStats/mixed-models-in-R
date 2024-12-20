@@ -332,10 +332,10 @@ window.Quarto = {
 </header>
 
 
-<p>Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects (e.g.&nbsp;treatments) represent population-level (i.e., average) effects that should persist across experiments. Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares. Random effects are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are inherently categorical.</p>
+<p>Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. Fixed effects (e.g.&nbsp;treatments) represent population-level (average) effects that should persist across experiments. Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares. Random effects are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are inherently categorical.</p>
 <section id="model" class="level2 page-columns page-full" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="model"><span class="header-section-number">3.1</span> Model</h2>
-<p>Recall simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>) effect for subject <em>i</em>. The slope and intercept are chosen in a way so that the residual sum of squares is minimized.</p>
+<p>Recall simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>) effect for subject <span class="math inline">\(i\)</span>. The slope and intercept are chosen in a way so that the residual sum of squares is minimized.</p>
 <p><span class="math display">\[  Y = \beta_0 + \beta_1 X + \epsilon \]</span></p>
 <p>If we consider this model in a mixed model framework, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_0\)</span> are considered fixed effects (also known as the population-averaged values) and <span class="math inline">\(b_i\)</span> is a random effect for subject <em>i</em>. The random effect can be thought of as each subject’s deviation from the fixed intercept parameter. The key assumption about <span class="math inline">\(b_i\)</span> is that it is <strong>independent, identically and normally distributed with a mean of zero and associated variance</strong>. Random effects are especially useful when we have (1) lots of levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and (3) uneven sampling across levels.</p>
 <p>For example, if we let the intercept be a random effect, it takes the form:</p>
@@ -351,7 +351,7 @@ window.Quarto = {
 </div>
 </div></div><p>In second case, we can have a fixed intercept and a random slope. The model will be:</p>
 <p><span class="math display">\[  Y = \beta_0 + (\beta_1 + b_i)(X) + \epsilon\]</span></p>
-<p>In this model, the <em>bi</em> is a random effect for subject <em>i</em> applied to the slope. Predictions would vary with random slope term, but the intercept will be the same:</p>
+<p>In this model, the <span class="math inline">\(\beta_i\)</span> is a random effect for subject <span class="math inline">\(i\)</span>. Predictions would vary with random slope term, but the intercept will be the same:</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="quarto-figure quarto-figure-center">
@@ -362,7 +362,7 @@ window.Quarto = {
 </div>
 </div></div><p>Third case would be the mixed model with random slope and intercept:</p>
 <p><span class="math display">\[  Y = (\beta_0 + a_i) + (\beta_1 + b_i)(X) + \epsilon\]</span></p>
-<p>In this model, <span class="math inline">\(a_i\)</span> and <span class="math inline">\(b_i\)</span> are random effects for subject <em>i</em> applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:</p>
+<p>In this model, <span class="math inline">\(a_i\)</span> and <span class="math inline">\(b_i\)</span> are random effects for subject <span class="math inline">\(i\)</span> applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="quarto-figure quarto-figure-center">
@@ -374,7 +374,7 @@ window.Quarto = {
 </div></div></section>
 <section id="formula-notation" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="formula-notation"><span class="header-section-number">3.2</span> R Formula Syntax for Random and Fixed Effects</h2>
-<p>Formula notation is often used in the R syntax for linear models. It looks like this: <span class="math inline">\(Y ~ X\)</span>, where Y is the dependent variable (the response) and X is/are the independent variable(s) (e.g.&nbsp;the experimental treatments).</p>
+<p>Formula notation is often used in the R syntax for linear models. It looks like this: <span class="math inline">\(Y ~ X\)</span>, where <span class="math inline">\(Y\)</span> is the dependent variable (the response) and <span class="math inline">\(X\)</span> is/are the independent variable(s) that is, the experimental treatments or interventions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>my_formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(Y <span class="sc">~</span> treatment1 <span class="sc">+</span> treatment2)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(my_formula)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -382,7 +382,7 @@ window.Quarto = {
 <pre><code>[1] "formula"</code></pre>
 </div>
 </div>
-<p>The package ‘lme4’ has some additional conventions regarding the formula. Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of grouping factors are denoted g, g1, and g2, and covariate as x.</p>
+<p>The package ‘<strong>lme4</strong>’ has some additional conventions regarding the formula. Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of grouping factors are denoted <code>g</code>, <code>g1</code>, and <code>g2</code>, and covariates as <code>x</code>.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 24%">
@@ -398,32 +398,33 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td>(1 | g)</td>
-<td>1 + (1 | g)</td>
+<td><code>(1|g)</code></td>
+<td><code>1 + (1|g)</code></td>
 <td>Random intercept with a fixed mean</td>
 </tr>
 <tr class="even">
-<td>(1 | g1/g2)</td>
-<td>(1 | g1) + (1 | g1:g2)</td>
-<td>Intercept varying among g1 and g2 within g1.</td>
+<td><code>(1|g1/g2)</code></td>
+<td><code>(1| 1) + (1|g1:g2)</code></td>
+<td>Intercept varying among g1 and g2 within g1</td>
 </tr>
 <tr class="odd">
-<td>(1 | g1) + (1 | g2)</td>
-<td>1 + (1 | g1) + (1| g2)</td>
-<td>Intercept varying among g1 and g2.</td>
+<td><code>(1|g1) + (1|g2)</code></td>
+<td><code>1 + (1|g1) + (1|g2)</code></td>
+<td>Intercept varying among g1 and g2</td>
 </tr>
 <tr class="even">
-<td>x + (x | g)</td>
-<td>1 + x + (1 + x | g)</td>
+<td><code>x + (x|g)</code></td>
+<td><code>1 + x + (1 + x|g)</code></td>
 <td>Correlated random intercept and slope</td>
 </tr>
 <tr class="odd">
-<td>x + (x || g)</td>
-<td>1 + x + (1 | g) + (0 + x | g)</td>
-<td>Uncorrelated random intercept and slope.</td>
+<td><code>x + (x||g)</code></td>
+<td><code>1 + x + (1|g) + (0 + x|g)</code></td>
+<td>Uncorrelated random intercept and slope</td>
 </tr>
 </tbody>
 </table>
+<p>The first example, <code>(1|g)</code> suffices for most models and is the only structure used in this guide.</p>
 
 
 </section>

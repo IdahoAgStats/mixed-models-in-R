@@ -339,7 +339,7 @@ window.Quarto = {
 
 
 <p>This is a simple model that can serve as a good entrance point to mixed models.</p>
-<p>It is very common design where experimental treatments are applied at random to experimental units within each block. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes.</p>
+<p>Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks.</p>
 <section id="background" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="background"><span class="header-section-number">4.1</span> Background</h2>
 <p>The statistical model:</p>
@@ -384,7 +384,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Next, let’s load some data. It is located <a href="https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv">here</a> if you want to download it yourself (recommended).</p>
-<p>This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield and test weight of each variety and the determine the rankings of each variety with regard to yield.</p>
+<p>This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the rankings of each variety for the variable.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>var_trial <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"aberdeen2015.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -455,7 +455,7 @@ window.Quarto = {
  $ test_weight           : num  56.4 55 55.3 54.1 54.1 56.4 54.7 57.5 56.1 53.8 ...</code></pre>
 </div>
 </div>
-<p>These look okay except for block, which is currently coded as integer (numeric). We don’t want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but I find character easier to work with, and ultimately, equivalent to factor conversion</p>
+<p>These look okay except for block, which is currently coded as integer (numeric). We don’t want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var_trial<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(var_trial<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -509,7 +509,7 @@ window.Quarto = {
   WB1529                 1 1 1 1</code></pre>
 </div>
 </div>
-<p>There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as “eltan” and “Eltan” and “Eltan”. There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.</p>
+<p>There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as “eltan” and “Eltan” and “Eltan”. There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -537,7 +537,7 @@ Missing Data
 <p>Alas, no missing data!</p>
 </div>
 </div>
-<p>If there were independent variables with a continuous distribution (a covariate), I would plot those data.</p>
+<p>If there were independent variables with a continuous distribution (a covariate), plot those data.</p>
 <p>Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.</p>
 <div class="cell page-columns page-full">
 
@@ -556,7 +556,7 @@ Figure&nbsp;4.1: Histogram of the dependent variable.
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The range is roughly falling into the range we expect. I know this from talking with the person who generated the data, not through my own intuition. I do not see any large spikes of points at a single value (indicating something odd), nor do I see any extreme values (low or high) that might indicate some larger problems.</p>
+<p>The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are mp large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.</p>
 <p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
 <p>These are not complicated checks. They are designed to be done quickly and should be done for <em>every analysis</em> if you not previously already inspected the data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
 <p>This data set is ready for analysis!</p>
@@ -589,7 +589,8 @@ Figure&nbsp;4.1: Histogram of the dependent variable.
 </div>
 </div>
 </div>
-<p>The parentheses are used to indicate that ‘block’ is a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block. I use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
+<p>The parentheses are used to indicate that ‘block’ is a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block.</p>
+<p>We use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
 </section>
 <section id="check-model-assumptions" class="level3 page-columns page-full" data-number="4.2.3">
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">4.2.3</span> Check Model Assumptions</h3>
@@ -637,14 +638,14 @@ Figure&nbsp;4.3: QQ-plot of residuals
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd_lmer), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd_lmer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This is reasonably good. Things do tend to fall apart at the tails.</p>
+<p>This is reasonably good. Things do tend to fall apart at the tails a little, so this is not concerning.</p>
 </section>
-<section id="new-way" class="level4 page-columns page-full" data-number="4.2.3.2">
-<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="new-way"><span class="header-section-number">4.2.3.2</span> New Way</h4>
+<section id="new-iid-checks" class="level4 page-columns page-full" data-number="4.2.3.2">
+<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">4.2.3.2</span> New Way</h4>
 <p>Nowadays, we can take advantage of the <a href="https://easystats.github.io/performance/">performance</a> package, which provides a comprehensive suite of diagnostic plots.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>Please look for <code>check_model()</code> in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use check = “all”.</p>
+<p>Please look for <code>check_model()</code> in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use the argument <code>check = "all"</code>.</p>
 </div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_rcbd_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -661,7 +662,7 @@ Figure&nbsp;4.3: QQ-plot of residuals
 <h3 data-number="4.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.2.4</span> Inference</h3>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>R syntax for esimating model marginal means is the same for lme4 and nlme.</p>
+<p>R syntax for estimating model marginal means is the same for lme4 and nlme.</p>
 </div></div><p>Estimates for each treatment level can be obtained with the ‘emmeans’ package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rcbd_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_rcbd_lmer, <span class="sc">~</span> variety)</span>
@@ -720,7 +721,7 @@ Confidence level used: 0.95 </code></pre>
 <p>If you want to run ANOVA, it can be done quite easily. By default, the Kenward-Rogers method of degrees of freedom approximation is used.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the anova() function.</p>
+<p>The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the <code>anova()</code> function. This only matters when a data set is unbalanced across treatments, either due to design or missing data points.</p>
 </div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
