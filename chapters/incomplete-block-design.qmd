@@ -81,15 +81,19 @@ dat <- agridat::weiss.incblock
 
 ```{r, fig.height= 9, echo=FALSE}
 
+desplot::desplot(dat, 
+        block ~ col+row, 
+         text=gen, cex=1, out1=block,
+        out2=gen, out2.gpar=list(col = "gray50", lwd = 1, lty = 1),
+         main="Incomplete block design")
+
 desplot::desplot(dat, yield~col*row,
           text=gen, shorten='none', cex=.6, out1=block,
           aspect=252/96, # true aspect
           main="weiss.incblock")
 ```
 
-
 #### Data integrity checks
-
 We will start inspecting the data set firstly by looking at the class of variables:
 
 ```{r}
@@ -100,7 +104,7 @@ The variables we need for the model are block, gen  and yield. The block and gen
 
 Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
-```{r}
+```{r, echo=FALSE}
 table(dat$block, dat$gen)
 ```
 
