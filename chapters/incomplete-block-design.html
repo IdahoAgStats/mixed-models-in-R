@@ -310,10 +310,14 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">9.2.1</span> Example Analysis</a></li>
   </ul></li>
-  <li><a href="#aplha-lattice-design-partially-balanced" id="toc-aplha-lattice-design-partially-balanced" class="nav-link" data-scroll-target="#aplha-lattice-design-partially-balanced"><span class="header-section-number">9.3</span> Aplha Lattice Design (partially-balanced)</a>
+  <li><a href="#data2" id="toc-data2" class="nav-link" data-scroll-target="#data2"><span class="header-section-number">9.3</span> data2</a>
   <ul class="collapse">
-  <li><a href="#example-analysis-1" id="toc-example-analysis-1" class="nav-link" data-scroll-target="#example-analysis-1"><span class="header-section-number">9.3.1</span> Example Analysis</a></li>
+  <li><a href="#data-integrity-checks-1" id="toc-data-integrity-checks-1" class="nav-link" data-scroll-target="#data-integrity-checks-1"><span class="header-section-number">9.3.1</span> Data integrity checks</a></li>
+  <li><a href="#data-integrity-checks-2" id="toc-data-integrity-checks-2" class="nav-link" data-scroll-target="#data-integrity-checks-2"><span class="header-section-number">9.3.2</span> Data integrity checks</a></li>
+  <li><a href="#check-model-assumptions-1" id="toc-check-model-assumptions-1" class="nav-link" data-scroll-target="#check-model-assumptions-1"><span class="header-section-number">9.3.3</span> Check Model Assumptions</a></li>
+  <li><a href="#inference-1" id="toc-inference-1" class="nav-link" data-scroll-target="#inference-1"><span class="header-section-number">9.3.4</span> Inference</a></li>
   </ul></li>
+  <li><a href="#partially-balanced-ibd-alpha-lattice-design" id="toc-partially-balanced-ibd-alpha-lattice-design" class="nav-link" data-scroll-target="#partially-balanced-ibd-alpha-lattice-design"><span class="header-section-number">9.4</span> Partially Balanced IBD (Alpha Lattice Design)</a></li>
   </ul>
 </nav>
     </div>
@@ -341,21 +345,24 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="background"><span class="header-section-number">9.1</span> Background</h2>
-<p>The block design in <a href="../chapters/rcbd.html"><strong>Chapter 4</strong></a> was complete, meaning that every block contained all the treatments. In practice, it may not be possible to have too many treatments in each block. Sometimes, there are also situations where it is advised to not have many treatments in each block.</p>
-<p>In such cases, incomplete block designs are used where we have to decide what subset of treatments to be used in an individual block. This will work well if we enough blocks. However, if we only have small number of blocks, there would be the risk that certain quantities are not estimable anymore.</p>
-<p>Incomplete block designs are grouped into balanced lattice design and partially balanced (or alpha-lattice) designs.</p>
+<p>The block design described in <a href="../chapters/rcbd.html"><strong>Chapter 4</strong></a> was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g.&nbsp;limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.</p>
+<p>In such cases, (randomized) incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller blocks than RCBD and assigns a subset of the treatment levels to each incomplete block. There are several different approaches for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An <a href="https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html">excellent description of incomplete block design</a> is provided in <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier"><em>ANOVA and Mixed Models</em></a> by Lukas Meier.</p>
+<p>Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also called alpha-lattice) designs.</p>
 <p>To avoid having a disconnected design, a balanced incomplete block design can be used</p>
 <p>The statistical model for balanced incomplete block design is:</p>
-<p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span> Where:</p>
-<p><span class="math inline">\(\mu\)</span> = overall experimental mean <span class="math inline">\(\alpha\)</span> = treatment effects (fixed) <span class="math inline">\(\beta\)</span> = block effects (random) <span class="math inline">\(\epsilon\)</span> = error terms</p>
+<p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span></p>
+<p>Where:</p>
+<p><span class="math inline">\(\mu\)</span> = overall experimental mean<br>
+<span class="math inline">\(\alpha\)</span> = treatment effects (fixed)<br>
+<span class="math inline">\(\beta\)</span> = block effects (random)<br>
+<span class="math inline">\(\epsilon\)</span> = error terms</p>
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[ \beta \sim N(0, \sigma_b)\]</span> There are few key points that we need to keep in mind while designing incomplete block designs:</p>
 <ul>
-<li><p>A drawback of this design is that block effect and treatment effects are confounded.</p></li>
-<li><p>To eliminate the block effects, better compare treatments within a block.</p></li>
-<li><p>No treatment should appear twice in any block as they contributes nothing to within block comparisons.</p></li>
+<li>A drawback of this design is that block effect and treatment effects are confounded.</li>
+<li>To remove the block effects, it is better compare treatments within a block.</li>
+<li>No treatment should appear twice in any block as it contributes nothing to within block comparisons.</li>
 </ul>
-<p>An <a href="https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html">excellent description of incomplete block design</a> is provided in <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier"><em>ANOVA and Mixed Models</em></a> by Lukas Meier.</p>
 <p>The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g.&nbsp;25, 36, and so on); number of replicates must be equal to no. of blocks +1;</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -754,35 +761,339 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
 </section>
 </section>
 </section>
-<section id="aplha-lattice-design-partially-balanced" class="level2 page-columns page-full" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="aplha-lattice-design-partially-balanced"><span class="header-section-number">9.3</span> Aplha Lattice Design (partially-balanced)</h2>
-<section id="example-analysis-1" class="level3 page-columns page-full" data-number="9.3.1">
-<h3 data-number="9.3.1" class="anchored" data-anchor-id="example-analysis-1"><span class="header-section-number">9.3.1</span> Example Analysis</h3>
-<p>In incomplete block alpha-design, the blocks are grouped into complete replicates. These designs are also termed as “resolvable incomplete block designs” or “partially balanced incomplete block designs”[^analysis-tips-1]. This design has been more commonly used instead of balanced IBD because of it’s practicability, flexibility, and versatility. [^analysis-tips-1]:Patterson, H. D., &amp; Williams, E. (1976). A new class of resolvable incomplete block designs. Biometrika, 63(1), 83-92.</p>
-<p>The data used in this example is published in John and Williams (1995)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. The data in this trial was laid out in an alpha lattice design. This trial data had 24 genotypes (gen), 6 incomplete blocks, and each replicated 3 times.</p>
-<p>Let’s start analyzing this example firstly by loading the required libraries for linear mixed models:</p>
+<section id="data2" class="level2 page-columns page-full" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="data2"><span class="header-section-number">9.3</span> data2</h2>
+<p>The data used in this example is extracted from the <code>agridat</code> package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.lattice</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#head(dat3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<table class="caption-top table">
+<caption>Table of variables in the data set</caption>
+<tbody>
+<tr class="odd">
+<td>rep</td>
+<td>replication unit</td>
+</tr>
+<tr class="even">
+<td>trt</td>
+<td>treatment factor</td>
+</tr>
+<tr class="odd">
+<td>row</td>
+<td>row position for each plot</td>
+</tr>
+<tr class="even">
+<td>col</td>
+<td>column position for each plot</td>
+</tr>
+<tr class="odd">
+<td>y</td>
+<td>% of young flower buds attacked</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   80 obs. of  5 variables:
+ $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
+ $ rep: Factor w/ 5 levels "R1","R2","R3",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ row: int  1 1 1 1 2 2 2 2 3 3 ...
+ $ col: int  1 2 3 4 1 2 3 4 1 2 ...
+ $ trt: Factor w/ 16 levels "T01","T02","T03",..: 10 12 9 11 2 4 1 3 14 16 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat3<span class="sc">$</span>trt, dat3<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     
+      R1 R2 R3 R4 R5
+  T01  1  1  1  1  1
+  T02  1  1  1  1  1
+  T03  1  1  1  1  1
+  T04  1  1  1  1  1
+  T05  1  1  1  1  1
+  T06  1  1  1  1  1
+  T07  1  1  1  1  1
+  T08  1  1  1  1  1
+  T09  1  1  1  1  1
+  T10  1  1  1  1  1
+  T11  1  1  1  1  1
+  T12  1  1  1  1  1
+  T13  1  1  1  1  1
+  T14  1  1  1  1  1
+  T15  1  1  1  1  1
+  T16  1  1  1  1  1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>trt, <span class="co"># aspect unknown, should be 2 or .5</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">main=</span><span class="st">"cochran.lattice"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here, we can use the <code>desplot()</code> function from the ‘desplot’ package to visualize the plot plan from lattice design.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">text=</span>trt, <span class="at">shorten=</span><span class="st">'none'</span>, <span class="at">cex=</span>.<span class="dv">6</span>,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">aspect=</span><span class="dv">252</span><span class="sc">/</span><span class="dv">96</span>, <span class="co"># true aspect</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main=</span><span class="st">"Balanced incomplete block"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="data-integrity-checks-1" class="level3 page-columns page-full" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">9.3.1</span> Data integrity checks</h3>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/lattice_design-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Histogram of the dependent variable.</figcaption>
+</figure>
+</div>
+</div></div></div>
+</section>
+<section id="data-integrity-checks-2" class="level3 page-columns page-full" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="data-integrity-checks-2"><span class="header-section-number">9.3.2</span> Data integrity checks</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   80 obs. of  5 variables:
+ $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
+ $ rep: Factor w/ 5 levels "R1","R2","R3",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ row: int  1 1 1 1 2 2 2 2 3 3 ...
+ $ col: int  1 2 3 4 1 2 3 4 1 2 ...
+ $ trt: Factor w/ 16 levels "T01","T02","T03",..: 10 12 9 11 2 4 1 3 14 16 ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$row &lt;- as.factor(dat2$row)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$col &lt;- as.factor(dat2$col)</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>row <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>row)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat3<span class="sc">$</span>y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-rcbd_hist" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rcbd_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="incomplete-block-design_files/figure-html/fig-rcbd_hist-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rcbd_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.2: Histogram of the dependent variable.
+</figcaption>
+</figure>
+</div>
+</div></div></div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col),</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat3,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 8
+   effect   group       term         estimate std.error statistic    df  p.value
+   &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+ 1 fixed    &lt;NA&gt;        (Intercept)      6.09      2.57     2.37   61.6  0.0208 
+ 2 fixed    &lt;NA&gt;        trtT02           7.64      3.45     2.21   47.8  0.0316 
+ 3 fixed    &lt;NA&gt;        trtT03           2.40      3.45     0.696  47.8  0.490  
+ 4 fixed    &lt;NA&gt;        trtT04           5.25      3.45     1.52   47.8  0.135  
+ 5 fixed    &lt;NA&gt;        trtT05           3.47      3.45     1.01   47.8  0.319  
+ 6 fixed    &lt;NA&gt;        trtT06           1.21      3.45     0.350  47.8  0.728  
+ 7 fixed    &lt;NA&gt;        trtT07           1.21      3.45     0.350  47.8  0.728  
+ 8 fixed    &lt;NA&gt;        trtT08           3.32      3.45     0.963  47.8  0.340  
+ 9 fixed    &lt;NA&gt;        trtT09           4.02      3.45     1.17   47.8  0.249  
+10 fixed    &lt;NA&gt;        trtT10           9.09      3.45     2.64   47.8  0.0113 
+11 fixed    &lt;NA&gt;        trtT11          11.8       3.45     3.42   47.8  0.00128
+12 fixed    &lt;NA&gt;        trtT12           6.76      3.45     1.96   47.8  0.0561 
+13 fixed    &lt;NA&gt;        trtT13           4.94      3.45     1.43   47.8  0.159  
+14 fixed    &lt;NA&gt;        trtT14           8.16      3.45     2.36   47.8  0.0222 
+15 fixed    &lt;NA&gt;        trtT15           3.20      3.45     0.929  47.8  0.358  
+16 fixed    &lt;NA&gt;        trtT16           4.54      3.45     1.31   47.8  0.195  
+17 ran_pars rep:col     sd__(Interc…     1.78     NA       NA      NA   NA      
+18 ran_pars rep:row:rep sd__(Interc…     3.30     NA       NA      NA   NA      
+19 ran_pars rep         sd__(Interc…     0        NA       NA      NA   NA      
+20 ran_pars Residual    sd__Observa…     4.88     NA       NA      NA   NA      </code></pre>
+</div>
 </div>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>col)))),</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat3, </span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>dummy = pdIdent(rep - 1), pdIdent(rep:row - 1), pdIdent(rep:col) 
+            Variance     StdDev      
+repR1       6.046133e-08 0.0002458889
+repR2       6.046133e-08 0.0002458889
+repR3       6.046133e-08 0.0002458889
+repR4       6.046133e-08 0.0002458889
+repR5       6.046133e-08 0.0002458889
+repR1:row1  1.091771e+01 3.3041961026
+repR2:row1  1.091771e+01 3.3041961026
+repR3:row1  1.091771e+01 3.3041961026
+repR4:row1  1.091771e+01 3.3041961026
+repR5:row1  1.091771e+01 3.3041961026
+repR1:row2  1.091771e+01 3.3041961026
+repR2:row2  1.091771e+01 3.3041961026
+repR3:row2  1.091771e+01 3.3041961026
+repR4:row2  1.091771e+01 3.3041961026
+repR5:row2  1.091771e+01 3.3041961026
+repR1:row3  1.091771e+01 3.3041961026
+repR2:row3  1.091771e+01 3.3041961026
+repR3:row3  1.091771e+01 3.3041961026
+repR4:row3  1.091771e+01 3.3041961026
+repR5:row3  1.091771e+01 3.3041961026
+repR1:row4  1.091771e+01 3.3041961026
+repR2:row4  1.091771e+01 3.3041961026
+repR3:row4  1.091771e+01 3.3041961026
+repR4:row4  1.091771e+01 3.3041961026
+repR5:row4  1.091771e+01 3.3041961026
+(Intercept) 3.169947e+00 1.7804345669
+repR1:col1  3.169947e+00 1.7804345669
+repR2:col1  3.169947e+00 1.7804345669
+repR3:col1  3.169947e+00 1.7804345669
+repR4:col1  3.169947e+00 1.7804345669
+repR5:col1  3.169947e+00 1.7804345669
+repR1:col2  3.169947e+00 1.7804345669
+repR2:col2  3.169947e+00 1.7804345669
+repR3:col2  3.169947e+00 1.7804345669
+repR4:col2  3.169947e+00 1.7804345669
+repR5:col2  3.169947e+00 1.7804345669
+repR1:col3  3.169947e+00 1.7804345669
+repR2:col3  3.169947e+00 1.7804345669
+repR3:col3  3.169947e+00 1.7804345669
+repR4:col3  3.169947e+00 1.7804345669
+repR5:col3  3.169947e+00 1.7804345669
+repR1:col4  3.169947e+00 1.7804345669
+repR2:col4  3.169947e+00 1.7804345669
+repR3:col4  3.169947e+00 1.7804345669
+repR4:col4  3.169947e+00 1.7804345669
+repR5:col4  3.169947e+00 1.7804345669
+Residual    2.385960e+01 4.8846291738</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="check-model-assumptions-1" class="level3" data-number="9.3.3">
+<h3 data-number="9.3.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">9.3.3</span> Check Model Assumptions</h3>
+<p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"linearity"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="inference-1" class="level3" data-number="9.3.4">
+<h3 data-number="9.3.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">9.3.4</span> Inference</h3>
+<p>Estimates for each treatment level can be obtained with the ‘emmeans’ package. And we can extract the ANOVA table from model using <code>anova()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+    Sum Sq Mean Sq NumDF DenDF F value Pr(&gt;F)  
+trt 612.21  40.814    15 47.81  1.7106 0.0808 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Estimated marginal means</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> trt emmean   SE df lower.CL upper.CL
+ T01   6.09 2.68 50     0.70     11.5
+ T02  13.73 2.68 50     8.34     19.1
+ T03   8.49 2.68 50     3.10     13.9
+ T04  11.34 2.68 50     5.95     16.7
+ T05   9.56 2.68 50     4.17     15.0
+ T06   7.30 2.68 50     1.91     12.7
+ T07   7.30 2.68 50     1.91     12.7
+ T08   9.41 2.68 50     4.02     14.8
+ T09  10.11 2.68 50     4.72     15.5
+ T10  15.18 2.68 50     9.79     20.6
+ T11  17.90 2.68 50    12.51     23.3
+ T12  12.85 2.68 50     7.46     18.2
+ T13  11.03 2.68 50     5.64     16.4
+ T14  14.25 2.68 50     8.86     19.6
+ T15   9.29 2.68 50     3.91     14.7
+ T16  10.63 2.68 50     5.24     16.0
+
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="partially-balanced-ibd-alpha-lattice-design" class="level2 page-columns page-full" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="partially-balanced-ibd-alpha-lattice-design"><span class="header-section-number">9.4</span> Partially Balanced IBD (Alpha Lattice Design)</h2>
+<p>======= ## Aplha Lattice Design (partially-balanced) &gt;&gt;&gt;&gt;&gt;&gt;&gt; 9f3fbe4a70b3f7fafe48e3c808e0e941732438d6 ### Example Analysis</p>
+<p>In incomplete block alpha-design, the blocks are grouped into complete replicates. These designs are also termed as “resolvable incomplete block designs” or “partially balanced incomplete block designs”[^analysis-tips-1]. This design has been more commonly used instead of balanced IBD because of it’s practicability, flexibility, and versatility. [^analysis-tips-1]:Patterson, H. D., &amp; Williams, E. (1976). A new class of resolvable incomplete block designs. Biometrika, 63(1), 83-92.</p>
+<p>The data used in this example is published in John and Williams (1995)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. The data in this trial was laid out in an alpha lattice design. This trial data had 24 genotypes (gen), 6 incomplete blocks, and each replicated 3 times.</p>
+<p>Let’s start analyzing this example firstly by loading the required libraries for linear mixed models:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>john.alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>john.alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -813,16 +1124,16 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
 </div>
-<section id="data-integrity-checks-1" class="level4 page-columns page-full" data-number="9.3.1.1">
-<h4 data-number="9.3.1.1" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">9.3.1.1</span> Data integrity checks</h4>
+<section id="data-integrity-checks-3" class="level4 page-columns page-full" data-number="9.4.0.1">
+<h4 data-number="9.4.0.1" class="anchored" data-anchor-id="data-integrity-checks-3"><span class="header-section-number">9.4.0.1</span> Data integrity checks</h4>
 <p>Let’s look into the structure of the data first to verify the class of the variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   72 obs. of  7 variables:
  $ plot : int  1 2 3 4 5 6 7 8 9 10 ...
@@ -836,10 +1147,10 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>Next step is evaluate the independent variables. Firstly, look at the number of treatments per replication. Each treatment is replicated 3 times.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> data1 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 2
    gen   total_count
@@ -859,8 +1170,8 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>This looks balanced. Also, let’s have a look at the number of times each treatment appear per block.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>agg_blk <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(data1<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(data1<span class="sc">$</span>block), <span class="at">FUN=</span>length)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>agg_blk</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>agg_blk <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(data1<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(data1<span class="sc">$</span>block), <span class="at">FUN=</span>length)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>agg_blk</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Group.1  x
 1      B1 12
@@ -882,27 +1193,27 @@ Confidence level used: 0.95 </code></pre>
 <img src="incomplete-block-design_files/figure-html/fig-alpha_hist-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-alpha_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.2: Histogram of the dependent variable.
+Figure&nbsp;9.3: Histogram of the dependent variable.
 </figcaption>
 </figure>
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The response variables seems to follow a normal distribution curve, with fewer values on extreme lower and higher ends.</p>
 </section>
-<section id="model-building-1" class="level4" data-number="9.3.1.2">
-<h4 data-number="9.3.1.2" class="anchored" data-anchor-id="model-building-1"><span class="header-section-number">9.3.1.2</span> Model Building</h4>
+<section id="model-building-1" class="level4" data-number="9.4.0.2">
+<h4 data-number="9.4.0.2" class="anchored" data-anchor-id="model-building-1"><span class="header-section-number">9.4.0.2</span> Model Building</h4>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod_alpha <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>block),</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1, </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_alpha)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>mod_alpha <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>block),</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1, </span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_alpha)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 26 × 8
    effect group term        estimate std.error statistic    df  p.value
@@ -921,13 +1232,13 @@ Figure&nbsp;9.2: Histogram of the dependent variable.
 </div>
 </div>
 </div>
-<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mod_alpha1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>block,</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> data1, </span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_alpha1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>mod_alpha1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>block,</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> data1, </span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_alpha1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in tidy.lme(mod_alpha1): ran_pars not yet implemented for multiple
 levels of nesting</code></pre>
@@ -948,61 +1259,61 @@ levels of nesting</code></pre>
 10 fixed  genG10       -0.735      0.259    31    -2.83  8.05e- 3
 # ℹ 14 more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="do">## need to try pdIdent here</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model_lme &lt;-lme(yield ~  gen,</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co">#               random = list(one = pdBlocked(list(</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co">#          pdIdent(~ 0 + rep:block)))),</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co">#         data = data1 %&gt;% mutate(one = factor(1)))</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(model_lme)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="do">## need to try pdIdent here</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model_lme &lt;-lme(yield ~  gen,</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="co">#               random = list(one = pdBlocked(list(</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co">#          pdIdent(~ 0 + rep:block)))),</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="co">#         data = data1 %&gt;% mutate(one = factor(1)))</span></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(model_lme)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="check-model-assumptions-1" class="level4" data-number="9.3.1.3">
-<h4 data-number="9.3.1.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">9.3.1.3</span> Check Model Assumptions</h4>
+<section id="check-model-assumptions-2" class="level4" data-number="9.4.0.3">
+<h4 data-number="9.4.0.3" class="anchored" data-anchor-id="check-model-assumptions-2"><span class="header-section-number">9.4.0.3</span> Check Model Assumptions</h4>
 <p>Let’s verify the assumption of linear mixed models including normal distribution and constant variance of residuals.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">nlme</a></li></ul>
-<div class="tab-content">
-<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check_model(model_lme, check = c('normality', 'linearity'))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="inference-1" class="level4" data-number="9.3.1.4">
-<h4 data-number="9.3.1.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">9.3.1.4</span> Inference</h4>
-<p>Let’s ANOVA table using <code>anova()</code> from lmer and lme models, respectively.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha, <span class="at">type =</span> <span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check_model(model_lme, check = c('normality', 'linearity'))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="inference-2" class="level4" data-number="9.4.0.4">
+<h4 data-number="9.4.0.4" class="anchored" data-anchor-id="inference-2"><span class="header-section-number">9.4.0.4</span> Inference</h4>
+<p>Let’s ANOVA table using <code>anova()</code> from lmer and lme models, respectively.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha, <span class="at">type =</span> <span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type I Analysis of Variance Table with Satterthwaite's method
     Sum Sq Mean Sq NumDF  DenDF F value   Pr(&gt;F)    
@@ -1012,26 +1323,26 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1    31 470.9507  &lt;.0001
 gen            23    31   5.4478  &lt;.0001</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#anova(model_lme, type = "sequential")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co">#anova(model_lme, type = "sequential")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 <p>Let’s look at the estimated marginal means of yield for each variety (gen).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE   df lower.CL upper.CL
  G01   5.09 0.212 46.8     4.66     5.52
@@ -1064,9 +1375,9 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE df lower.CL upper.CL
  G01   5.11 0.276  2     3.92     6.30
@@ -1103,7 +1414,6 @@ Confidence level used: 0.95 </code></pre>
 </div>
 
 
-</section>
 </section>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
