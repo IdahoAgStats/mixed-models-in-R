@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-b37946e615776c97abd6b38c7c799888.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -434,6 +434,13 @@ A note
 </figure>
 </div>
 </div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 <section id="data-integrity-checks" class="level4 page-columns page-full" data-number="9.2.1.1">
 <h4 data-number="9.2.1.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">9.2.1.1</span> Data integrity checks</h4>
@@ -452,7 +459,6 @@ A note
 <p>The variables we need for the model are block, gen and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we don’t need to change class of any of the required variables.</p>
 <p>Next, let’s check the independent variables. We can look at this by running a cross tabulations among block and gen factors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat<span class="sc">$</span>block, dat<span class="sc">$</span>gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     
       G01 G02 G03 G04 G05 G06 G07 G08 G09 G10 G11 G12 G13 G14 G15 G16 G17 G18
@@ -523,10 +529,10 @@ A note
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 31 × 2
    gen   total_count
@@ -545,8 +551,8 @@ A note
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>agg_df <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(dat<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(dat<span class="sc">$</span>block), <span class="at">FUN=</span>length)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>agg_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>agg_df <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(dat<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(dat<span class="sc">$</span>block), <span class="at">FUN=</span>length)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>agg_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   Group.1 x
 1      B01 6
@@ -585,7 +591,7 @@ A note
 <p>There are 31 varieties (gen) and it is perfectly balanced, with exactly one observation per treatment per block.</p>
 <p>We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>block   gen yield   row   col 
     0     0     0     0     0 </code></pre>
@@ -608,7 +614,7 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Response variable values fall within expected range, with few extreme values on right tail. This data set is ready for analysis!</p>
 </section>
@@ -623,10 +629,10 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model_icbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(yield) <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dat, </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model_icbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(yield) <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dat, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 33 × 8
    effect group term        estimate std.error statistic    df   p.value
@@ -647,11 +653,11 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model_icbd1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat, </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model_icbd1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> gen,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 33 × 8
    effect group term        estimate std.error    df statistic  p.value
@@ -681,7 +687,7 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -693,7 +699,7 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -713,7 +719,7 @@ Figure&nbsp;9.1: Histogram of the dependent variable.
 <h4 data-number="9.2.1.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">9.2.1.4</span> Inference</h4>
 <p>We can extract information about ANOVA using <code>anova()</code> from lmer and lme models, respectively. ::: panel-tabset #### lme4</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd, <span class="at">type =</span> <span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd, <span class="at">type =</span> <span class="st">"1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type I Analysis of Variance Table with Satterthwaite's method
     Sum Sq  Mean Sq NumDF  DenDF F value    Pr(&gt;F)    
@@ -726,7 +732,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="nlme-3" class="level4" data-number="9.2.1.5">
 <h4 data-number="9.2.1.5" class="anchored" data-anchor-id="nlme-3"><span class="header-section-number">9.2.1.5</span> nlme</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_icbd1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1   125 4042.016  &lt;.0001
@@ -736,7 +742,7 @@ gen            30   125   17.675  &lt;.0001</code></pre>
 <p>:::</p>
 <p>Let’s look at the estimated marginal means of yield for each variety (gen). ::: panel-tabset #### lme4</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean     SE  df lower.CL upper.CL
  G01   3.20 0.0335 153     3.13     3.27
@@ -780,7 +786,7 @@ Confidence level used: 0.95 </code></pre>
 <section id="nlme-4" class="level4" data-number="9.2.1.6">
 <h4 data-number="9.2.1.6" class="anchored" data-anchor-id="nlme-4"><span class="header-section-number">9.2.1.6</span> nlme</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_icbd1, <span class="sc">~</span> gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE df lower.CL upper.CL
  G01   24.6 0.922 30     22.7     26.5
@@ -823,8 +829,8 @@ Confidence level used: 0.95 </code></pre>
 <p>##data2</p>
 <p>The data used in this example is extracted from the <code>agridat</code> package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.lattice</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#head(dat3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>cochran.lattice</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">#head(dat3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -852,7 +858,7 @@ Confidence level used: 0.95 </code></pre>
 </tbody>
 </table>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   80 obs. of  5 variables:
  $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
@@ -861,7 +867,7 @@ Confidence level used: 0.95 </code></pre>
  $ col: int  1 2 3 4 1 2 3 4 1 2 ...
  $ trt: Factor w/ 16 levels "T01","T02","T03",..: 10 12 9 11 2 4 1 3 14 16 ...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat3<span class="sc">$</span>trt, dat3<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat3<span class="sc">$</span>trt, dat3<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     
       R1 R2 R3 R4 R5
@@ -884,10 +890,10 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>trt, <span class="co"># aspect unknown, should be 2 or .5</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">main=</span><span class="st">"cochran.lattice"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span>trt, <span class="co"># aspect unknown, should be 2 or .5</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">main=</span><span class="st">"cochran.lattice"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -898,10 +904,10 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>Here, we can use the <code>desplot()</code> function from the ‘desplot’ package to visualize the plot plan from lattice design.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">text=</span>trt, <span class="at">shorten=</span><span class="st">'none'</span>, <span class="at">cex=</span>.<span class="dv">6</span>,</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">aspect=</span><span class="dv">252</span><span class="sc">/</span><span class="dv">96</span>, <span class="co"># true aspect</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main=</span><span class="st">"Balanced incomplete block"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(dat3, y<span class="sc">~</span>row<span class="sc">*</span>col<span class="sc">|</span>rep,</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">text=</span>trt, <span class="at">shorten=</span><span class="st">'none'</span>, <span class="at">cex=</span>.<span class="dv">6</span>,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">aspect=</span><span class="dv">252</span><span class="sc">/</span><span class="dv">96</span>, <span class="co"># true aspect</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">main=</span><span class="st">"Balanced incomplete block"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -928,7 +934,7 @@ Confidence level used: 0.95 </code></pre>
 <section id="data-integrity-checks-2" class="level3 page-columns page-full" data-number="9.2.3">
 <h3 data-number="9.2.3" class="anchored" data-anchor-id="data-integrity-checks-2"><span class="header-section-number">9.2.3</span> Data integrity checks</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   80 obs. of  5 variables:
  $ y  : num  9 20.3 17.7 26.3 4.7 9 7.3 8.3 9 6.7 ...
@@ -939,14 +945,14 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$row &lt;- as.factor(dat2$row)</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$col &lt;- as.factor(dat2$col)</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>row <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>row)</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$row &lt;- as.factor(dat2$row)</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dat2$col &lt;- as.factor(dat2$col)</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>row <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>row)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dat3<span class="sc">$</span>col)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat3<span class="sc">$</span>y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat3<span class="sc">$</span>y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -967,13 +973,13 @@ Figure&nbsp;9.2: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col),</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat3,</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>row<span class="sc">:</span>rep) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">:</span>col),</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> dat3,</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(m1_a) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 20 × 8
    effect   group       term         estimate std.error statistic    df  p.value
@@ -1003,17 +1009,17 @@ Figure&nbsp;9.2: Histogram of the dependent variable.
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt,</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>col)))),</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat3, </span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>dat3<span class="sc">$</span>dummy <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> trt,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span> <span class="fu">list</span>(<span class="at">dummy =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>row <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">pdIdent</span>(<span class="sc">~</span>rep<span class="sc">:</span>col)))),</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat3, </span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>dummy = pdIdent(rep - 1), pdIdent(rep:row - 1), pdIdent(rep:col) 
             Variance     StdDev      
@@ -1074,7 +1080,7 @@ Residual    2.385960e+01 4.8846291738</code></pre>
 <h3 data-number="9.2.4" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">9.2.4</span> Check Model Assumptions</h3>
 <p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"linearity"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">"linearity"</span>, <span class="st">"normality"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1088,7 +1094,7 @@ Residual    2.385960e+01 4.8846291738</code></pre>
 <h3 data-number="9.2.5" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">9.2.5</span> Inference</h3>
 <p>Estimates for each treatment level can be obtained with the ‘emmeans’ package. And we can extract the ANOVA table from model using <code>anova()</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
     Sum Sq Mean Sq NumDF DenDF F value Pr(&gt;F)  
@@ -1099,7 +1105,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>Estimated marginal means</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_a, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> trt emmean   SE df lower.CL upper.CL
  T01   6.09 2.68 50     0.70     11.5
@@ -1137,14 +1143,14 @@ Confidence level used: 0.95 </code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1152,9 +1158,9 @@ Confidence level used: 0.95 </code></pre>
 <section id="data-integrity-checks-3" class="level4" data-number="9.3.1.1">
 <h4 data-number="9.3.1.1" class="anchored" data-anchor-id="data-integrity-checks-3"><span class="header-section-number">9.3.1.1</span> Data integrity checks</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a> base<span class="sc">::</span><span class="fu">library</span>(readr)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>dataURL <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/SchmidtPaul/DSFAIR/master/data/John%26Williams1995.csv"</span></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(dataURL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a> base<span class="sc">::</span><span class="fu">library</span>(readr)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>dataURL <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/SchmidtPaul/DSFAIR/master/data/John%26Williams1995.csv"</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(dataURL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 72 Columns: 7
 ── Column specification ────────────────────────────────────────────────────────
@@ -1165,7 +1171,7 @@ dbl (4): plot, yield, row, col
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 72 × 7
     plot rep   inc.block gen   yield   row   col
@@ -1184,16 +1190,16 @@ dbl (4): plot, yield, row, col
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(plot<span class="sc">:</span>gen), as.factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(plot<span class="sc">:</span>gen), as.factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(<span class="at">data =</span> dat, <span class="at">flip =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">form =</span> gen <span class="sc">~</span> col <span class="sc">+</span> row <span class="sc">|</span> rep,          <span class="co"># fill color per genotype, headers per replicate</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> gen, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">shorten =</span> <span class="st">"no"</span>, <span class="co"># show genotype names per plot</span></span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">out1 =</span> rep,                            <span class="co"># lines between complete blocks/replicates</span></span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">out2 =</span> inc.block,                      <span class="co"># lines between incomplete blocks</span></span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Field layout"</span>, <span class="at">show.key =</span> F)   <span class="co"># formatting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>desplot<span class="sc">::</span><span class="fu">desplot</span>(<span class="at">data =</span> dat, <span class="at">flip =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">form =</span> gen <span class="sc">~</span> col <span class="sc">+</span> row <span class="sc">|</span> rep,          <span class="co"># fill color per genotype, headers per replicate</span></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> gen, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">shorten =</span> <span class="st">"no"</span>, <span class="co"># show genotype names per plot</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">out1 =</span> rep,                            <span class="co"># lines between complete blocks/replicates</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">out2 =</span> inc.block,                      <span class="co"># lines between incomplete blocks</span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Field layout"</span>, <span class="at">show.key =</span> F)   <span class="co"># formatting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1204,7 +1210,7 @@ dbl (4): plot, yield, row, col
 </div>
 <p>https://kwstat.github.io/agridat/reference/john.alpha.html</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>dat4 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>john.alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>dat4 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>john.alpha</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
