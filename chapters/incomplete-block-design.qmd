@@ -10,31 +10,34 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-The block design in [**Chapter 4**](rcbd.qmd) was complete, meaning that every block contained all the treatments. In practice, it may not be possible to have too many treatments in each block. Sometimes, there are also situations where it is advised to not have many treatments in each block.
+The block design described in [**Chapter 4**](rcbd.qmd) was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g. limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.  
 
-In such cases, incomplete block designs are used where we have to decide what subset of treatments to be used in an individual block. This will work well if we enough blocks. However, if we only have small number of blocks, there would be the risk that certain quantities are not estimable anymore.
+In such cases, (randomized) incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller blocks than RCBD and assigns a subset of the treatment levels to each incomplete block. There are several different approaches for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html) is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier) by Lukas Meier.
 
-Incomplete block designs are grouped into balanced lattice design and partially balanced (or alpha-lattice) designs. 
+Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also called alpha-lattice) designs. 
 
 To avoid having a disconnected design, a balanced incomplete block design can be used
 
 The statistical model for balanced incomplete block design is:
 
-$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ Where:
+$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ 
 
-$\mu$ = overall experimental mean $\alpha$ = treatment effects (fixed) $\beta$ = block effects (random) $\epsilon$ = error terms
+Where:
+
+$\mu$ = overall experimental mean   
+$\alpha$ = treatment effects (fixed)  
+$\beta$ = block effects (random)   
+$\epsilon$ = error terms  
 
 $$ \epsilon \sim N(0, \sigma)$$
 
 $$ \beta \sim N(0, \sigma_b)$$ There are few key points that we need to keep in mind while designing incomplete block designs:
 
 -   A drawback of this design is that block effect and treatment effects are confounded.
+-   To remove the block effects, it is better compare treatments within a block.
+-   No treatment should appear twice in any block as it contributes nothing to within block comparisons.
 
--   To eliminate the block effects, better compare treatments within a block.
-
--   No treatment should appear twice in any block as they contributes nothing to within block comparisons.
-
-An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html) is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier) by Lukas Meier. 
+ 
 
 
 The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on); number of replicates must be equal to no. of blocks +1;  
@@ -218,7 +221,7 @@ emmeans(model_icbd1, ~ gen)
 :::
 
 
-##data2
+## data2
 
 The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
 ```{r}
@@ -347,7 +350,8 @@ Estimated marginal means
 emmeans(m1_a, ~ trt)
 ```
 
-## Aplha Lattice Design (partially-balanced)
+## Partially Balanced IBD (Alpha Lattice Design)
+
 ### Example Analysis
 
 In incomplete block alpha-design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs"[^analysis-tips-1]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. 
