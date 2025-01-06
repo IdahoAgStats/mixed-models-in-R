@@ -12,13 +12,17 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 The block design described in [**Chapter 4**](rcbd.qmd) was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g. limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.  
 
-In such cases, (randomized) incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller blocks than RCBD and assigns a subset of the treatment levels to each incomplete block. There are several different approaches for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html) is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier) by Lukas Meier.
+In such cases, incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936, @patterson_1976] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier){.external target="_blank"} by Lukas Meier.
 
-Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also called alpha-lattice) designs. 
+Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called "lattice designs" [need refs], but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used. 
 
-To avoid having a disconnected design, a balanced incomplete block design can be used
+In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs" [@paterson]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. 
 
-The statistical model for balanced incomplete block design is:
+To avoid having a disconnected design, a balanced incomplete block design can be used.
+
+### Statistical Model
+
+The statistical model for a balanced incomplete block design is:
 
 $$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ 
 
@@ -31,25 +35,26 @@ $\epsilon$ = error terms
 
 $$ \epsilon \sim N(0, \sigma)$$
 
-$$ \beta \sim N(0, \sigma_b)$$ There are few key points that we need to keep in mind while designing incomplete block designs:
+$$ \beta \sim N(0, \sigma_b)$$ 
+
+There are few key points that we need to keep in mind while designing incomplete block experiments:
 
 -   A drawback of this design is that block effect and treatment effects are confounded.
 -   To remove the block effects, it is better compare treatments within a block.
 -   No treatment should appear twice in any block as it contributes nothing to within block comparisons.
 
- 
-
-
-The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on); number of replicates must be equal to no. of blocks +1;  
+The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on), and number of replicates must be equal to number of blocks +1. 
 
 ::: callout-note
-## A note
+## Note on Sums of Squares
 
-Because the blocks are incomplete, the Type I and Type III sums of squares will be different. That is, the missing treatments in each block represent missing observations (but not missing ‘at random’).
+Because the blocks are incomplete, the Type I and Type III sums of squares will be different even when there is no missing data from a trail. That is because the missing treatments in each block represent missing observations (even though they are not missing ‘at random’).
 :::
 
-## Balanced Incomplete Block Design
-### Example Analysis
+## Examples Analyses
+
+### Balanced Incomplete Block Design
+
 We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries required for analysis and estimation.
 
 ::: panel-tabset
@@ -96,19 +101,17 @@ desplot::desplot(dat,
 ```
 
 #### Data integrity checks
-We will start inspecting the data set firstly by looking at the class of variables:
+
+We will start inspecting the data set firstly by looking at the class of each variable:
 
 ```{r}
 str(dat)
 ```
 
-The variables we need for the model are block, gen  and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we don't need to change class of any of the required variables.
+The variables we need for the model are block, genand yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we do not need to change class of any of the required variables.
 
 Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
-```{r, echo=FALSE, eval=FALSE}
-table(dat$block, dat$gen)
-```
 
 ```{r}
 agg_tbl <- dat %>% group_by(gen) %>% 
@@ -123,14 +126,15 @@ agg_df
 ```
 
 
-There are 31 varieties (gen) and it is perfectly balanced, with exactly one observation per treatment per block.
+There are 31 varieties (levels of gen) and it is perfectly balanced, with exactly one observation per treatment per block.
 
-We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables
+We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables: 
 
 ```{r}
 apply(dat, 2, function(x) sum(is.na(x)))
 ```
-We observed no missing data!
+
+No missing data!
 
 Last, let's plot a histogram of the dependent variable. This is a quick check before analysis to see if there is any strong deviation in values.
 ```{r, echo=FALSE}
@@ -148,11 +152,13 @@ Response variable values fall within expected range, with few extreme values on 
 This data set is ready for analysis!
 
 #### Model Building
+
 We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect).
 
 ::: column-margin
 Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.
 :::
+
 ::: panel-tabset
 ### lme4
 
@@ -174,6 +180,7 @@ tidy(model_icbd1)
 :::
 
 #### Check Model Assumptions
+
 Let's verify the assumption of linear mixed models including normal distribution and constant variance of residuals. 
 
 ::: panel-tabset
@@ -187,13 +194,14 @@ check_model(model_icbd, check = c('normality', 'linearity'))
 check_model(model_icbd1, check = c('normality', 'linearity'))
 ```
 :::
+
 ::: column-margin
 Here we observed a right skewness in residuals, this can be resolved by using data transformation e.g. log transformation of response variable. Please refer to **chapter** to read more about data transformation. 
 :::
 
 #### Inference
 
-We can extract information about ANOVA using `anova()` from lmer and lme models, respectively.
+We can extract information about ANOVA using `anova()`.
 
 ::: panel-tabset
 #### lme4
@@ -221,152 +229,12 @@ emmeans(model_icbd1, ~ gen)
 ```
 :::
 
-<<<<<<< HEAD
 
-## data2
+### Partially Balanced IBD (Alpha Lattice Design)
 
-The data used in this example is extracted from the `agridat` package. This data is a balanced lattice experiment in cotton containing 16 treatments in a 4x4 layout in each of 5 replicates. The response variable in this data is the percentage of young flower buds attacked by boll weevils.
-```{r}
-dat3 <- agridat::cochran.lattice
-#head(dat3)
-```
-|       |                              |
-|-------|------------------------------|
-| rep   | replication unit             |
-| trt   | treatment factor                |
-| row   | row position for each plot        |
-| col   | column position for each plot    |
-| y | % of young flower buds attacked        |
+The data used in this example is published in *Cyclic and Computer Generated Designs* [@john_cyclic]. The data in this trial was laid out in an alpha lattice design. This trial data had 24 genotypes ("gen"), 6 incomplete blocks, each replicated 3 times. 
 
-: Table of variables in the data set {tbl-lattice}
-
-
-```{r}
-str(dat3)
-table(dat3$trt, dat3$rep)
-```
-
-```{r}
-library(desplot)
-desplot(dat3, y~row*col|rep,
-        text=trt, # aspect unknown, should be 2 or .5
-         main="cochran.lattice")
-
-```
-
-
-Here, we can use the `desplot()` function from the 'desplot' package to visualize the plot plan from lattice design.
-
-```{r}
-desplot::desplot(dat3, y~row*col|rep,
-                 text=trt, shorten='none', cex=.6,
-                 aspect=252/96, # true aspect
-                 main="Balanced incomplete block")
-
-```
-
-### Data integrity checks
-```{r, echo=FALSE}
-#| label: lattice_design
-#| fig-cap: "Histogram of the dependent variable."
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-desplot(dat3,  y~row*col|rep,
-                 text=trt, shorten='none', cex=.6,
-                 aspect=252/96, # true aspect
-                 main="Balanced incomplete block")
-```
-### Data integrity checks
-
-```{r}
-str(dat3)
-```
-
-```{r}
-#dat2$row <- as.factor(dat2$row)
-#dat2$col <- as.factor(dat2$col)
-
-dat3$row <- as.factor(dat3$row)
-dat3$col <- as.factor(dat3$col)
-```
-
-```{r, eval=FALSE}
-hist(dat3$y, main = "", xlab = "yield")
-```
-
-```{r, echo=FALSE}
-#| label: fig-rcbd_hist
-#| fig-cap: "Histogram of the dependent variable."
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat3$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
-```
-
-::: panel-tabset
-### lme4
-
-```{r}
-m1_a <- lmer(y ~ trt + (1|rep) + (1|rep:row:rep) + (1|rep:col),
-           data = dat3,
-           na.action = na.exclude)
-tidy(m1_a) 
-```
-
-### nlme
-
-```{r}
-dat3$dummy <- factor(1)
-
-m1_b <- lme(y ~ trt,
-          random = list(dummy = pdBlocked(list(
-                                  pdIdent(~rep - 1),
-                                  pdIdent(~rep:row - 1),
-                                  pdIdent(~rep:col)))),
-          data = dat3, 
-          na.action = na.exclude)
-
-VarCorr(m1_b)
-```
-:::
-
-### Check Model Assumptions
-
-Remember those iid assumptions? Let's make sure we actually met them.
-
-```{r, fig.height=5}
-check_model(m1_a, check = c("linearity", "normality"))
-```
-
-
-### Inference
-
-Estimates for each treatment level can be obtained with the 'emmeans' package. And we can extract the ANOVA table from model using `anova()` function.
-
-```{r}
-anova(m1_a)
-```
-
-Estimated marginal means
-
-```{r}
-emmeans(m1_a, ~ trt)
-```
-
-## Partially Balanced IBD (Alpha Lattice Design)
-
-=======
-## Aplha Lattice Design (partially-balanced)
->>>>>>> 9f3fbe4a70b3f7fafe48e3c808e0e941732438d6
-### Example Analysis
-
-In incomplete block alpha-design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs"[^analysis-tips-1]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. 
-[^analysis-tips-1]:Patterson, H. D., & Williams, E. (1976). A new class of resolvable incomplete block designs. Biometrika, 63(1), 83-92.
-
-The data used in this example is published in John and Williams (1995)[^analysis-tips-2]. The data in this trial was laid out in an alpha lattice design. This trial data had 24 genotypes (gen), 6 incomplete blocks, and each replicated 3 times. 
-
-[^analysis-tips-2]: Hering, F. (1996). John, JA, Williams, ER: Cyclic and Computer Generated Designs. Chapmann and Hall, London, New York 1995, 255 S., $ L 32,‐.
-
-Let's start analyzing this example firstly by loading the required libraries for linear mixed models:
+Let's start analyzing this example first by loading the required libraries for linear mixed models:
 
 ::: panel-tabset
 ### lme4
@@ -374,6 +242,7 @@ Let's start analyzing this example firstly by loading the required libraries for
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(broom.mixed); library(performance)
 ```
+
 ### nlme
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans)
@@ -405,27 +274,37 @@ desplot::desplot(data = data1, flip = TRUE,
         out2.gpar=list(col = "blue", lwd = 1, lty = 1),# lines between incomplete blocks
         main = "Alpha Lattice Design", show.key =T)   # formatting
 ```
+
 #### Data integrity checks
+
 Let's look into the structure of the data first to verify the class of the variables.
+
 ```{r}
 str(data1)
 ```
-Next step is evaluate the independent variables. Firstly, look at the number of treatments per replication. Each treatment is replicated 3 times.
+
+Next step is to evaluate the independent variables. First, check the number of treatments per replication (each treatment should be replicated 3 times). 
+
 ```{r}
 agg_tbl <- data1 %>% group_by(gen) %>% 
   summarise(total_count=n(),
             .groups = 'drop')
 agg_tbl
 ```
-This looks balanced. 
+
+This looks balanced, as expected. 
+
 Also, let's have a look at the number of times each treatment appear per block.
+
 ```{r}
 agg_blk <- aggregate(data1$gen, by=list(data1$block), FUN=length)
 agg_blk
 ```
+
 12 treatments randomly appear in incomplete block. Each incomplete block has same number of treatments.
 
-Lastly, before fitting the model, it's a good idea to look at the distribution of dependent (yield) variable.
+Lastly, before fitting the model, it's a good idea to look at the distribution of dependent variable, yield.
+
 ```{r, echo=FALSE}
 #| label: fig-alpha_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -436,6 +315,7 @@ hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```{r, eval=FALSE}
 hist(data1$yield, main = "", xlab = "yield")
 ```
+
 The response variables seems to follow a normal distribution curve, with fewer values on extreme lower and higher ends. 
 
 #### Model Building
@@ -452,11 +332,13 @@ tidy(mod_alpha)
 
 ### nlme
 ```{r}
+
 mod_alpha1 <- lme(yield ~ gen,
                   random = ~ 1|rep/block,
                   data = data1, 
                   na.action = na.exclude)
 tidy(mod_alpha1)
+
 ## need to try pdIdent here
 # model_lme <-lme(yield ~  gen,
 #               random = list(one = pdBlocked(list(
@@ -515,10 +397,4 @@ emmeans(mod_alpha, ~ gen)
 emmeans(mod_alpha1, ~ gen)
 ```
 :::
-
-
-
-```{r}
-
-```
 
