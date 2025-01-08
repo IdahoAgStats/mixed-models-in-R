@@ -18,7 +18,6 @@ Incomplete block designs are grouped into two groups: (1) balanced lattice desig
 
 In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs" [@paterson]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. 
 
-To avoid having a disconnected design, a balanced incomplete block design can be used.
 
 ### Statistical Model
 
@@ -93,7 +92,6 @@ desplot::desplot(dat,
          text=gen, cex=1, out1=block,
         out2=gen, out2.gpar=list(col = "black", lwd = 1, lty = 1),
          main="Incomplete block design")
-
 # desplot::desplot(dat, yield~col*row,
 #           text=gen, shorten='none', cex=.6, out1=block,
 #           aspect=252/96, # true aspect
@@ -232,7 +230,20 @@ emmeans(model_icbd1, ~ gen)
 
 ### Partially Balanced IBD (Alpha Lattice Design)
 
-The data used in this example is published in *Cyclic and Computer Generated Designs* [@john_cyclic]. The data in this trial was laid out in an alpha lattice design. This trial data had 24 genotypes ("gen"), 6 incomplete blocks, each replicated 3 times. 
+The statistical model for partially balanced design includes:
+
+$$y_{ij(l)} = \mu + \alpha_i + \beta_{i(l)} + \tau_j + \epsilon_{ij(l)}$$ 
+
+Where:
+
+$\mu$ = overall experimental mean   
+$\alpha$ = replicate effect (random)  
+$\beta$ = incomplete block effect (random)  
+$\tau$ = treatment effect (fixed)  
+$\epsilon_{ij(l)}$ = intra-block residual  
+
+
+The data used in this example is published in *Cyclic and Computer Generated Designs* [@john_cyclic]. The trial was laid out in an alpha lattice design. This trial data had 24 genotypes ("gen"), 6 incomplete blocks, each replicated 3 times. 
 
 Let's start analyzing this example first by loading the required libraries for linear mixed models:
 
@@ -324,7 +335,7 @@ The response variables seems to follow a normal distribution curve, with fewer v
 ### lme4
 
 ```{r}
-mod_alpha <- lmer(yield ~ gen + (1|rep:block),
+mod_alpha <- lmer(yield ~ gen + (1|rep/block),
                    data = data1, 
                    na.action = na.exclude)
 tidy(mod_alpha)
@@ -338,15 +349,6 @@ mod_alpha1 <- lme(yield ~ gen,
                   data = data1, 
                   na.action = na.exclude)
 tidy(mod_alpha1)
-
-## need to try pdIdent here
-# model_lme <-lme(yield ~  gen,
-#               random = list(one = pdBlocked(list(
-#          pdIdent(~ 0 + rep:block)))),
-#         data = data1 %>% mutate(one = factor(1)))
-# 
-# summary(model_lme)
-
 ```
 :::
 
@@ -366,7 +368,6 @@ check_model(mod_alpha1, check = c('normality', 'linearity'))
 ```
 :::
 
-
 #### Inference
 
 Let's ANOVA table using `anova()` from lmer and lme models, respectively.
@@ -380,7 +381,6 @@ anova(mod_alpha, type = "1")
 #### nlme
 ```{r}
 anova(mod_alpha1, type = "sequential")
-#anova(model_lme, type = "sequential")
 ```
 :::
 

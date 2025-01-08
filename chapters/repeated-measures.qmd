@@ -4,11 +4,11 @@
 source(here::here("settings.r"))
 ```
 
-In the previous chapters we covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures random effects.
+In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects.
 
-Studies that involve repeated observations of the exact same experimental units require a repeated measures component to properly model correlations across time with the experiment unit. This is common in any studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to repeated measures effect while analyzing the main effects.
+Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time of each subject. This is common in any studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
 
-In these models, the 'iid' assumption (idependently and identically distributed) is being violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
+In these models, the 'iid' assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
 There are several types of covariance structures:
 
@@ -97,7 +97,6 @@ ggplot(data = dat, aes(y = y, x = factweek, fill = variety)) +
 ```
 
 Looks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
-
 One last step before we fit model is to look at the distribution of response variable.
 
 ```{r, eval=FALSE}
@@ -224,7 +223,6 @@ Firstly, we need to look at the class of variables in the data set.
 ```{r}
 str(Yield)
 ```
-
 We will now convert the fertilizer and Rep into factor. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
 
 ::: column-margin
