@@ -45,7 +45,6 @@ library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
 ```
 ### mmrm
-
 ```{r, message=FALSE, warning=FALSE}
 library(mmrm); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
@@ -262,7 +261,7 @@ Looks like a well balanced design with 2 variety treatments and 3 fertilizer tre
 
 Before fitting a model, let's check the distribution of the response variable.
 ```{r, echo=FALSE}
-#| label: fig-split-split-plot_hist
+#| label: fig-split-plot_hist
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
@@ -318,14 +317,11 @@ We will use `check_model()` from 'performance' package to evaluate the model fit
 check_model(fit1, check = c('normality', 'linearity'))
 ```
 
-
 ### mmrm
-
 ```{r eval=FALSE, echo=TRUE}
 plot(residuals(fit2), xlab = "fitted values", ylab = "residuals")
 qqnorm(residuals(fit2)); qqline(residuals(fit2))
 ```
-
 
 ::: {layout-ncol=2 .column-body}
 
@@ -335,13 +331,11 @@ plot(residuals(fit2), xlab = "fitted values", ylab = "residuals",
      cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
 ```
 
-
 ```{r echo=FALSE}
 par(mar=c(5.1, 5, 2.1, 2.1))
 qqvals <- qqnorm(residuals(fit2), plot.it=FALSE)
 qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(fit2))
 ```
-
 ::: 
 
 :::
@@ -412,23 +406,119 @@ phos <- read.csv(here::here("data", "split_split_repeated.csv"))
 
 
 ```{r}
+str(phos)
+```
+
+```{r}
+phos$time = as.factor(phos$time)
+phos1 <- phos %>%   
+  mutate(time1 = as.numeric(time),
+        rep = as.character(bloc),
+        plot = as.character(plot)) 
+```
+
+
+```{r}
+table(phos1$Ptrt, phos1$Inoc, phos1$Cv) 
+```
+Looks like a well balanced design with 2 variety treatments and 3 fertilizer treatments.
+
+Before fitting a model, let's check the distribution of the response variable.
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(phos1$P_leaf, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+```{r, eval=FALSE}
+hist(phos1$P_leaf)
+```
+
+### Model fit
+
+```{r}
+#| warning: false
+
+corr_str1 = corAR1(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
+
+fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
+                random = ~ 1|rep/Ptrt/Inoc/plot,
+                corr= corr_str1,
+                data = phos1, na.action= na.exclude)
+tidy(fit1)
+```
+
+
+```{r, fig.height=3}
+#| warning: false
+#| message: false
+check_model(fit1, check = c('normality', 'linearity'))
+```
+We see a cluster of values in residuals which was due to large number of observations having low values. 
+
+
+```{r}
+#| warning: false
+#| message: false
+anova(fit1, type = "marginal")
+```
+```{r}
+emmeans(fit1,~ time)
+emmeans(fit1,~ time|Cv)
 
 ```
+Really low P leaf content at PT3 in all the cultivars.
 
 
 4.  **Factorial design repeated measures**
 
-As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously
-
-https://search.r-project.org/CRAN/refmans/agridat/html/gregory.cotton.html
+As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously. In this section we will add repeated measures component to the factorial design.
 
 ```{r}
 data3 <- agridat::gregory.cotton
 str(data3)
+
+data31 <- data3 |> 
+ mutate(year1 = as.numeric(year))
 ```
 
 ```{r}
 table(data3$nitrogen, data3$date)
+```
+
+
+```{r, eval=FALSE}
+corr_str2 = corAR1(form = ~ year1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
+
+fit3 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
+                random = ~ 1|rep/Ptrt/Inoc/plot,
+                corr= corr_str2,
+                data = data31, na.action= na.exclude)
+tidy(fit3)
+
+summary(fit3)
+
+```
+
+```{r, fig.height=3, eval=FALSE}
+#| warning: false
+#| message: false
+check_model(fit3, check = c('normality', 'linearity'))
+```
+We see a cluster of values in residuals which was due to large number of observations having low values. 
+
+
+```{r, eval=FALSE}
+#| warning: false
+#| message: false
+anova(fit1, type = "marginal")
+```
+```{r}
+emmeans(fit1,~ time)
+emmeans(fit1,~ time|Cv)
+
 ```
 
 
