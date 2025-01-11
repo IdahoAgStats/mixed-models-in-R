@@ -292,7 +292,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#model-diagnostics" id="toc-model-diagnostics" class="nav-link" data-scroll-target="#model-diagnostics"><span class="header-section-number">12.2.3</span> Model diagnostics</a></li>
   <li><a href="#inference-1" id="toc-inference-1" class="nav-link" data-scroll-target="#inference-1"><span class="header-section-number">12.2.4</span> Inference</a></li>
   </ul></li>
-  <li><a href="#split-split-plot-repeated-measures" id="toc-split-split-plot-repeated-measures" class="nav-link" data-scroll-target="#split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split plot repeated measures</a></li>
+  <li><a href="#split-split-plot-repeated-measures" id="toc-split-split-plot-repeated-measures" class="nav-link" data-scroll-target="#split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split plot repeated measures</a>
+  <ul class="collapse">
+  <li><a href="#model-fit-1" id="toc-model-fit-1" class="nav-link" data-scroll-target="#model-fit-1"><span class="header-section-number">12.3.1</span> Model fit</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -812,12 +815,12 @@ Time variable
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-split-split-plot_hist" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div id="fig-split-plot_hist" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-split-split-plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="repeated-measures_files/figure-html/fig-split-split-plot_hist-1.png" class="img-fluid figure-img" width="672">
+<div aria-describedby="fig-split-plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="repeated-measures_files/figure-html/fig-split-plot_hist-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-split-plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.2: Histogram of the dependent variable.
 </figcaption>
 </figure>
@@ -1088,7 +1091,7 @@ Confidence level used: 0.95 </code></pre>
 <p>To explore more about contrasts and emmeans please refer to <a href="../chapters/means-and-contrasts.html"><strong>Chapter 12</strong></a>.</p>
 </div></div></section>
 </section>
-<section id="split-split-plot-repeated-measures" class="level2" data-number="12.3">
+<section id="split-split-plot-repeated-measures" class="level2 page-columns page-full" data-number="12.3">
 <h2 data-number="12.3" class="anchored" data-anchor-id="split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split plot repeated measures</h2>
 <p>Recall, we have evaluated the split-split experiment design in <a href="../chapters/split-plot-design.html"><strong>Chapter 5</strong></a>, where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures compoenet to the split-split plot design.</p>
 <div class="cell">
@@ -1126,14 +1129,207 @@ Confidence level used: 0.95 </code></pre>
 </tr>
 </tbody>
 </table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(phos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   240 obs. of  7 variables:
+ $ plot  : int  1 1 1 2 2 2 3 3 3 4 ...
+ $ bloc  : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ Ptrt  : chr  "high" "high" "high" "high" ...
+ $ Inoc  : chr  "none" "none" "none" "none" ...
+ $ Cv    : chr  "LOUISE" "LOUISE" "LOUISE" "BlancaG" ...
+ $ time  : chr  "PT1" "PT2" "PT3" "PT1" ...
+ $ P_leaf: num  3154 2331 247 3016 2160 ...</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>phos<span class="sc">$</span>time <span class="ot">=</span> <span class="fu">as.factor</span>(phos<span class="sc">$</span>time)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>phos1 <span class="ot">&lt;-</span> phos <span class="sc">%&gt;%</span>   </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time1 =</span> <span class="fu">as.numeric</span>(time),</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">rep =</span> <span class="fu">as.character</span>(bloc),</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot =</span> <span class="fu">as.character</span>(plot)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(phos1<span class="sc">$</span>Ptrt, phos1<span class="sc">$</span>Inoc, phos1<span class="sc">$</span>Cv) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, ,  = ALPOWA
+
+      
+       myco none
+  high   12   12
+  low    12   12
+
+, ,  = BlancaG
+
+      
+       myco none
+  high   12   12
+  low    12   12
+
+, ,  = LOUISE
+
+      
+       myco none
+  high   12   12
+  low    12   12
+
+, ,  = OTIS
+
+      
+       myco none
+  high   12   12
+  low    12   12
+
+, ,  = WALWORTH
+
+      
+       myco none
+  high   12   12
+  low    12   12</code></pre>
+</div>
+</div>
+<p>Looks like a well balanced design with 2 variety treatments and 3 fertilizer treatments.</p>
+<p>Before fitting a model, let’s check the distribution of the response variable.</p>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div id="fig-split-split-plot_hist" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-split-split-plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="repeated-measures_files/figure-html/fig-split-split-plot_hist-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-split-plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12.3: Histogram of the dependent variable.
+</figcaption>
+</figure>
+</div>
+</div></div></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(phos1<span class="sc">$</span>P_leaf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="model-fit-1" class="level3" data-number="12.3.1">
+<h3 data-number="12.3.1" class="anchored" data-anchor-id="model-fit-1"><span class="header-section-number">12.3.1</span> Model fit</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> time1<span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv,</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot,</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr=</span> corr_str1,</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> phos1, <span class="at">na.action=</span> na.exclude)</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 7
+   effect term            estimate std.error    df statistic  p.value
+   &lt;chr&gt;  &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+ 1 fixed  (Intercept)      3175.        82.6   120   38.4    2.63e-69
+ 2 fixed  timePT2          -866.        91.6   120   -9.46   3.41e-16
+ 3 fixed  timePT3         -3015.        96.9   120  -31.1    2.66e-59
+ 4 fixed  Ptrtlow          -185.       101.      3   -1.84   1.64e- 1
+ 5 fixed  Inocnone          129.        97.6     6    1.33   2.33e- 1
+ 6 fixed  CvBlancaG          48.4       97.6    48    0.496  6.22e- 1
+ 7 fixed  CvLOUISE          -23.2       97.6    48   -0.238  8.13e- 1
+ 8 fixed  CvOTIS              2.49      97.6    48    0.0255 9.80e- 1
+ 9 fixed  CvWALWORTH       -413.        97.6    48   -4.23   1.03e- 4
+10 fixed  timePT2:Ptrtlow   104.       129.    120    0.800  4.25e- 1
+# ℹ 50 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We see a cluster of values in residuals which was due to large number of observations having low values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  numDF denDF   F-value p-value
+(Intercept)           1   120 1477.6555  &lt;.0001
+time                  2   120  518.4625  &lt;.0001
+Ptrt                  1     3    3.3729  0.1636
+Inoc                  1     6    1.7592  0.2330
+Cv                    4    48    7.5577  0.0001
+time:Ptrt             2   120    0.6765  0.5103
+time:Inoc             2   120    2.2797  0.1067
+Ptrt:Inoc             1     6    2.4771  0.1666
+time:Cv               8   120    2.4426  0.0175
+Ptrt:Cv               4    48    0.5051  0.7321
+Inoc:Cv               4    48    2.1222  0.0925
+time:Ptrt:Inoc        2   120    0.8339  0.4369
+time:Ptrt:Cv          8   120    0.2320  0.9843
+time:Inoc:Cv          8   120    1.0401  0.4100
+Ptrt:Inoc:Cv          4    48    0.4733  0.7551
+time:Ptrt:Inoc:Cv     8   120    0.4155  0.9098</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1,<span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> time emmean   SE df lower.CL upper.CL
+ PT1    3096 46.2  3   2948.7     3242
+ PT2    2270 46.2  3   2122.7     2416
+ PT3     198 46.2  3     50.8      345
+
+Results are averaged over the levels of: Ptrt, Inoc, Cv 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1,<span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cv = ALPOWA:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3201 55.5  3  3024.57     3378
+ PT2    2225 55.5  3  2047.87     2401
+ PT3     178 55.5  3     1.53      355
+
+Cv = BlancaG:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3183 55.5  3  3006.50     3360
+ PT2    2334 55.5  3  2157.45     2511
+ PT3     210 55.5  3    32.95      386
+
+Cv = LOUISE:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3121 55.5  3  2944.36     3298
+ PT2    2366 55.5  3  2189.56     2543
+ PT3     174 55.5  3    -2.43      351
+
+Cv = OTIS:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3228 55.5  3  3051.65     3405
+ PT2    2253 55.5  3  2076.66     2430
+ PT3     234 55.5  3    56.86      410
+
+Cv = WALWORTH:
+ time emmean   SE df lower.CL upper.CL
+ PT1    2744 55.5  3  2567.30     2921
+ PT2    2170 55.5  3  1992.90     2346
+ PT3     193 55.5  3    15.88      369
+
+Results are averaged over the levels of: Ptrt, Inoc 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+<p>Really low P leaf content at PT3 in all the cultivars.</p>
 <ol start="4" type="1">
 <li><strong>Factorial design repeated measures</strong></li>
 </ol>
-<p>As explained in <a href="../chapters/factorial-design.html"><strong>Chapter 6</strong></a>, factorial designs involve examining several factors simultaneously</p>
-<p>https://search.r-project.org/CRAN/refmans/agridat/html/gregory.cotton.html</p>
+<p>As explained in <a href="../chapters/factorial-design.html"><strong>Chapter 6</strong></a>, factorial designs involve examining several factors simultaneously. In this section we will add repeated measures component to the factorial design.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>gregory.cotton</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>gregory.cotton</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   144 obs. of  6 variables:
  $ yield   : num  0.99 1.34 1.26 1.44 1.4 1.36 1.23 1.28 1.56 1.64 ...
@@ -1143,9 +1339,11 @@ Confidence level used: 0.95 </code></pre>
  $ water   : Factor w/ 3 levels "I1","I2","I3": 1 1 1 2 2 2 3 3 3 1 ...
  $ spacing : Factor w/ 3 levels "S1","S2","S3": 1 2 3 1 2 3 1 2 3 1 ...</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>data31 <span class="ot">&lt;-</span> data3 <span class="sc">|&gt;</span> </span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">year1 =</span> <span class="fu">as.numeric</span>(year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data3<span class="sc">$</span>nitrogen, data3<span class="sc">$</span>date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data3<span class="sc">$</span>nitrogen, data3<span class="sc">$</span>date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    
      D1 D2 D3 D4
@@ -1153,10 +1351,84 @@ Confidence level used: 0.95 </code></pre>
   N1 18 18 18 18</code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>corr_str2 <span class="ot">=</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> year1<span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">lme</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv,</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot,</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr=</span> corr_str2,</span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> data31, <span class="at">na.action=</span> na.exclude)</span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(fit3)</span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit3, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We see a cluster of values in residuals which was due to large number of observations having low values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1,<span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> time emmean   SE df lower.CL upper.CL
+ PT1    3096 46.2  3   2948.7     3242
+ PT2    2270 46.2  3   2122.7     2416
+ PT3     198 46.2  3     50.8      345
+
+Results are averaged over the levels of: Ptrt, Inoc, Cv 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1,<span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Cv = ALPOWA:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3201 55.5  3  3024.57     3378
+ PT2    2225 55.5  3  2047.87     2401
+ PT3     178 55.5  3     1.53      355
+
+Cv = BlancaG:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3183 55.5  3  3006.50     3360
+ PT2    2334 55.5  3  2157.45     2511
+ PT3     210 55.5  3    32.95      386
+
+Cv = LOUISE:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3121 55.5  3  2944.36     3298
+ PT2    2366 55.5  3  2189.56     2543
+ PT3     174 55.5  3    -2.43      351
+
+Cv = OTIS:
+ time emmean   SE df lower.CL upper.CL
+ PT1    3228 55.5  3  3051.65     3405
+ PT2    2253 55.5  3  2076.66     2430
+ PT3     234 55.5  3    56.86      410
+
+Cv = WALWORTH:
+ time emmean   SE df lower.CL upper.CL
+ PT1    2744 55.5  3  2567.30     2921
+ PT2    2170 55.5  3  1992.90     2346
+ PT3     193 55.5  3    15.88      369
+
+Results are averaged over the levels of: Ptrt, Inoc 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
 <p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle&nbsp;<a href="https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/">crossed random factors</a>&nbsp;as well as nested</p>
 <p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
 
 
+</section>
 </section>
 </section>
 
