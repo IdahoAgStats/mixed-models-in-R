@@ -282,8 +282,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data"><span class="header-section-number">12.2.1</span> Import data</a></li>
   <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">12.2.2</span> Model fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">12.2.3</span> Check Model Assumptions</a></li>
-  <li><a href="#model-inference" id="toc-model-inference" class="nav-link" data-scroll-target="#model-inference"><span class="header-section-number">12.2.4</span> Model Inference</a></li>
-  <li><a href="#estimated-marginal-means" id="toc-estimated-marginal-means" class="nav-link" data-scroll-target="#estimated-marginal-means"><span class="header-section-number">12.2.5</span> Estimated Marginal Means</a></li>
+  <li><a href="#estimated-marginal-means" id="toc-estimated-marginal-means" class="nav-link" data-scroll-target="#estimated-marginal-means"><span class="header-section-number">12.2.4</span> Estimated Marginal Means</a></li>
   </ul></li>
   <li><a href="#contrasts-using-emmeans" id="toc-contrasts-using-emmeans" class="nav-link" data-scroll-target="#contrasts-using-emmeans"><span class="header-section-number">12.3</span> Contrasts using emmeans</a>
   <ul class="collapse">
@@ -322,9 +321,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="background" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="background"><span class="header-section-number">12.1</span> Background</h2>
 <p>To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a “population-level” average.</p>
-<p>The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as <strong>least-squares means</strong>) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs(mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html"><strong>vignettes</strong></a> and works with a lot of different model objects.</p>
+<p>The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as <strong>least-squares means</strong>) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html"><strong>vignettes</strong></a> and works with a lot of different model objects.</p>
 <p>In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.</p>
-<p>To demonstrate the use of the emmeans() package. We will pull the model from split plot lesson (<a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in <a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>.</p>
+<p>To demonstrate the use of the emmeans package. We will pull the model from split plot lesson (<a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in <a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -342,6 +341,7 @@ Marginal means using lmer and nlme
 </section>
 <section id="analysis-examples" class="level2 page-columns page-full" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">12.2</span> Analysis Examples</h2>
+<p>We will start with loading required R libraries for this analysis.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(multcompView)</span>
@@ -350,13 +350,13 @@ Marginal means using lmer and nlme
 <section id="import-data" class="level3 page-columns page-full" data-number="12.2.1">
 <h3 data-number="12.2.1" class="anchored" data-anchor-id="import-data"><span class="header-section-number">12.2.1</span> Import data</h3>
 <p>Let’s import oats data from the MASS package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> MASS<span class="sc">::</span>oats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>To read more about data and model fitting explanation please refer to <a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>.</p>
-</div></div><div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> MASS<span class="sc">::</span>oats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
+</div></div></section>
 <section id="model-fitting" class="level3" data-number="12.2.2">
 <h3 data-number="12.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">12.2.2</span> Model fitting</h3>
 <div class="cell">
@@ -400,9 +400,7 @@ of nesting</code></pre>
 </div>
 </div>
 </div>
-</section>
-<section id="model-inference" class="level3" data-number="12.2.4">
-<h3 data-number="12.2.4" class="anchored" data-anchor-id="model-inference"><span class="header-section-number">12.2.4</span> Model Inference</h3>
+<p>Residuals look good with a small hump in middle and normality curve looks better. ### Model Inference</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -413,12 +411,13 @@ N               3    45 13.02273  &lt;.0001
 V:N             6    45  0.30282  0.9322</code></pre>
 </div>
 </div>
+<p>The analysis of variance showed a significant N effect and no effect of V and VxN on oat yield.</p>
 </section>
-<section id="estimated-marginal-means" class="level3" data-number="12.2.5">
-<h3 data-number="12.2.5" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">12.2.5</span> Estimated Marginal Means</h3>
+<section id="estimated-marginal-means" class="level3" data-number="12.2.4">
+<h3 data-number="12.2.4" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">12.2.4</span> Estimated Marginal Means</h3>
 <p>Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let’s use the <code>emmeans()</code> function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects.</p>
-<section id="main-effects" class="level4" data-number="12.2.5.1">
-<h4 data-number="12.2.5.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">12.2.5.1</span> Main effects</h4>
+<section id="main-effects" class="level4" data-number="12.2.4.1">
+<h4 data-number="12.2.4.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">12.2.4.1</span> Main effects</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -456,9 +455,9 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it’s N treatments, respectively.</p>
 </section>
-<section id="interaction-effects" class="level4" data-number="12.2.5.2">
-<h4 data-number="12.2.5.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">12.2.5.2</span> Interaction effects</h4>
-<p>Now let’s evaluate the interaction effect EMMs for V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
+<section id="interaction-effects" class="level4" data-number="12.2.4.2">
+<h4 data-number="12.2.4.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">12.2.4.2</span> Interaction effects</h4>
+<p>Now let’s evaluate the EMMs for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V<span class="sc">*</span>N)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>m3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -513,10 +512,11 @@ Degrees-of-freedom method: containment
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
+<p>The EMMs (m3 and m4) gives the same results but the outcome style is litte more explanatory in m4.</p>
 </section>
 </section>
 </section>
-<section id="contrasts-using-emmeans" class="level2 page-columns page-full" data-number="12.3">
+<section id="contrasts-using-emmeans" class="level2" data-number="12.3">
 <h2 data-number="12.3" class="anchored" data-anchor-id="contrasts-using-emmeans"><span class="header-section-number">12.3</span> Contrasts using emmeans</h2>
 <p>Firstly, the <code>pairs()</code> function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through <code>pairs()</code> function which will provide a p-value adjustment equivalent to the Tukey test.</p>
 <div class="cell">
@@ -548,7 +548,7 @@ Degrees-of-freedom method: containment
 P value adjustment: tukey method for comparing a family of 4 estimates </code></pre>
 </div>
 </div>
-<p>Here if we look at the results from code chunk above, it’s easy to interpret results from <code>pairs()</code> function in case of varietey comparison becuase there were only 3 groups. It’s bit confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.</p>
+<p>Here if we look at the results from code chunk above, it’s easy to interpret results from <code>pairs()</code> function in case of variety comparison becuase there were only 3 groups. But it’s little confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -559,12 +559,13 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Remember!! The <code>pairs()</code> function can be used to calculate pairwise comparison when treatment groups are less than equal to 3.</p>
+<p>Remember!!</p>
+<p>The <code>pairs()</code> function can be used to calculate pairwise comparison when treatment groups are less than equal to 3.</p>
 </div>
 </div>
-<section id="custom-contrasts" class="level3 page-columns page-full" data-number="12.3.1">
+<section id="custom-contrasts" class="level3" data-number="12.3.1">
 <h3 data-number="12.3.1" class="anchored" data-anchor-id="custom-contrasts"><span class="header-section-number">12.3.1</span> Custom contrasts</h3>
-<p>Firstly, let’s run emmean object ‘m2’ for nitrogen treatment comparison.</p>
+<p>First, run emmean object ‘m2’ for nitrogen treatments.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -579,7 +580,7 @@ Degrees-of-freedom method: containment
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
-<p>Now, lets a create a vector for each nitrogen treatment in the same order as presented in output from m2.</p>
+<p>Now, let’s create a vector for each nitrogen treatment in the same order as presented in output from m2.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>A1 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>A2 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>)</span>
@@ -587,7 +588,7 @@ Confidence level used: 0.95 </code></pre>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>A4 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>These vectors (A1, A2, A3, A4) represent each Nitrogen treatment in an order as presented in m2 emmeans object. A1, A2, and A3, A4 vectors represents 0.0cwt, 0.2cwt, 0.4cwt, and 0.6cwt treatments, respectively.</p>
-<p>Let’s create custom contrasts for comparing ‘0.0cwt’ (A1) treatment to ‘0.2cwt’ (A2), ‘0.4cwt’ (A3), and ‘0.6cwt’ (A4) treatments. This can be evaluated as shown below: Here the output shows the difference in mean yield between these two varieties</p>
+<p>Next step is to create a custom contrasts for comparing ‘0.0cwt’ (A1) treatment to ‘0.2cwt’ (A2), ‘0.4cwt’ (A3), and ‘0.6cwt’ (A4) treatments. This can be evaluated as shown below:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="at">method =</span> <span class="fu">list</span>(A1 <span class="sc">-</span> A2) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -614,16 +615,27 @@ Results are averaged over the levels of: V
 Degrees-of-freedom method: containment </code></pre>
 </div>
 </div>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Using custom contrasts is strongly recommended instead of <code>pairs()</code> when you are comparing multiple treatment groups (&gt;5).</p>
-</div></div></section>
+<p>Here the output shows the difference in mean yield between control and 3 N treatments. The results shows that yield was significantly higher N treatments compared to the control (0.0cwt) irrespective of the oat variety.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="contrast() vs pairs()">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+contrast() vs pairs()
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Using custom contrast() is strongly recommended instead of <code>pairs()</code> when you are comparing multiple treatment groups (&gt;5).</p>
+</div>
+</div>
+</section>
 </section>
 <section id="compact-letter-displays" class="level2" data-number="12.4">
 <h2 data-number="12.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">12.4</span> Compact letter displays</h2>
 <p>Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. The R package <code>multcompView</code> (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.</p>
 <p>The <code>cld()</code> function from the <em>multcomp</em> package is used to implement CLDs in the form of symbols or letters. The <code>emmeans</code> package provides a emmGrid objects for cld() method.</p>
-<p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 and m2 for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.</p>
+<p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -766,7 +778,7 @@ Cautionary Note about CLD
 </section>
 <section id="graphical-display-of-emmeans" class="level2" data-number="12.7">
 <h2 data-number="12.7" class="anchored" data-anchor-id="graphical-display-of-emmeans"><span class="header-section-number">12.7</span> Graphical display of emmeans</h2>
-<p>The results of emmeans() object can be plotted in two different ways. Firstly, we can use base <code>plot()</code> function in R.</p>
+<p>The results of emmeans() object can be plotted in two different ways. First, we can use base <code>plot()</code> function in R.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -835,7 +847,7 @@ More details on emmeans
 </section>
 <section id="conclusion" class="level2" data-number="12.8">
 <h2 data-number="12.8" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">12.8</span> Conclusion</h2>
-<p>Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “nonsignificant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.</p>
+<p>Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “non-significant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -847,7 +859,6 @@ P values, “significance”, and recommendations
 </div>
 <div class="callout-body-container callout-body">
 <p>P values are often misinterpreted, and the term “statistical significance” can be misleading. Please refer to this <a href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e167">link</a> to read more about basic principles outlined by the American Statistical Association when considering p-values.</p>
-<p>If you want to read more about emmeans, please refer to vignettes on this <a href="https://cran.r-project.org/web/packages/emmeans/index.html">CRAN page</a>.</p>
 </div>
 </div>
 

@@ -369,7 +369,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>In this example, we have a rice yield data from ‘agricolae’ package. This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design. Here, we are using rice yield data from the (<a href="https://CRAN.R-project.org/package=agricolae">agricolae</a>) package.</p>
+<p>In this example, we have a rice yield data from the <a href="https://CRAN.R-project.org/package=agricolae">agricolae</a> package. The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_ssp.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -404,7 +404,7 @@ window.Quarto = {
 </table>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="7.2.1">
 <h3 data-number="7.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">7.2.1</span> Data integrity checks</h3>
-<p>Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.</p>
+<p>Before analyzing the data let’s do some preliminary data quality checks. We will start with evaluation of the structure of the data where class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -417,7 +417,7 @@ window.Quarto = {
  $ yield     : num  3.32 3.77 4.66 3.19 3.62 ...</code></pre>
 </div>
 </div>
-<p>Convert block, nitrogen, variety, and management to characters.</p>
+<p>Here we need to convert block, nitrogen, variety, and management to characters.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>block)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rice<span class="sc">$</span>nitrogen <span class="ot">&lt;-</span> <span class="fu">as.character</span>(rice<span class="sc">$</span>nitrogen)</span>
@@ -454,7 +454,7 @@ window.Quarto = {
 </div>
 </div>
 <p>It looks perfectly balanced, with exactly 3 observation per treatment group.</p>
-<p>Last, check the distribution of the dependent variable by plotting a histogram using <code>hist()</code>.</p>
+<p>Last, check the distribution of the dependent variable by plotting a histogram of yield values using <code>hist()</code> in R.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rice<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -574,11 +574,11 @@ levels of nesting</code></pre>
 </div>
 </div>
 </div>
-<p>Here, we didn’t observe any anomaly in model assumptions.</p>
+<p>Constant variance and normality of residuals looks good. Here, we didn’t observe any anomalies in the model assumptions.</p>
 </section>
 <section id="inference" class="level3" data-number="7.2.4">
 <h3 data-number="7.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">7.2.4</span> Inference</h3>
-<p>Analysis of variance</p>
+<p>Let’s look at the analysis of variance for fixed effects and their interaction effect on yield.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -621,84 +621,49 @@ nitrogen:management:variety    16    60   0.52893  0.9210</code></pre>
 </div>
 </div>
 </div>
-<p>We can estimated the marginal means for each treatment factor (variety, nitrogen, management) which will averaged across other factors. and their interaction.</p>
+<p>Here, we observed a significant impact of management, variety, and nitrogen x variety interaction effect on rice yield. We can estimate the marginal means for each treatment factor (variety, nitrogen, management) which will averaged across other factors and their interaction.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> nitrogen emmean    SE df lower.CL upper.CL
- 0          5.38 0.139 10     5.08     5.69
- 110        6.94 0.139 10     6.63     7.25
- 140        7.23 0.139 10     6.93     7.54
- 50         6.22 0.139 10     5.91     6.53
- 80         7.00 0.139 10     6.69     7.30
+<pre><code> management emmean    SE   df lower.CL upper.CL
+ m1           5.90 0.102 11.2     5.68     6.12
+ m2           6.49 0.102 11.2     6.26     6.71
+ m3           7.28 0.102 11.2     7.05     7.50
 
-Results are averaged over the levels of: management, variety 
+Results are averaged over the levels of: nitrogen, variety 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety<span class="sc">|</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
-<pre><code>management = m1:
- nitrogen variety emmean    SE   df lower.CL upper.CL
- 0        1         3.90 0.386 89.7     3.13     4.66
- 110      1         4.65 0.386 89.7     3.88     5.42
- 140      1         4.06 0.386 89.7     3.30     4.83
- 50       1         4.23 0.386 89.7     3.47     5.00
- 80       1         5.23 0.386 89.7     4.46     5.99
- 0        2         5.35 0.386 89.7     4.58     6.11
- 110      2         6.25 0.386 89.7     5.49     7.02
- 140      2         6.78 0.386 89.7     6.01     7.54
- 50       2         5.92 0.386 89.7     5.16     6.69
- 80       2         5.98 0.386 89.7     5.21     6.75
- 0        3         5.38 0.386 89.7     4.61     6.14
- 110      3         7.45 0.386 89.7     6.69     8.22
- 140      3         8.62 0.386 89.7     7.85     9.38
- 50       3         6.78 0.386 89.7     6.02     7.55
- 80       3         7.93 0.386 89.7     7.17     8.70
+<pre><code> nitrogen variety emmean    SE df lower.CL upper.CL
+ 0        1         4.51 0.227 49     4.06     4.97
+ 110      1         5.44 0.227 49     4.99     5.90
+ 140      1         5.08 0.227 49     4.62     5.53
+ 50       1         4.76 0.227 49     4.31     5.22
+ 80       1         5.83 0.227 49     5.38     6.29
+ 0        2         5.16 0.227 49     4.71     5.62
+ 110      2         6.92 0.227 49     6.47     7.38
+ 140      2         7.29 0.227 49     6.83     7.74
+ 50       2         6.02 0.227 49     5.56     6.47
+ 80       2         6.59 0.227 49     6.13     7.04
+ 0        3         6.48 0.227 49     6.02     6.93
+ 110      3         8.44 0.227 49     7.99     8.90
+ 140      3         9.34 0.227 49     8.88     9.79
+ 50       3         7.88 0.227 49     7.42     8.34
+ 80       3         8.56 0.227 49     8.11     9.02
 
-management = m2:
- nitrogen variety emmean    SE   df lower.CL upper.CL
- 0        1         4.32 0.386 89.7     3.55     5.08
- 110      1         5.45 0.386 89.7     4.68     6.21
- 140      1         5.20 0.386 89.7     4.43     5.97
- 50       1         4.58 0.386 89.7     3.81     5.34
- 80       1         5.73 0.386 89.7     4.97     6.50
- 0        2         4.71 0.386 89.7     3.95     5.48
- 110      2         7.00 0.386 89.7     6.24     7.77
- 140      2         7.08 0.386 89.7     6.32     7.85
- 50       2         5.82 0.386 89.7     5.05     6.58
- 80       2         6.50 0.386 89.7     5.73     7.27
- 0        3         6.50 0.386 89.7     5.73     7.26
- 110      3         8.62 0.386 89.7     7.86     9.39
- 140      3         9.40 0.386 89.7     8.63    10.17
- 50       3         7.82 0.386 89.7     7.05     8.58
- 80       3         8.57 0.386 89.7     7.80     9.33
-
-management = m3:
- nitrogen variety emmean    SE   df lower.CL upper.CL
- 0        1         5.33 0.386 89.7     4.56     6.09
- 110      1         6.24 0.386 89.7     5.47     7.00
- 140      1         5.97 0.386 89.7     5.21     6.74
- 50       1         5.48 0.386 89.7     4.72     6.25
- 80       1         6.55 0.386 89.7     5.78     7.31
- 0        2         5.43 0.386 89.7     4.66     6.20
- 110      2         7.52 0.386 89.7     6.75     8.28
- 140      2         8.01 0.386 89.7     7.24     8.77
- 50       2         6.31 0.386 89.7     5.55     7.08
- 80       2         7.29 0.386 89.7     6.52     8.05
- 0        3         7.56 0.386 89.7     6.79     8.33
- 110      3         9.25 0.386 89.7     8.49    10.02
- 140      3         9.99 0.386 89.7     9.22    10.76
- 50       3         9.05 0.386 89.7     8.28     9.81
- 80       3         9.19 0.386 89.7     8.42     9.96
-
+Results are averaged over the levels of: management 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -706,78 +671,43 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitrogen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> nitrogen emmean    SE df lower.CL upper.CL
- 0          5.38 0.139  2     4.79     5.98
- 110        6.94 0.139  2     6.34     7.53
- 140        7.23 0.139  2     6.64     7.83
- 50         6.22 0.139  2     5.62     6.82
- 80         7.00 0.139  2     6.40     7.59
+<pre><code> management emmean    SE df lower.CL upper.CL
+ m1           5.90 0.102  2     5.46     6.34
+ m2           6.49 0.102  2     6.05     6.92
+ m3           7.28 0.102  2     6.84     7.71
 
-Results are averaged over the levels of: management, variety 
+Results are averaged over the levels of: nitrogen, variety 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety<span class="sc">|</span>management)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitrogen<span class="sc">*</span>variety)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
-<pre><code>management = m1:
- nitrogen variety emmean    SE df lower.CL upper.CL
- 0        1         3.90 0.386  2     2.24     5.56
- 110      1         4.65 0.386  2     2.99     6.31
- 140      1         4.06 0.386  2     2.40     5.72
- 50       1         4.23 0.386  2     2.57     5.89
- 80       1         5.23 0.386  2     3.57     6.89
- 0        2         5.35 0.386  2     3.69     7.01
- 110      2         6.25 0.386  2     4.59     7.91
- 140      2         6.78 0.386  2     5.12     8.43
- 50       2         5.92 0.386  2     4.26     7.58
- 80       2         5.98 0.386  2     4.32     7.64
- 0        3         5.38 0.386  2     3.72     7.04
- 110      3         7.45 0.386  2     5.79     9.11
- 140      3         8.62 0.386  2     6.96    10.28
- 50       3         6.78 0.386  2     5.12     8.44
- 80       3         7.93 0.386  2     6.27     9.59
+<pre><code> nitrogen variety emmean    SE df lower.CL upper.CL
+ 0        1         4.51 0.227  2     3.54     5.49
+ 110      1         5.44 0.227  2     4.47     6.42
+ 140      1         5.08 0.227  2     4.10     6.05
+ 50       1         4.76 0.227  2     3.79     5.74
+ 80       1         5.83 0.227  2     4.86     6.81
+ 0        2         5.16 0.227  2     4.19     6.14
+ 110      2         6.92 0.227  2     5.95     7.90
+ 140      2         7.29 0.227  2     6.31     8.27
+ 50       2         6.02 0.227  2     5.04     6.99
+ 80       2         6.59 0.227  2     5.61     7.57
+ 0        3         6.48 0.227  2     5.50     7.46
+ 110      3         8.44 0.227  2     7.47     9.42
+ 140      3         9.34 0.227  2     8.36    10.31
+ 50       3         7.88 0.227  2     6.90     8.86
+ 80       3         8.56 0.227  2     7.59     9.54
 
-management = m2:
- nitrogen variety emmean    SE df lower.CL upper.CL
- 0        1         4.32 0.386  2     2.66     5.98
- 110      1         5.45 0.386  2     3.79     7.11
- 140      1         5.20 0.386  2     3.54     6.86
- 50       1         4.58 0.386  2     2.92     6.24
- 80       1         5.73 0.386  2     4.07     7.39
- 0        2         4.71 0.386  2     3.05     6.37
- 110      2         7.00 0.386  2     5.34     8.66
- 140      2         7.08 0.386  2     5.43     8.74
- 50       2         5.82 0.386  2     4.16     7.47
- 80       2         6.50 0.386  2     4.84     8.16
- 0        3         6.50 0.386  2     4.84     8.16
- 110      3         8.62 0.386  2     6.97    10.28
- 140      3         9.40 0.386  2     7.74    11.06
- 50       3         7.82 0.386  2     6.16     9.48
- 80       3         8.57 0.386  2     6.91    10.23
-
-management = m3:
- nitrogen variety emmean    SE df lower.CL upper.CL
- 0        1         5.33 0.386  2     3.67     6.98
- 110      1         6.24 0.386  2     4.58     7.90
- 140      1         5.97 0.386  2     4.31     7.63
- 50       1         5.48 0.386  2     3.82     7.14
- 80       1         6.55 0.386  2     4.89     8.21
- 0        2         5.43 0.386  2     3.77     7.09
- 110      2         7.52 0.386  2     5.86     9.18
- 140      2         8.01 0.386  2     6.35     9.66
- 50       2         6.31 0.386  2     4.65     7.97
- 80       2         7.29 0.386  2     5.63     8.95
- 0        3         7.56 0.386  2     5.90     9.22
- 110      3         9.25 0.386  2     7.59    10.91
- 140      3         9.99 0.386  2     8.33    11.65
- 50       3         9.05 0.386  2     7.39    10.70
- 80       3         9.19 0.386  2     7.53    10.85
-
+Results are averaged over the levels of: management 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -785,7 +715,25 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>Notice we get a message that the estimated means for ‘nitrogen’ are averaged over the levels of ‘management’ and ‘variety’. So we need to be careful about how we interpret these estimates.</p>
+<p>Notice we get a message that the estimated means for ‘nitrogen x variety’ are averaged over the levels of ‘management’. So we need to be careful about how we interpret these estimates.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Nested random effects
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You may have noticed the order of random effects in model statement:</p>
+<pre><code>model_lme &lt;- lme(yield ~ nitrogen*management*variety,
+                  random = ~ 1|block/nitrogen/management,
+                  data = rice, 
+                  na.action = na.exclude)</code></pre>
+<p>The random effects follow the order of <code>~1|block/main-plot/split-plot</code>. While fitting the model for split-split plot design please make sure to have a clear understanding of the main plot, split-plot and split-split plot factors to avoid having an erroneous model.</p>
+</div>
+</div>
 
 
 </section>

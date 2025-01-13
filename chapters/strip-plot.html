@@ -340,7 +340,11 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="background"><span class="header-section-number">8.1</span> Background</h2>
-<p>In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors. 1. Vertical strip plot for the first factor – vertical factor 2. Horizontal strip plot for the second factor – horizontal factor</p>
+<p>In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors.</p>
+<ol type="1">
+<li>Vertical strip plot for the first factor – vertical factor.</li>
+<li>Horizontal strip plot for the second factor – horizontal factor.</li>
+</ol>
 <p>Divide the experimental area into ‘A’ horizontal strips and ‘B’ vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.</p>
 <p>The statistical model:</p>
 <p><span class="math display">\[y_{ijk} = \mu + \alpha_j + \beta_k + \alpha_j\beta_k + b_i + r_{ij} + c_{ik} + \epsilon_{ijk}\]</span> Where:</p>
@@ -353,7 +357,7 @@ window.Quarto = {
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">8.2</span> Example Analysis</h2>
-<p>We will start by loading the required libraries for this analysis for <code>lme</code> and <code>lmer</code> models, respectively.</p>
+<p>We will start the analysis first by loading the required libraries for this analysis for <code>lme</code> and <code>lmer</code> models, respectively.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -372,7 +376,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>For this example, we will use Rice strip-plot experiment data from the<code>agridat</code> package. A strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.</p>
+<p>For this example, we will use Rice strip-plot experiment data from the<code>agridat</code> package. This data contains a strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>gomez.stripplot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -434,7 +438,7 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>nitro <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data1<span class="sc">$</span>nitro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s have a look at the balance of treatment factors by running a a cross tabulation, and it looks well balanced.</p>
+<p>Let’s have a look at the balance of treatment factors by running a a cross tabulation of independent variables.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>gen, data1<span class="sc">$</span>nitro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -448,6 +452,8 @@ window.Quarto = {
   G6 3  3   3</code></pre>
 </div>
 </div>
+<p>It looks balanced with 3 number of observations for each variety and nitrogen level.</p>
+<p>Next step is to identify if there are any missing observations in the data set.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(data1, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -456,7 +462,7 @@ window.Quarto = {
 </div>
 </div>
 <p>We don’t have any missing values in this data set.</p>
-<p>Lastly, let’s check the dependent variable by plotting.</p>
+<p>Lastly, let’s check the distribution of dependent variable by plotting.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -478,8 +484,7 @@ Figure&nbsp;8.1: Histogram of the dependent variable.
 </section>
 <section id="model-building" class="level3" data-number="8.2.2">
 <h3 data-number="8.2.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">8.2.2</span> Model Building</h3>
-<p>The impact of nitro, gen, and their interaction was evaluated on rice yield. The rep, gen nested in rep, and nitro nested in rep were random effects in the model.</p>
-<p>https://stackoverflow.com/questions/36643713/how-to-specify-correlated-crossed-random-effects-in-nlme</p>
+<p>The impact of nitro, gen, and their interaction was evaluated on rice yield. Three random effects are used to account for rep, row, and column effects, with last two random effects nested within rep, but crossed with each other. The rep, gen nested in rep, and nitro nested in rep were random effects in the model. All random effects are assumed to independent of each other and independent of within group errors.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -620,13 +625,23 @@ Number of Groups: 1 </code></pre>
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Crossed random effects
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This type of variance-covariance structure in <code>lme()</code> is represented by a <strong>pdBlocked</strong> object with <strong>pdIdent</strong> elements.</p>
+</div>
+</div>
 </section>
 <section id="check-model-assumptions" class="level3" data-number="8.2.3">
 <h3 data-number="8.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">8.2.3</span> Check Model Assumptions</h3>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
-<div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>Let’s evaluate the assumptions of linear mixed models by looking at the residuals and normality of error terms. ::: panel-tabset #### lme4</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -637,8 +652,8 @@ Number of Groups: 1 </code></pre>
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<section id="nlme-2" class="level4" data-number="8.2.3.1">
+<h4 data-number="8.2.3.1" class="anchored" data-anchor-id="nlme-2"><span class="header-section-number">8.2.3.1</span> nlme</h4>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_lme, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(model_lme))</span>
@@ -653,18 +668,17 @@ Number of Groups: 1 </code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
+<p>:::</p>
 <p>The residuals fit the assumptions of the model well.</p>
+</section>
 </section>
 <section id="inference" class="level3" data-number="8.2.4">
 <h3 data-number="8.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">8.2.4</span> Inference</h3>
 <p>We can evaluate the model for the analysis of variance, for main and interaction effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -681,7 +695,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -696,11 +710,11 @@ nitro:gen      10    36  5.80061  &lt;.0001</code></pre>
 </div>
 </div>
 <p>Analysis of variance showed a significant interaction impact of gen and nitro on rice grain yield.</p>
-<p>Next, We estimate marginal means for nitro and gen interaction effects using <code>emmeans</code> package.</p>
+<p>Next, We can estimate marginal means for nitro and gen interaction effects using the <code>emmeans</code> package.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitro<span class="sc">*</span>gen) </span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -730,7 +744,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -782,7 +796,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For strip plot experiment deisgn, fitting nested and crossed random effects is more complicated through nlme. Therefore, it’s more convinent to use lmer in this case as both models yielded same results in the example shown above.</p>
+<p>For strip plot experiment design, fitting nested and crossed random effects is more complicated through <strong>nlme</strong>. Therefore, it’s more convenient to use <strong>lmer</strong> in this case as both models yielded same results in the example shown above.</p>
 </div>
 </div>
 
