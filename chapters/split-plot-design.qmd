@@ -4,7 +4,7 @@
 source(here::here("settings.r"))
 ```
 
-Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD), and Latin square designs. The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
 
 ## Details for Split Plot Designs
 
@@ -126,7 +126,9 @@ The levels of whole plots and subplots are balanced.
 str(height_data)
 ```
 
-The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed. - Check the number of missing values in each column.
+The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed. 
+
+-   Check the number of missing values in each column.
 
 ```{r}
 apply(height_data, 2, function(x) sum(is.na(x)))
@@ -138,6 +140,21 @@ apply(height_data, 2, function(x) sum(is.na(x)))
 ggplot(data = height_data, aes(y = height, x = time)) +
   geom_boxplot(aes(fill = manage), alpha = 0.6)
 ```
+
+Last, check the dependent variable by plotting a histogram of height data. 
+```{r, echo=FALSE}
+#| label: fig-split_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(height_data$height, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+```{r, eval=FALSE}
+hist(height_data$height, main = "", xlab = "yield")
+```
+
+The distribution of height data looks close to normal.
 
 #### Model building
 
@@ -250,7 +267,7 @@ pairs(m2)
 ::: callout-note
 ## `pairs()`
 
-The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts **please check this link**.
+The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts please visit [**Chapter 12**](means-and-contrasts.qmd). 
 :::
 
 ### Example model for RCBD Split Plot Designs
@@ -289,6 +306,27 @@ Next, run the table() command to verify the levels of main-plots and sub-plots.
 ```{r}
 table(oats$V, oats$N)
 ```
+
+-   Check the number of missing values in each column.
+
+```{r}
+apply(oats, 2, function(x) sum(is.na(x)))
+```
+
+Last, check the dependent variable by plotting a histogram of yield data. 
+```{r, echo=FALSE}
+#| label: fig-split-rcbd_hist
+#| fig-cap: "Histogram of the dependent variable."
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+```{r, eval=FALSE}
+hist(oats$Y, main = "", xlab = "yield")
+```
+
+
 
 #### Model Building the Model
 
@@ -377,4 +415,4 @@ emm1
 ```
 :::
 
-In the next chapter we will continue with extension of split plot design called split-split plot design.
+In the next chapter, we will continue with extension of split plot design called split-split plot design.

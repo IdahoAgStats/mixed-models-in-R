@@ -32,7 +32,7 @@ library(dplyr); library(performance)
 ```
 :::
 
-Next, we will load the dataset named 'cochran.factorial' from the '**agridat**' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus The goal of this analysis is the estimate the effect on d, n, p, k, and their interactions on bean yield.
+Next, we will load the dataset named 'cochran.factorial' from the '**agridat**' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus. The goal of this analysis is the estimate the effect of d, n, p, k, and their interactions on bean yield.
 
 Note, while importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function from dplyr package. This helps in reducing the extra steps of converting each single variable to factor manually.
 
@@ -62,7 +62,7 @@ The objective of this example is evaluate the individual and interactive effect 
 
 ### Data Integrity Checks
 
-Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.
+First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.
 
 ```{r}
 str(data1)
@@ -91,8 +91,7 @@ hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```{r, eval=FALSE}
 hist(data1$yield)
 ```
-
-The range is roughly falling into the expected range. I didn't observe any extreme observations (too high/low), indicating no issues with data. don't see 
+No extreme (low or high) yield values were observed in data. 
 
 ### Model fitting
 
@@ -125,7 +124,7 @@ tidy(model2_lme)
 
 :::: column-margin
 ::: callout-note
-Instead of `summary()` function, we used `tidy()` function from 'broom.mixed' package to get a short summary output of the model.
+Instead of `summary()` function, we used `tidy()` function from the 'broom.mixed' package to get a short summary output of the model.
 :::
 ::::
 
@@ -163,7 +162,7 @@ anova(model2_lme, type = "marginal")
 ```
 :::
 
-Let’s find estimates for some of the factors such as n, p, and n:k interaction. We will try the random intercept model first.
+Let’s find estimates for some of the factors such as n, p, and n:k interaction effect. This will help us look at the combined effect of n & k on bean yield.
 
 ::: panel-tabset
 ### lme4
@@ -181,6 +180,6 @@ emmeans(model2_lme, specs = ~ n:k)
 ```
 :::
 
-2.  Unbalanced factorial design
+In summary, while working with factorial designs make sure to carefully interpret ANOVA and estimated marginal means for main and interaction effects.
 
 
