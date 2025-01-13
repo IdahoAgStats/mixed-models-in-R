@@ -46,18 +46,19 @@ library(broom.mixed); library(performance)
 ```
 :::
 
-In this example, we have a rice yield data from 'agricolae' package.
-This consists of of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split design.
-Here, we are using rice yield data from the ([agricolae](https://CRAN.R-project.org/package=agricolae)) package.
+In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae) package.
+The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.
 
-```{r, eval=FALSE, echo=FALSE}
+```{r}
 library(agricolae)
 f <- system.file("external/ssp.csv", package="agricolae")
 rice <- read.csv(f)
-write.csv(rice, here::here("data", "rice_ssp.csv"))
 ```
 
-```{r}
+```{r, echo=FALSE, eval=FALSE}
+library(agricolae, eval=FALSE, echo=FALSE)
+dat <- rice
+data <- agricolae::rice_ssp.csv
 rice <- read.csv(here::here("data", "rice_ssp.csv"))
 ```
 
@@ -73,13 +74,13 @@ rice <- read.csv(here::here("data", "rice_ssp.csv"))
 
 ### Data integrity checks
 
-Look at the structure of the data, class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
+Before analyzing the data let's do some preliminary data quality checks. 
+We will start with evaluation of the structure of the data where class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
 
 ```{r}
 str(rice)
 ```
-
-Convert block, nitrogen, variety, and management to characters.
+Here we need to convert block, nitrogen, variety, and management to characters.
 
 ```{r}
 rice$block <- as.character(rice$block)
@@ -96,7 +97,7 @@ table(rice$variety, rice$nitrogen, rice$management)
 
 It looks perfectly balanced, with exactly 3 observation per treatment group.
 
-Last, check the distribution of the dependent variable by plotting a histogram using `hist()`.
+Last, check the distribution of the dependent variable by plotting a histogram of yield values using `hist()` in R.
 
 ```{r, eval=FALSE}
 hist(rice$yield)
@@ -170,11 +171,11 @@ check_model(model_lme, check = c('normality', 'linearity'))
 
 :::
 
-Here, we didn't observe any anomaly in model assumptions.
+Constant variance and normality of residuals looks good. Here, we didn't observe any anomalies in the model assumptions.
 
 ### Inference
 
-Analysis of variance
+Let's look at the analysis of variance for fixed effects and their interaction effect on yield.
 
 ::: panel-tabset
 ### lme4
@@ -190,22 +191,38 @@ anova(model_lme, type = "marginal")
 ```
 :::
 
-We can estimated the marginal means for each treatment factor (variety, nitrogen, management) which will averaged across other factors. and their interaction.
+Here, we observed a significant impact of management, variety, and nitrogen x variety interaction effect on rice yield. 
+We can estimate the marginal means for each treatment factor (variety, nitrogen, management) which will averaged across other factors and their interaction.
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-emmeans(model_lmer, ~ nitrogen)
-emmeans(model_lmer, ~ nitrogen*variety|management)
+emmeans(model_lmer, ~ management)
+emmeans(model_lmer, ~ nitrogen*variety)
 ```
 
 ### nlme
 
 ```{r}
-emmeans(model_lme, ~ nitrogen)
-emmeans(model_lme, ~ nitrogen*variety|management)
+emmeans(model_lme, ~ management)
+emmeans(model_lme, ~ nitrogen*variety)
 ```
 :::
 
-Notice we get a message that the estimated means for 'nitrogen' are averaged over the levels of 'management' and 'variety'. So we need to be careful about how we interpret these estimates.
+Notice we get a message that the estimated means for 'nitrogen x variety' are averaged over the levels of 'management'. So we need to be careful about how we interpret these estimates.
+
+::: callout-note
+## Nested random effects
+
+You may have noticed the order of random effects in model statement:
+
+```         
+model_lme <- lme(yield ~ nitrogen*management*variety,
+                  random = ~ 1|block/nitrogen/management,
+                  data = rice, 
+                  na.action = na.exclude)
+```
+The random effects follow the order of `~1|block/main-plot/split-plot`. While fitting the model for split-split plot design please make sure to have a clear understanding of the main plot, split-plot and split-split plot factors to avoid having an erroneous model. 
+
+:::

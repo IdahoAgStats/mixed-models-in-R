@@ -404,6 +404,7 @@ phos <- read.csv(here::here("data", "split_split_repeated.csv"))
 | time | time points for data collection |
 | P_leaf | leaf phosphorous content  |
 
+### Data Integrity Checks
 
 ```{r}
 str(phos)
@@ -470,57 +471,6 @@ emmeans(fit1,~ time|Cv)
 
 ```
 Really low P leaf content at PT3 in all the cultivars.
-
-
-4.  **Factorial design repeated measures**
-
-As explained in [**Chapter 6**](factorial-design.qmd), factorial designs involve examining several factors simultaneously. In this section we will add repeated measures component to the factorial design.
-
-```{r}
-data3 <- agridat::gregory.cotton
-str(data3)
-
-data31 <- data3 |> 
- mutate(year1 = as.numeric(year))
-```
-
-```{r}
-table(data3$nitrogen, data3$date)
-```
-
-
-```{r, eval=FALSE}
-corr_str2 = corAR1(form = ~ year1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
-
-fit3 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
-                random = ~ 1|rep/Ptrt/Inoc/plot,
-                corr= corr_str2,
-                data = data31, na.action= na.exclude)
-tidy(fit3)
-
-summary(fit3)
-
-```
-
-```{r, fig.height=3, eval=FALSE}
-#| warning: false
-#| message: false
-check_model(fit3, check = c('normality', 'linearity'))
-```
-We see a cluster of values in residuals which was due to large number of observations having low values. 
-
-
-```{r, eval=FALSE}
-#| warning: false
-#| message: false
-anova(fit1, type = "marginal")
-```
-```{r}
-emmeans(fit1,~ time)
-emmeans(fit1,~ time|Cv)
-
-```
-
 
 
 The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed random factors](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested

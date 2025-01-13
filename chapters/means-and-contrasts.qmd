@@ -6,11 +6,11 @@ title: Marginal Means & Contrasts
 
 To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
 
-The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs(mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
+The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
 
 In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.
 
-To demonstrate the use of the emmeans() package. We will pull the model from split plot lesson ([**Chapter 6**](split-plot-design.qmd)), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield.
+To demonstrate the use of the emmeans package. We will pull the model from split plot lesson ([**Chapter 6**](split-plot-design.qmd)), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield.
 To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 6**](split-plot-design.qmd).
 
 
@@ -23,6 +23,7 @@ For demonstration of the `emmeans` package, we are fitting model with `nlme` pac
 Let's start the analysis by loading the required libraries for fitting linear mixed models using `nlme` package.
 
 ## Analysis Examples
+We will start with loading required R libraries for this analysis.
 ```{r, warning=FALSE, message=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(multcompView)
@@ -30,13 +31,13 @@ library(multcomp); library(ggplot2)
 ```
 ### Import data
 Let's import oats data from the MASS package.
+```{r}
+data1 <- MASS::oats
+```
 
 ::: column-margin
 To read more about data and model fitting explanation please refer to [**Chapter 6**](split-plot-design.qmd).
 :::
-```{r}
-data1 <- MASS::oats
-```
 ### Model fitting
 ```{r}
 model1 <- lme(Y ~  V + N + V:N ,
@@ -49,10 +50,12 @@ tidy(model1)
 ```{r,  fig.height=3}
 check_model(model1, check = c('normality', 'linearity'))
 ```
+Residuals look good with a small hump in middle and normality curve looks better.
 ### Model Inference
 ```{r}
 anova(model1, type = "marginal")
 ```
+The analysis of variance showed a significant N effect and no effect of V and VxN on oat yield.
 
 ### Estimated Marginal Means
 Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let's use the `emmeans()` function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects. 
@@ -70,7 +73,7 @@ m2
 Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it's N treatments, respectively.
 
 #### Interaction effects
-Now let's evaluate the interaction effect EMMs for V and N. These can be calculated either using `V*N` or `V|N`. 
+Now let's evaluate the EMMs for the interaction effect of V and N. These can be calculated either using `V*N` or `V|N`. 
 ```{r}
 m3 <- emmeans(model1, ~V*N)
 m3
@@ -80,9 +83,9 @@ m3
 m4 <- emmeans(model1, ~V|N)
 m4
 ```
+The EMMs (m3 and m4) gives the same results but the outcome style is litte more explanatory in m4.
 
 ## Contrasts using emmeans
-
 Firstly, the `pairs()` function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through `pairs()` function which will provide a p-value adjustment equivalent to the Tukey test.
 
 ```{r}
@@ -91,22 +94,23 @@ pairs(m1, adjust = "tukey")
 ```{r}
 pairs(m2)
 ```
-Here if we look at the results from code chunk above, it's easy to interpret results from `pairs()` function in case of varietey comparison becuase there were only 3 groups. It's bit confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.
+Here if we look at the results from code chunk above, it's easy to interpret results from `pairs()` function in case of variety comparison becuase there were only 3 groups. But it's little confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.
 
 
 ::: {.callout-caution}
 ## `pairs()`
 Remember!! 
+
 The `pairs()` function can be used to calculate pairwise comparison when treatment groups are less than equal to 3. 
 :::
 ### Custom contrasts 
 
-Firstly, let's run emmean object 'm2' for nitrogen treatment comparison.
+First, run emmean object 'm2' for nitrogen treatments.
 
 ```{r}
 m2
 ```
-Now, lets a create a vector for each nitrogen treatment in the same order as presented in output from m2. 
+Now, let's create a vector for each nitrogen treatment in the same order as presented in output from m2. 
 ```{r}
 A1 = c(1, 0, 0, 0)
 A2 = c(0, 1, 0, 0)
@@ -115,17 +119,19 @@ A4 = c(0, 0, 0, 1)
 ```
 These vectors (A1, A2, A3, A4) represent each Nitrogen treatment in an order as presented in m2 emmeans object. A1, A2, and A3, A4 vectors represents 0.0cwt, 0.2cwt, 0.4cwt, and 0.6cwt treatments, respectively. 
 
-Let's create custom contrasts for comparing '0.0cwt' (A1) treatment to  '0.2cwt' (A2), '0.4cwt' (A3), and '0.6cwt' (A4) treatments. 
+Next step is to create a custom contrasts for comparing '0.0cwt' (A1) treatment to  '0.2cwt' (A2), '0.4cwt' (A3), and '0.6cwt' (A4) treatments. 
 This can be evaluated as shown below:
-Here the output shows the difference in mean yield between these two varieties
+
 ```{r}
 contrast(m2, method = list(A1 - A2) )
 contrast(m2, method = list(A1 - A3) )
 contrast(m2, method = list(A1 - A4) )
 
 ```
-::: column-margin
-Using custom contrasts is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
+Here the output shows the difference in mean yield between control and 3 N treatments. The results shows that yield was significantly higher N treatments compared to the control (0.0cwt) irrespective of the oat variety.
+
+::: {.callout-tip title="contrast() vs pairs()"}
+Using custom contrast() is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
 :::
 
 ## Compact letter displays
@@ -134,7 +140,7 @@ The R package `multcompView` (Graves et al., 2019) provides an implementation of
 
 The `cld()` function from the *multcomp* package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
 
-Let's start evaluating CLDs for main effects. We will use emmean objects m1 and m2 for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.
+Let's start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.
 ```{r}
 cld(m1, alpha=0.05, Letters=letters)
 ```
@@ -193,7 +199,7 @@ writexl::write_xlsx(result_n)
 ```
 ## Graphical display of emmeans 
 The results of emmeans() object can be plotted in two different ways.
-Firstly, we can use base `plot()` function in R. 
+First, we can use base `plot()` function in R. 
 
 ```{r}
 plot(m1)
@@ -230,12 +236,10 @@ If you want to read more about emmeans, please refer to vignettes on this [CRAN 
 :::
 
 ## Conclusion
-Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “nonsignificant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
+Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “non-significant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
 
 ::: {.callout-note}
 ## P values, “significance”, and recommendations
 
 P values are often misinterpreted, and the term “statistical significance” can be misleading. Please refer to this [link](https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e167) to read more about basic principles outlined by the American Statistical Association when considering p-values.
-
-If you want to read more about emmeans, please refer to vignettes on this [CRAN page](https://cran.r-project.org/web/packages/emmeans/index.html).
 :::
