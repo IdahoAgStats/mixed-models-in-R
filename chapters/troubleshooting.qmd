@@ -2,32 +2,69 @@
 title: Troubleshooting
 execute: 
   eval: false
+editor: 
+  markdown: 
+    wrap: sentence
 ---
 
-In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs. However, it is likely that you will eventually have issues in conducting mixed models in R, such as lack of convergence 
-
+In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs.
+However, it is likely that you will eventually have issues in conducting mixed models in R, such as lack of convergence
 
 This section discusses common issues and errors that might come up when implementing mixed models.
 ## Common Errors we Encounter
 
-1. Singular fit error in linear mixed models
+1.  Singular fit error in linear mixed models
 
-error produced in output is:
-`boundary (singular) fit: see ?isSingular`.
+error produced in output is: `boundary (singular) fit: see ?isSingular`.
 
-This error occurs because one of the variance component is approximately 0. 
-If a model is "singular", this means that some dimensions of the variance-covariance matrix have been estimated as exactly zero or really close to zero. This often occurs for mixed models with complex random effects structures.
+This error occurs because one of the variance component is approximately 0.
+If a model is "singular", this means that some dimensions of the variance-covariance matrix have been estimated as exactly zero or really close to zero.
+This often occurs for mixed models with complex random effects structures.
 
+solution:
 
-2. Model failed to converge 
+search for `?lmercontrol`
+
+2.  Model failed to converge
 
 ### Convergence Issues
 
+common error recieved when model doesn't converge:
 
-[[lme4 convergence warnings](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html)
+`convergence error code = 1 message = iteration limit reached without convergence (10)`
+
+or
+
+`Hessian that is not positive definite`
+
+Possible solutions for this issue:
+
+1.  
+
+\[[lme4 convergence warnings](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html)
 
 [more](https://rpubs.com/palday/lme4-singular-convergence)
 
+## Optimization failures
 
+Trying to different options or even a different optimizer are good strategies.
+
+https://rpubs.com/palday/lme4-singular-convergence
+
+### Recommendations for warnings about the convergence
+
+-   Try setting stricter convergence criteria and allowing more iterations (ftol_rel, xtol_rel, maxeval).
+
+-   Check your overall model fit by plotting fitted vs. observed, etc. to make sure your model isn't misspecified.
+
+-   Consider setting control=lmerControl(calc.derivs=FALSE).
+
+    -   The derivative check takes a loooooong time And tends to deliver false positives with maximal models.
+
+-   BUT PAY ATTENTION TO YOUR MODEL FIT AND YOUR OPTIMIZER'S OWN WARNINGS!!!
+
+-   The common convergence warnings such as 'Hessian that is not positive definite', may imply a genuine problem in the model, in this condition you should consider to make changes as the warning tells you to do.
+
+-   
 
 ### Other
