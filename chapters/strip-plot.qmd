@@ -8,30 +8,24 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-In strip plot design each block or replication is divided into number of vertical and horizontal strips depending on the levels of the respective factors.
+Also referred by 'strip-plot design' or 'strip-split-plot design'. This design had an extensive application in the agricultural sciences. In the simplest case, we have two factors A and B. Factor A is applied to whole plots same as in the standard split-plot design. Then factor B is applied to **strips** (which are just another set of whole plots) that are orthogonal to the original whole plots used for factor A.  
 
-1.  Vertical strip plot for the first factor – vertical factor.
-2.  Horizontal strip plot for the second factor – horizontal factor.
 
-Divide the experimental area into 'A' horizontal strips and 'B' vertical strips. Each level of factor A is assigned to all the plots in one row, and each level of factor B is assigned to all the plots in one column.
+The statistical model for this design is:
 
-The statistical model:
+$$y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}$$ 
+Where:
 
-$$y_{ijk} = \mu + \alpha_j + \beta_k + \alpha_j\beta_k + b_i + r_{ij} + c_{ik} + \epsilon_{ijk}$$ Where:
-
-$\mu$= overall experimental mean, $\alpha$ and $\beta$ are the main effects applied in a horizontal and vertical direction, and $\alpha$$\beta$ represents the interaction between main factors. The random effects in above equation are $b_i$, the random rep effect, $r_{ij}$, the row within rep random effect, $c_{ik}$, the column within rep random effect.
-
-$$ b_i \sim N(0, \sigma_1^2)$$
-
-$$ r_{ij}  \sim N(0, \sigma_2^2)$$
-
-$$ c_{ik} \sim N(0, \sigma_3^2)$$
+$\mu$= overall experimental mean, 
+$(\tau\alpha)_{ij}$, $(\tau\beta)_{ik}$, and $\epsilon_{ijk}$ are the errors used to test factor A, B, and their interaction AB, respectively. 
+$\alpha$ and $\beta$ are the main effects applied A and B, and $\alpha_j\beta_k$ represents the interaction between main factors. 
 
 $$ \epsilon_{ijk} \sim N(0, \sigma^2)$$\
 
+
 ## Example Analysis
 
-We will start the analysis first by loading the required libraries for this analysis for `lme` and `lmer` models, respectively.
+We will start the analysis first by loading the required libraries for this analysis for `lmer()` and `lme()` models, respectively.
 
 ::: panel-tabset
 ### lme4
@@ -50,7 +44,7 @@ library(dplyr); library(desplot); library(broom.mixed)
 ```
 :::
 
-For this example, we will use Rice strip-plot experiment data from the`agridat` package. This data contains a strip-plot experiment with three reps, variety as the horizontal strip and nitrogen fertilizer as the vertical strip.
+For this example, we will use Rice strip-plot experiment data from the **agridat** package. This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.
 
 ```{r}
 data1 <- agridat::gomez.stripplot
@@ -78,7 +72,7 @@ desplot(data1, gen ~ col*row,
 
 ### Data integrity checks
 
-First thing we need to verify is the data types of the variables in data1. The 'rep', 'nitro', and 'gen' needs to be a factor/character variables and 'yield' should be numeric.
+First thing we need to verify is the class of the variables in data1. The 'rep', 'nitro', and 'gen' needs to be a factor/character variables and 'yield' should be numeric.
 
 ```{r}
 str(data1)
@@ -106,7 +100,7 @@ apply(data1, 2, function(x) sum(is.na(x)))
 
 We don't have any missing values in this data set.
 
-Lastly, let's check the distribution of dependent variable by plotting.
+Lastly, let's check the distribution of dependent variable by plotting a histogram.
 
 ```{r, eval=FALSE}
 hist(data1$yield, main = "", xlab = "yield")
@@ -124,7 +118,8 @@ No extreme values or skewness is present in the yield values.
 
 ### Model Building
 
-The impact of nitro, gen, and their interaction was evaluated on rice yield. Three random effects are used to account for rep, row, and column effects, with last two random effects nested within rep, but crossed with each other. The rep, gen nested in rep, and nitro nested in rep were random effects in the model. All random effects are assumed to independent of each other and independent of within group errors.
+The goal of this analysis is to evaluate the impact of nitro, gen, and their interaction on rice yield.
+The rep, gen nested in rep, and nitro nested in rep were random effects in the model. All random effects are assumed to independent of each other and independent of within group errors.
 
 ::: panel-tabset
 #### lme4
@@ -148,7 +143,6 @@ model_lme <-lme(yield ~  nitro*gen,
         data = data1 %>% mutate(one = factor(1)))
 
 summary(model_lme)
-#tidy(model_lme)
 ```
 :::
 
@@ -160,6 +154,7 @@ This type of variance-covariance structure in `lme()` is represented by a **pdBl
 ### Check Model Assumptions
 
 Let's evaluate the assumptions of linear mixed models by looking at the residuals and normality of error terms.
+
 ::: panel-tabset
 #### lme4
 

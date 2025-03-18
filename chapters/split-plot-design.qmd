@@ -137,12 +137,14 @@ The 'time', 'manage', and 'rep' are character and variable height is numeric. Th
 apply(height_data, 2, function(x) sum(is.na(x)))
 ```
 
--   Exploratory boxplot to look at the height observations at different times with variable managements.
+-   Exploratory boxplot to look at the height observations at different times with variable managements. This helps in identifying any patterns in the dependent vraiable in response to differnt treatments.
 
 ```{r}
 ggplot(data = height_data, aes(y = height, x = time)) +
   geom_boxplot(aes(fill = manage), alpha = 0.6)
 ```
+
+Here we observed any greater height with manage 'M1" and comparatively less variability across all times compared to other management treatments.
 
 Last, check the dependent variable by plotting a histogram of height data. 
 ```{r, echo=FALSE}
@@ -193,7 +195,7 @@ tidy(model_lme)
 
 #### Check Model Assumptions
 
-Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.
+Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.
 
 We will use `check_model()` function from 'performance' package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.
 
@@ -231,7 +233,7 @@ anova(model_lme, type = "marginal")
 ```
 :::
 
-We can further compute estimated marginal means for each fixed effect and interaction effect can be obtained using `emmeans()`.
+We can further compute estimated marginal means for each fixed effect and interaction effect using `emmeans()` from the emmeans package.
 
 ::: panel-tabset
 #### lme4
@@ -275,6 +277,8 @@ The default p-value adjustment in `pairs()` function is "tukey", other options i
 
 ### Example model for RCBD Split Plot Designs
 
+Recall, at the beginning of this chapter we discussed CRD and RCBD split plot design. 
+Now we will demonstrate how to analyze data from the RCBD split plot experiment design. 
 The oats data used in this example is from the **MASS** package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.
 
 |              |                          |
@@ -288,8 +292,9 @@ The oats data used in this example is from the **MASS** package. The design is R
 
 The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.
 
-To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.
+To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.
 
+Let's start this example analysis by firstly loading the 'oat' data from the MASS package. 
 ```{r, message=FALSE}
 library(MASS)
 data("oats")
@@ -298,13 +303,13 @@ head(oats,5)
 
 #### Data integrity checks
 
-Let's look at the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
+As shown in previous example, we will first examine the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
 
 ```{r}
 str(oats)
 ```
 
-Next, run the table() command to verify the levels of main-plots and sub-plots.
+-   Next, run the `table()` command to verify the levels of main-plots and sub-plots.
 
 ```{r}
 table(oats$V, oats$N)
@@ -316,7 +321,7 @@ table(oats$V, oats$N)
 apply(oats, 2, function(x) sum(is.na(x)))
 ```
 
-Last, check the dependent variable by plotting a histogram of yield data. 
+-   Last, check the distribution of the dependent variable by plotting a histogram of yield data. 
 ```{r, echo=FALSE}
 #| label: fig-split-rcbd_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -324,12 +329,9 @@ Last, check the dependent variable by plotting a histogram of yield data.
 par(mar=c(5.1, 5, 2.1, 2.1))
 hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
-
 ```{r, eval=FALSE}
 hist(oats$Y, main = "", xlab = "yield")
 ```
-
-
 
 #### Model Building the Model
 
@@ -417,5 +419,7 @@ emm1 <- emmeans(model2_lme, ~ V *N)
 emm1
 ```
 :::
+
+The estimated means for Marvellous variety were higher compared to varieties across all N treatments.
 
 In the next chapter, we will continue with extension of split plot design called split-split plot design.
