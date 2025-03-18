@@ -8,7 +8,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 This is a simple model that can serve as a good entrance point to mixed models.
 
-Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks. 
+Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks.
 
 ## Background
 
@@ -22,7 +22,7 @@ $$ \epsilon \sim N(0, \sigma)$$
 
 $$ \beta \sim N(0, \sigma_b)$$
 
-Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $sigma_B$, respectively.
+Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_B$, respectively.
 
 ::: callout-note
 ## 'iid' assumption for error terms
@@ -60,16 +60,16 @@ This data set is for a single wheat variety trial conducted in Aberdeen, Idaho i
 var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 ```
 
-|                        |                                                                                  |
-|------------------|------------------------------------------------------|
-| block                  | blocking unit                                                                    |
-| range                  | column position for each plot                                                    |
-| row                    | row position for each plot                                                       |
-| variety                | crop variety (the treatment) being evaluated                                     |
-| stand_pct              | percentage of the plot with actual plants growing in them                        |
-| days_to_heading_julian | Julian days (starting January 1st) until plot "headed" (first spike emerged)     |
-| lodging                | percentage of plants in the plot that fell down and hence could not be harvested |
-| yield_bu_a             | yield (bushels per acre)                                                         |
+|  |  |
+|-------------------|-----------------------------------------------------|
+| block | blocking unit |
+| range | column position for each plot |
+| row | row position for each plot |
+| variety | crop variety (the treatment) being evaluated |
+| stand_pct | percentage of the plot with actual plants growing in them |
+| days_to_heading_julian | Julian days (starting January 1st) until plot "headed" (first spike emerged) |
+| lodging | percentage of plants in the plot that fell down and hence could not be harvested |
+| yield_bu_a | yield (bushels per acre) |
 
 : Table of variables in the data set {tbl-rcbd}
 
@@ -77,7 +77,7 @@ There are several variables present that are not useful for this analysis. The o
 
 ### Data integrity checks
 
-The first thing is to make sure the data is what we expect. There are two steps:
+The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
 1.  make sure data are the expected data type
 2.  check the extent of missing data
@@ -88,7 +88,7 @@ The first thing is to make sure the data is what we expect. There are two steps:
 str(var_trial)
 ```
 
-These look okay except for block, which is currently coded as integer (numeric). We don't want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion
+These look okay except for block, which is currently coded as integer (numeric). We don't want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion
 
 ```{r}
 var_trial$block <- as.character(var_trial$block)
@@ -100,12 +100,12 @@ Next, check the independent variables. Running a cross tabulations is often suff
 table(var_trial$variety, var_trial$block)
 ```
 
-There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
+There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
 ::: callout-tip
 ## Missing Data
 
-Here is a quick check to count the number of missing data in each column. This is not neededfor the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the level of missingness displayed in an R session is what you expect.
+Here is a quick check to count the number of missing data in each column. This is not needed for the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the extent of missing values displayed in an R session is what you expect.
 
 ```{r}
 apply(var_trial, 2, function(x) sum(is.na(x)))
@@ -130,11 +130,11 @@ hist(var_trial$yield_bu_a, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 
 hist(var_trial$yield_bu_a, main = "", xlab = "yield")
 ```
 
-The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are mp large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.
+The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.
 
-Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
+Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
 
-These are not complicated checks. They are designed to be done quickly and should be done for *every analysis* if you not previously already inspected the data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
+These are not complicated checks. They are designed to be done quickly and should be done for **every analysis** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
 
 This data set is ready for analysis!
 
@@ -169,7 +169,7 @@ model_rcbd_lme <- lme(yield_bu_a ~ variety,
 ```
 :::
 
-The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. 
+The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block.
 
 We use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
 
@@ -218,7 +218,7 @@ qqnorm(resid(model_rcbd_lmer), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqli
 qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
 ```
 
-This is reasonably good. Things do tend to fall apart at the tails a little, so this is not concerning. 
+This is reasonably good. Things do tend to fall apart at the tails a little, so this is not concerning.
 
 #### New Way {#new-iid-checks}
 
@@ -252,7 +252,7 @@ At this point, the analysis goals have been met: we know the estimated means for
 If you want to run ANOVA, it can be done quite easily. By default, the Kenward-Rogers method of degrees of freedom approximation is used.
 
 ::: column-margin
-The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the `anova()` function. This only matters when a data set is unbalanced across treatments, either due to design or missing data points. 
+The Type I method is sometimes referred to as the “sequential” sum of squares, because it involves a process of adding terms to the model one at a time. Type I sum of squares is the default hypothesis testing method used by the `anova()` function. This only matters when a data set is unbalanced across treatments, either due to design or missing data points.
 :::
 
 ::: panel-tabset

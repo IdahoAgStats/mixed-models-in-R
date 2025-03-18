@@ -8,7 +8,12 @@ source(here::here("settings.r"))
 
 ## Background
 
-Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: $$y_{ij} = \mu +  \tau_i+ \beta_j + \tau_i\beta_j + \epsilon_{ij}$$ Where: $\mu$ = experiment mean, $\tau$ = effect of factor A, $\beta$ = effect of factor B, and $\tau\beta$ = interaction effect of factor A and B.
+Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is:
+$$y_{ij} = \mu +  \tau_i+ \beta_j + \tau_i\beta_j + \epsilon_{ij}$$ 
+Where: $\mu$ = experiment mean, $\tau$ = effect of factor A, $\beta$ = effect of factor B, and $\tau\beta$ = interaction effect of factor A and B.
+
+
+
 
 Assumptions of this model includes: independent and identically distributed error terms with a constant variance.
 
@@ -32,7 +37,9 @@ library(dplyr); library(performance)
 ```
 :::
 
-Next, we will load the dataset named 'cochran.factorial' from the '**agridat**' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus. The goal of this analysis is the estimate the effect of d, n, p, k, and their interactions on bean yield.
+Next, we will load the dataset named 'cochran.factorial' from the '**agridat**' package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus. 
+
+The objective of this example is evaluate the individual and interactive effect of "d", "n", "p", and "k" treatments on bean yield.
 
 Note, while importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function from dplyr package. This helps in reducing the extra steps of converting each single variable to factor manually.
 
@@ -58,8 +65,6 @@ data1 <- agridat::cochran.factorial %>%
 
 : Table of variables in the data set {tbl-factorial}
 
-The objective of this example is evaluate the individual and interactive effect of "d", "n", "p", and "k" treatments on yield.
-
 ### Data Integrity Checks
 
 First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.
@@ -78,7 +83,7 @@ table(data1$d, data1$n, data1$p, data1$k)
 
 The design looks well balanced.
 
-Last step is to inspect the dependent variable to ensure its distribution follows the bell-shaped curve and no skewness is there.
+Last step is to inspect the dependent variable to ensure that there are no extremes (high or low) in the dataset.
 
 ```{r, echo=FALSE}
 #| label: fig-factorial_hist
@@ -95,13 +100,17 @@ No extreme (low or high) yield values were observed in data.
 
 ### Model fitting
 
-Model fitting with R is exactly the same as shown in previous chapters: we need to include all effect, as well as the interaction, which is represented by using the colon indicator ‘:’. Therefore, model syntax is:
+Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon indicator ‘:’. 
+
+Therefore, model syntax is:
 
 `yield ~ d + n + p + k + d:n + d:p + d:k + n:p + n:k + p:k + d:n:p:k`
 
 which can be abbreviated as:
 
 `yield ~ d*n*p*k`
+
+In this analysis, "d", "n", "p", & "k" are fixed factors and block is a random effect.
 
 ::: panel-tabset
 ### lme4
@@ -148,19 +157,22 @@ The linearity and homogeneity of variance plots show no trend. The normal Q-Q pl
 
 ### Inference
 
-We can get an ANOVA table for the linear mixed model using the function `anova()`, which works for both `lmer()` and `lme()` models..
+We can get an ANOVA table for the linear mixed model using the function `anova()`, which works for both `lmer()` and `lme()` models.
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-car::Anova(model1_lmer, type = 'III', test.statistic="F")
+anova(model1_lmer, type = "marginal")
 ```
 ### nlme
 ```{r, fig.height=3}
 anova(model2_lme, type = "marginal")
 ```
 :::
+
+Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only "p" had a significant effect on bean yield when evaluated at significance level of 0.05.
+
 
 Let’s find estimates for some of the factors such as n, p, and n:k interaction effect. This will help us look at the combined effect of n & k on bean yield.
 
@@ -169,17 +181,24 @@ Let’s find estimates for some of the factors such as n, p, and n:k interaction
 ```{r}
 emmeans(model1_lmer, specs = ~ n)
 emmeans(model1_lmer, specs = ~ p)
-emmeans(model1_lmer, specs = ~ n:k)
+emmeans(model1_lmer, specs = ~ n:p)
 ```
 
 ### nlme
 ```{r}
 emmeans(model2_lme, specs = ~ n)
 emmeans(model2_lme, specs = ~ p)
-emmeans(model2_lme, specs = ~ n:k)
+emmeans(model2_lme, specs = ~ n:p)
 ```
 :::
 
+The code chunks showed above estimated marginal means for individual effects of "n" and "p" and their interaction (n:p) effect on bean yield. Make sure to give an attention to the warning message that means are averaged over the "d", "p", and "k" levels. It's an important detail that needs to be pointed out while making conclusions.
+
+::: callout-tip
+## Interpretation
+
 In summary, while working with factorial designs make sure to carefully interpret ANOVA and estimated marginal means for main and interaction effects.
+:::
+
 
 

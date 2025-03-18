@@ -4,7 +4,10 @@
 source(here::here("settings.r"))
 ```
 
-Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+
+In some multifactor factorial experiments, we may be unable to completely randomize the
+order of the treatments. This often results in a generalization of the factorial design called a
+split-plot design. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
 
 ## Details for Split Plot Designs
 
@@ -20,7 +23,7 @@ $$ \epsilon \sim N(0, \sigma_\epsilon)$$
 
 $$\ \delta  \sim N(0, \sigma_\delta)$$
 
-Both the error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
+Both the error and replication effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
 
 2.  Whole Plot Randomized as an RCBD
 
@@ -73,7 +76,7 @@ plot(spd1)
 
 ## Analysis Examples
 
-Load required libraries
+Let's start analyzing by loading required libraries.
 
 ::: panel-tabset
 ### lme4
@@ -94,7 +97,7 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 
 Let's import height data. It is located [here](https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv) if you want to download it yourself (recommended).
 
-The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are times and management represents subplot and 3 replications.
+The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are time and management represents subplot and 3 replications.
 
 ```{r}
 height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
@@ -246,7 +249,7 @@ m2
 ```
 :::
 
-Further, a pairwise comparison or contrasts can be analyzed using estimated means. In this model, 'time' factor has 4 levels. We can use `pairs()` function to evaluate pairwise comparison among different 'time' levels.
+Further, a pairwise comparison or contrasts can be made using estimated means. In this model, 'time' factor has 4 levels. We can use `pairs()` function to evaluate pairwise comparison among different 'time' levels.
 
 Here's a example using `pairs()` function to compare difference in height among different time points.
 
@@ -272,7 +275,7 @@ The default p-value adjustment in `pairs()` function is "tukey", other options i
 
 ### Example model for RCBD Split Plot Designs
 
-The oats data used in this example is from the MASS package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.
+The oats data used in this example is from the **MASS** package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.
 
 |              |                          |
 |--------------|--------------------------|
@@ -295,7 +298,7 @@ head(oats,5)
 
 #### Data integrity checks
 
-Let's look at the structure of the data. The "B", "V", and "N" needs to be 'factor' and "Y" should be numeric.
+Let's look at the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
 
 ```{r}
 str(oats)
