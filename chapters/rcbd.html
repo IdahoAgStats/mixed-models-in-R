@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b37946e615776c97abd6b38c7c799888.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -347,7 +347,7 @@ window.Quarto = {
 <p><span class="math inline">\(\mu\)</span> = overall experimental mean <span class="math inline">\(\alpha\)</span> = treatment effects (fixed) <span class="math inline">\(\beta\)</span> = block effects (random) <span class="math inline">\(\epsilon\)</span> = error terms</p>
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[ \beta \sim N(0, \sigma_b)\]</span></p>
-<p>Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(sigma_B\)</span>, respectively.</p>
+<p>Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\sigma_B\)</span>, respectively.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -391,8 +391,8 @@ window.Quarto = {
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
 <colgroup>
-<col style="width: 25%">
-<col style="width: 75%">
+<col style="width: 26%">
+<col style="width: 73%">
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -432,7 +432,7 @@ window.Quarto = {
 <p>There are several variables present that are not useful for this analysis. The only thing we are concerned about is <strong>block</strong>, <strong>variety</strong>, <strong>yield_bu_a</strong>, and <strong>test_weight</strong>.</p>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2.1</span> Data integrity checks</h3>
-<p>The first thing is to make sure the data is what we expect. There are two steps:</p>
+<p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
 <ol type="1">
 <li>make sure data are the expected data type</li>
 <li>check the extent of missing data</li>
@@ -455,7 +455,7 @@ window.Quarto = {
  $ test_weight           : num  56.4 55 55.3 54.1 54.1 56.4 54.7 57.5 56.1 53.8 ...</code></pre>
 </div>
 </div>
-<p>These look okay except for block, which is currently coded as integer (numeric). We don’t want run a regression of block, where block 1 has twice the effect of block 2, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion</p>
+<p>These look okay except for block, which is currently coded as integer (numeric). We don’t want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var_trial<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(var_trial<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -509,7 +509,7 @@ window.Quarto = {
   WB1529                 1 1 1 1</code></pre>
 </div>
 </div>
-<p>There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as “eltan” and “Eltan” and “Eltan”. There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.</p>
+<p>There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as “eltan” and “Eltan”. There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -520,7 +520,7 @@ Missing Data
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here is a quick check to count the number of missing data in each column. This is not neededfor the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the level of missingness displayed in an R session is what you expect.</p>
+<p>Here is a quick check to count the number of missing data in each column. This is not needed for the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the extent of missing values displayed in an R session is what you expect.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(var_trial, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -556,9 +556,9 @@ Figure&nbsp;4.1: Histogram of the dependent variable.
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are mp large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.</p>
-<p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure the the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
-<p>These are not complicated checks. They are designed to be done quickly and should be done for <em>every analysis</em> if you not previously already inspected the data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
+<p>The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.</p>
+<p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
+<p>These are not complicated checks. They are designed to be done quickly and should be done for <strong>every analysis</strong> if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
 <p>This data set is ready for analysis!</p>
 </section>
 <section id="model-building" class="level3 page-columns page-full" data-number="4.2.2">

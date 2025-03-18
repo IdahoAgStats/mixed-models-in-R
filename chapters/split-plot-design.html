@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b37946e615776c97abd6b38c7c799888.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -336,7 +336,7 @@ window.Quarto = {
 </header>
 
 
-<p>Split-plot design is frequently used for factorial experiments. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.</p>
+<p>In some multifactor factorial experiments, we may be unable to completely randomize the order of the treatments. This often results in a generalization of the factorial design called a split-plot design. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.</p>
 <section id="details-for-split-plot-designs" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="details-for-split-plot-designs"><span class="header-section-number">6.1</span> Details for Split Plot Designs</h2>
 <ol type="1">
@@ -347,7 +347,7 @@ window.Quarto = {
 <p><span class="math inline">\(\mu\)</span>= overall experimental mean, <span class="math inline">\(\alpha\)</span> = main effect of whole plot (fixed), <span class="math inline">\(\beta\)</span> = main effect of subplot (fixed), <span class="math inline">\(\alpha\)</span><span class="math inline">\(\tau\)</span> = interaction between factors A and B, <span class="math inline">\(\epsilon_{ij}\)</span> = whole plot error, <span class="math inline">\(\delta_{ijk}\)</span> = subplot error.</p>
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma_\epsilon)\]</span></p>
 <p><span class="math display">\[\ \delta  \sim N(0, \sigma_\delta)\]</span></p>
-<p>Both the error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma_\epsilon\)</span> and <span class="math inline">\(\sigma_\delta\)</span>, respectively.</p>
+<p>Both the error and replication effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma_\epsilon\)</span> and <span class="math inline">\(\sigma_\delta\)</span>, respectively.</p>
 <ol start="2" type="1">
 <li>Whole Plot Randomized as an RCBD</li>
 </ol>
@@ -391,7 +391,7 @@ window.Quarto = {
 </section>
 <section id="analysis-examples" class="level2 page-columns page-full" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">6.2</span> Analysis Examples</h2>
-<p>Load required libraries</p>
+<p>Let’s start analyzing by loading required libraries.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -413,7 +413,7 @@ window.Quarto = {
 <section id="example-model-for-crd-split-plot-designs" class="level3 page-columns page-full" data-number="6.2.1">
 <h3 data-number="6.2.1" class="anchored" data-anchor-id="example-model-for-crd-split-plot-designs"><span class="header-section-number">6.2.1</span> Example model for CRD Split Plot Designs</h3>
 <p>Let’s import height data. It is located <a href="https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv">here</a> if you want to download it yourself (recommended).</p>
-<p>The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are times and management represents subplot and 3 replications.</p>
+<p>The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are time and management represents subplot and 3 replications.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>height_data <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"height_data.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -485,7 +485,7 @@ window.Quarto = {
 </div>
 </div>
 <ul>
-<li>Exploratory boxplot to look at the height observations at different times with variable managements.</li>
+<li>Exploratory boxplot to look at the height observations at different times with variable managements. This helps in identifying any patterns in the dependent vraiable in response to differnt treatments.</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> height_data, <span class="fu">aes</span>(<span class="at">y =</span> height, <span class="at">x =</span> time)) <span class="sc">+</span></span>
@@ -498,6 +498,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>Here we observed any greater height with manage ’M1” and comparatively less variability across all times compared to other management treatments.</p>
 <p>Last, check the dependent variable by plotting a histogram of height data.</p>
 <div class="cell page-columns page-full">
 
@@ -566,7 +567,7 @@ levels of nesting</code></pre>
 <pre><code># A tibble: 32 × 7
    effect term        estimate std.error    df statistic  p.value
    &lt;chr&gt;  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)   108.        3.19   152    33.9   9.59e-73
+ 1 fixed  (Intercept)   108.        3.19   152    33.9   9.58e-73
  2 fixed  timeT2          3.18      2.63     6     1.21  2.72e- 1
  3 fixed  timeT3         -2.25      2.63     6    -0.855 4.25e- 1
  4 fixed  timeT4          1.28      2.63     6     0.488 6.43e- 1
@@ -585,7 +586,7 @@ levels of nesting</code></pre>
 </section>
 <section id="check-model-assumptions" class="level4" data-number="6.2.1.3">
 <h4 data-number="6.2.1.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">6.2.1.3</span> Check Model Assumptions</h4>
-<p>Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. There are assumptions that we can check are 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.</p>
+<p>Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.</p>
 <p>We will use <code>check_model()</code> function from ‘performance’ package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
@@ -646,7 +647,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF   F-value p-value
-(Intercept)     1   152 1148.6202  &lt;.0001
+(Intercept)     1   152 1148.6222  &lt;.0001
 time            3     6    1.5046  0.3061
 manage          7   152    2.2727  0.0315
 time:manage    21   152    1.1588  0.2955</code></pre>
@@ -655,7 +656,7 @@ time:manage    21   152    1.1588  0.2955</code></pre>
 </div>
 </div>
 </div>
-<p>We can further compute estimated marginal means for each fixed effect and interaction effect can be obtained using <code>emmeans()</code>.</p>
+<p>We can further compute estimated marginal means for each fixed effect and interaction effect using <code>emmeans()</code> from the emmeans package.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -701,7 +702,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>Further, a pairwise comparison or contrasts can be analyzed using estimated means. In this model, ‘time’ factor has 4 levels. We can use <code>pairs()</code> function to evaluate pairwise comparison among different ‘time’ levels.</p>
+<p>Further, a pairwise comparison or contrasts can be made using estimated means. In this model, ‘time’ factor has 4 levels. We can use <code>pairs()</code> function to evaluate pairwise comparison among different ‘time’ levels.</p>
 <p>Here’s a example using <code>pairs()</code> function to compare difference in height among different time points.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">nlme</a></li></ul>
@@ -761,7 +762,7 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </section>
 <section id="example-model-for-rcbd-split-plot-designs" class="level3 page-columns page-full" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="example-model-for-rcbd-split-plot-designs"><span class="header-section-number">6.2.2</span> Example model for RCBD Split Plot Designs</h3>
-<p>The oats data used in this example is from the MASS package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.</p>
+<p>Recall, at the beginning of this chapter we discussed CRD and RCBD split plot design. Now we will demonstrate how to analyze data from the RCBD split plot experiment design. The oats data used in this example is from the <strong>MASS</strong> package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.</p>
 <table class="caption-top table">
 <caption>Table of variables in the oat data set</caption>
 <tbody>
@@ -784,7 +785,8 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </tbody>
 </table>
 <p>The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.</p>
-<p>To fully examine the yield of oats due to varieties and nutrient levels in a split plots. We will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.</p>
+<p>To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.</p>
+<p>Let’s start this example analysis by firstly loading the ‘oat’ data from the MASS package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
@@ -800,7 +802,7 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 <section id="data-integrity-checks-1" class="level4 page-columns page-full" data-number="6.2.2.1">
 <h4 data-number="6.2.2.1" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">6.2.2.1</span> Data integrity checks</h4>
-<p>Let’s look at the structure of the data. The “B”, “V”, and “N” needs to be ‘factor’ and “Y” should be numeric.</p>
+<p>As shown in previous example, we will first examine the structure of the data. The “B”, “V”, and “N” needs to be a factor and “Y” should be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -811,7 +813,9 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
  $ Y: int  111 130 157 174 117 114 161 141 105 140 ...</code></pre>
 </div>
 </div>
-<p>Next, run the table() command to verify the levels of main-plots and sub-plots.</p>
+<ul>
+<li>Next, run the <code>table()</code> command to verify the levels of main-plots and sub-plots.</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -832,7 +836,9 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 0 0 0 0 </code></pre>
 </div>
 </div>
-<p>Last, check the dependent variable by plotting a histogram of yield data.</p>
+<ul>
+<li>Last, check the distribution of the dependent variable by plotting a histogram of yield data.</li>
+</ul>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -907,7 +913,7 @@ levels of nesting</code></pre>
    &lt;chr&gt;  &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
  1 fixed  (Intercept)           80          9.11    45    8.78   2.56e-11
  2 fixed  VMarvellous            6.67       9.72    10    0.686  5.08e- 1
- 3 fixed  VVictory              -8.50       9.72    10   -0.875  4.02e- 1
+ 3 fixed  VVictory              -8.5        9.72    10   -0.875  4.02e- 1
  4 fixed  N0.2cwt               18.5        7.68    45    2.41   2.02e- 2
  5 fixed  N0.4cwt               34.7        7.68    45    4.51   4.58e- 5
  6 fixed  N0.6cwt               44.8        7.68    45    5.84   5.48e- 7
@@ -984,7 +990,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
-(Intercept)     1    45 77.16729  &lt;.0001
+(Intercept)     1    45 77.16732  &lt;.0001
 V               2    10  1.22454  0.3344
 N               3    45 13.02273  &lt;.0001
 V:N             6    45  0.30282  0.9322</code></pre>
@@ -1047,6 +1053,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
+<p>The estimated means for Marvellous variety were higher compared to varieties across all N treatments.</p>
 <p>In the next chapter, we will continue with extension of split plot design called split-split plot design.</p>
 
 

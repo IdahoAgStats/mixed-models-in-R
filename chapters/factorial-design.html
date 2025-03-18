@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b37946e615776c97abd6b38c7c799888.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -363,7 +363,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Next, we will load the dataset named ‘cochran.factorial’ from the ‘<strong>agridat</strong>’ package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus. The goal of this analysis is the estimate the effect of d, n, p, k, and their interactions on bean yield.</p>
+<p>Next, we will load the dataset named ‘cochran.factorial’ from the ‘<strong>agridat</strong>’ package. This data comprises a yield response of beans to different levels of manure (d), nitrogen (n), phosphorus.</p>
+<p>The objective of this example is evaluate the individual and interactive effect of “d”, “n”, “p”, and “k” treatments on bean yield.</p>
 <p>Note, while importing the data, d, n, p, and k were converted into factor variables using the <code>mutate()</code> function from dplyr package. This helps in reducing the extra steps of converting each single variable to factor manually.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agridat)</span>
@@ -410,7 +411,6 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>The objective of this example is evaluate the individual and interactive effect of “d”, “n”, “p”, and “k” treatments on yield.</p>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">5.2.1</span> Data Integrity Checks</h3>
 <p>First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.</p>
@@ -463,7 +463,7 @@ window.Quarto = {
 </div>
 </div>
 <p>The design looks well balanced.</p>
-<p>Last step is to inspect the dependent variable to ensure its distribution follows the bell-shaped curve and no skewness is there.</p>
+<p>Last step is to inspect the dependent variable to ensure that there are no extremes (high or low) in the dataset.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -485,10 +485,12 @@ Figure&nbsp;5.1: Histogram of the dependent variable.
 </section>
 <section id="model-fitting" class="level3 page-columns page-full" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">5.2.2</span> Model fitting</h3>
-<p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all effect, as well as the interaction, which is represented by using the colon indicator ‘:’. Therefore, model syntax is:</p>
+<p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon indicator ‘:’.</p>
+<p>Therefore, model syntax is:</p>
 <p><code>yield ~ d + n + p + k + d:n + d:p + d:k + n:p + n:k + p:k + d:n:p:k</code></p>
 <p>which can be abbreviated as:</p>
 <p><code>yield ~ d*n*p*k</code></p>
+<p>In this analysis, “d”, “n”, “p”, &amp; “k” are fixed factors and block is a random effect.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -535,7 +537,7 @@ Figure&nbsp;5.1: Histogram of the dependent variable.
    effect   group    term           estimate std.error    df statistic   p.value
    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
  1 fixed    &lt;NA&gt;     (Intercept)      49          4.79    15   10.2      3.66e-8
- 2 fixed    &lt;NA&gt;     d1               -9.5        6.77    15   -1.40     1.81e-1
+ 2 fixed    &lt;NA&gt;     d1               -9.50       6.77    15   -1.40     1.81e-1
  3 fixed    &lt;NA&gt;     n1                0.500      6.77    15    0.0739   9.42e-1
  4 fixed    &lt;NA&gt;     p1              -11.5        6.77    15   -1.70     1.10e-1
  5 fixed    &lt;NA&gt;     k1                1.00       6.77    15    0.148    8.85e-1
@@ -608,34 +610,31 @@ Note
 </section>
 <section id="inference" class="level3" data-number="5.2.4">
 <h3 data-number="5.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">5.2.4</span> Inference</h3>
-<p>We can get an ANOVA table for the linear mixed model using the function <code>anova()</code>, which works for both <code>lmer()</code> and <code>lme()</code> models..</p>
+<p>We can get an ANOVA table for the linear mixed model using the function <code>anova()</code>, which works for both <code>lmer()</code> and <code>lme()</code> models.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model1_lmer, <span class="at">type =</span> <span class="st">'III'</span>, <span class="at">test.statistic=</span><span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_lmer, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
-
-Response: yield
-                   F Df Df.res    Pr(&gt;F)    
-(Intercept) 175.2030  1 20.439 1.729e-11 ***
-d             3.2928  1 20.439   0.08429 .  
-n             0.0091  1 20.439   0.92484    
-p             4.8252  1 20.439   0.03974 *  
-k             0.0365  1 20.439   0.85040    
-d:n           2.9812  1 25.421   0.09637 .  
-d:p           3.9300  1 25.421   0.05834 .  
-n:p           1.4763  1 25.421   0.23552    
-d:k           0.2617  1 25.421   0.61335    
-n:k           0.0041  1 25.421   0.94951    
-p:k           0.1472  1 25.421   0.70440    
-d:n:p         1.4251  1 37.012   0.24016    
-d:n:k         1.9589  1 37.012   0.16996    
-d:p:k         0.3321  1 37.012   0.56789    
-n:p:k         0.1373  1 37.012   0.71313    
-d:n:p:k       1.5778  1 66.709   0.21346    
+<pre><code>Marginal Analysis of Variance Table with Satterthwaite's method
+         Sum Sq Mean Sq NumDF DenDF F value  Pr(&gt;F)  
+d        79.851  79.851     1    16  3.2928 0.08838 .
+n         0.221   0.221     1    16  0.0091 0.92510  
+p       117.011 117.011     1    16  4.8252 0.04313 *
+k         0.885   0.885     1    16  0.0365 0.85092  
+d:n      72.294  72.294     1    16  2.9812 0.10349  
+d:p      95.302  95.302     1    16  3.9300 0.06488 .
+n:p      35.800  35.800     1    16  1.4763 0.24198  
+d:k       6.347   6.347     1    16  0.2617 0.61593  
+n:k       0.099   0.099     1    16  0.0041 0.94980  
+p:k       3.570   3.570     1    16  0.1472 0.70626  
+d:n:p    34.559  34.559     1    16  1.4251 0.24996  
+d:n:k    47.503  47.503     1    16  1.9589 0.18072  
+d:p:k     8.054   8.054     1    16  0.3321 0.57242  
+n:p:k     3.329   3.329     1    16  0.1373 0.71588  
+d:n:p:k  38.261  38.261     1    16  1.5778 0.22711  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -667,6 +666,7 @@ d:n:p:k         1    15   0.39719  0.5380</code></pre>
 </div>
 </div>
 </div>
+<p>Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only “p” had a significant effect on bean yield when evaluated at significance level of 0.05.</p>
 <p>Let’s find estimates for some of the factors such as n, p, and n:k interaction effect. This will help us look at the combined effect of n &amp; k on bean yield.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
@@ -699,18 +699,18 @@ Results are averaged over the levels of: d, n, k
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> n k emmean   SE   df lower.CL upper.CL
- 0 0   42.4 1.95 25.4     38.4     46.4
- 1 0   50.8 1.95 25.4     46.7     54.8
- 0 1   45.1 1.95 25.4     41.1     49.1
- 1 1   49.5 1.95 25.4     45.5     53.5
+<pre><code> n p emmean   SE   df lower.CL upper.CL
+ 0 0   45.8 1.95 25.4     41.7     49.8
+ 1 0   49.0 1.95 25.4     45.0     53.0
+ 0 1   41.8 1.95 25.4     37.7     45.8
+ 1 1   51.2 1.95 25.4     47.2     55.3
 
-Results are averaged over the levels of: d, p 
+Results are averaged over the levels of: d, k 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -744,18 +744,18 @@ Results are averaged over the levels of: d, n, k
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> n k emmean  SE df lower.CL upper.CL
- 0 0   42.4 2.9  1     5.50     79.2
- 1 0   50.8 2.9  1    13.88     87.6
- 0 1   45.1 2.9  1     8.25     82.0
- 1 1   49.5 2.9  1    12.63     86.4
+<pre><code> n p emmean  SE df lower.CL upper.CL
+ 0 0   45.8 2.9  1     8.88     82.6
+ 1 0   49.0 2.9  1    12.13     85.9
+ 0 1   41.8 2.9  1     4.88     78.6
+ 1 1   51.2 2.9  1    14.38     88.1
 
-Results are averaged over the levels of: d, p 
+Results are averaged over the levels of: d, k 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -763,7 +763,20 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
+<p>The code chunks showed above estimated marginal means for individual effects of “n” and “p” and their interaction (n:p) effect on bean yield. Make sure to give an attention to the warning message that means are averaged over the “d”, “p”, and “k” levels. It’s an important detail that needs to be pointed out while making conclusions.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>In summary, while working with factorial designs make sure to carefully interpret ANOVA and estimated marginal means for main and interaction effects.</p>
+</div>
+</div>
 
 
 </section>

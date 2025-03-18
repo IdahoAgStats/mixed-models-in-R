@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.40">
+<meta name="generator" content="quarto-1.6.42">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -38,10 +38,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b37946e615776c97abd6b38c7c799888.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -242,9 +242,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#common-errors-we-encounter" id="toc-common-errors-we-encounter" class="nav-link active" data-scroll-target="#common-errors-we-encounter"><span class="header-section-number">14.1</span> Common Errors we Encounter</a>
+  <li><a href="#convergence-issues" id="toc-convergence-issues" class="nav-link active" data-scroll-target="#convergence-issues"><span class="header-section-number">14.0.1</span> Convergence Issues</a></li>
+  <li><a href="#optimization-failures" id="toc-optimization-failures" class="nav-link" data-scroll-target="#optimization-failures"><span class="header-section-number">14.1</span> Optimization failures</a>
   <ul class="collapse">
-  <li><a href="#convergence-issues" id="toc-convergence-issues" class="nav-link" data-scroll-target="#convergence-issues"><span class="header-section-number">14.1.1</span> Convergence Issues</a></li>
+  <li><a href="#recommendations-for-warnings-about-the-convergence" id="toc-recommendations-for-warnings-about-the-convergence" class="nav-link" data-scroll-target="#recommendations-for-warnings-about-the-convergence"><span class="header-section-number">14.1.1</span> Recommendations for warnings about the convergence</a></li>
   <li><a href="#other" id="toc-other" class="nav-link" data-scroll-target="#other"><span class="header-section-number">14.1.2</span> Other</a></li>
   </ul></li>
   </ul>
@@ -272,12 +273,48 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="common-errors-we-encounter" class="level2" data-number="14.1">
-<h2 data-number="14.1" class="anchored" data-anchor-id="common-errors-we-encounter"><span class="header-section-number">14.1</span> Common Errors we Encounter</h2>
-<section id="convergence-issues" class="level3" data-number="14.1.1">
-<h3 data-number="14.1.1" class="anchored" data-anchor-id="convergence-issues"><span class="header-section-number">14.1.1</span> Convergence Issues</h3>
+<p>In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs. However, it is likely that you will eventually have issues in conducting mixed models in R, such as lack of convergence</p>
+<p>This section discusses common issues and errors that might come up when implementing mixed models. ## Common Errors we Encounter</p>
+<ol type="1">
+<li>Singular fit error in linear mixed models</li>
+</ol>
+<p>error produced in output is: <code>boundary (singular) fit: see ?isSingular</code>.</p>
+<p>This error occurs because one of the variance component is approximately 0. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as exactly zero or really close to zero. This often occurs for mixed models with complex random effects structures.</p>
+<p>solution:</p>
+<p>search for <code>?lmercontrol</code></p>
+<ol start="2" type="1">
+<li>Model failed to converge</li>
+</ol>
+<section id="convergence-issues" class="level3" data-number="14.0.1">
+<h3 data-number="14.0.1" class="anchored" data-anchor-id="convergence-issues"><span class="header-section-number">14.0.1</span> Convergence Issues</h3>
+<p>common error recieved when model doesn’t converge:</p>
+<p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
+<p>or</p>
+<p><code>Hessian that is not positive definite</code></p>
+<p>Possible solutions for this issue:</p>
+<ol type="1">
+<li></li>
+</ol>
 <p>[<a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html">lme4 convergence warnings</a></p>
 <p><a href="https://rpubs.com/palday/lme4-singular-convergence">more</a></p>
+</section>
+<section id="optimization-failures" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="optimization-failures"><span class="header-section-number">14.1</span> Optimization failures</h2>
+<p>Trying to different options or even a different optimizer are good strategies.</p>
+<p>https://rpubs.com/palday/lme4-singular-convergence</p>
+<section id="recommendations-for-warnings-about-the-convergence" class="level3" data-number="14.1.1">
+<h3 data-number="14.1.1" class="anchored" data-anchor-id="recommendations-for-warnings-about-the-convergence"><span class="header-section-number">14.1.1</span> Recommendations for warnings about the convergence</h3>
+<ul>
+<li><p>Try setting stricter convergence criteria and allowing more iterations (ftol_rel, xtol_rel, maxeval).</p></li>
+<li><p>Check your overall model fit by plotting fitted vs.&nbsp;observed, etc. to make sure your model isn’t misspecified.</p></li>
+<li><p>Consider setting control=lmerControl(calc.derivs=FALSE).</p>
+<ul>
+<li>The derivative check takes a loooooong time And tends to deliver false positives with maximal models.</li>
+</ul></li>
+<li><p>BUT PAY ATTENTION TO YOUR MODEL FIT AND YOUR OPTIMIZER’S OWN WARNINGS!!!</p></li>
+<li><p>The common convergence warnings such as ‘Hessian that is not positive definite’, may imply a genuine problem in the model, in this condition you should consider to make changes as the warning tells you to do.</p></li>
+<li></li>
+</ul>
 </section>
 <section id="other" class="level3" data-number="14.1.2">
 <h3 data-number="14.1.2" class="anchored" data-anchor-id="other"><span class="header-section-number">14.1.2</span> Other</h3>
