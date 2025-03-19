@@ -4,27 +4,55 @@ execute:
   eval: false
 ---
 
-Mixed models provide the advantage of being able to estimate the variance of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random drawn from a normal distribution with a standard deviation. The decision of how to designate a variable as random or fixed depends on 
+H
 
-```{r}
-library(nlme); library(emmeans); library(performance)
-library(lme4)
+Mixed, hierarchical or multilevel models provide the advantage of being able to estimate the variance of random variables and model correlations within the grouping structure of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random draw from a probability distribution. 
+
+The decision of how to designate a variable as random or fixed depends on (1) your experimental aims with regard to inference and (2) your data structure. 
+
+```{r, include=FALSE}
+library(dplyr)
+library(nlme); library(emmeans); 
+library(performance)
 ```
 
+## Variance component estimation for 2+ random effects
 
-## Unequal Variance
-
-### Case 1: Unequal Variance Due to a Factor
+## Multiple crossed variance components
 
 ```{r}
-var_ex1 <- here::here(read.csv("data", "MET_trial_variance.csv"))
+var_comps <- read.csv(here::here("data", "potato_tuber_size.csv"))
 ```
 
+## Nested variance components
+
+[[need a data set]]
+
+
+
+## Variance component estimation for heteroscedasticity
+
+> In the "general" linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject $H_0$, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model. 
+> --Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, $2^{nd}$ Ed, Section 7.2.3.1
+
+In previous sections, we have assumed the error terms or residuals were "i.i.d.", that is "independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity. 
+
+### Case 1: unequal variance due to a factor
+
+This data set is from a set of canola variety trials conducted in a single year across  multiple locations. The trials included 38 varieties that were evaluated at 9 locations using a RCBD design. 
+
 ```{r}
-var_ex1$block <- as.character(var_ex1$block)
+var_ex1 <- read.csv(here::here("data", "MET_trial_variance.csv")) |> 
+  mutate(block = as.character(block)) |> 
+  tidyr::drop_na()
+```
+
+Exploratory data visualizations indicate that the dependent variable, seed yield, varied greatly overall and certain locations had smaller variance compared to others. 
+```{r}
 hist(var_ex1$yield)
 boxplot(yield ~ site, data = var_ex1)
 ```
+The study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model. 
 
 ```{r}
 m1_a <- lme(yield ~ site:variety + variety, 
@@ -34,10 +62,20 @@ m1_a <- lme(yield ~ site:variety + variety,
 
 ```
 
+The residual plot indicates some association between the residuals and fitted values. 
+```{r}
+plot(m1_a)
+```
+We can add a term to model the variance by site.
+
+$$Var(\epsilon_{ij}) = \sigma^2 \delta^2_{s_{ij}} $$
+Details on the implementation can be found in [@nlme_book].
 
 ```{r}
 m1_b <- update(m1_a, weights = varIdent(form = ~1|site))
 ```
+
+The function `varIdent()` is used to set the stratifying variable at which to estimate variance. Like many functions in R, there are additional arguments to consider for more complex scenarios (type `?varIdent` in an R console to check). 
 
 ::: {.note}
 
@@ -58,17 +96,28 @@ m1_b <- lme(yield ~ site:variety + variety,
 
 :::
 
-### Case 2: Variance is related to the fitted values
+The residual plot is now much cleaner. The result is a better-fitting model and with that, better inference for variety at the site level. 
 
 ```{r}
-var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv"))
+plot(m1_b)
+anova(m1_a, m1_b)
 ```
 
+### Case 2: Variance is related to the fitted values
+
+This is the infamous 'horn' pattern in the residuals-vs-fitted values plot. This is another canola trial using 38 varieties conducted at a single year and single location. 
+
 ```{r}
-var_ex1$block <- as.character(var_ex1$block)
+var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv")) |> 
+  dplyr::mutate(block = as.character(block))
+```
+
+A histogram does indicate there is anything unusual about the dependent variabe (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.
+```{r}
 hist(var_ex2$yield)
 ```
 
+Since this experiment has a single fixed effect and is arranged using a RCBD, the model is same as described in [the RCBD chapter](rcbd.qmd).
 
 ```{r}
 m2_a <- lme(yield ~ variety, 
@@ -77,30 +126,44 @@ m2_a <- lme(yield ~ variety,
                data = var_ex2)
 ```
 
+An inspection of the residual plot indicates a clear mean-variance relationship. 
+```{r}
+plot(m2_a)
+```
+This mean-variance relationship can be mitigated by modelling the variance directly as a function of any covariate in the model using a power function. 
+
+
+$$ Var(\epsilon_{ij}) = \sigma^2|\nu_{ij}|^{2\delta}$$
+
+We can accomplish this using the **nlme** function `varPower()`. This function can take other covariates, but when there is no argument provided, it defaults to using the fitted values. 
+
 ```{r}
 m2_b <- update(m2_a, weights = varPower())
 ```
 
+The model fit is substantially improved according to visual inspection of the residuals and the results of a likelihood ratio test. 
+
+```{r}
+plot(m2_b)
+```
+```{r}
+anova(m2_a, m2_b)
+```
+
+There are many other ways of using these functions for modeling heteroscedasticity. For example, `varIdent()` can include a covariate, and `varPower()` can include a stratifying variable. All or some of the parameters can be fixed at set values. It's worth reading the documentation to understand what is possible.  
+
 ## Coefficient of Variation
 
-```{r}
-m2_ave <- fixef(m2_b)[1]
-names(m2_b) <- NULL
-```
+The coefficient of variation can be manually calculated as thus:
+
+$$ \frac {\sigma}{\mu} * 100 $$
 
 ```{r}
-m2_cv = sigma(m2_b)/m2_ave*100
-m2_cv
+m1_ave <- mean(var_ex1$yield, na.rm = TRUE)
+m1_cv = sigma(m1_b)/m1_ave*100
+round(m1_cv, 1)
 ```
 
-
-
-### Looking at Variance Components
-
-```{r}
-var_comps <- read.csv(here::here("data", "potato_tuber_size.csv"))
-```
-
-
+However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). 
 
 
