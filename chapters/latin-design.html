@@ -354,7 +354,7 @@ window.Quarto = {
 </ol>
 <p>Statistical model for a response in Latin square design is:</p>
 <p><span class="math inline">\(Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}\)</span></p>
-<p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i's\)</span> represents treatment effect, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column specific effects.</p>
+<p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i\)</span> represents treatment effect, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column specific effects.</p>
 <p>Assumptions of this design includes normality and independent distribution of error (<span class="math inline">\(\epsilon_{ijk}\)</span>) terms. And there is no interaction between two blocking (rows &amp; columns) factors and treatments.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="10.2">
@@ -415,7 +415,7 @@ window.Quarto = {
  $ col  : int  1 1 1 1 1 2 2 2 2 2 ...</code></pre>
 </div>
 </div>
-<p>Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change ‘row’ and ‘col’ from integer t factor/character.</p>
+<p>Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change ‘row’ and ‘col’ from integer to factor/character.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">row =</span> <span class="fu">as.factor</span>(row),</span>
@@ -459,7 +459,6 @@ window.Quarto = {
 <section id="model-fitting" class="level3" data-number="10.2.2">
 <h3 data-number="10.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">10.2.2</span> Model fitting</h3>
 <p>Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row &amp; col as a random effect.</p>
-<p>VarCorr(m1_b)</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -560,7 +559,7 @@ Number of Groups:
 </section>
 <section id="check-model-assumptions" class="level3 page-columns page-full" data-number="10.2.3">
 <h3 data-number="10.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">10.2.3</span> Check Model Assumptions</h3>
-<p>This step involves inspection of model residuals. by using <code>check_model()</code> function from the “performance” package.</p>
+<p>This step involves inspection of the model residuals by using <code>check_model()</code> function from the <strong>performance</strong> package.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset page-columns page-full">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content page-columns page-full">
