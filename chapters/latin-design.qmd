@@ -28,7 +28,7 @@ Statistical model for a response in Latin square design is:
 
 $Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}$
 
-where, $\mu$ is the experiment mean, $\alpha_i's$ represents treatment effect, $\beta$ and $\gamma$ are the row- and column specific effects.
+where, $\mu$ is the experiment mean, $\alpha_i$ represents treatment effect, $\beta$ and $\gamma$ are the row- and column specific effects.
 
 Assumptions of this design includes normality and independent distribution of error ($\epsilon_{ijk}$) terms. And there is no interaction between two blocking (rows & columns) factors and treatments.
 
@@ -75,7 +75,7 @@ Firstly, let's verify the class of variables in the dataset using `str()` functi
 str(dat)
 ```
 
-Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer t factor/character.
+Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer to factor/character.
 
 ```{r}
 dat1 <- dat |> 
@@ -93,13 +93,6 @@ desplot::desplot(data = dat1, flip = TRUE,
         out1 = trt,                          
        # out2 = block,  
         main = "Alpha Lattice Design", show.key =F) 
-# desplot::desplot(data = dat, flip = TRUE,
-#         form = yield ~ row + col, 
-#         out1 = row, out1.gpar=list(col="black", lwd=3),
-#         out2 = col, out2.gpar=list(col="black", lwd=3),
-#         text = trt, cex = 1, shorten = "no",
-#         main = "Field layout", 
-#         show.key = FALSE)
 
 ```
 
@@ -131,8 +124,6 @@ hist(dat$yield, main = "", xlab = "yield")
 
 Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row & col as a random effect.
 
-VarCorr(m1_b)
-
 ::: panel-tabset
 ### lme4
 
@@ -157,7 +148,7 @@ summary(m1_b)
 
 ### Check Model Assumptions
 
-This step involves inspection of model residuals. by using `check_model()` function from the "performance" package.
+This step involves inspection of the model residuals by using `check_model()` function from the **performance** package.
 
 :::: panel-tabset
 #### lme4

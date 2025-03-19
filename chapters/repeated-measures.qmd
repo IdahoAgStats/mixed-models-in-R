@@ -6,7 +6,7 @@ source(here::here("settings.r"))
 
 In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects.
 
-Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time of each subject. This is common in any studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
+Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
 
 In these models, the 'iid' assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
@@ -23,6 +23,7 @@ To read more about selecting appropriate covariance structure based on your data
 :::
 
 The repeated measures syntax in **nlme** follow this convention: 
+
 `corr = corAR1(value = (b/w -1 & 1), form = ~ t|g, fixed = (T or F))`. 
 
 One can use differnt correlation structure classes such as `CorAR1()`, `corCompSymm()`, `CorSymm()`.
@@ -32,7 +33,7 @@ The default starting `value` is zero, and if `fixed = FALSE` (the current nlme d
 
 There are several other options in the **nlme** machinery (search "cor" for more options and details on the syntax).
 
-Fitting models with correlated observations requires new libraries including **mmrm** and **nlme**. The **lmer** package allows random effects only.
+Fitting models with correlated observations requires new libraries including **mmrm** and **nlme**. The **lme4** package allows random effects only.
 
 In this tutorial we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.
 
@@ -73,7 +74,7 @@ dat <- agriTutorial::sorghum %>%
 | Replicate | replication unit                    |
 | Week      | Time points when data was collected |
 | variety   | treatment factor, 4 levels          |
-| y         | yield (lbs)                         |
+| y         | leaf area index                        |
 
 : Table of variables in the data set {tbl-rcbd-rp}
 
@@ -105,7 +106,7 @@ Looks like variety '1' has the lowest yield and showed drastic reduction in yiel
 One last step before we fit model is to look at the distribution of response variable.
 
 ```{r, eval=FALSE}
-hist(dat$y, main = "", xlab = "yield")
+hist(dat$y, main = "", xlab = "leaf area index")
 ```
 
 ```{r, echo=FALSE}
@@ -113,12 +114,12 @@ hist(dat$y, main = "", xlab = "yield")
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+hist(dat$y, main = "", xlab = "leaf area index", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
 ### Model Building
 
-Let's fit the basic model first using `lme()` from the nlme package.
+Let's fit the basic model first using `lme()` from the **nlme** package.
 
 ```{r}
 lm1 <- lme(y ~ variety + factweek + variety:factweek,
@@ -138,14 +139,14 @@ cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
 cs2 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
 ```
 
-In the code chunk above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model lm1, with these two matrices. In nlme, please search the help tool to know more about functions for different correlation structure classes.
+In the code chunk above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model lm1, with these two matrices. 
 
 ```{r}
 lm2 <- update(lm1, corr = cs1)
 lm3 <- update(lm1, corr= cs2)
 ```
 
-Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by `compare_performance()` function from the 'performance' library.
+Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by `compare_performance()` function from the **performance** library.
 
 ::: panel-tabset
 ### anova
@@ -250,7 +251,7 @@ To fit model, we first need to convert Variety, Fertilizer, and Sample_time as f
 ```{r}
 ##creating a plot variable 
 Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-')) 
-Yield$Rep2 <- factor(paste(Yield$Rep, Yield$Variety, sep='-')) 
+
 table(Yield$plot) 
 ```
 
@@ -269,15 +270,13 @@ hist(Yield$Yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
 ```{r, eval=FALSE}
-hist(Yield$Yield)
+hist(Yield$Yield, xlab = "yield")
 ```
 ### Model fit
 
 This data can be analyzed either using `nlme` or `mmrm`.
 
-**using lme() from nlme package.**
-
-Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from nlme package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the mmrm package. In addition, instead of `summary()` function we will use `tidy()`  function from the 'broom.mixed' package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
+Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. In addition, instead of `summary()` function we will use `tidy()`  function from the 'broom.mixed' package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
 ::: panel-tabset
 ### nlme
@@ -306,7 +305,7 @@ tidy(fit2)
 
 ### Model diagnostics
 
-We will use `check_model()` from 'performance' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evalute the model diagnostics by plotting the residuals using base R functions.
+We will use `check_model()` from 'performance' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.
 
 ::: panel-tabset
 ### nlme
@@ -356,8 +355,7 @@ anova(fit1, type = "marginal")
 ### mmrm
 
 ```{r}
-#car::Anova(fit2, type = "III")
-#Anova.mmrm(fit2, type = "III")
+car::Anova(fit2, type = "III")
 ```
 :::
 
@@ -430,12 +428,18 @@ Before fitting a model, let's check the distribution of the response variable.
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(phos1$P_leaf, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
 ```{r, eval=FALSE}
-hist(phos1$P_leaf)
+hist(phos1$P_leaf, xlab = "P leaf")
 ```
+
+::: callout-warning
+## distribution of dependent variables
+
+Here note that we observed uneven distribution of response variable with large number of observations in the range of 0-500. This will cause issues with assumptions of the linear mixed model. In such cases, It's recommended to check for data transformations such as log or square root transformation. For this cahpter, we will not try that here and rather focus on model structure only. 
+:::
 
 ### Model fit
 
@@ -449,22 +453,31 @@ fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
                 corr= corr_str1,
                 data = phos1, na.action= na.exclude)
 tidy(fit1)
-```
 
+```
+### Inference
 
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
 check_model(fit1, check = c('normality', 'linearity'))
 ```
-We see a cluster of values in residuals which was due to large number of observations having low values. 
 
+We see a cluster of values in residuals which was due to large number of observations having low values. Which means we cannot rely on results from this model without doing any data transformation. 
+
+::: column-margin
+::: callout-warning
+## Model inference
+Please remember that conclusions cannot be drawn from the model that doesn't meet linear mixed model assumptions. 
+:::
+:::
 
 ```{r}
 #| warning: false
 #| message: false
 anova(fit1, type = "marginal")
 ```
+
 ```{r}
 emmeans(fit1,~ time)
 emmeans(fit1,~ time|Cv)
@@ -473,6 +486,6 @@ emmeans(fit1,~ time|Cv)
 Really low P leaf content at PT3 in all the cultivars.
 
 
-The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed random factors](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested
+The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
 
 The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.

@@ -12,7 +12,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 The block design described in [**Chapter 4**](rcbd.qmd) was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g. limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.  
 
-In such cases, incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936, @patterson_1976] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier){.external target="_blank"} by Lukas Meier.
+In such cases, randomized incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936, @patterson_1976] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier){.external target="_blank"} by Lukas Meier.
 
 Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called "lattice designs" [need refs], but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used. 
 
@@ -54,7 +54,7 @@ Because the blocks are incomplete, the Type I and Type III sums of squares will 
 
 ### Balanced Incomplete Block Design
 
-We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries required for analysis and estimation.
+We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries required for analysis.
 
 ::: panel-tabset
 ### lme4
@@ -106,7 +106,7 @@ We will start inspecting the data set firstly by looking at the class of each va
 str(dat)
 ```
 
-The variables we need for the model are block, genand yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we do not need to change class of any of the required variables.
+The variables we need for the model are block, gen, and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we do not need to change class of any of the required variables.
 
 Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
