@@ -432,17 +432,37 @@
     "href": "chapters/variance-components.html",
     "title": "13  Variance & Variance Components",
     "section": "",
-    "text": "13.1 Unequal Variance\nMixed models provide the advantage of being able to estimate the variance of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random drawn from a normal distribution with a standard deviation. The decision of how to designate a variable as random or fixed depends on",
+    "text": "13.1 Variance component estimation for 2+ random effects\nH\nMixed, hierarchical or multilevel models provide the advantage of being able to estimate the variance of random variables and model correlations within the grouping structure of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random draw from a probability distribution.\nThe decision of how to designate a variable as random or fixed depends on (1) your experimental aims with regard to inference and (2) your data structure.",
     "crumbs": [
       "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
     ]
   },
   {
-    "objectID": "chapters/variance-components.html#unequal-variance",
-    "href": "chapters/variance-components.html#unequal-variance",
+    "objectID": "chapters/variance-components.html#multiple-crossed-variance-components",
+    "href": "chapters/variance-components.html#multiple-crossed-variance-components",
     "title": "13  Variance & Variance Components",
-    "section": "",
-    "text": "13.1.1 Case 1: Unequal Variance Due to a Factor\n\nvar_ex1 &lt;- here::here(read.csv(\"data\", \"MET_trial_variance.csv\"))\n\n\nvar_ex1$block &lt;- as.character(var_ex1$block)\nhist(var_ex1$yield)\nboxplot(yield ~ site, data = var_ex1)\n\n\nm1_a &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block, \n                na.action = na.exclude, \n                data = var_ex1)\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\nis equivalent to\n\nm1_b &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block,\n                weights = varIdent(form = ~1|site), \n                na.action = na.exclude, \n                data = var_ex1)\n\n\n\n\n13.1.2 Case 2: Variance is related to the fitted values\n\nvar_ex2 &lt;- read.csv(here::here(\"data\", \"single_trial_variance.csv\"))\n\n\nvar_ex1$block &lt;- as.character(var_ex1$block)\nhist(var_ex2$yield)\n\n\nm2_a &lt;- lme(yield ~ variety, \n               random = ~ 1 |block, \n               na.action = na.exclude, \n               data = var_ex2)\n\n\nm2_b &lt;- update(m2_a, weights = varPower())",
+    "section": "13.2 Multiple crossed variance components",
+    "text": "13.2 Multiple crossed variance components\n\nvar_comps &lt;- read.csv(here::here(\"data\", \"potato_tuber_size.csv\"))",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/variance-components.html#nested-variance-components",
+    "href": "chapters/variance-components.html#nested-variance-components",
+    "title": "13  Variance & Variance Components",
+    "section": "13.3 Nested variance components",
+    "text": "13.3 Nested variance components\n[[need a data set]]",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/variance-components.html#variance-component-estimation-for-heteroscedasticity",
+    "href": "chapters/variance-components.html#variance-component-estimation-for-heteroscedasticity",
+    "title": "13  Variance & Variance Components",
+    "section": "13.4 Variance component estimation for heteroscedasticity",
+    "text": "13.4 Variance component estimation for heteroscedasticity\n\nIn the “general” linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject \\(H_0\\), it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model. –Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), Generalized Linear Mixed Models, \\(2^{nd}\\) Ed, Section 7.2.3.1\n\nIn previous sections, we have assumed the error terms or residuals were “i.i.d.”, that is “independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity.\n\n13.4.1 Case 1: unequal variance due to a factor\nThis data set is from a set of canola variety trials conducted in a single year across multiple locations. The trials included 38 varieties that were evaluated at 9 locations using a RCBD design.\n\nvar_ex1 &lt;- read.csv(here::here(\"data\", \"MET_trial_variance.csv\")) |&gt; \n  mutate(block = as.character(block)) |&gt; \n  tidyr::drop_na()\n\nExploratory data visualizations indicate that the dependent variable, seed yield, varied greatly overall and certain locations had smaller variance compared to others.\n\nhist(var_ex1$yield)\nboxplot(yield ~ site, data = var_ex1)\n\nThe study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model.\n\nm1_a &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block, \n                na.action = na.exclude, \n                data = var_ex1)\n\nThe residual plot indicates some association between the residuals and fitted values.\n\nplot(m1_a)\n\nWe can add a term to model the variance by site.\n\\[Var(\\epsilon_{ij}) = \\sigma^2 \\delta^2_{s_{ij}} \\] Details on the implementation can be found in (Pinheiro and Bates 2000).\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\nThe function varIdent() is used to set the stratifying variable at which to estimate variance. Like many functions in R, there are additional arguments to consider for more complex scenarios (type ?varIdent in an R console to check).\n\n\nm1_b &lt;- update(m1_a, weights = varIdent(form = ~1|site))\n\nis equivalent to\n\nm1_b &lt;- lme(yield ~ site:variety + variety, \n                random = ~ 1 |site/block,\n                weights = varIdent(form = ~1|site), \n                na.action = na.exclude, \n                data = var_ex1)\n\n\nThe residual plot is now much cleaner. The result is a better-fitting model and with that, better inference for variety at the site level.\n\nplot(m1_b)\nanova(m1_a, m1_b)\n\n\n\n13.4.2 Case 2: Variance is related to the fitted values\nThis is the infamous ‘horn’ pattern in the residuals-vs-fitted values plot. This is another canola trial using 38 varieties conducted at a single year and single location.\n\nvar_ex2 &lt;- read.csv(here::here(\"data\", \"single_trial_variance.csv\")) |&gt; \n  dplyr::mutate(block = as.character(block))\n\nA histogram does indicate there is anything unusual about the dependent variabe (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.\n\nhist(var_ex2$yield)\n\nSince this experiment has a single fixed effect and is arranged using a RCBD, the model is same as described in the RCBD chapter.\n\nm2_a &lt;- lme(yield ~ variety, \n               random = ~ 1 |block, \n               na.action = na.exclude, \n               data = var_ex2)\n\nAn inspection of the residual plot indicates a clear mean-variance relationship.\n\nplot(m2_a)\n\nThis mean-variance relationship can be mitigated by modelling the variance directly as a function of any covariate in the model using a power function.\n\\[ Var(\\epsilon_{ij}) = \\sigma^2|\\nu_{ij}|^{2\\delta}\\]\nWe can accomplish this using the nlme function varPower(). This function can take other covariates, but when there is no argument provided, it defaults to using the fitted values.\n\nm2_b &lt;- update(m2_a, weights = varPower())\n\nThe model fit is substantially improved according to visual inspection of the residuals and the results of a likelihood ratio test.\n\nplot(m2_b)\n\n\nanova(m2_a, m2_b)\n\nThere are many other ways of using these functions for modeling heteroscedasticity. For example, varIdent() can include a covariate, and varPower() can include a stratifying variable. All or some of the parameters can be fixed at set values. It’s worth reading the documentation to understand what is possible.",
     "crumbs": [
       "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
     ]
@@ -451,8 +471,8 @@
     "objectID": "chapters/variance-components.html#coefficient-of-variation",
     "href": "chapters/variance-components.html#coefficient-of-variation",
     "title": "13  Variance & Variance Components",
-    "section": "13.2 Coefficient of Variation",
-    "text": "13.2 Coefficient of Variation\n\nm2_ave &lt;- fixef(m2_b)[1]\nnames(m2_b) &lt;- NULL\n\n\nm2_cv = sigma(m2_b)/m2_ave*100\nm2_cv\n\n\n13.2.1 Looking at Variance Components\n\nvar_comps &lt;- read.csv(here::here(\"data\", \"potato_tuber_size.csv\"))",
+    "section": "13.5 Coefficient of Variation",
+    "text": "13.5 Coefficient of Variation\nThe coefficient of variation can be manually calculated as thus:\n\\[ \\frac {\\sigma}{\\mu} * 100 \\]\n\nm1_ave &lt;- mean(var_ex1$yield, na.rm = TRUE)\nm1_cv = sigma(m1_b)/m1_ave*100\nround(m1_cv, 1)\n\nHowever, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with varIdent()) or much much smaller (e.g. with varPower()).\n\n\n\n\nPinheiro, José C., and Douglas M. Bates. 2000. Mixed-Effects Models in s and s-PLUS. New York: Springer. https://doi.org/10.1007/b98882.",
     "crumbs": [
       "<span class='chapter-number'>13</span>  <span class='chapter-title'>Variance and Variance Components</span>"
     ]
