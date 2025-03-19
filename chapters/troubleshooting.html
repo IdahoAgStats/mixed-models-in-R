@@ -242,11 +242,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#convergence-issues" id="toc-convergence-issues" class="nav-link active" data-scroll-target="#convergence-issues"><span class="header-section-number">14.0.1</span> Convergence Issues</a></li>
-  <li><a href="#optimization-failures" id="toc-optimization-failures" class="nav-link" data-scroll-target="#optimization-failures"><span class="header-section-number">14.1</span> Optimization failures</a>
+  <li><a href="#common-errors-we-encounter" id="toc-common-errors-we-encounter" class="nav-link active" data-scroll-target="#common-errors-we-encounter"><span class="header-section-number">14.1</span> Common errors we encounter</a>
   <ul class="collapse">
-  <li><a href="#recommendations-for-warnings-about-the-convergence" id="toc-recommendations-for-warnings-about-the-convergence" class="nav-link" data-scroll-target="#recommendations-for-warnings-about-the-convergence"><span class="header-section-number">14.1.1</span> Recommendations for warnings about the convergence</a></li>
-  <li><a href="#other" id="toc-other" class="nav-link" data-scroll-target="#other"><span class="header-section-number">14.1.2</span> Other</a></li>
+  <li><a href="#other-tools" id="toc-other-tools" class="nav-link" data-scroll-target="#other-tools"><span class="header-section-number">14.1.1</span> Other Tools</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -273,51 +271,30 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs. However, it is likely that you will eventually have issues in conducting mixed models in R, such as lack of convergence</p>
-<p>This section discusses common issues and errors that might come up when implementing mixed models. ## Common Errors we Encounter</p>
+<p>In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs using examples we have already tested and know work. However, it is likely that you will eventually have issues in fitting mixed models in R. This section discusses common issues and errors that might come up when implementing mixed models.</p>
+<section id="common-errors-we-encounter" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="common-errors-we-encounter"><span class="header-section-number">14.1</span> Common errors we encounter</h2>
 <ol type="1">
-<li>Singular fit error in linear mixed models</li>
+<li>Singular fit error</li>
 </ol>
-<p>error produced in output is: <code>boundary (singular) fit: see ?isSingular</code>.</p>
-<p>This error occurs because one of the variance component is approximately 0. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as exactly zero or really close to zero. This often occurs for mixed models with complex random effects structures.</p>
-<p>solution:</p>
-<p>search for <code>?lmercontrol</code></p>
-<ol start="2" type="1">
-<li>Model failed to converge</li>
+<p><code>boundary (singular) fit: see ?isSingular</code>.</p>
+<p>This error occurs because one of the variance component is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision will allow.</p>
+<p>There is no single solution for this problem. One option is to remove the block effect or include it as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> in <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
+<p>[[need info on the drawbacks of leaving block out]]</p>
+<p>search for <code>?lmercontrol</code> (Julia: why?????)</p>
+<ol type="1">
+<li>Model failed to converge. There are several different error messsages for non-convergence, depending on what happened:</li>
 </ol>
-<section id="convergence-issues" class="level3" data-number="14.0.1">
-<h3 data-number="14.0.1" class="anchored" data-anchor-id="convergence-issues"><span class="header-section-number">14.0.1</span> Convergence Issues</h3>
-<p>common error recieved when model doesn’t converge:</p>
 <p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
-<p>or</p>
 <p><code>Hessian that is not positive definite</code></p>
-<p>Possible solutions for this issue:</p>
-<ol type="1">
-<li></li>
-</ol>
-<p>[<a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html">lme4 convergence warnings</a></p>
-<p><a href="https://rpubs.com/palday/lme4-singular-convergence">more</a></p>
-</section>
-<section id="optimization-failures" class="level2" data-number="14.1">
-<h2 data-number="14.1" class="anchored" data-anchor-id="optimization-failures"><span class="header-section-number">14.1</span> Optimization failures</h2>
-<p>Trying to different options or even a different optimizer are good strategies.</p>
-<p>https://rpubs.com/palday/lme4-singular-convergence</p>
-<section id="recommendations-for-warnings-about-the-convergence" class="level3" data-number="14.1.1">
-<h3 data-number="14.1.1" class="anchored" data-anchor-id="recommendations-for-warnings-about-the-convergence"><span class="header-section-number">14.1.1</span> Recommendations for warnings about the convergence</h3>
-<ul>
-<li><p>Try setting stricter convergence criteria and allowing more iterations (ftol_rel, xtol_rel, maxeval).</p></li>
-<li><p>Check your overall model fit by plotting fitted vs.&nbsp;observed, etc. to make sure your model isn’t misspecified.</p></li>
-<li><p>Consider setting control=lmerControl(calc.derivs=FALSE).</p>
-<ul>
-<li>The derivative check takes a loooooong time And tends to deliver false positives with maximal models.</li>
-</ul></li>
-<li><p>BUT PAY ATTENTION TO YOUR MODEL FIT AND YOUR OPTIMIZER’S OWN WARNINGS!!!</p></li>
-<li><p>The common convergence warnings such as ‘Hessian that is not positive definite’, may imply a genuine problem in the model, in this condition you should consider to make changes as the warning tells you to do.</p></li>
-<li></li>
-</ul>
-</section>
-<section id="other" class="level3" data-number="14.1.2">
-<h3 data-number="14.1.2" class="anchored" data-anchor-id="other"><span class="header-section-number">14.1.2</span> Other</h3>
+<p>There are several causes for lack of convergence. Model fitting is an iterative process where in each interation, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explainations.</p>
+<p>Running this is an R console will bring up a useful help file with details on how to address convergence issues.</p>
+<pre><code>?convergence</code></pre>
+<section id="other-tools" class="level3" data-number="14.1.1">
+<h3 data-number="14.1.1" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">14.1.1</span> Other Tools</h3>
+<p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well.</p>
+<p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A help ful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
+<p>Posit (née RStudio) has published a <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html">rather useful guide</a> for advanced troubleshooting of convergence issues in <strong>lme4</strong>. Phillip Alday wrote a <a href="https://rpubs.com/palday/lme4-singular-convergence">detailed tutorial</a> on <strong>lme4</strong> convergence warnings.</p>
 
 
 </section>
