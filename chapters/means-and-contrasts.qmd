@@ -17,13 +17,14 @@ To read more about the experiment layout details please read RCBD split-plot sec
 ::: callout-note
 #### Marginal means using lmer and nlme
 
-For demonstration of the `emmeans` package, we are fitting model with `nlme` package. Please note that code below calculating marginal means works for both `lmer` and `nlme` models.
+For demonstration of the `emmeans` package, we are fitting model with `nlme` package. Please note that code below calculating marginal means works for both `lmer()` and `nlme()` models.
 :::
 
-Let's start the analysis by loading the required libraries for fitting linear mixed models using `nlme` package.
-
 ## Analysis Examples
-We will start with loading required R libraries for this analysis.
+Let's start this example by loading the required libraries for fitting linear mixed models using **nlme** package.
+
+
+
 ```{r, warning=FALSE, message=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(multcompView)
@@ -51,16 +52,19 @@ tidy(model1)
 check_model(model1, check = c('normality', 'linearity'))
 ```
 Residuals look good with a small hump in middle and normality curve looks better.
+
 ### Model Inference
 ```{r}
 anova(model1, type = "marginal")
 ```
-The analysis of variance showed a significant N effect and no effect of V and VxN on oat yield.
+The analysis of variance showed a significant N effect and no effect of V and VxN interaction effect on oat yield.
 
 ### Estimated Marginal Means
 Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let's use the `emmeans()` function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects. 
 
 #### Main effects
+
+The main effects in model1 were V and N. we will start with firstly looking at the stimated means of V and N.
 ```{r, warning=FALSE}
 m1 <- emmeans(model1, ~V, level = 0.95)
 m1
@@ -138,7 +142,7 @@ Using custom contrast() is strongly recommended instead of `pairs()` when you ar
 Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. 
 The R package `multcompView` (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.
 
-The `cld()` function from the *multcomp* package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
+The `cld()` function from the **multcomp** package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
 
 Let's start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.
 ```{r}
@@ -205,7 +209,7 @@ First, we can use base `plot()` function in R.
 plot(m1)
 plot(m4)
 ```
-Or we can use 'ggplot2' library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.
+Or we can use **ggplot2** library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.
 
 ```{r, warning = FALSE}
 ggplot(cld3) +
