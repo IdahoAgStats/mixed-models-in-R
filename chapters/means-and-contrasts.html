@@ -282,7 +282,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data"><span class="header-section-number">12.2.1</span> Import data</a></li>
   <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">12.2.2</span> Model fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">12.2.3</span> Check Model Assumptions</a></li>
-  <li><a href="#estimated-marginal-means" id="toc-estimated-marginal-means" class="nav-link" data-scroll-target="#estimated-marginal-means"><span class="header-section-number">12.2.4</span> Estimated Marginal Means</a></li>
+  <li><a href="#model-inference" id="toc-model-inference" class="nav-link" data-scroll-target="#model-inference"><span class="header-section-number">12.2.4</span> Model Inference</a></li>
+  <li><a href="#estimated-marginal-means" id="toc-estimated-marginal-means" class="nav-link" data-scroll-target="#estimated-marginal-means"><span class="header-section-number">12.2.5</span> Estimated Marginal Means</a></li>
   </ul></li>
   <li><a href="#contrasts-using-emmeans" id="toc-contrasts-using-emmeans" class="nav-link" data-scroll-target="#contrasts-using-emmeans"><span class="header-section-number">12.3</span> Contrasts using emmeans</a>
   <ul class="collapse">
@@ -334,14 +335,13 @@ Marginal means using lmer and nlme
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For demonstration of the <code>emmeans</code> package, we are fitting model with <code>nlme</code> package. Please note that code below calculating marginal means works for both <code>lmer</code> and <code>nlme</code> models.</p>
+<p>For demonstration of the <code>emmeans</code> package, we are fitting model with <code>nlme</code> package. Please note that code below calculating marginal means works for both <code>lmer()</code> and <code>nlme()</code> models.</p>
 </div>
 </div>
-<p>Let’s start the analysis by loading the required libraries for fitting linear mixed models using <code>nlme</code> package.</p>
 </section>
 <section id="analysis-examples" class="level2 page-columns page-full" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">12.2</span> Analysis Examples</h2>
-<p>We will start with loading required R libraries for this analysis.</p>
+<p>Let’s start this example by loading the required libraries for fitting linear mixed models using <strong>nlme</strong> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(multcompView)</span>
@@ -400,7 +400,10 @@ of nesting</code></pre>
 </div>
 </div>
 </div>
-<p>Residuals look good with a small hump in middle and normality curve looks better. ### Model Inference</p>
+<p>Residuals look good with a small hump in middle and normality curve looks better.</p>
+</section>
+<section id="model-inference" class="level3" data-number="12.2.4">
+<h3 data-number="12.2.4" class="anchored" data-anchor-id="model-inference"><span class="header-section-number">12.2.4</span> Model Inference</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -411,13 +414,14 @@ N               3    45 13.02273  &lt;.0001
 V:N             6    45  0.30282  0.9322</code></pre>
 </div>
 </div>
-<p>The analysis of variance showed a significant N effect and no effect of V and VxN on oat yield.</p>
+<p>The analysis of variance showed a significant N effect and no effect of V and VxN interaction effect on oat yield.</p>
 </section>
-<section id="estimated-marginal-means" class="level3" data-number="12.2.4">
-<h3 data-number="12.2.4" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">12.2.4</span> Estimated Marginal Means</h3>
+<section id="estimated-marginal-means" class="level3" data-number="12.2.5">
+<h3 data-number="12.2.5" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">12.2.5</span> Estimated Marginal Means</h3>
 <p>Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let’s use the <code>emmeans()</code> function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects.</p>
-<section id="main-effects" class="level4" data-number="12.2.4.1">
-<h4 data-number="12.2.4.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">12.2.4.1</span> Main effects</h4>
+<section id="main-effects" class="level4" data-number="12.2.5.1">
+<h4 data-number="12.2.5.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">12.2.5.1</span> Main effects</h4>
+<p>The main effects in model1 were V and N. we will start with firstly looking at the stimated means of V and N.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -455,8 +459,8 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it’s N treatments, respectively.</p>
 </section>
-<section id="interaction-effects" class="level4" data-number="12.2.4.2">
-<h4 data-number="12.2.4.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">12.2.4.2</span> Interaction effects</h4>
+<section id="interaction-effects" class="level4" data-number="12.2.5.2">
+<h4 data-number="12.2.5.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">12.2.5.2</span> Interaction effects</h4>
 <p>Now let’s evaluate the EMMs for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V<span class="sc">*</span>N)</span>
@@ -634,7 +638,7 @@ contrast() vs pairs()
 <section id="compact-letter-displays" class="level2" data-number="12.4">
 <h2 data-number="12.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">12.4</span> Compact letter displays</h2>
 <p>Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. The R package <code>multcompView</code> (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.</p>
-<p>The <code>cld()</code> function from the <em>multcomp</em> package is used to implement CLDs in the form of symbols or letters. The <code>emmeans</code> package provides a emmGrid objects for cld() method.</p>
+<p>The <code>cld()</code> function from the <strong>multcomp</strong> package is used to implement CLDs in the form of symbols or letters. The <code>emmeans</code> package provides a emmGrid objects for cld() method.</p>
 <p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -797,7 +801,7 @@ Cautionary Note about CLD
 </div>
 </div>
 </div>
-<p>Or we can use ‘ggplot2’ library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.</p>
+<p>Or we can use <strong>ggplot2</strong> library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cld3) <span class="sc">+</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> V, <span class="at">y =</span> emmean, <span class="at">color =</span> N) <span class="sc">+</span></span>
