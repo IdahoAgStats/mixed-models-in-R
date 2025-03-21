@@ -5,10 +5,10 @@
 options(
   # set default colors in ggplot2 to colorblind-friendly
   # Okabe-Ito and Viridis palettes
-  ggplot2.discrete.colour = harrypotter::hp(10, option = "Always"),
-  ggplot2.discrete.fill = harrypotter::hp(10, option = "Always"),
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis",
+  ggplot2.discrete.colour = viridis::plasma,
+  ggplot2.discrete.fill = viridis::plasma,
+  ggplot2.continuous.colour = "YlOrBr",
+  ggplot2.continuous.fill = "YlOrBr",
   # set theme font and size
   book.base_family = "sans",
   book.base_size = 14
