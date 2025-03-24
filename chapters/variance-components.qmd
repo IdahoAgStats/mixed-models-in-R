@@ -1,10 +1,8 @@
 ---
 title: Variance & Variance Components
 execute: 
-  eval: false
+  eval: true
 ---
-
-H
 
 Mixed, hierarchical or multilevel models provide the advantage of being able to estimate the variance of random variables and model correlations within the grouping structure of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random draw from a probability distribution. 
 
@@ -20,7 +18,7 @@ library(performance)
 
 ## Multiple crossed variance components
 
-```{r}
+```{r, eval=FALSE}
 var_comps <- read.csv(here::here("data", "potato_tuber_size.csv"))
 ```
 
@@ -33,7 +31,8 @@ var_comps <- read.csv(here::here("data", "potato_tuber_size.csv"))
 ## Variance component estimation for heteroscedasticity
 
 > In the "general" linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject $H_0$, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model. 
-> --Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, $2^{nd}$ Ed, Section 7.2.3.1
+> 
+> -- Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, $2^{nd}$ Ed, Section 7.2.3.1
 
 In previous sections, we have assumed the error terms or residuals were "i.i.d.", that is "independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity. 
 
@@ -164,6 +163,6 @@ m1_cv = sigma(m1_b)/m1_ave*100
 round(m1_cv, 1)
 ```
 
-However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). 
+However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). Interpret the coefficient of variation with caution. 
 
 
