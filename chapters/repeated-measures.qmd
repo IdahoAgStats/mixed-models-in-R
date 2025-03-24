@@ -246,7 +246,7 @@ Yield$Rep <- factor(Yield$Rep)
 ```
 
 
-To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a new variable named 'plot' with a unique value for each plot. In addition, we need a create variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
+To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
 
 ```{r}
 ##creating a plot variable 
@@ -276,7 +276,7 @@ hist(Yield$Yield, xlab = "yield")
 
 This data can be analyzed either using `nlme` or `mmrm`.
 
-Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. In addition, instead of `summary()` function we will use `tidy()`  function from the 'broom.mixed' package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
+Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. In addition, instead of `summary()` function we will use `tidy()`  function from the **broom.mixed** package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
 ::: panel-tabset
 ### nlme
@@ -305,7 +305,7 @@ tidy(fit2)
 
 ### Model diagnostics
 
-We will use `check_model()` from 'performance' package to evaluate the model fitness of model fitted using nlme (mod1). However, the mmrm model class doesn't work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.
+We will use `check_model()` from **performance** package to evaluate the model fitness of model fitted using nlme (mod1). However, the `mmrm()` model class doesn't work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.
 
 ::: panel-tabset
 ### nlme
