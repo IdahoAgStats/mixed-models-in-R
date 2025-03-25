@@ -428,17 +428,13 @@ hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
 ```{r, echo=FALSE}
-#| label: fig-split-split-plot_hist
+#| label: fig-split-split-plot_boxplot
 #| fig-cap: "Boxplot of P concentration by stage"
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5)
-```
-
-```{r, eval=FALSE, echo=FALSE}
-hist(phos1$P_leaf, xlab = "P leaf")
 boxplot(P_leaf ~ time, data = phos1)
 ```
+
 
 ::: callout-warning
 ## distribution of dependent variables
@@ -459,7 +455,7 @@ fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
                 data = phos1, na.action= na.exclude)
 
 ```
-### Inference
+
 
 ```{r, fig.height=3}
 #| warning: false
@@ -467,22 +463,19 @@ fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
 check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
 ```
 
-
+This model fit a first glance is not ideal, but that LOESS line is trying to model a space where there are no data (between 500 and 1500 ppm P leaf concentration), so that can introduce artifacts. **Performance** does have an option for testing for heteroscedascity:
 
 ```{r}
-fit1_b <- update(fit1, weights = varIdent(form = ~1|time))
+check_heteroscedasticity(fit1)
 ```
+These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a a difference in variance for each time time point. This addressed in the [chapter on variance components](variance-components.qmd). 
 
-```{r, fig.height=3}
-#| warning: false
-#| message: false
-check_model(fit1_b, check = c('qq', 'linearity'), line_size = 0, detrend=FALSE)
-```
-```{r}
-plot(fit1_b)
+```{r, echo=FALSE, eval=FALSE}
+save(fit1, file = here::here("data/phos_fit1.RData"))
 ```
 
 
+### Inference
 
 ```{r}
 #| warning: false
@@ -492,9 +485,10 @@ anova(fit1, type = "marginal")
 
 
 ```{r}
-emmeans(fit1_b, ~ Inoc|Cv)
-emmeans(fit1_b, ~ time|Cv)
+emmeans(fit1, ~ Inoc|Cv)
+emmeans(fit1, ~ time|Cv)
 ```
+
 
 The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
 

@@ -106,6 +106,7 @@ plot(m1_b)
 anova(m1_a, m1_b)
 ```
 
+
 ### Case 2: Variance is related to the fitted values
 
 This is the infamous 'horn' pattern in the residuals-vs-fitted values plot. This is another canola trial using 38 varieties conducted at a single year and single location. 
@@ -154,6 +155,68 @@ anova(m2_a, m2_b)
 ```
 
 There are many other ways of using these functions for modeling heteroscedasticity. For example, `varIdent()` can include a covariate, and `varPower()` can include a stratifying variable. All or some of the parameters can be fixed at set values. It's worth reading the documentation to understand what is possible.  
+
+### Case 3: Variance is related to a factor under other complex circumstances
+
+Recall the [repeated measures/split-split plot example](repeated-measures.qmd). There was some evidence of 
+
+```{r, echo=FALSE}
+load(here::here("data/phos_fit1.RData"))
+phos1 <- getData(fit1)
+```
+
+```{r}
+check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
+```
+
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_boxplot
+#| fig-cap: "Boxplot of P concentration by stage"
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+boxplot(P_leaf ~ time, data = phos1)
+```
+
+We can model the variance as a function of time point by using the `varIdent()` function shown earlier. 
+
+```{r}
+fit1_b <- update(fit1, weights = varIdent(form = ~1|time))
+```
+
+```{r, fig.height=3}
+#| warning: false
+#| message: false
+check_model(fit1_b, check = c('qq', 'linearity'), line_size = 0, detrend=FALSE)
+```
+
+A comparison of models indicates that 'fit1_b` (with heteroscedascity modelled) is a better fit.
+
+```{r}
+anova(fit1, fit1_b)
+```
+The main impact of this change are the standard error for time:
+
+```{r}
+emmeans(fit1, ~ time)
+emmeans(fit1_b, ~ time)
+```
+
+
+#### Inference
+
+```{r}
+#| warning: false
+#| message: false
+anova(fit1, type = "marginal")
+```
+
+
+```{r}
+emmeans(fit1_b, ~ Inoc|Cv)
+emmeans(fit1_b, ~ time|Cv)
+```
+
+
 
 ## Coefficient of Variation
 
