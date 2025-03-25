@@ -5,7 +5,6 @@
 options(
   # set default colors in ggplot2 to colorblind-friendly
   # Okabe-Ito and Viridis palettes
-  #install.packages("ggokabeito"),
   #ggplot2.discrete.colour = ggokabeito::palette_okabe_ito(aesthetics = "colour", order = 1:9),
   #ggplot2.discrete.fill = ggokabeito::palette_okabe_ito(aesthetics = "colour", order = 1:9),
   ggplot2.discrete.colour = harrypotter::hp(10, option = "Always"),
