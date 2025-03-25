@@ -10,13 +10,15 @@ Studies that involve repeated observations of the exact same experimental units 
 
 In these models, the 'iid' assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
+Fitting models with correlated observations requires new libraries including **mmrm** and **nlme**. The **lme4** package allows random effects only. In this chapter, we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.
+
 There are several types of covariance structures:
 
-| Structure name | R function | Assumption |
+| Structure name | nlme function | mmrm function | Assumption |
 |------------------------|------------------------|------------------------|
-| Autoregressive (AR1) | `corAR1()` | observations which are more proximate are more correlated than measures that are more distant |
-| Compound symmetry | `corCompSymm()` | Correlation is equal for all time gaps between observations |
-| Unstructured | `CorSymm()` | Correlations are different for the various time gaps |
+| Autoregressive (AR1) | `corAR1()` | `ar1`  | observations which are more proximate are more correlated than measures that are more distant |
+| Compound symmetry | `corCompSymm()` |   | Correlation is equal for all time gaps between observations |
+| Unstructured | `CorSymm()` |    | Correlations are different for the various time gaps |
 
 ::: column-margin
 To read more about selecting appropriate covariance structure based on your data, please refer to this [link](https://www.ars.usda.gov/ARSUserFiles/80000000/StatisticsGroupWebinars/Appendix%20E%20-%20Selecting%20a%20Covariance%20Structure.pdf).
@@ -24,18 +26,11 @@ To read more about selecting appropriate covariance structure based on your data
 
 The repeated measures syntax in **nlme** follow this convention: 
 
-`corr = corAR1(value = (b/w -1 & 1), form = ~ t|g, fixed = (T or F))`. 
+`corr = corAR1(value = 0, form = ~ t|g, fixed = FALSE)`. 
 
-One can use differnt correlation structure classes such as `CorAR1()`, `corCompSymm()`, `CorSymm()`.
+The argument for 'value' is the starting value for iterations (zero, unless you specify something else), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t` or `~ t|g`, specifying a time covariate $t$ and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use `~t|g` form, the correlation structure is assumed to apply only to observations within the same grouping level. The covariate for this correlation structure must be a integer value. `corCompSymm()` and `corSymm()` follow the same argument syntax. 
 
-For `form()`, ~ t or ~ t|g, specifying a time covariate t and, optionally a grouping factor g. When we use ~t|g form, the correlation structure is assumed to apply only to observations within the same grouping level.    
-The default starting `value` is zero, and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. A covariate for this correlation structure must be a integer value.
-
-There are several other options in the **nlme** machinery (search "cor" for more options and details on the syntax).
-
-Fitting models with correlated observations requires new libraries including **mmrm** and **nlme**. The **lme4** package allows random effects only.
-
-In this tutorial we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.
+There are other covariance structures (e.g. `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Type `??cor` in an R console for more options and details on the syntax
 
 For examples used in this chapter we will fitting model using `mmrm` and `lme` packages. So, let's start with loading the required libraries for this analysis.
 
@@ -45,6 +40,7 @@ For examples used in this chapter we will fitting model using `mmrm` and `lme` p
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
 ```
+
 ### mmrm
 ```{r, message=FALSE, warning=FALSE}
 library(mmrm); library(performance); library(emmeans)
@@ -418,7 +414,7 @@ phos1 <- phos %>%
 
 
 ```{r}
-table(phos1$Ptrt, phos1$Inoc, phos1$Cv) 
+table(phos1$Cv, phos1$Ptrt, phos1$Inoc) 
 ```
 Looks like a well balanced design with 2 variety treatments and 3 fertilizer treatments.
 
@@ -431,8 +427,17 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5)
 ```
 
-```{r, eval=FALSE}
+```{r, echo=FALSE}
+#| label: fig-split-split-plot_hist
+#| fig-cap: "Boxplot of P concentration by stage"
+#| column: margin
+par(mar=c(5.1, 5, 2.1, 2.1))
+hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5)
+```
+
+```{r, eval=FALSE, echo=FALSE}
 hist(phos1$P_leaf, xlab = "P leaf")
+boxplot(P_leaf ~ time, data = phos1)
 ```
 
 ::: callout-warning
@@ -446,13 +451,12 @@ Here note that we observed uneven distribution of response variable with large n
 ```{r}
 #| warning: false
 
-corr_str1 = corAR1(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
+corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
 
 fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
                 random = ~ 1|rep/Ptrt/Inoc/plot,
-                corr= corr_str1,
+                corr = corr_str1,
                 data = phos1, na.action= na.exclude)
-tidy(fit1)
 
 ```
 ### Inference
@@ -460,17 +464,25 @@ tidy(fit1)
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(fit1, check = c('normality', 'linearity'))
+check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
 ```
 
-We see a cluster of values in residuals which was due to large number of observations having low values. Which means we cannot rely on results from this model without doing any data transformation. 
 
-::: column-margin
-::: callout-warning
-## Model inference
-Please remember that conclusions cannot be drawn from the model that doesn't meet linear mixed model assumptions. 
-:::
-:::
+
+```{r}
+fit1_b <- update(fit1, weights = varIdent(form = ~1|time))
+```
+
+```{r, fig.height=3}
+#| warning: false
+#| message: false
+check_model(fit1_b, check = c('qq', 'linearity'), line_size = 0, detrend=FALSE)
+```
+```{r}
+plot(fit1_b)
+```
+
+
 
 ```{r}
 #| warning: false
@@ -478,14 +490,17 @@ Please remember that conclusions cannot be drawn from the model that doesn't mee
 anova(fit1, type = "marginal")
 ```
 
+
 ```{r}
-emmeans(fit1,~ time)
-emmeans(fit1,~ time|Cv)
-
+emmeans(fit1_b, ~ Inoc|Cv)
+emmeans(fit1_b, ~ time|Cv)
 ```
-Really low P leaf content at PT3 in all the cultivars.
 
-
-The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
+The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
 
 The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.
+
+::: callout-warning
+## Model inference
+Please remember that conclusions cannot be drawn from the model that doesn't meet linear mixed model assumptions. 
+:::
