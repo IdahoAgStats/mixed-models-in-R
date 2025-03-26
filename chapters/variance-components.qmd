@@ -14,25 +14,140 @@ The decision of how to designate a variable as random or fixed depends on (1) yo
 
 ```{r, include=FALSE}
 library(dplyr)
-library(nlme); library(emmeans); 
-library(performance)
+library(lme4); library(nlme)
+library(lmerTest); library(merTools)
+library(emmeans); library(performance)
+library(broom.mixed)
+library(ggplot2)
 ```
 
 ## Variance component estimation for 2+ random effects
 
 ## Multiple crossed variance components
 
-```{r, eval=FALSE}
-var_comps <- read.csv(here::here("data", "potato_tuber_size.csv"))
+```{r}
+potato <- read.csv(here::here("data", "potato_tuber_size.csv"))
+```
+
+Number of observations for each location and year: 
+```{r}
+table(potato$year, potato$state)
+```
+
+Total clones evaluated: 
+```{r}
+length(unique(potato$clone))
+```
+
+How often clones were evaluated:
+```{r}
+potato |> count(clone, name = "n_clone") |> count(n_clone)
+```
+
+Distribution of the dependent variable, LxW or length-to-width ratio:
+```{r}
+hist(potato$LxW)
+
+boxplot(LxW ~ state, data = potato)
+```
+
+
+```{r}
+potato_m1 <- lmer(LxW ~ 1 + (1|year) + (1|state) + (1|state:year) + (1|clone),
+                  data = potato)
+```
+
+```{r}
+var_comps <- tidy(potato_m1, "ran_pars", scales = "vcov") |> 
+  select(group, variance = "estimate") |> 
+  mutate(percentage = round(variance/sum(variance) * 100, 1))
+
+var_comps
+```
+
+```{r}
+ranova(potato_m1)
+```
+```{r}
+intercept = fixef(potato_m1)[1]
+random_effects <- REextract(potato_m1)
+```
+
+```{r}
+clone_re <- filter(random_effects, groupFctr == "clone") |> 
+  rename(clone = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
+  mutate(blup_adj = BLUP + intercept)
+```
+
+Recall that random effects are distributed with a mean of zero and a standard deviation, $\sigma_{clone}$ that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to put it on a scale that may be more intuitive for some. Since this consant (the model intercept) was added to all BLUPs, the overall relationship between the clones is unchanged. 
+
+```{r}
+#| fig-cap: "Histogram of Clone BLUPs"
+#| column: margin
+hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = "Clone Random Effects", col = "turquoise")
+```
+
+Below are the BLUPs (in red) and standard errors for each clone, arranged from lowest to highest length-to-width ratio. The horizontal gray dotted line indicates the average clone effect. 
+
+```{r}
+ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
+  geom_hline(yintercept = intercept, color = "gray", linetype = 2) + 
+  geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE)) +
+    geom_point(size = 0.7, col = "red3") + 
+  theme_classic(base_size = 14) +
+  ggtitle("length-to-width ratio") + 
+  ylab("BLUP + intercept") + 
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(), 
+        axis.title.x = element_blank())
+```
+
+
+
+```{r, eval = FALSE, echo=FALSE}
+new_data <- data.frame(clone = unique(potato$clone))
+new_data$clone_blups <- predict(potato_m1, newdata = new_data, re.form = ~ (1|clone))
+
+PI <- predictInterval(merMod = potato_m1, 
+                        level = 0.95, n.sims = 1000,
+                        stat = "median", type="linear.prediction",
+                        include.resid.var = FALSE) |> 
+  bind_cols(potato)
+```
+
+
+```{r, echo=FALSE, include=FALSE}
+rm(list = ls())
+gc()
 ```
 
 ## Nested variance components
 
-[[need a data set]]
+It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These end up being truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied. 
+
+This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized. ^1
+
+::: column-margin
+^1 This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. :::
+
+For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. 
+This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally. The data set and and the model object were saved as a .RData file for easy loading into this session.
+
+```{r, eval=FALSE}
+load("data/salary_models.RData")
+```
+
+
+The analysis is from this model:
+```{r, eval=FALSE}
+m2 <- lmer(log(salary) ~ factor(year) + (year0|agency/id), 
+           data = salary_final, REML = FALSE)
+```
 
 
 
-## Variance component estimation for heteroscedasticity
+
+## Variance estimation under heteroscedasticity
 
 > In the "general" linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject $H_0$, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model. 
 > 
@@ -163,6 +278,7 @@ Recall the [repeated measures/split-split plot example](repeated-measures.qmd). 
 ```{r, echo=FALSE}
 load(here::here("data/phos_fit1.RData"))
 phos1 <- getData(fit1)
+corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
 ```
 
 ```{r}
@@ -230,6 +346,6 @@ m1_cv = sigma(m1_b)/m1_ave*100
 round(m1_cv, 1)
 ```
 
-However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). Interpret the coefficient of variation with caution. 
+However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). Interpret the coefficient of variation from mixed models with caution. 
 
 
