@@ -25,6 +25,8 @@ library(ggplot2)
 
 ## Multiple crossed variance components
 
+This is a common scenario: an experiment is conducted and their are multiple grouping levels, none of which are nested within each other, but the observations have differential group memberships. 
+
 ```{r}
 potato <- read.csv(here::here("data", "potato_tuber_size.csv"))
 ```
@@ -44,11 +46,14 @@ How often clones were evaluated:
 potato |> count(clone, name = "n_clone") |> count(n_clone)
 ```
 
-Distribution of the dependent variable, LxW or length-to-width ratio:
-```{r}
-hist(potato$LxW)
+Distribution of the dependent variable, LxW or length-to-width ratio
 
-boxplot(LxW ~ state, data = potato)
+
+hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = "Clone Random Effects", col = "turquoise")
+```{r}
+#| fig-cap: "Distribution of Length-to-Width Ratio"
+#| column: margin
+hist(potato$LxW, ylab=NULL, xlab = NULL, main = "Potato LxW Ratio", col = "turquoise")
 ```
 
 
@@ -125,10 +130,12 @@ gc()
 
 It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These end up being truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied. 
 
-This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized. ^1
+This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized. [^1]
 
 ::: column-margin
-^1 This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. :::
+[^1] This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. 
+
+:::
 
 For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. 
 This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally. The data set and and the model object were saved as a .RData file for easy loading into this session.
