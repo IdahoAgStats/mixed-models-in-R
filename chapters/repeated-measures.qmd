@@ -4,7 +4,7 @@
 source(here::here("settings.r"))
 ```
 
-In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects.
+In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called "longtudinal data").
 
 Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
 
@@ -380,7 +380,7 @@ emmeans(fit2,~ Sample_time1)
 To explore more about contrasts and emmeans please refer to [**Chapter 12**](means-and-contrasts.qmd).
 :::
 
-## Split-split plot repeated measures
+## Split-split Plot Repeated Measures
 
 Recall, we have evaluated the split-split experiment design in [**Chapter 5**](split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures compoenet to the split-split plot design.
 
@@ -439,7 +439,7 @@ boxplot(P_leaf ~ time, data = phos1)
 ::: callout-warning
 ## distribution of dependent variables
 
-Here note that we observed uneven distribution of response variable with large number of observations in the range of 0-500. This will cause issues with assumptions of the linear mixed model. In such cases, It's recommended to check for data transformations such as log or square root transformation. For this cahpter, we will not try that here and rather focus on model structure only. 
+Here note that we observed uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It's important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks *as expected*, a judgement that requires some knowlede of the experiment (this was Julia Piaskowski's PhD research). In this case, the time points, PT1 and PT2, reflect early wheat growth stages (tillering and jointing, respectively), and the final time point is senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model fitting process when deciding if a non-normal distribution is appropriate for the data.  
 :::
 
 ### Model fit
