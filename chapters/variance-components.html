@@ -328,6 +328,13 @@ window.Quarto = {
   <li><a href="#variance-component-estimation-for-2-random-effects" id="toc-variance-component-estimation-for-2-random-effects" class="nav-link active" data-scroll-target="#variance-component-estimation-for-2-random-effects"><span class="header-section-number">13.1</span> Variance component estimation for 2+ random effects</a></li>
   <li><a href="#multiple-crossed-variance-components" id="toc-multiple-crossed-variance-components" class="nav-link" data-scroll-target="#multiple-crossed-variance-components"><span class="header-section-number">13.2</span> Multiple crossed variance components</a></li>
   <li><a href="#nested-variance-components" id="toc-nested-variance-components" class="nav-link" data-scroll-target="#nested-variance-components"><span class="header-section-number">13.3</span> Nested variance components</a></li>
+  <li><a href="#variance-estimation-under-heteroscedasticity" id="toc-variance-estimation-under-heteroscedasticity" class="nav-link" data-scroll-target="#variance-estimation-under-heteroscedasticity"><span class="header-section-number">13.4</span> Variance estimation under heteroscedasticity</a>
+  <ul class="collapse">
+  <li><a href="#case-1-unequal-variance-due-to-a-factor" id="toc-case-1-unequal-variance-due-to-a-factor" class="nav-link" data-scroll-target="#case-1-unequal-variance-due-to-a-factor"><span class="header-section-number">13.4.1</span> Case 1: unequal variance due to a factor</a></li>
+  <li><a href="#case-2-variance-is-related-to-the-fitted-values" id="toc-case-2-variance-is-related-to-the-fitted-values" class="nav-link" data-scroll-target="#case-2-variance-is-related-to-the-fitted-values"><span class="header-section-number">13.4.2</span> Case 2: Variance is related to the fitted values</a></li>
+  <li><a href="#case-3-variance-is-related-to-a-factor-under-other-complex-circumstances" id="toc-case-3-variance-is-related-to-a-factor-under-other-complex-circumstances" class="nav-link" data-scroll-target="#case-3-variance-is-related-to-a-factor-under-other-complex-circumstances"><span class="header-section-number">13.4.3</span> Case 3: Variance is related to a factor under other complex circumstances</a></li>
+  </ul></li>
+  <li><a href="#coefficient-of-variation" id="toc-coefficient-of-variation" class="nav-link" data-scroll-target="#coefficient-of-variation"><span class="header-section-number">13.5</span> Coefficient of Variation</a></li>
   </ul>
 </nav>
     </div>
@@ -361,6 +368,7 @@ window.Quarto = {
 </section>
 <section id="multiple-crossed-variance-components" class="level2 page-columns page-full" data-number="13.2">
 <h2 data-number="13.2" class="anchored" data-anchor-id="multiple-crossed-variance-components"><span class="header-section-number">13.2</span> Multiple crossed variance components</h2>
+<p>This is a common scenario: an experiment is conducted and their are multiple grouping levels, none of which are nested within each other, but the observations have differential group memberships.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>potato <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"potato_tuber_size.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -419,35 +427,29 @@ window.Quarto = {
 17      93  1</code></pre>
 </div>
 </div>
-<p>Distribution of the dependent variable, LxW or length-to-width ratio:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(potato<span class="sc">$</span>LxW)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
+<p>Distribution of the dependent variable, LxW or length-to-width ratio</p>
+<p>hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = “Clone Random Effects”, col = “turquoise”)</p>
+<div class="cell page-columns page-full">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(potato<span class="sc">$</span>LxW, <span class="at">ylab=</span><span class="cn">NULL</span>, <span class="at">xlab =</span> <span class="cn">NULL</span>, <span class="at">main =</span> <span class="st">"Potato LxW Ratio"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="variance-components_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Distribution of Length-to-Width Ratio</figcaption>
 </figure>
 </div>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(LxW <span class="sc">~</span> state, <span class="at">data =</span> potato)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
+</div></div></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>potato_m1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(LxW <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>state) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>state<span class="sc">:</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>clone),</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> potato)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>potato_m1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(LxW <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>state) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>state<span class="sc">:</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>clone),</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> potato)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>var_comps <span class="ot">&lt;-</span> <span class="fu">tidy</span>(potato_m1, <span class="st">"ran_pars"</span>, <span class="at">scales =</span> <span class="st">"vcov"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, <span class="at">variance =</span> <span class="st">"estimate"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">round</span>(variance<span class="sc">/</span><span class="fu">sum</span>(variance) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>var_comps</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>var_comps <span class="ot">&lt;-</span> <span class="fu">tidy</span>(potato_m1, <span class="st">"ran_pars"</span>, <span class="at">scales =</span> <span class="st">"vcov"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, <span class="at">variance =</span> <span class="st">"estimate"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">round</span>(variance<span class="sc">/</span><span class="fu">sum</span>(variance) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>var_comps</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   group      variance percentage
@@ -460,7 +462,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranova</span>(potato_m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranova</span>(potato_m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
 Model failed to converge with max|grad| = 0.00268739 (tol = 0.002, component 1)</code></pre>
@@ -481,17 +483,17 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>intercept <span class="ot">=</span> <span class="fu">fixef</span>(potato_m1)[<span class="dv">1</span>]</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>random_effects <span class="ot">&lt;-</span> <span class="fu">REextract</span>(potato_m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>intercept <span class="ot">=</span> <span class="fu">fixef</span>(potato_m1)[<span class="dv">1</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>random_effects <span class="ot">&lt;-</span> <span class="fu">REextract</span>(potato_m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>clone_re <span class="ot">&lt;-</span> <span class="fu">filter</span>(random_effects, groupFctr <span class="sc">==</span> <span class="st">"clone"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">clone =</span> groupID, <span class="at">BLUP =</span> <span class="st">"(Intercept)"</span>, <span class="at">SE =</span> <span class="st">"(Intercept)_se"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">blup_adj =</span> BLUP <span class="sc">+</span> intercept)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>clone_re <span class="ot">&lt;-</span> <span class="fu">filter</span>(random_effects, groupFctr <span class="sc">==</span> <span class="st">"clone"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">clone =</span> groupID, <span class="at">BLUP =</span> <span class="st">"(Intercept)"</span>, <span class="at">SE =</span> <span class="st">"(Intercept)_se"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">blup_adj =</span> BLUP <span class="sc">+</span> intercept)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Recall that random effects are distributed with a mean of zero and a standard deviation, <span class="math inline">\(\sigma_{clone}\)</span> that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to put it on a scale that may be more intuitive for some. Since this consant (the model intercept) was added to all BLUPs, the overall relationship between the clones is unchanged.</p>
 <div class="cell page-columns page-full">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(clone_re<span class="sc">$</span>BLUP, <span class="at">ylab=</span><span class="cn">NULL</span>, <span class="at">xlab =</span> <span class="cn">NULL</span>, <span class="at">main =</span> <span class="st">"Clone Random Effects"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(clone_re<span class="sc">$</span>BLUP, <span class="at">ylab=</span><span class="cn">NULL</span>, <span class="at">xlab =</span> <span class="cn">NULL</span>, <span class="at">main =</span> <span class="st">"Clone Random Effects"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -503,16 +505,16 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div></div></div>
 <p>Below are the BLUPs (in red) and standard errors for each clone, arranged from lowest to highest length-to-width ratio. The horizontal gray dotted line indicates the average clone effect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clone_re, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(clone, blup_adj), <span class="at">y =</span> blup_adj)) <span class="sc">+</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> intercept, <span class="at">color =</span> <span class="st">"gray"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymax =</span> blup_adj <span class="sc">+</span> SE, <span class="at">ymin =</span> blup_adj <span class="sc">-</span> SE)) <span class="sc">+</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.7</span>, <span class="at">col =</span> <span class="st">"red3"</span>) <span class="sc">+</span> </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"length-to-width ratio"</span>) <span class="sc">+</span> </span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"BLUP + intercept"</span>) <span class="sc">+</span> </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(), </span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(clone_re, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(clone, blup_adj), <span class="at">y =</span> blup_adj)) <span class="sc">+</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> intercept, <span class="at">color =</span> <span class="st">"gray"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>(<span class="fu">aes</span>(<span class="at">ymax =</span> blup_adj <span class="sc">+</span> SE, <span class="at">ymin =</span> blup_adj <span class="sc">-</span> SE)) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.7</span>, <span class="at">col =</span> <span class="st">"red3"</span>) <span class="sc">+</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"length-to-width ratio"</span>) <span class="sc">+</span> </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"BLUP + intercept"</span>) <span class="sc">+</span> </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>(), </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -525,20 +527,21 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="nested-variance-components" class="level2 page-columns page-full" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="nested-variance-components"><span class="header-section-number">13.3</span> Nested variance components</h2>
 <p>It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These end up being truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied.</p>
-<p>This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized. ^1</p>
+<p>This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized. [^1]</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>^1 This data set (<a href="https://govsalaries.com/state/WA">source</a>) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. :::</p>
-<p>For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally. The data set and and the model object were saved as a .RData file for easy loading into this session.</p>
+<p>[^1] This data set (<a href="https://govsalaries.com/state/WA">source</a>) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only.</p>
+</div></div><p>For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally. The data set and and the model object were saved as a .RData file for easy loading into this session.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/salary_models.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/salary_models.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The analysis is from this model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(salary) <span class="sc">~</span> <span class="fu">factor</span>(year) <span class="sc">+</span> (year0<span class="sc">|</span>agency<span class="sc">/</span>id), </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> salary_final, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(salary) <span class="sc">~</span> <span class="fu">factor</span>(year) <span class="sc">+</span> (year0<span class="sc">|</span>agency<span class="sc">/</span>id), </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> salary_final, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="variance-estimation-under-heteroscedasticity" class="level2" data-number="13.4">
+</section>
+<section id="variance-estimation-under-heteroscedasticity" class="level2 page-columns page-full" data-number="13.4">
 <h2 data-number="13.4" class="anchored" data-anchor-id="variance-estimation-under-heteroscedasticity"><span class="header-section-number">13.4</span> Variance estimation under heteroscedasticity</h2>
 <blockquote class="blockquote">
 <p>In the “general” linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject <span class="math inline">\(H_0\)</span>, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model.</p>
@@ -549,13 +552,13 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h3 data-number="13.4.1" class="anchored" data-anchor-id="case-1-unequal-variance-due-to-a-factor"><span class="header-section-number">13.4.1</span> Case 1: unequal variance due to a factor</h3>
 <p>This data set is from a set of canola variety trials conducted in a single year across multiple locations. The trials included 38 varieties that were evaluated at 9 locations using a RCBD design.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>var_ex1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"MET_trial_variance.csv"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(block)) <span class="sc">|&gt;</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>var_ex1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"MET_trial_variance.csv"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(block)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">drop_na</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Exploratory data visualizations indicate that the dependent variable, seed yield, varied greatly overall and certain locations had smaller variance compared to others.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_ex1<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_ex1<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -563,7 +566,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(yield <span class="sc">~</span> site, <span class="at">data =</span> var_ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(yield <span class="sc">~</span> site, <span class="at">data =</span> var_ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -574,14 +577,14 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>The study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> site<span class="sc">:</span>variety <span class="sc">+</span> variety, </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>site<span class="sc">/</span>block, </span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.action =</span> na.exclude, </span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> var_ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>m1_a <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> site<span class="sc">:</span>variety <span class="sc">+</span> variety, </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>site<span class="sc">/</span>block, </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.action =</span> na.exclude, </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> var_ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The residual plot indicates some association between the residuals and fitted values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -593,25 +596,25 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>We can add a term to model the variance by site.</p>
 <p><span class="math display">\[Var(\epsilon_{ij}) = \sigma^2 \delta^2_{s_{ij}} \]</span> Details on the implementation can be found in <span class="citation" data-cites="nlme_book">(<a href="../references.html#ref-nlme_book" role="doc-biblioref">Pinheiro and Bates 2000</a>)</span>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">update</span>(m1_a, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">update</span>(m1_a, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The function <code>varIdent()</code> is used to set the stratifying variable at which to estimate variance. Like many functions in R, there are additional arguments to consider for more complex scenarios (type <code>?varIdent</code> in an R console to check).</p>
 <div class="note">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">update</span>(m1_a, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">update</span>(m1_a, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>is equivalent to</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> site<span class="sc">:</span>variety <span class="sc">+</span> variety, </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>site<span class="sc">/</span>block,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site), </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.action =</span> na.exclude, </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> var_ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> site<span class="sc">:</span>variety <span class="sc">+</span> variety, </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>site<span class="sc">/</span>block,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site), </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.action =</span> na.exclude, </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> var_ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p>The residual plot is now much cleaner. The result is a better-fitting model and with that, better inference for variety at the site level.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -619,7 +622,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a, m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_a, m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Model  df      AIC      BIC    logLik   Test  L.Ratio p-value
 m1_a     1 345 14826.99 16524.62 -7068.493                        
@@ -631,12 +634,12 @@ m1_b     2 353 14499.68 16236.68 -6896.840 1 vs 2 343.3059  &lt;.0001</code></pr
 <h3 data-number="13.4.2" class="anchored" data-anchor-id="case-2-variance-is-related-to-the-fitted-values"><span class="header-section-number">13.4.2</span> Case 2: Variance is related to the fitted values</h3>
 <p>This is the infamous ‘horn’ pattern in the residuals-vs-fitted values plot. This is another canola trial using 38 varieties conducted at a single year and single location.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>var_ex2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"single_trial_variance.csv"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(block))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>var_ex2 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"single_trial_variance.csv"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(block))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A histogram does indicate there is anything unusual about the dependent variabe (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_ex2<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_ex2<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -647,14 +650,14 @@ m1_b     2 353 14499.68 16236.68 -6896.840 1 vs 2 343.3059  &lt;.0001</code></pr
 </div>
 <p>Since this experiment has a single fixed effect and is arranged using a RCBD, the model is same as described in <a href="../chapters/rcbd.html">the RCBD chapter</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>m2_a <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> variety, </span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>block, </span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">na.action =</span> na.exclude, </span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> var_ex2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>m2_a <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> variety, </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>block, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">na.action =</span> na.exclude, </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> var_ex2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>An inspection of the residual plot indicates a clear mean-variance relationship.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m2_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m2_a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -667,11 +670,11 @@ m1_b     2 353 14499.68 16236.68 -6896.840 1 vs 2 343.3059  &lt;.0001</code></pr
 <p><span class="math display">\[ Var(\epsilon_{ij}) = \sigma^2|\nu_{ij}|^{2\delta}\]</span></p>
 <p>We can accomplish this using the <strong>nlme</strong> function <code>varPower()</code>. This function can take other covariates, but when there is no argument provided, it defaults to using the fitted values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>m2_b <span class="ot">&lt;-</span> <span class="fu">update</span>(m2_a, <span class="at">weights =</span> <span class="fu">varPower</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>m2_b <span class="ot">&lt;-</span> <span class="fu">update</span>(m2_a, <span class="at">weights =</span> <span class="fu">varPower</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The model fit is substantially improved according to visual inspection of the residuals and the results of a likelihood ratio test.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m2_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m2_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -681,7 +684,7 @@ m1_b     2 353 14499.68 16236.68 -6896.840 1 vs 2 343.3059  &lt;.0001</code></pr
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m2_a, m2_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m2_a, m2_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Model df      AIC      BIC    logLik   Test  L.Ratio p-value
 m2_a     1 40 1545.596 1655.044 -732.7978                        
@@ -690,11 +693,11 @@ m2_b     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></pre
 </div>
 <p>There are many other ways of using these functions for modeling heteroscedasticity. For example, <code>varIdent()</code> can include a covariate, and <code>varPower()</code> can include a stratifying variable. All or some of the parameters can be fixed at set values. It’s worth reading the documentation to understand what is possible.</p>
 </section>
-<section id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances" class="level3" data-number="13.4.3">
+<section id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances" class="level3 page-columns page-full" data-number="13.4.3">
 <h3 data-number="13.4.3" class="anchored" data-anchor-id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances"><span class="header-section-number">13.4.3</span> Case 3: Variance is related to a factor under other complex circumstances</h3>
 <p>Recall the <a href="../chapters/repeated-measures.html">repeated measures/split-split plot example</a>. There was some evidence of</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -703,8 +706,9 @@ m2_b     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></pre
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="cell-output-display">
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div id="fig-split-split-plot_boxplot" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-split-split-plot_boxplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -715,14 +719,13 @@ Figure&nbsp;13.1: Boxplot of P concentration by stage
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
+</div></div></div>
 <p>We can model the variance as a function of time point by using the <code>varIdent()</code> function shown earlier.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit1_b <span class="ot">&lt;-</span> <span class="fu">update</span>(fit1, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>time))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit1_b <span class="ot">&lt;-</span> <span class="fu">update</span>(fit1, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>time))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1_b, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">line_size =</span> <span class="dv">0</span>, <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1_b, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">line_size =</span> <span class="dv">0</span>, <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -733,7 +736,7 @@ Figure&nbsp;13.1: Boxplot of P concentration by stage
 </div>
 <p>A comparison of models indicates that ’fit1_b` (with heteroscedascity modelled) is a better fit.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, fit1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, fit1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       Model df      AIC      BIC    logLik   Test  L.Ratio p-value
 fit1       1 66 2511.987 2722.722 -1189.993                        
@@ -742,7 +745,7 @@ fit1_b     2 68 2508.314 2725.435 -1186.157 1 vs 2 7.672945  0.0216</code></pre>
 </div>
 <p>The main impact of this change are the standard error for time:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -756,7 +759,7 @@ Results are averaged over the levels of: Ptrt, Inoc, Cv
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -774,7 +777,7 @@ Confidence level used: 0.95 </code></pre>
 <section id="inference" class="level4" data-number="13.4.3.1">
 <h4 data-number="13.4.3.1" class="anchored" data-anchor-id="inference"><span class="header-section-number">13.4.3.1</span> Inference</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                  numDF denDF   F-value p-value
 (Intercept)           1   120 1458.2396  &lt;.0001
@@ -796,7 +799,7 @@ time:Ptrt:Inoc:Cv     8   120    0.3886  0.9249</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -830,7 +833,7 @@ Results are averaged over the levels of: time, Ptrt
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -878,9 +881,9 @@ Confidence level used: 0.95 </code></pre>
 <p>The coefficient of variation can be manually calculated as thus:</p>
 <p><span class="math display">\[ \frac {\sigma}{\mu} * 100 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>m1_ave <span class="ot">&lt;-</span> <span class="fu">mean</span>(var_ex1<span class="sc">$</span>yield, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>m1_cv <span class="ot">=</span> <span class="fu">sigma</span>(m1_b)<span class="sc">/</span>m1_ave<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(m1_cv, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>m1_ave <span class="ot">&lt;-</span> <span class="fu">mean</span>(var_ex1<span class="sc">$</span>yield, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>m1_cv <span class="ot">=</span> <span class="fu">sigma</span>(m1_b)<span class="sc">/</span>m1_ave<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(m1_cv, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 23.3</code></pre>
 </div>
@@ -888,8 +891,7 @@ Confidence level used: 0.95 </code></pre>
 <p>However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with <code>varIdent()</code>) or much much smaller (e.g.&nbsp;with <code>varPower()</code>). Interpret the coefficient of variation from mixed models with caution.</p>
 
 
-</section>
-</div></div><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-nlme_book" class="csl-entry" role="listitem">
 Pinheiro, José C., and Douglas M. Bates. 2000. <em>Mixed-Effects Models in s and s-PLUS</em>. New York: Springer. <a href="https://doi.org/10.1007/b98882">https://doi.org/10.1007/b98882</a>.
 </div>
