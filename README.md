@@ -6,14 +6,10 @@ A set of tutorial for running mixed models in R
 
 ### Sections done
 
-- index/intr9o
+- index/intro
 - background
 - analysis tips
 - RCBD
-
-
-### Tutorials in progress
-
 - factorial
 - resources
 - split plot
@@ -21,9 +17,14 @@ A set of tutorial for running mixed models in R
 - latin
 - IBD
 - strip plot
-- multiple random effects
 - repeated measures 
 - means-and-contrasts
+
+### Section in progress
+
+- analytical flow chart
+- variance and variance components
+
 
 ### Other TODO
 
