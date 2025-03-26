@@ -60,7 +60,7 @@ length(unique(potato$clone))
 
 Total counts for how often invividual clones were evaluated:
 ```{r}
-potato |> count(clone, name = "Frequency of Evaluation") |> count(n_clone)
+potato |> count(clone, name = "Frequency of Evaluation") |> count(`Frequency of Evaluation`)
 ```
 
 Distribution of the dependent variable, LxW or length-to-width ratio:
@@ -185,7 +185,7 @@ For this data set, we are concerned with what is contributing to employee salari
 
 This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a .RData file. Now let's load this object into an R session. 
 
-```{r, eval=FALSE}
+```{r}
 load("data/salary_models.RData")
 ```
 
@@ -237,7 +237,7 @@ clone_re <- filter(random_effects, groupFctr == "id:agency") |>
   mutate(blup_adj = BLUP + intercept)
 ```
 
-```{r}
+```{r, echo=FALSE}
 # person 30780:University of Washington (highest paid)
 ```
 
