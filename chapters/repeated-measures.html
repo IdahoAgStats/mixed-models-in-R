@@ -321,7 +321,7 @@ window.Quarto = {
   <li><a href="#model-diagnostics" id="toc-model-diagnostics" class="nav-link" data-scroll-target="#model-diagnostics"><span class="header-section-number">12.2.3</span> Model diagnostics</a></li>
   <li><a href="#inference-1" id="toc-inference-1" class="nav-link" data-scroll-target="#inference-1"><span class="header-section-number">12.2.4</span> Inference</a></li>
   </ul></li>
-  <li><a href="#split-split-plot-repeated-measures" id="toc-split-split-plot-repeated-measures" class="nav-link" data-scroll-target="#split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split plot repeated measures</a>
+  <li><a href="#split-split-plot-repeated-measures" id="toc-split-split-plot-repeated-measures" class="nav-link" data-scroll-target="#split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split Plot Repeated Measures</a>
   <ul class="collapse">
   <li><a href="#data-integrity-checks-2" id="toc-data-integrity-checks-2" class="nav-link" data-scroll-target="#data-integrity-checks-2"><span class="header-section-number">12.3.1</span> Data Integrity Checks</a></li>
   <li><a href="#model-fit-1" id="toc-model-fit-1" class="nav-link" data-scroll-target="#model-fit-1"><span class="header-section-number">12.3.2</span> Model fit</a></li>
@@ -353,7 +353,7 @@ window.Quarto = {
 </header>
 
 
-<p>In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects.</p>
+<p>In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called “longtudinal data”).</p>
 <p>Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.</p>
 <p>In these models, the ‘iid’ assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
 <p>Fitting models with correlated observations requires new libraries including <strong>mmrm</strong> and <strong>nlme</strong>. The <strong>lme4</strong> package allows random effects only. In this chapter, we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.</p>
@@ -1006,10 +1006,10 @@ Sample_time1:Variety:Fertilizer     8    72 0.731698  0.6631</code></pre>
                                 Num Df Denom Df F Statistic   Pr(&gt;=F)    
 Sample_time1                         4   2.0000     193.465  0.005149 ** 
 Variety                              1   8.0183       5.002  0.055656 .  
-Fertilizer                           2   9.1210     135.839 1.631e-07 ***
+Fertilizer                           2   8.0183     136.962 6.332e-07 ***
 Sample_time1:Variety                 4   2.0000       1.057  0.539021    
 Sample_time1:Fertilizer              8   2.0000      26.383  0.037022 *  
-Variety:Fertilizer                   2   9.1210       3.122  0.092685 .  
+Variety:Fertilizer                   2   8.0183       3.075  0.102038    
 Sample_time1:Variety:Fertilizer      8   2.0000       0.540  0.781917    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
@@ -1135,7 +1135,7 @@ Confidence level used: 0.95 </code></pre>
 </div></div></section>
 </section>
 <section id="split-split-plot-repeated-measures" class="level2 page-columns page-full" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split plot repeated measures</h2>
+<h2 data-number="12.3" class="anchored" data-anchor-id="split-split-plot-repeated-measures"><span class="header-section-number">12.3</span> Split-split Plot Repeated Measures</h2>
 <p>Recall, we have evaluated the split-split experiment design in <a href="../chapters/split-plot-design.html"><strong>Chapter 5</strong></a>, where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures compoenet to the split-split plot design.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>phos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"split_split_repeated.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1258,7 +1258,7 @@ distribution of dependent variables
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here note that we observed uneven distribution of response variable with large number of observations in the range of 0-500. This will cause issues with assumptions of the linear mixed model. In such cases, It’s recommended to check for data transformations such as log or square root transformation. For this cahpter, we will not try that here and rather focus on model structure only.</p>
+<p>Here note that we observed uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It’s important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks <em>as expected</em>, a judgement that requires some knowlede of the experiment (this was Julia Piaskowski’s PhD research). In this case, the time points, PT1 and PT2, reflect early wheat growth stages (tillering and jointing, respectively), and the final time point is senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model fitting process when deciding if a non-normal distribution is appropriate for the data.</p>
 </div>
 </div>
 </section>
