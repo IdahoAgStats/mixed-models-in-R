@@ -18,8 +18,8 @@
 
 library(ggplot2)
 library(viridis)
-library(ggsci)
-library(RColorBrewer)
+#library(ggsci)
+#library(RColorBrewer)
 library(scales)
 
 options(
