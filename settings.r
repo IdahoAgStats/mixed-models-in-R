@@ -1,7 +1,7 @@
 
 # code from https://www.r-causal.org/
 
-
+install.packages("ggokabeito")
 options(
   # set default colors in ggplot2 to colorblind-friendly
   # Okabe-Ito and Viridis palettes
