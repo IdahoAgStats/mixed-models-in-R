@@ -30,11 +30,10 @@ library(ggplot2)
 
 This is a common scenario: an experiment is conducted and their are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packges can handle crossed random effects, but **lme4** can! 
 
-The data used in this example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones$^1$ are evaluated across all 3 locations, but each year, different clones are evaluated. Some clones are evaluted for multiple years, and a small number are evaluted each year. These potato clones were evaluated for the length-to-width ratio (LxW). We want to know how much location, year and clone contribute to this trait.  
+The data used in this example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones[^vc-1] are evaluated across all 3 locations, but each year, different clones are evaluated. Some clones are evaluted for multiple years, and a small number are evaluted each year. These potato clones were evaluated for the length-to-width ratio (LxW). We want to know how much location, year and clone contribute to this trait.  
 
-::: column-margin
-$^1$ A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line. 
-:::
+[^vc-1] A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line. 
+
 
 |       |                               |
 |-------|-------------------------------|
@@ -100,12 +99,14 @@ var_comps
 ANOVA as classically defined (F-tests contrasting the between group and within group variation) is not an option for random effects. There are several ways to test if random effects are impactful on the model overall. One of the most reliable and popular methods is the log likelihood ratio test. In brief, a reduced model is refit from a full specified model omitting a random variable. The log likelihood from the two models (the full specified and reduced models) are compared and a p-value is computed for that difference given the change in number of parameters estimated. The null hypothesis is that the models are equivalent and the alternative hypothesis is that the models are not equivalent. Hence, low p-values provide evidence that the omitted factor is impactful on the dependent variable of interest. 
 :::
 
-The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model. 
+The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model.[^vc-2] 
 ```{r}
 ranova(potato_m1)
 ```
 
-It is possible to make inferences on specific levels of random effects. This take a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called "BLUPs" (rhymes with "cups"). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs "shrink" the estimates towards zero, reducing their overall spread compared to fixed effects. [VSNi](https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/) has a short summary on BLUPs and BLUEs. 
+[^vc-2] It is also possible to conduct likelihood tests manually by constructing reduced models and comparing it to the fully specificed (or more specified) model. In such cases, the fixed effects need to be identical between models, and they need to fit using maximimun likelihood instead of REML. 
+
+It is possible to make inferences on specific levels of random effects. This take a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called "BLUPs" (rhymes with "cups"). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs "shrink" the estimates towards zero, reducing their overall spread compared to fixed effects. [VSNi](https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/){.external target="_blank"} has a short summary on BLUPs and BLUEs. 
 
 Recall that random effects are distributed with a mean of zero and a standard deviation, $\sigma_b$ that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them (in this example, potato clones) is unchanged. 
 
@@ -159,23 +160,20 @@ PI <- predictInterval(merMod = potato_m1,
 
 ```{r, echo=FALSE, include=FALSE}
 rm(list = ls())
-gc()
 ```
 
 ## Nested variance components
 
 It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These end up being truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied. 
 
-This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized. [^1]
+This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized.[^vc-3]
 
-::: column-margin
-[^1] This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. 
 
-:::
+[^vc-3] This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. 
+
 
 For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. While this reflects a complete data set for Washington State (all institutions, all employees), the interest is inference for other U.S. higher education institutions. This is an example where we will use random slopes to examine how an individual's salary changed over time. The data set:
 
-|       |                               |
 |-------|-------------------------------|
 | agency   | educational institution, 36 levels    |
 | id   | anonymized employee within each agency   |
@@ -265,6 +263,7 @@ Exploratory data visualizations indicate that the dependent variable, seed yield
 hist(var_ex1$yield)
 boxplot(yield ~ site, data = var_ex1)
 ```
+
 The study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model. 
 
 ```{r}

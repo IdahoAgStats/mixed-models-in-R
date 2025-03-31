@@ -1,0 +1,85 @@
+---
+title: "Model Preparation and Flow"
+---
+
+The following provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
+
+
+
+
+
+## Data integrity checks 
+
+The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
+
+1.  make sure data are the expected data type
+2.  check the extent of missing data
+3.  inspect the independent variables and make sure the expected levels are present in the data
+4.  inspect the dependent variable to ensure its distribution is following expectations
+
+factor v character
+integer v numeric
+
+
+This step involves verifying 
+
+the structure of data variables, 
+
+
+- check balance of independent variables 
+
+The purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.
+
+
+check missing values in the dataset:
+
+It's important to verify the extent of missing values in the dataset. So 
+
+Discuss what can go wrong and how to respond
+
+
+check distribution of the response variable
+
+## Model building
+
+Formula syntax and expectations
+
+The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block.
+
+::: callout-note
+## `na.action = na.exclude`
+
+You may have noticed the final argument for `na.action` in the model statement:
+
+```         
+model_rcbd_lmer <- lmer(yield_bu_a ~ variety + (1|block),
+                   data = var_trial, 
+                   na.action = na.exclude)
+```
+
+The argument `na.action = na.exclude` provides instructions for how to handle missing data. `na.exclude` removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g. predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.
+
+Even when there are no missing data and this step is not necessary, it's a good habit to be in.
+:::
+
+
+
+We use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
+
+## Model Assumptions
+
+we are looking for a constant variance and normality of residuals.
+Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line.
+we can do all at one using one function `check_model()`.
+
+## Inference
+
+
+The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
+
+The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.
+
+::: callout-warning
+## Model inference
+Please remember that conclusions cannot be drawn from the model that doesn't meet linear mixed model assumptions. 
+:::

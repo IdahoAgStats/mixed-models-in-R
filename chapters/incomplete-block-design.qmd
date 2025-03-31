@@ -42,12 +42,12 @@ There are few key points that we need to keep in mind while designing incomplete
 -   To remove the block effects, it is better compare treatments within a block.
 -   No treatment should appear twice in any block as it contributes nothing to within block comparisons.
 
-The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on), and number of replicates must be equal to number of blocks +1. 
+The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on), and number of replicates must be equal to number of blocks + 1. 
 
 ::: callout-note
 ## Note on Sums of Squares
 
-Because the blocks are incomplete, the Type I and Type III sums of squares will be different even when there is no missing data from a trail. That is because the missing treatments in each block represent missing observations (even though they are not missing ‘at random’).
+Because the blocks are incomplete, the type I and type III sums of squares will be different even when there is no missing data from a trail. That is because the missing treatments in each block represent missing observations (even though they are not missing ‘at random’).
 :::
 
 ## Examples Analyses
@@ -151,11 +151,10 @@ This data set is ready for analysis!
 
 #### Model Building
 
-We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect).
+We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect).[^icb-1]
 
-::: column-margin
-Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.
-:::
+[^icb-1] Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.
+
 
 ::: panel-tabset
 ### lme4
@@ -191,10 +190,6 @@ check_model(model_icbd, check = c('normality', 'linearity'))
 ```{r, fig.height=3}
 check_model(model_icbd1, check = c('normality', 'linearity'))
 ```
-:::
-
-::: column-margin
-Here we observed a right skewness in residuals, this can be resolved by using data transformation e.g. log transformation of response variable. Please refer to **chapter** to read more about data transformation. 
 :::
 
 #### Inference
@@ -303,18 +298,16 @@ agg_tbl <- data1 %>% group_by(gen) %>%
 agg_tbl
 ```
 
-This looks balanced, as expected. 
-
-Also, let's have a look at the number of times each treatment appear per block.
+This looks balanced, as expected. Also, let's have a look at the number of times each treatment appear per block.
 
 ```{r}
 agg_blk <- aggregate(data1$gen, by=list(data1$block), FUN=length)
 agg_blk
 ```
 
-12 treatments randomly appear in incomplete block. Each incomplete block has same number of treatments.
+12 treatments randomly appear in incomplete block. Each incomplete block has same number of treatments. 
 
-Lastly, before fitting the model, it's a good idea to look at the distribution of dependent variable, yield.
+Before fitting the model, it's a good idea to look at the distribution of dependent variable, yield.
 
 ```{r, echo=FALSE}
 #| label: fig-alpha_hist
@@ -327,7 +320,7 @@ hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 hist(data1$yield, main = "", xlab = "yield")
 ```
 
-The response variables seems to follow a normal distribution curve, with fewer values on extreme lower and higher ends. 
+The response variables seems to follow a normal distribution curve, with few values on extreme lower and higher ends. 
 
 #### Model Building
 
@@ -365,7 +358,7 @@ check_model(mod_alpha, check = c('normality', 'linearity'))
 check_model(mod_alpha1, check = c('normality', 'linearity'))
 ```
 :::
-We observed a few extremes in residuals and normality curve showed a right skewness.
+
 
 #### Inference
 

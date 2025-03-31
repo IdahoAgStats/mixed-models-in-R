@@ -10,7 +10,15 @@ source(here::here("settings.r"))
 
 Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is:
 $$y_{ij} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \epsilon_{ij}$$ 
-Where: $\mu$ = experiment mean, $\tau$ = effect of factor A, $\beta$ = effect of factor B, and $\tau\beta$ = interaction effect of factor A and B.
+Where: 
+
+$\mu$ = experiment mean
+
+$\tau$ = effect of factor A
+
+$\beta$ = effect of factor B 
+
+$\tau\beta$ = interaction effect of factor A and B.
 
 
 Assumptions of this model includes: independent and identically distributed error terms with a constant variance $\sigma^2$.
@@ -41,7 +49,7 @@ The objective of this example is evaluate the individual and interactive effect 
 
 Note, while importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function from **dplyr** package. This helps in reducing the extra steps of converting each single variable to factor manually.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(agridat)
 data1 <- agridat::cochran.factorial %>% 
   mutate(d = as.factor(d),
@@ -65,7 +73,7 @@ data1 <- agridat::cochran.factorial %>%
 
 ### Data Integrity Checks
 
-First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric/integer.
+First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric.
 
 ```{r}
 str(data1)
@@ -73,7 +81,7 @@ str(data1)
 
 This looks good.
 
-Next step is to inspect the independent variables and make sure the expected levels are present in the data.
+The next step is to inspect the independent variables and make sure the expected levels are present in the data.
 
 ```{r}
 table(data1$d, data1$n, data1$p, data1$k)
@@ -81,7 +89,7 @@ table(data1$d, data1$n, data1$p, data1$k)
 
 The design looks well balanced.
 
-Last step is to inspect the dependent variable to ensure that there are no extremes (high or low) in the data set.
+The last step is to inspect the dependent variable to ensure it looks as expected.
 
 ```{r, echo=FALSE}
 #| label: fig-factorial_hist
@@ -94,13 +102,14 @@ hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
 ```{r, eval=FALSE}
 hist(data1$yield)
 ```
-No extreme (low or high) yield values were observed in data. 
+
+No extreme values are observed in the dependent variable, and the distribution looks as expected.  
 
 ### Model fitting
 
 Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon indicator ‘:’. 
 
-Therefore, model syntax is:
+The model syntax is:
 
 `yield ~ d + n + p + k + d:n + d:p + d:k + n:p + n:k + p:k + d:n:p:k`
 
@@ -119,7 +128,9 @@ model1_lmer <- lmer(yield ~ d*n*p*k + (1|block),
                    na.action = na.exclude)
 tidy(model1_lmer)
 ```
+
 ### nlme
+
 ```{r}
 model2_lme <- lme(yield ~ d*n*p*k,
               random = ~ 1|block,
@@ -131,7 +142,7 @@ tidy(model2_lme)
 
 :::: column-margin
 ::: callout-note
-Instead of `summary()` function, we used `tidy()` function from the **broom.mixed** package to get a short summary output of the model.
+The `tidy()` function from the **broom.mixed** package provides a short summary output of the model.
 :::
 ::::
 
@@ -172,7 +183,7 @@ anova(model2_lme, type = "marginal")
 Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only "p" had a significant effect on bean yield when evaluated at significance level of 0.05.
 
 
-Let’s find estimates for some of the factors such as n, p, and n:k interaction effect. This will help us look at the combined effect of n & k on bean yield.
+Let’s find estimates for some of the factors such as N, P and the N-by-K interactions in order to understand the combined effect of nitrogen and potassium on bean yield.
 
 ::: panel-tabset
 ### lme4
@@ -190,13 +201,4 @@ emmeans(model2_lme, specs = ~ n:p)
 ```
 :::
 
-The code chunks showed above estimated marginal means for individual effects of "n" and "p" and their interaction (n:p) effect on bean yield. Make sure to give an attention to the warning message that means are averaged over the "d", "p", and "k" levels. It's an important detail that needs to be pointed out while making conclusions.
-
-::: callout-tip
-## Interpretation
-
-In summary, while working with factorial designs make sure to carefully interpret ANOVA and estimated marginal means for main and interaction effects.
-:::
-
-
-
+The code chunks showed above estimated marginal means for individual effects of "n" and "p" and their interaction (n:p) effect on bean yield. Make sure to give an attention to the warning message that means are averaged over the "d", "p", and "k" levels. It's an important detail that needs to be pointed out while making conclusions. When working with factorial designs make sure to carefully interpret ANOVA and estimated marginal means for main and interaction effects.
