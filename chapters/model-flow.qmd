@@ -2,17 +2,29 @@
 title: "Model Preparation and Flow"
 ---
 
-The following provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
+This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
+add this to callout - tip: The steps explained below were applied to all the chapters. 
 
+Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
 
+## Define the Research Question 
 
+It's important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. 
+This step involves identifying the dependent variable (response variable), determine the fixed and random effects. 
 
 ## Data integrity checks 
 
 The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
-1.  make sure data are the expected data type
+1.  Check structure of the data 
+In this step, we need to make sure data are the expected data type e.g. replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a 'character' or 'factor' format. 
+The response variable has be in the 'numeric' format. Sometimes the class of response variable appears to be a character, it's important 
+
+You can use the base code `str()` in R to look at the class of each variable in the data set. 
+
+
+
 2.  check the extent of missing data
 3.  inspect the independent variables and make sure the expected levels are present in the data
 4.  inspect the dependent variable to ensure its distribution is following expectations
@@ -46,6 +58,30 @@ Formula syntax and expectations
 
 The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block.
 
+
+In this tutorial, we will demonstrate the methodology to fit linear mixed model using **lme4** and **nlme** package.
+
+The code below shows the R syntax mixed model with one fixed and one random effect:
+
+::: panel-tabset
+### lme4
+
+```{r, eval=FALSE}
+model_lmer <- lmer(response ~ fixed + (1|random),
+                   data = data1, 
+                   na.action = na.exclude)
+```
+
+### nlme
+
+```{r, eval=FALSE}
+model_lme <- lme(response ~ fixed,
+                  random = ~ 1|random,
+                  data = data1var_trial, 
+                  na.action = na.exclude)
+```
+:::
+
 ::: callout-note
 ## `na.action = na.exclude`
 
@@ -68,9 +104,24 @@ We use the argument `na.action = na.exclude` as instruction for how to handle mi
 
 ## Model Assumptions
 
+Check assumptions:
+
+Residuals should be normally distributed (Q-Q plot).
+
+Check homoscedasticity (residuals vs. fitted values plot).
+
 we are looking for a constant variance and normality of residuals.
 Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line.
 we can do all at one using one function `check_model()`.
+
+
+Residual normality: Check using Q-Q plots.
+
+Homoscedasticity: Plot residuals vs. fitted values.
+
+Influential points: Use Cook’s distance or leverage analysis.
+
+Random effect distribution: Examine estimated BLUPs.
 
 ## Inference
 
