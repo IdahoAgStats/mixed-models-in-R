@@ -114,7 +114,7 @@
     "href": "chapters/model-flow.html",
     "title": "4  Model Preparation and Flow",
     "section": "",
-    "text": "4.1 Data integrity checks\nThe following provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation.\nThe first thing is to make sure the data is what we expect. Here are the steps to verify our data:\nfactor v character integer v numeric\nThis step involves verifying\nthe structure of data variables,\nThe purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.\ncheck missing values in the dataset:\nIt’s important to verify the extent of missing values in the dataset. So\nDiscuss what can go wrong and how to respond\ncheck distribution of the response variable",
+    "text": "4.1 Define the Research Question\nThis chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation.\nadd this to callout - tip: The steps explained below were applied to all the chapters.\nAnalyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:\nIt’s important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. This step involves identifying the dependent variable (response variable), determine the fixed and random effects.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Model Prep & Workflow</span>"
     ]
@@ -123,8 +123,8 @@
     "objectID": "chapters/model-flow.html#data-integrity-checks",
     "href": "chapters/model-flow.html#data-integrity-checks",
     "title": "4  Model Preparation and Flow",
-    "section": "",
-    "text": "make sure data are the expected data type\ncheck the extent of missing data\ninspect the independent variables and make sure the expected levels are present in the data\ninspect the dependent variable to ensure its distribution is following expectations\n\n\n\n\n\ncheck balance of independent variables",
+    "section": "4.2 Data integrity checks",
+    "text": "4.2 Data integrity checks\nThe first thing is to make sure the data is what we expect. Here are the steps to verify our data:\n\nCheck structure of the data In this step, we need to make sure data are the expected data type e.g. replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a ‘character’ or ‘factor’ format. The response variable has be in the ‘numeric’ format. Sometimes the class of response variable appears to be a character, it’s important\n\nYou can use the base code str() in R to look at the class of each variable in the data set.\n\ncheck the extent of missing data\ninspect the independent variables and make sure the expected levels are present in the data\ninspect the dependent variable to ensure its distribution is following expectations\n\nfactor v character integer v numeric\nThis step involves verifying\nthe structure of data variables,\n\ncheck balance of independent variables\n\nThe purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.\ncheck missing values in the dataset:\nIt’s important to verify the extent of missing values in the dataset. So\nDiscuss what can go wrong and how to respond\ncheck distribution of the response variable",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Model Prep & Workflow</span>"
     ]
@@ -133,8 +133,8 @@
     "objectID": "chapters/model-flow.html#model-building",
     "href": "chapters/model-flow.html#model-building",
     "title": "4  Model Preparation and Flow",
-    "section": "4.2 Model building",
-    "text": "4.2 Model building\nFormula syntax and expectations\nThe parentheses are used to indicate that ‘block’ is a random effect, and this particular notation (1|block) indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block.\n\n\n\n\n\n\nna.action = na.exclude\n\n\n\nYou may have noticed the final argument for na.action in the model statement:\nmodel_rcbd_lmer &lt;- lmer(yield_bu_a ~ variety + (1|block),\n                   data = var_trial, \n                   na.action = na.exclude)\nThe argument na.action = na.exclude provides instructions for how to handle missing data. na.exclude removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g. predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.\nEven when there are no missing data and this step is not necessary, it’s a good habit to be in.\n\n\nWe use the argument na.action = na.exclude as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.",
+    "section": "4.3 Model building",
+    "text": "4.3 Model building\nFormula syntax and expectations\nThe parentheses are used to indicate that ‘block’ is a random effect, and this particular notation (1|block) indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block.\nIn this tutorial, we will demonstrate the methodology to fit linear mixed model using lme4 and nlme package.\nThe code below shows the R syntax mixed model with one fixed and one random effect:\n\nlme4nlme\n\n\n\nmodel_lmer &lt;- lmer(response ~ fixed + (1|random),\n                   data = data1, \n                   na.action = na.exclude)\n\n\n\n\nmodel_lme &lt;- lme(response ~ fixed,\n                  random = ~ 1|random,\n                  data = data1var_trial, \n                  na.action = na.exclude)\n\n\n\n\n\n\n\n\n\n\nna.action = na.exclude\n\n\n\nYou may have noticed the final argument for na.action in the model statement:\nmodel_rcbd_lmer &lt;- lmer(yield_bu_a ~ variety + (1|block),\n                   data = var_trial, \n                   na.action = na.exclude)\nThe argument na.action = na.exclude provides instructions for how to handle missing data. na.exclude removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g. predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.\nEven when there are no missing data and this step is not necessary, it’s a good habit to be in.\n\n\nWe use the argument na.action = na.exclude as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Model Prep & Workflow</span>"
     ]
@@ -143,8 +143,8 @@
     "objectID": "chapters/model-flow.html#model-assumptions",
     "href": "chapters/model-flow.html#model-assumptions",
     "title": "4  Model Preparation and Flow",
-    "section": "4.3 Model Assumptions",
-    "text": "4.3 Model Assumptions\nwe are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function check_model().",
+    "section": "4.4 Model Assumptions",
+    "text": "4.4 Model Assumptions\nCheck assumptions:\nResiduals should be normally distributed (Q-Q plot).\nCheck homoscedasticity (residuals vs. fitted values plot).\nwe are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function check_model().\nResidual normality: Check using Q-Q plots.\nHomoscedasticity: Plot residuals vs. fitted values.\nInfluential points: Use Cook’s distance or leverage analysis.\nRandom effect distribution: Examine estimated BLUPs.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Model Prep & Workflow</span>"
     ]
@@ -153,8 +153,8 @@
     "objectID": "chapters/model-flow.html#inference",
     "href": "chapters/model-flow.html#inference",
     "title": "4  Model Preparation and Flow",
-    "section": "4.4 Inference",
-    "text": "4.4 Inference\nThe biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle crossed as well as nested random factors.\nThe biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.\n\n\n\n\n\n\nModel inference\n\n\n\nPlease remember that conclusions cannot be drawn from the model that doesn’t meet linear mixed model assumptions.",
+    "section": "4.5 Inference",
+    "text": "4.5 Inference\nThe biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle crossed as well as nested random factors.\nThe biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.\n\n\n\n\n\n\nModel inference\n\n\n\nPlease remember that conclusions cannot be drawn from the model that doesn’t meet linear mixed model assumptions.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Model Prep & Workflow</span>"
     ]

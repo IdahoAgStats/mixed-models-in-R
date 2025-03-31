@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -248,10 +282,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link active" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.1</span> Data integrity checks</a></li>
-  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">4.2</span> Model building</a></li>
-  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">4.3</span> Model Assumptions</a></li>
-  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.4</span> Inference</a></li>
+  <li><a href="#define-the-research-question" id="toc-define-the-research-question" class="nav-link active" data-scroll-target="#define-the-research-question"><span class="header-section-number">4.1</span> Define the Research Question</a></li>
+  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</a></li>
+  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">4.3</span> Model building</a></li>
+  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">4.4</span> Model Assumptions</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.5</span> Inference</a></li>
   </ul>
 </nav>
     </div>
@@ -277,12 +312,21 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>The following provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation.</p>
-<section id="data-integrity-checks" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.1</span> Data integrity checks</h2>
+<p>This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation.</p>
+<p>add this to callout - tip: The steps explained below were applied to all the chapters.</p>
+<p>Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:</p>
+<section id="define-the-research-question" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="define-the-research-question"><span class="header-section-number">4.1</span> Define the Research Question</h2>
+<p>It’s important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. This step involves identifying the dependent variable (response variable), determine the fixed and random effects.</p>
+</section>
+<section id="data-integrity-checks" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</h2>
 <p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
 <ol type="1">
-<li>make sure data are the expected data type</li>
+<li>Check structure of the data In this step, we need to make sure data are the expected data type e.g.&nbsp;replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a ‘character’ or ‘factor’ format. The response variable has be in the ‘numeric’ format. Sometimes the class of response variable appears to be a character, it’s important</li>
+</ol>
+<p>You can use the base code <code>str()</code> in R to look at the class of each variable in the data set.</p>
+<ol start="2" type="1">
 <li>check the extent of missing data</li>
 <li>inspect the independent variables and make sure the expected levels are present in the data</li>
 <li>inspect the dependent variable to ensure its distribution is following expectations</li>
@@ -299,10 +343,32 @@ ul.task-list li input[type="checkbox"] {
 <p>Discuss what can go wrong and how to respond</p>
 <p>check distribution of the response variable</p>
 </section>
-<section id="model-building" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">4.2</span> Model building</h2>
+<section id="model-building" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="model-building"><span class="header-section-number">4.3</span> Model building</h2>
 <p>Formula syntax and expectations</p>
 <p>The parentheses are used to indicate that ‘block’ is a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block.</p>
+<p>In this tutorial, we will demonstrate the methodology to fit linear mixed model using <strong>lme4</strong> and <strong>nlme</strong> package.</p>
+<p>The code below shows the R syntax mixed model with one fixed and one random effect:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(response <span class="sc">~</span> fixed <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>random),</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(response <span class="sc">~</span> fixed,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>random,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> data1var_trial, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -323,12 +389,19 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>We use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
 </section>
-<section id="model-assumptions" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="model-assumptions"><span class="header-section-number">4.3</span> Model Assumptions</h2>
+<section id="model-assumptions" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="model-assumptions"><span class="header-section-number">4.4</span> Model Assumptions</h2>
+<p>Check assumptions:</p>
+<p>Residuals should be normally distributed (Q-Q plot).</p>
+<p>Check homoscedasticity (residuals vs.&nbsp;fitted values plot).</p>
 <p>we are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function <code>check_model()</code>.</p>
+<p>Residual normality: Check using Q-Q plots.</p>
+<p>Homoscedasticity: Plot residuals vs.&nbsp;fitted values.</p>
+<p>Influential points: Use Cook’s distance or leverage analysis.</p>
+<p>Random effect distribution: Examine estimated BLUPs.</p>
 </section>
-<section id="inference" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.4</span> Inference</h2>
+<section id="inference" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.5</span> Inference</h2>
 <p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle <a href="https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/">crossed</a> as well as nested random factors.</p>
 <p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
