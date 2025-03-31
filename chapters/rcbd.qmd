@@ -76,12 +76,9 @@ There are several variables present that are not useful for this analysis. The o
 
 ### Data integrity checks
 
-The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
+The first thing is to make sure the data is what we expect.We will the steps explained in [**Chapter 4**](model-flow.qmd). Here are the steps to verify our data:
 
-1.  make sure data are the expected data type
-2.  check the extent of missing data
-3.  inspect the independent variables and make sure the expected levels are present in the data
-4.  inspect the dependent variable to ensure its distribution is following expectations
+- Check structure of the data
 
 ```{r}
 str(var_trial)
@@ -93,6 +90,8 @@ These look okay except for block, which is currently coded as integer (numeric).
 var_trial$block <- as.character(var_trial$block)
 ```
 
+- Inspect the independent variables
+
 Next, check the independent variables. Running a cross tabulations is often sufficient to ascertain this.
 
 ```{r}
@@ -101,23 +100,19 @@ table(var_trial$variety, var_trial$block)
 
 There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
-::: callout-tip
-## Missing Data
+- Check the extent of missing data 
 
-Here is a quick check to count the number of missing data in each column. This is not needed for the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the extent of missing values displayed in an R session is what you expect.
+Here is a quick check to count the number of missing data in each column. 
 
 ```{r}
-apply(var_trial, 2, function(x) sum(is.na(x)))
-
-## ColSums(is.na(var_trial))
+colSums(is.na(var_trial))
 ```
 
 Alas, no missing data!
-:::
 
-If there were independent variables with a continuous distribution (a covariate), plot those data.
+- Inspect the dependent variable
 
-Last, check the dependent variable. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
+Last, check the dependent variable by creating a histogram.
 
 ```{r, echo=FALSE}
 #| label: fig-rcbd_hist
@@ -133,9 +128,6 @@ hist(var_trial$yield_bu_a, main = "", xlab = "yield")
 
 The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.
 
-Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
-
-These are not complicated checks. They are designed to be done quickly and should be done for **every analysis** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
 
 This data set is ready for analysis!
 

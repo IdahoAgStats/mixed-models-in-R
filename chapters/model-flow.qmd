@@ -11,29 +11,81 @@ Analyzing data using linear mixed models involves several key steps, from data p
 ## Define the Research Question 
 
 It's important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. 
-This step involves identifying the dependent variable (response variable), determine the fixed and random effects. 
+This step involves identifying the dependent variable (response variable), determine the fixed and random effects in the experiment design. 
 
 ## Data integrity checks 
 
 The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
 1.  Check structure of the data 
+
 In this step, we need to make sure data are the expected data type e.g. replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a 'character' or 'factor' format. 
 The response variable has be in the 'numeric' format. Sometimes the class of response variable appears to be a character, it's important 
 
 You can use the base code `str()` in R to look at the class of each variable in the data set. 
+```{r, eval=FALSE}
+str(data)
+```
 
 
+The code chunk below can be used to change the class of variable from numeric to character/factor or vice-versa.
+Here the example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.
+```{r, eval = FALSE}
+data$rep <- as.factor(data$rep)
+data$yield <- as.numeric(data$yield)
+```
 
-2.  check the extent of missing data
-3.  inspect the independent variables and make sure the expected levels are present in the data
-4.  inspect the dependent variable to ensure its distribution is following expectations
-
+::: column-margin
 factor v character
 integer v numeric
+:::
 
 
-This step involves verifying 
+3.  Inspect the independent variables
+
+Running a cross tabulations across treatments and replications is generally enough to make sure the expected levels are present in the data.
+
+```{r, eval=FALSE}
+table(data$trt, data$rep)
+```
+
+The output from this code will give you the number of observations in each replication for a given treatment. You are supposed to have equal number of observations across treatments. Unbalanced independent variables can affect the fitting, interpretation and performance of mixed model which can result in biased estimates for fixed effects. 
+
+3.  Check the extent of missing data
+
+It's important to check the extent of missing values in the data. 
+
+```{r, eval=FALSE}
+colSums(is.na(data))
+```
+
+This will give you a number of missing values in each variable. It's an easy identification to 
+
+This is not needed for the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the extent of missing values displayed in an R session is what you expect.
+
+
+Having extreme values in the data can lead to biased estimates, model convergence issues, and incorrect variance estimates. Properly handling missing data through imputation ensures more reliable results.  
+
+
+If there were independent variables with a continuous distribution (a covariate), plot those data.
+
+
+4.  Inspect the dependent variable 
+
+Last, check the dependent variable to ensure its distribution is following expectations. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
+
+The code below does not test for the normality of the response variable. Here we are creating a histogram to look at count of a given values of the response variable. 
+
+The target of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme high/low observations. 
+
+```{r, eval=FALSE}
+hist(data$response)
+```
+
+Data are not expected to be normally distributed at this point, so don't bother running any Shapiro-Wilk tests. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
+
+These are not complicated checks. They are designed to be done quickly and should be done for **every analysis** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
+
 
 the structure of data variables, 
 
@@ -43,23 +95,16 @@ the structure of data variables,
 The purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.
 
 
-check missing values in the dataset:
 
-It's important to verify the extent of missing values in the dataset. So 
-
-Discuss what can go wrong and how to respond
 
 
 check distribution of the response variable
 
-## Model building
-
-Formula syntax and expectations
-
-The parentheses are used to indicate that 'block' is a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block.
-
+## Model building - Formula syntax and expectations
 
 In this tutorial, we will demonstrate the methodology to fit linear mixed model using **lme4** and **nlme** package.
+
+The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
 
 The code below shows the R syntax mixed model with one fixed and one random effect:
 
@@ -77,7 +122,7 @@ model_lmer <- lmer(response ~ fixed + (1|random),
 ```{r, eval=FALSE}
 model_lme <- lme(response ~ fixed,
                   random = ~ 1|random,
-                  data = data1var_trial, 
+                  data = data1, 
                   na.action = na.exclude)
 ```
 :::
