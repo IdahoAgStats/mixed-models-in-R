@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>15&nbsp; Troubleshooting – Field Guide to the R Mixed Model Wilderness</title>
+<title>4&nbsp; Model Preparation and Flow – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/additional-resources.html" rel="next">
-<link href="../chapters/variance-components.html" rel="prev">
+<link href="../chapters/rcbd.html" rel="next">
+<link href="../chapters/background.html" rel="prev">
 <link href="../img/logo_transparent.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -94,7 +94,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/troubleshooting.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/model-flow.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model Prep &amp; Workflow</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -145,7 +145,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/model-flow.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/model-flow.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model Prep &amp; Workflow</span></span></a>
   </div>
 </li>
@@ -222,7 +222,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/troubleshooting.html" class="sidebar-item-text sidebar-link active">
+  <a href="../chapters/troubleshooting.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting</span></span></a>
   </div>
 </li>
@@ -248,10 +248,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#common-errors-we-encounter" id="toc-common-errors-we-encounter" class="nav-link active" data-scroll-target="#common-errors-we-encounter"><span class="header-section-number">15.1</span> Common errors we encounter</a>
-  <ul class="collapse">
-  <li><a href="#other-tools" id="toc-other-tools" class="nav-link" data-scroll-target="#other-tools"><span class="header-section-number">15.1.1</span> Other Tools</a></li>
-  </ul></li>
+  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link active" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.1</span> Data integrity checks</a></li>
+  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">4.2</span> Model building</a></li>
+  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">4.3</span> Model Assumptions</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.4</span> Inference</a></li>
   </ul>
 </nav>
     </div>
@@ -260,7 +260,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model Preparation and Flow</span></h1>
 </div>
 
 
@@ -277,34 +277,75 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs using examples we have already tested and know work. However, it is likely that you will eventually have issues in fitting mixed models in R. This section discusses common issues and errors that might come up when implementing mixed models.</p>
-<section id="common-errors-we-encounter" class="level2" data-number="15.1">
-<h2 data-number="15.1" class="anchored" data-anchor-id="common-errors-we-encounter"><span class="header-section-number">15.1</span> Common errors we encounter</h2>
+<p>The following provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation.</p>
+<section id="data-integrity-checks" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.1</span> Data integrity checks</h2>
+<p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
 <ol type="1">
-<li>Singular fit error</li>
+<li>make sure data are the expected data type</li>
+<li>check the extent of missing data</li>
+<li>inspect the independent variables and make sure the expected levels are present in the data</li>
+<li>inspect the dependent variable to ensure its distribution is following expectations</li>
 </ol>
-<pre><code>boundary (singular) fit: see ?isSingular</code></pre>
-<p>Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one (JUlIA: ????). This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.</p>
-<p>This error occurs because one of the variance component is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision will allow.</p>
-<p>There is no single solution for this problem. One option is to remove the block effect or include it as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> in <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
-<p>[[need info on the drawbacks of leaving block out]]</p>
-<p>search for <code>?lmercontrol</code> (Julia: why?????)</p>
-<ol type="1">
-<li>Model failed to converge. There are several different error messsages for non-convergence, depending on what happened:</li>
-</ol>
-<p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
-<p><code>Hessian that is not positive definite</code></p>
-<p>There are several causes for lack of convergence. Model fitting is an iterative process where in each interation, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explainations.</p>
-<p>Running this is an R console will bring up a useful help file with details on how to address convergence issues.</p>
-<pre><code>?convergence</code></pre>
-<section id="other-tools" class="level3" data-number="15.1.1">
-<h3 data-number="15.1.1" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">15.1.1</span> Other Tools</h3>
-<p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well.</p>
-<p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A help ful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
-<p>Posit (née RStudio) has published a <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html" class="external" target="_blank">rather useful guide</a> for advanced troubleshooting of convergence issues in <strong>lme4</strong>. Phillip Alday wrote a <a href="https://rpubs.com/palday/lme4-singular-convergence" class="external" target="_blank">detailed tutorial</a> on <strong>lme4</strong> convergence warnings.</p>
-
-
+<p>factor v character integer v numeric</p>
+<p>This step involves verifying</p>
+<p>the structure of data variables,</p>
+<ul>
+<li>check balance of independent variables</li>
+</ul>
+<p>The purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.</p>
+<p>check missing values in the dataset:</p>
+<p>It’s important to verify the extent of missing values in the dataset. So</p>
+<p>Discuss what can go wrong and how to respond</p>
+<p>check distribution of the response variable</p>
 </section>
+<section id="model-building" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">4.2</span> Model building</h2>
+<p>Formula syntax and expectations</p>
+<p>The parentheses are used to indicate that ‘block’ is a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<code>na.action = na.exclude</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You may have noticed the final argument for <code>na.action</code> in the model statement:</p>
+<pre><code>model_rcbd_lmer &lt;- lmer(yield_bu_a ~ variety + (1|block),
+                   data = var_trial, 
+                   na.action = na.exclude)</code></pre>
+<p>The argument <code>na.action = na.exclude</code> provides instructions for how to handle missing data. <code>na.exclude</code> removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g.&nbsp;predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.</p>
+<p>Even when there are no missing data and this step is not necessary, it’s a good habit to be in.</p>
+</div>
+</div>
+<p>We use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
+</section>
+<section id="model-assumptions" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="model-assumptions"><span class="header-section-number">4.3</span> Model Assumptions</h2>
+<p>we are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function <code>check_model()</code>.</p>
+</section>
+<section id="inference" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.4</span> Inference</h2>
+<p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle <a href="https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/">crossed</a> as well as nested random factors.</p>
+<p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Model inference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Please remember that conclusions cannot be drawn from the model that doesn’t meet linear mixed model assumptions.</p>
+</div>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -727,13 +768,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/variance-components.html" class="pagination-link" aria-label="Variance and Variance Components">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Variance and Variance Components</span></span>
+      <a href="../chapters/background.html" class="pagination-link" aria-label="Mixed Model Background">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed Model Background</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/additional-resources.html" class="pagination-link" aria-label="Additional Resources">
-        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Additional Resources</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../chapters/rcbd.html" class="pagination-link" aria-label="Randomized Complete Block Design">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>12&nbsp; Marginal Means &amp; Contrasts – Field Guide to the R Mixed Model Wilderness</title>
+<title>13&nbsp; Marginal Means &amp; Contrasts – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -104,6 +104,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -128,7 +157,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/means-and-contrasts.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Marginal Means and Contrasts</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/means-and-contrasts.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Marginal Means and Contrasts</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -177,6 +206,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed Model Background</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/model-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Model Prep &amp; Workflow</span></span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
@@ -189,43 +224,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/rcbd.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Randomized Complete Block Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/factorial-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Factorial RCBD Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Factorial RCBD Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/split-plot-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Split Plot Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Split Plot Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/strip-plot.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Strip Plot Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Strip Plot Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/incomplete-block-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Incomplete Block Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Incomplete Block Design</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/latin-design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Latin Square Design</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Latin Square Design</span></span></a>
   </div>
 </li>
       </ul>
@@ -233,31 +268,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/repeated-measures.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Repeated Measures</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Repeated Measures</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/means-and-contrasts.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Marginal Means and Contrasts</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Marginal Means and Contrasts</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/variance-components.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Variance and Variance Components</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Variance and Variance Components</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/troubleshooting.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Troubleshooting</span></span></a>
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Troubleshooting</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/additional-resources.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Additional Resources</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -276,24 +311,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">12.1</span> Background</a></li>
-  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">12.2</span> Analysis Examples</a>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">13.1</span> Background</a></li>
+  <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">13.2</span> Analysis Examples</a>
   <ul class="collapse">
-  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data"><span class="header-section-number">12.2.1</span> Import data</a></li>
-  <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">12.2.2</span> Model fitting</a></li>
-  <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">12.2.3</span> Check Model Assumptions</a></li>
-  <li><a href="#model-inference" id="toc-model-inference" class="nav-link" data-scroll-target="#model-inference"><span class="header-section-number">12.2.4</span> Model Inference</a></li>
-  <li><a href="#estimated-marginal-means" id="toc-estimated-marginal-means" class="nav-link" data-scroll-target="#estimated-marginal-means"><span class="header-section-number">12.2.5</span> Estimated Marginal Means</a></li>
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data"><span class="header-section-number">13.2.1</span> Import data</a></li>
+  <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">13.2.2</span> Model fitting</a></li>
+  <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">13.2.3</span> Check Model Assumptions</a></li>
+  <li><a href="#model-inference" id="toc-model-inference" class="nav-link" data-scroll-target="#model-inference"><span class="header-section-number">13.2.4</span> Model Inference</a></li>
+  <li><a href="#estimated-marginal-means" id="toc-estimated-marginal-means" class="nav-link" data-scroll-target="#estimated-marginal-means"><span class="header-section-number">13.2.5</span> Estimated Marginal Means</a></li>
   </ul></li>
-  <li><a href="#contrasts-using-emmeans" id="toc-contrasts-using-emmeans" class="nav-link" data-scroll-target="#contrasts-using-emmeans"><span class="header-section-number">12.3</span> Contrasts using emmeans</a>
+  <li><a href="#contrasts-using-emmeans" id="toc-contrasts-using-emmeans" class="nav-link" data-scroll-target="#contrasts-using-emmeans"><span class="header-section-number">13.3</span> Contrasts using emmeans</a>
   <ul class="collapse">
-  <li><a href="#custom-contrasts" id="toc-custom-contrasts" class="nav-link" data-scroll-target="#custom-contrasts"><span class="header-section-number">12.3.1</span> Custom contrasts</a></li>
+  <li><a href="#custom-contrasts" id="toc-custom-contrasts" class="nav-link" data-scroll-target="#custom-contrasts"><span class="header-section-number">13.3.1</span> Custom contrasts</a></li>
   </ul></li>
-  <li><a href="#compact-letter-displays" id="toc-compact-letter-displays" class="nav-link" data-scroll-target="#compact-letter-displays"><span class="header-section-number">12.4</span> Compact letter displays</a></li>
-  <li><a href="#alternatives-to-cld" id="toc-alternatives-to-cld" class="nav-link" data-scroll-target="#alternatives-to-cld"><span class="header-section-number">12.5</span> Alternatives to CLD</a></li>
-  <li><a href="#export-emmeans-to-excel-sheet" id="toc-export-emmeans-to-excel-sheet" class="nav-link" data-scroll-target="#export-emmeans-to-excel-sheet"><span class="header-section-number">12.6</span> Export emmeans to excel sheet</a></li>
-  <li><a href="#graphical-display-of-emmeans" id="toc-graphical-display-of-emmeans" class="nav-link" data-scroll-target="#graphical-display-of-emmeans"><span class="header-section-number">12.7</span> Graphical display of emmeans</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">12.8</span> Conclusion</a></li>
+  <li><a href="#compact-letter-displays" id="toc-compact-letter-displays" class="nav-link" data-scroll-target="#compact-letter-displays"><span class="header-section-number">13.4</span> Compact letter displays</a></li>
+  <li><a href="#alternatives-to-cld" id="toc-alternatives-to-cld" class="nav-link" data-scroll-target="#alternatives-to-cld"><span class="header-section-number">13.5</span> Alternatives to CLD</a></li>
+  <li><a href="#export-emmeans-to-excel-sheet" id="toc-export-emmeans-to-excel-sheet" class="nav-link" data-scroll-target="#export-emmeans-to-excel-sheet"><span class="header-section-number">13.6</span> Export emmeans to excel sheet</a></li>
+  <li><a href="#graphical-display-of-emmeans" id="toc-graphical-display-of-emmeans" class="nav-link" data-scroll-target="#graphical-display-of-emmeans"><span class="header-section-number">13.7</span> Graphical display of emmeans</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">13.8</span> Conclusion</a></li>
   </ul>
 </nav>
     </div>
@@ -302,7 +337,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Marginal Means &amp; Contrasts</span></h1>
+<h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Marginal Means &amp; Contrasts</span></h1>
 </div>
 
 
@@ -319,8 +354,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="background" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="background"><span class="header-section-number">12.1</span> Background</h2>
+<section id="background" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="background"><span class="header-section-number">13.1</span> Background</h2>
 <p>To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a “population-level” average.</p>
 <p>The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as <strong>least-squares means</strong>) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html"><strong>vignettes</strong></a> and works with a lot of different model objects.</p>
 <p>In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.</p>
@@ -339,16 +374,16 @@ Marginal means using lmer and nlme
 </div>
 </div>
 </section>
-<section id="analysis-examples" class="level2 page-columns page-full" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">12.2</span> Analysis Examples</h2>
+<section id="analysis-examples" class="level2 page-columns page-full" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="analysis-examples"><span class="header-section-number">13.2</span> Analysis Examples</h2>
 <p>Let’s start this example by loading the required libraries for fitting linear mixed models using <strong>nlme</strong> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(multcompView)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp); <span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="import-data" class="level3 page-columns page-full" data-number="12.2.1">
-<h3 data-number="12.2.1" class="anchored" data-anchor-id="import-data"><span class="header-section-number">12.2.1</span> Import data</h3>
+<section id="import-data" class="level3 page-columns page-full" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="import-data"><span class="header-section-number">13.2.1</span> Import data</h3>
 <p>Let’s import oats data from the MASS package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> MASS<span class="sc">::</span>oats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -357,8 +392,8 @@ Marginal means using lmer and nlme
 <div class="no-row-height column-margin column-container"><div class="">
 <p>To read more about data and model fitting explanation please refer to <a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>.</p>
 </div></div></section>
-<section id="model-fitting" class="level3" data-number="12.2.2">
-<h3 data-number="12.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">12.2.2</span> Model fitting</h3>
+<section id="model-fitting" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">13.2.2</span> Model fitting</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
@@ -388,8 +423,8 @@ of nesting</code></pre>
 </div>
 </div>
 </section>
-<section id="check-model-assumptions" class="level3" data-number="12.2.3">
-<h3 data-number="12.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">12.2.3</span> Check Model Assumptions</h3>
+<section id="check-model-assumptions" class="level3" data-number="13.2.3">
+<h3 data-number="13.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">13.2.3</span> Check Model Assumptions</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -400,10 +435,10 @@ of nesting</code></pre>
 </div>
 </div>
 </div>
-<p>Residuals look good with a small hump in middle and normality curve looks better.</p>
+<p>Residuals look good with a small hump in middle and normality curve looks reasonable.</p>
 </section>
-<section id="model-inference" class="level3" data-number="12.2.4">
-<h3 data-number="12.2.4" class="anchored" data-anchor-id="model-inference"><span class="header-section-number">12.2.4</span> Model Inference</h3>
+<section id="model-inference" class="level3" data-number="13.2.4">
+<h3 data-number="13.2.4" class="anchored" data-anchor-id="model-inference"><span class="header-section-number">13.2.4</span> Model Inference</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -416,11 +451,11 @@ V:N             6    45  0.30282  0.9322</code></pre>
 </div>
 <p>The analysis of variance showed a significant N effect and no effect of V and VxN interaction effect on oat yield.</p>
 </section>
-<section id="estimated-marginal-means" class="level3" data-number="12.2.5">
-<h3 data-number="12.2.5" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">12.2.5</span> Estimated Marginal Means</h3>
+<section id="estimated-marginal-means" class="level3" data-number="13.2.5">
+<h3 data-number="13.2.5" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">13.2.5</span> Estimated Marginal Means</h3>
 <p>Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let’s use the <code>emmeans()</code> function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects.</p>
-<section id="main-effects" class="level4" data-number="12.2.5.1">
-<h4 data-number="12.2.5.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">12.2.5.1</span> Main effects</h4>
+<section id="main-effects" class="level4" data-number="13.2.5.1">
+<h4 data-number="13.2.5.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">13.2.5.1</span> Main effects</h4>
 <p>The main effects in model1 were V and N. we will start with firstly looking at the stimated means of V and N.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -459,8 +494,8 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it’s N treatments, respectively.</p>
 </section>
-<section id="interaction-effects" class="level4" data-number="12.2.5.2">
-<h4 data-number="12.2.5.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">12.2.5.2</span> Interaction effects</h4>
+<section id="interaction-effects" class="level4" data-number="13.2.5.2">
+<h4 data-number="13.2.5.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">13.2.5.2</span> Interaction effects</h4>
 <p>Now let’s evaluate the EMMs for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V<span class="sc">*</span>N)</span>
@@ -520,9 +555,9 @@ Confidence level used: 0.95 </code></pre>
 </section>
 </section>
 </section>
-<section id="contrasts-using-emmeans" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="contrasts-using-emmeans"><span class="header-section-number">12.3</span> Contrasts using emmeans</h2>
-<p>Firstly, the <code>pairs()</code> function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through <code>pairs()</code> function which will provide a p-value adjustment equivalent to the Tukey test.</p>
+<section id="contrasts-using-emmeans" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="contrasts-using-emmeans"><span class="header-section-number">13.3</span> Contrasts using emmeans</h2>
+<p>The <code>pairs()</code> function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through <code>pairs()</code> function which will provide a p-value adjustment equivalent to the Tukey test.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m1, <span class="at">adjust =</span> <span class="st">"tukey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -553,22 +588,8 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 </div>
 <p>Here if we look at the results from code chunk above, it’s easy to interpret results from <code>pairs()</code> function in case of variety comparison becuase there were only 3 groups. But it’s little confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.</p>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<code>pairs()</code>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Remember!!</p>
-<p>The <code>pairs()</code> function can be used to calculate pairwise comparison when treatment groups are less than equal to 3.</p>
-</div>
-</div>
-<section id="custom-contrasts" class="level3" data-number="12.3.1">
-<h3 data-number="12.3.1" class="anchored" data-anchor-id="custom-contrasts"><span class="header-section-number">12.3.1</span> Custom contrasts</h3>
+<section id="custom-contrasts" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="custom-contrasts"><span class="header-section-number">13.3.1</span> Custom contrasts</h3>
 <p>First, run emmean object ‘m2’ for nitrogen treatments.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -635,11 +656,11 @@ contrast() vs pairs()
 </div>
 </section>
 </section>
-<section id="compact-letter-displays" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">12.4</span> Compact letter displays</h2>
+<section id="compact-letter-displays" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">13.4</span> Compact letter displays</h2>
 <p>Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. The R package <code>multcompView</code> (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.</p>
 <p>The <code>cld()</code> function from the <strong>multcomp</strong> package is used to implement CLDs in the form of symbols or letters. The <code>emmeans</code> package provides a emmGrid objects for cld() method.</p>
-<p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the .group are not statistically different from each other.</p>
+<p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -708,8 +729,8 @@ NOTE: If two or more means share the same grouping symbol,
 <p>Interpretation of these letters is: Here we have a significant difference in grain yield with varieties “victory”, with N treatments of 0.0cwt, 0.2cwt, 0.4cwt, and 0.6wt. Grain yield for Golden.rain variety was significantly lower with 0.0cwt N treatment compared to the 0.2cwt, 0.4cwt, and 0.6wt treatments.</p>
 <p>In the data set we used for demonstration here, we had equal number of observations in each group. However, this might not be a case every time as it is common to have missing values in the data set. In such cases, readers usually struggle to interpret significant differences among groups. For example, estimated means of two groups are substantially different but they are no statistically different. This normally happens when SE of one group is large due to its small sample size, so it’s hard for it to be statistically different from other groups. In such cases, we can use alternatives to CLDs as shown below.</p>
 </section>
-<section id="alternatives-to-cld" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="alternatives-to-cld"><span class="header-section-number">12.5</span> Alternatives to CLD</h2>
+<section id="alternatives-to-cld" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="alternatives-to-cld"><span class="header-section-number">13.5</span> Alternatives to CLD</h2>
 <ol type="1">
 <li>Equivalence test</li>
 </ol>
@@ -765,13 +786,13 @@ Cautionary Note about CLD
 </div>
 <div class="callout-body-container callout-body">
 <p>It’s important to note that we cannot conclude that treatment levels with the same letter are the same. We can only conclude that they are not different.</p>
-<p>There is a separate branch of statistics, “<a href="https://en.wikipedia.org/wiki/Equivalence_test">equivalence testing</a>” that is for ascertaining if things are sufficiently similar to conclude they are equivalent.</p>
+<p>There is a separate branch of statistics, <a href="https://en.wikipedia.org/wiki/Equivalence_test">equivalence testing</a> that is for ascertaining if things are sufficiently similar to conclude they are equivalent.</p>
 <p>See <a href="analysis-tips.html#sec-cld_warning" class="quarto-xref"><span>Section 2.0.4</span></a> for additional warnings about problems with using compact letter display.</p>
 </div>
 </div>
 </section>
-<section id="export-emmeans-to-excel-sheet" class="level2" data-number="12.6">
-<h2 data-number="12.6" class="anchored" data-anchor-id="export-emmeans-to-excel-sheet"><span class="header-section-number">12.6</span> Export emmeans to excel sheet</h2>
+<section id="export-emmeans-to-excel-sheet" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="export-emmeans-to-excel-sheet"><span class="header-section-number">13.6</span> Export emmeans to excel sheet</h2>
 <p>The outputs from <code>emmeans()</code> or <code>cld()</code> objects can exported by firstly converting outputs to a data frame and then using writexlsx() function from the ‘writexl’ package to export the outputs.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>result_n <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">summary</span>(m1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -780,9 +801,9 @@ Cautionary Note about CLD
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(result_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="graphical-display-of-emmeans" class="level2" data-number="12.7">
-<h2 data-number="12.7" class="anchored" data-anchor-id="graphical-display-of-emmeans"><span class="header-section-number">12.7</span> Graphical display of emmeans</h2>
-<p>The results of emmeans() object can be plotted in two different ways. First, we can use base <code>plot()</code> function in R.</p>
+<section id="graphical-display-of-emmeans" class="level2" data-number="13.7">
+<h2 data-number="13.7" class="anchored" data-anchor-id="graphical-display-of-emmeans"><span class="header-section-number">13.7</span> Graphical display of emmeans</h2>
+<p>The easiest optionp is to use default plotting functions that accompany the emmeans package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -801,7 +822,7 @@ Cautionary Note about CLD
 </div>
 </div>
 </div>
-<p>Or we can use <strong>ggplot2</strong> library. We can plot cld3 object in ggplot, with Variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented in groups of different colors.</p>
+<p>Eventually, you are likely to want customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented using different colors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cld3) <span class="sc">+</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> V, <span class="at">y =</span> emmean, <span class="at">color =</span> N) <span class="sc">+</span></span>
@@ -849,8 +870,8 @@ More details on emmeans
 </div>
 </div>
 </section>
-<section id="conclusion" class="level2" data-number="12.8">
-<h2 data-number="12.8" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">12.8</span> Conclusion</h2>
+<section id="conclusion" class="level2" data-number="13.8">
+<h2 data-number="13.8" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">13.8</span> Conclusion</h2>
 <p>Be cautious with the terms “significant” and “nonsignificant”, and don’t ever interpret a “non-significant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1290,12 +1311,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../chapters/repeated-measures.html" class="pagination-link" aria-label="Repeated Measures">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Repeated Measures</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Repeated Measures</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../chapters/variance-components.html" class="pagination-link" aria-label="Variance and Variance Components">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Variance and Variance Components</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Variance and Variance Components</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
