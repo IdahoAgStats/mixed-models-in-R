@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="nav-sidebar docked nav-fixed">
+<body class="nav-sidebar docked nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -284,14 +284,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#define-the-research-question" id="toc-define-the-research-question" class="nav-link active" data-scroll-target="#define-the-research-question"><span class="header-section-number">4.1</span> Define the Research Question</a></li>
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</a></li>
-  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building"><span class="header-section-number">4.3</span> Model building</a></li>
+  <li><a href="#model-building---formula-syntax-and-expectations" id="toc-model-building---formula-syntax-and-expectations" class="nav-link" data-scroll-target="#model-building---formula-syntax-and-expectations"><span class="header-section-number">4.3</span> Model building - Formula syntax and expectations</a></li>
   <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">4.4</span> Model Assumptions</a></li>
   <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.5</span> Inference</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content column-body" id="quarto-document-content">
+<main class="content page-columns page-full column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -317,54 +317,85 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:</p>
 <section id="define-the-research-question" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="define-the-research-question"><span class="header-section-number">4.1</span> Define the Research Question</h2>
-<p>It’s important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. This step involves identifying the dependent variable (response variable), determine the fixed and random effects.</p>
+<p>It’s important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. This step involves identifying the dependent variable (response variable), determine the fixed and random effects in the experiment design.</p>
 </section>
-<section id="data-integrity-checks" class="level2" data-number="4.2">
+<section id="data-integrity-checks" class="level2 page-columns page-full" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</h2>
 <p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
 <ol type="1">
-<li>Check structure of the data In this step, we need to make sure data are the expected data type e.g.&nbsp;replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a ‘character’ or ‘factor’ format. The response variable has be in the ‘numeric’ format. Sometimes the class of response variable appears to be a character, it’s important</li>
+<li>Check structure of the data</li>
 </ol>
+<p>In this step, we need to make sure data are the expected data type e.g.&nbsp;replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a ‘character’ or ‘factor’ format. The response variable has be in the ‘numeric’ format. Sometimes the class of response variable appears to be a character, it’s important</p>
 <p>You can use the base code <code>str()</code> in R to look at the class of each variable in the data set.</p>
-<ol start="2" type="1">
-<li>check the extent of missing data</li>
-<li>inspect the independent variables and make sure the expected levels are present in the data</li>
-<li>inspect the dependent variable to ensure its distribution is following expectations</li>
-</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The code chunk below can be used to change the class of variable from numeric to character/factor or vice-versa. Here the example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data<span class="sc">$</span>rep)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>yield <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(data<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
 <p>factor v character integer v numeric</p>
-<p>This step involves verifying</p>
+</div></div><ol start="3" type="1">
+<li>Inspect the independent variables</li>
+</ol>
+<p>Running a cross tabulations across treatments and replications is generally enough to make sure the expected levels are present in the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>trt, data<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output from this code will give you the number of observations in each replication for a given treatment. You are supposed to have equal number of observations across treatments. Unbalanced independent variables can affect the fitting, interpretation and performance of mixed model which can result in biased estimates for fixed effects.</p>
+<ol start="3" type="1">
+<li>Check the extent of missing data</li>
+</ol>
+<p>It’s important to check the extent of missing values in the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This will give you a number of missing values in each variable. It’s an easy identification to</p>
+<p>This is not needed for the data sets in this tutorial that have already been comprehensively examined, but it is helpful to check that the extent of missing values displayed in an R session is what you expect.</p>
+<p>Having extreme values in the data can lead to biased estimates, model convergence issues, and incorrect variance estimates. Properly handling missing data through imputation ensures more reliable results.</p>
+<p>If there were independent variables with a continuous distribution (a covariate), plot those data.</p>
+<ol start="4" type="1">
+<li>Inspect the dependent variable</li>
+</ol>
+<p>Last, check the dependent variable to ensure its distribution is following expectations. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.</p>
+<p>The code below does not test for the normality of the response variable. Here we are creating a histogram to look at count of a given values of the response variable.</p>
+<p>The target of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme high/low observations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data<span class="sc">$</span>response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
+<p>These are not complicated checks. They are designed to be done quickly and should be done for <strong>every analysis</strong> if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
 <p>the structure of data variables,</p>
 <ul>
 <li>check balance of independent variables</li>
 </ul>
 <p>The purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.</p>
-<p>check missing values in the dataset:</p>
-<p>It’s important to verify the extent of missing values in the dataset. So</p>
-<p>Discuss what can go wrong and how to respond</p>
 <p>check distribution of the response variable</p>
 </section>
-<section id="model-building" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="model-building"><span class="header-section-number">4.3</span> Model building</h2>
-<p>Formula syntax and expectations</p>
-<p>The parentheses are used to indicate that ‘block’ is a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block.</p>
+<section id="model-building---formula-syntax-and-expectations" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="model-building---formula-syntax-and-expectations"><span class="header-section-number">4.3</span> Model building - Formula syntax and expectations</h2>
 <p>In this tutorial, we will demonstrate the methodology to fit linear mixed model using <strong>lme4</strong> and <strong>nlme</strong> package.</p>
+<p>The parentheses are used to indicate a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the <code>lmer()</code> and <code>nlme()</code> models.</p>
 <p>The code below shows the R syntax mixed model with one fixed and one random effect:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(response <span class="sc">~</span> fixed <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>random),</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(response <span class="sc">~</span> fixed <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>random),</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> data1, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(response <span class="sc">~</span> fixed,</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>random,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> data1var_trial, </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(response <span class="sc">~</span> fixed,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>random,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> data1, </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
