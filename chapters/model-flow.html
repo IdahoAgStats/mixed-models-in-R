@@ -285,7 +285,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#define-the-research-question" id="toc-define-the-research-question" class="nav-link active" data-scroll-target="#define-the-research-question"><span class="header-section-number">4.1</span> Define the Research Question</a></li>
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</a></li>
   <li><a href="#model-building---formula-syntax-and-expectations" id="toc-model-building---formula-syntax-and-expectations" class="nav-link" data-scroll-target="#model-building---formula-syntax-and-expectations"><span class="header-section-number">4.3</span> Model building - Formula syntax and expectations</a></li>
-  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">4.4</span> Model Assumptions</a></li>
+  <li><a href="#model-assumptions" id="toc-model-assumptions" class="nav-link" data-scroll-target="#model-assumptions"><span class="header-section-number">4.4</span> Model Assumptions</a>
+  <ul class="collapse">
+  <li><a href="#original-method" id="toc-original-method" class="nav-link" data-scroll-target="#original-method"><span class="header-section-number">4.4.1</span> Original method</a></li>
+  <li><a href="#new-iid-checks" id="toc-new-iid-checks" class="nav-link" data-scroll-target="#new-iid-checks"><span class="header-section-number">4.4.2</span> New Method</a></li>
+  </ul></li>
   <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.5</span> Inference</a></li>
   </ul>
 </nav>
@@ -313,11 +317,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation.</p>
-<p>add this to callout - tip: The steps explained below were applied to all the chapters.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The steps explained below were applied to all the chapters.</p>
+</div>
+</div>
 <p>Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:</p>
 <section id="define-the-research-question" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="define-the-research-question"><span class="header-section-number">4.1</span> Define the Research Question</h2>
-<p>It’s important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. This step involves identifying the dependent variable (response variable), determine the fixed and random effects in the experiment design.</p>
+<p>It’s important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. For example, We conducted a randomized field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments. Next step involves identifying the dependent variable (yield), and determine the fixed (treatment) and random (replications) effects in the experiment design.</p>
 </section>
 <section id="data-integrity-checks" class="level2 page-columns page-full" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</h2>
@@ -325,11 +341,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li>Check structure of the data</li>
 </ol>
-<p>In this step, we need to make sure data are the expected data type e.g.&nbsp;replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a ‘character’ or ‘factor’ format. The response variable has be in the ‘numeric’ format. Sometimes the class of response variable appears to be a character, it’s important</p>
-<p>You can use the base code <code>str()</code> in R to look at the class of each variable in the data set.</p>
+<p>In this step, we need to make sure that class of variables in data is as expected e.g.&nbsp;replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a ‘character’ or ‘factor’ format. The response variable must be in a ‘numeric’ format. Sometimes the class of response variable appears to be a character, it’s important to check that and convert it to numeric format to avoid errors in model fitting.</p>
+<p>We can use the base code <code>str()</code> in R to look at the class of each variable in the data set.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>This code will create an output showing the data class of each variable present in the data.</p>
 <p>The code chunk below can be used to change the class of variable from numeric to character/factor or vice-versa. Here the example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data<span class="sc">$</span>rep)</span>
@@ -345,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>trt, data<span class="sc">$</span>rep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The output from this code will give you the number of observations in each replication for a given treatment. You are supposed to have equal number of observations across treatments. Unbalanced independent variables can affect the fitting, interpretation and performance of mixed model which can result in biased estimates for fixed effects.</p>
+<p>The output from this code will give us the number of observations in each replication for a given treatment. It’s supposed to have equal number of observations across treatments. Unbalanced independent variables can affect the fitting, interpretation and performance of mixed model which can result in biased estimates for fixed effects.</p>
 <ol start="3" type="1">
 <li>Check the extent of missing data</li>
 </ol>
@@ -368,17 +385,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Data are not expected to be normally distributed at this point, so don’t bother running any Shapiro-Wilk tests. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.</p>
 <p>These are not complicated checks. They are designed to be done quickly and should be done for <strong>every analysis</strong> if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.</p>
-<p>the structure of data variables,</p>
-<ul>
-<li>check balance of independent variables</li>
-</ul>
-<p>The purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.</p>
-<p>check distribution of the response variable</p>
+<p>Once our data passes through these pre-checks we can move to next step is building the model. the structure of data variables,</p>
 </section>
 <section id="model-building---formula-syntax-and-expectations" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="model-building---formula-syntax-and-expectations"><span class="header-section-number">4.3</span> Model building - Formula syntax and expectations</h2>
-<p>In this tutorial, we will demonstrate the methodology to fit linear mixed model using <strong>lme4</strong> and <strong>nlme</strong> package.</p>
-<p>The parentheses are used to indicate a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit. This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the <code>lmer()</code> and <code>nlme()</code> models.</p>
+<p>In this guide we used <strong>lme4</strong> and <strong>nlme</strong> packages fit linear mixed model.</p>
+<p>The general framework for <code>lmer()</code> and <code>lme()</code> models include specifying the response variable, fixed factors, and random factors. For this demonstration, let’s assume response variable = yield, fixed factor = treatment, random factor = block.</p>
 <p>The code below shows the R syntax mixed model with one fixed and one random effect:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
@@ -400,6 +412,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>The parentheses are used to indicate a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit (Please refer to <a href="../chapters/background.html"><strong>Chapter 3</strong></a>). This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the <code>lmer()</code> and <code>nlme()</code> models.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -420,16 +433,84 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>We use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, please pad them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
 </section>
-<section id="model-assumptions" class="level2" data-number="4.4">
+<section id="model-assumptions" class="level2 page-columns page-full" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="model-assumptions"><span class="header-section-number">4.4</span> Model Assumptions</h2>
-<p>Check assumptions:</p>
-<p>Residuals should be normally distributed (Q-Q plot).</p>
-<p>Check homoscedasticity (residuals vs.&nbsp;fitted values plot).</p>
-<p>we are looking for a constant variance and normality of residuals. Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line. we can do all at one using one function <code>check_model()</code>.</p>
-<p>Residual normality: Check using Q-Q plots.</p>
-<p>Homoscedasticity: Plot residuals vs.&nbsp;fitted values.</p>
-<p>Influential points: Use Cook’s distance or leverage analysis.</p>
-<p>Random effect distribution: Examine estimated BLUPs.</p>
+<p>Linear mixed models rely on linearity, independence, normality, homoscedasticity of residuals. Violating these assumptions can lead to biased estimates, inefficient inference, and convergence issues. Always diagnose model assumptions using residual plots, tests, and alternative specifications in R.</p>
+<p>In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:</p>
+<section id="original-method" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.4.1</span> Original method</h3>
+<p>We can use base <code>plot()</code> function in R for <strong>lme4</strong> and <strong>nlme</strong> objects to check the homoscedasticity (residuals vs.&nbsp;fitted values plot) of residuals.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_lmer, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_lme, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>In this output, we expect to see a plot with random and uniform distribution of points. If we notice any specific pattern in the distribution of points, we need to look into the model structure and response variable distribution closely.</p>
+<p>To check the normality of the residuals, we need to extract the residuals first using the <code>resid()</code> function and then generate a qq-plot and line:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_lmer), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_lmer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_lme), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_lme))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>The interpretation of the qq-plots generated from this code chunk is : if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. However, if there is strong deviation of residual points from the qq-line, consider model adjustments or data transformation.</p>
+</section>
+<section id="new-iid-checks" class="level3 page-columns page-full" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">4.4.2</span> New Method</h3>
+<p>Nowadays, we can take advantage of the <a href="https://easystats.github.io/performance/" class="external" target="_blank">performance</a> package package, which provides a comprehensive suite of diagnostic plots.</p>
+<p>The diagnostic plots we created above can be created using one function <code>check_model()</code> from the <strong>performance</strong> package.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Please look for <code>check_model()</code> in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use the argument <code>check = "all"</code>.</p>
+</div>
+</div>
+</div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="inference" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.5</span> Inference</h2>
