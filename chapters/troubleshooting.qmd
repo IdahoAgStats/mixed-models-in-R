@@ -16,26 +16,26 @@ In this tutorial, we have demonstrated how to use linear mixed models for differ
 ```
 boundary (singular) fit: see ?isSingular
 ```
-
-Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one (JUlIA: ????).
 This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.
 
 This error occurs because one of the variance component is approximately zero. If a model is "singular", this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer's precision will allow. 
 
-There is no single solution for this problem. One option is to remove the block effect or include it as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` in **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
+There is no single solution for this problem. Here are the possible solutions that you can try:
 
-[[need info on the drawbacks of leaving block out]]
+First, look at the summary of the fitted model using `summary()` function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.
 
-search for `?lmercontrol` (Julia: why?????)
+Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` in **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
 
-1.  Model failed to converge. There are several different error messsages for non-convergence, depending on what happened:
+
+
+2.  Model failed to converge. There are several different error messages for non-convergence, depending on what happened:
 
 ```convergence error code = 1 message = iteration limit reached without convergence (10)```
 
 
 ```Hessian that is not positive definite```
 
-There are several causes for lack of convergence. Model fitting is an iterative process where in each interation, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explainations.
+There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.
 
 Running this is an R console will bring up a useful help file with details on how to address convergence issues.
 
