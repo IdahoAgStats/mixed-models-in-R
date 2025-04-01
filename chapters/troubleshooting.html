@@ -284,17 +284,17 @@ ul.task-list li input[type="checkbox"] {
 <li>Singular fit error</li>
 </ol>
 <pre><code>boundary (singular) fit: see ?isSingular</code></pre>
-<p>Some components of the variance-covariance matrix of the random effects are either exactly zero or exactly one (JUlIA: ????). This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.</p>
+<p>This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.</p>
 <p>This error occurs because one of the variance component is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision will allow.</p>
-<p>There is no single solution for this problem. One option is to remove the block effect or include it as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> in <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
-<p>[[need info on the drawbacks of leaving block out]]</p>
-<p>search for <code>?lmercontrol</code> (Julia: why?????)</p>
-<ol type="1">
-<li>Model failed to converge. There are several different error messsages for non-convergence, depending on what happened:</li>
+<p>There is no single solution for this problem. Here are the possible solutions that you can try:</p>
+<p>First, look at the summary of the fitted model using <code>summary()</code> function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.</p>
+<p>Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> in <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
+<ol start="2" type="1">
+<li>Model failed to converge. There are several different error messages for non-convergence, depending on what happened:</li>
 </ol>
 <p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
 <p><code>Hessian that is not positive definite</code></p>
-<p>There are several causes for lack of convergence. Model fitting is an iterative process where in each interation, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explainations.</p>
+<p>There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.</p>
 <p>Running this is an R console will bring up a useful help file with details on how to address convergence issues.</p>
 <pre><code>?convergence</code></pre>
 <section id="other-tools" class="level3" data-number="15.1.1">
