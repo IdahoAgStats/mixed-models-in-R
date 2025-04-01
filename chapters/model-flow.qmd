@@ -4,14 +4,18 @@ title: "Model Preparation and Flow"
 
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
-add this to callout - tip: The steps explained below were applied to all the chapters. 
+::: callout-note
+The steps explained below were applied to all the chapters. 
+:::
 
 Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
 
 ## Define the Research Question 
 
-It's important to know what is your question that you want to answer with your research data. For example, we want to analyze the impact of 3 nitrogen treatments on crop yield. 
-This step involves identifying the dependent variable (response variable), determine the fixed and random effects in the experiment design. 
+It's important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity.
+For example, We conducted a randomized field trial to study wheat yield response to different nitrogen fertilizer treatments. 
+In this case, we want to analyze how wheat yield responded to the fertilizer treatments. 
+Next step involves identifying the dependent variable (yield), and determine the fixed (treatment) and random (replications) effects in the experiment design. 
 
 ## Data integrity checks 
 
@@ -19,14 +23,15 @@ The first thing is to make sure the data is what we expect. Here are the steps t
 
 1.  Check structure of the data 
 
-In this step, we need to make sure data are the expected data type e.g. replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a 'character' or 'factor' format. 
-The response variable has be in the 'numeric' format. Sometimes the class of response variable appears to be a character, it's important 
+In this step, we need to make sure that class of variables in data is as expected e.g. replication/block are generally in the numeric format. But, for analysis the blocks/replications needs to be in a 'character' or 'factor' format. 
+The response variable must be in a 'numeric' format. Sometimes the class of response variable appears to be a character, it's important to check that and convert it to numeric format to avoid errors in model fitting. 
 
-You can use the base code `str()` in R to look at the class of each variable in the data set. 
+We can use the base code `str()` in R to look at the class of each variable in the data set. 
 ```{r, eval=FALSE}
 str(data)
 ```
 
+This code will create an output showing the data class of each variable present in the data. 
 
 The code chunk below can be used to change the class of variable from numeric to character/factor or vice-versa.
 Here the example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.
@@ -49,7 +54,7 @@ Running a cross tabulations across treatments and replications is generally enou
 table(data$trt, data$rep)
 ```
 
-The output from this code will give you the number of observations in each replication for a given treatment. You are supposed to have equal number of observations across treatments. Unbalanced independent variables can affect the fitting, interpretation and performance of mixed model which can result in biased estimates for fixed effects. 
+The output from this code will give us the number of observations in each replication for a given treatment. It's supposed to have equal number of observations across treatments. Unbalanced independent variables can affect the fitting, interpretation and performance of mixed model which can result in biased estimates for fixed effects. 
 
 3.  Check the extent of missing data
 
@@ -65,7 +70,6 @@ This is not needed for the data sets in this tutorial that have already been com
 
 
 Having extreme values in the data can lead to biased estimates, model convergence issues, and incorrect variance estimates. Properly handling missing data through imputation ensures more reliable results.  
-
 
 If there were independent variables with a continuous distribution (a covariate), plot those data.
 
@@ -86,31 +90,21 @@ Data are not expected to be normally distributed at this point, so don't bother 
 
 These are not complicated checks. They are designed to be done quickly and should be done for **every analysis** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! Best to discover these things early, since they are likely to impact the final analysis.
 
-
+Once our data passes through these pre-checks we can move to next step is building the model. 
 the structure of data variables, 
 
 
-- check balance of independent variables 
-
-The purpose of this step is to verify that all treatments have equal number of reps/ observations at each treatment level.
-
-
-
-
-
-check distribution of the response variable
-
 ## Model building - Formula syntax and expectations
 
-In this tutorial, we will demonstrate the methodology to fit linear mixed model using **lme4** and **nlme** package.
+In this guide we used **lme4** and **nlme** packages fit linear mixed model.
 
-The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit. This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
+The general framework for `lmer()` and `lme()` models include specifying the response variable, fixed factors, and random factors.
+For this demonstration, let's assume response variable = yield, fixed factor = treatment, random factor = block.
 
 The code below shows the R syntax mixed model with one fixed and one random effect:
 
 ::: panel-tabset
 ### lme4
-
 ```{r, eval=FALSE}
 model_lmer <- lmer(response ~ fixed + (1|random),
                    data = data1, 
@@ -118,7 +112,6 @@ model_lmer <- lmer(response ~ fixed + (1|random),
 ```
 
 ### nlme
-
 ```{r, eval=FALSE}
 model_lme <- lme(response ~ fixed,
                   random = ~ 1|random,
@@ -126,6 +119,8 @@ model_lme <- lme(response ~ fixed,
                   na.action = na.exclude)
 ```
 :::
+
+The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit (Please refer to [**Chapter 3**](background.qmd)). This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
 
 ::: callout-note
 ## `na.action = na.exclude`
@@ -149,27 +144,72 @@ We use the argument `na.action = na.exclude` as instruction for how to handle mi
 
 ## Model Assumptions
 
-Check assumptions:
+Linear mixed models rely on linearity, independence, normality, homoscedasticity of residuals. Violating these assumptions can lead to biased estimates, inefficient inference, and convergence issues. Always diagnose model assumptions using residual plots, tests, and alternative specifications in R.
 
-Residuals should be normally distributed (Q-Q plot).
+In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:
 
-Check homoscedasticity (residuals vs. fitted values plot).
+### Original method
 
-we are looking for a constant variance and normality of residuals.
-Checking normality requiring first extracting the model residuals and then generating a qq-plot and qq-line.
-we can do all at one using one function `check_model()`.
+We can use base `plot()` function in R for **lme4** and **nlme** objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
+
+::: panel-tabset
+### lme4
+```{r, eval=FALSE}
+plot(model_lmer, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
+```
+
+### nlme
+```{r, eval=FALSE}
+plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
+```
+:::
+
+In this output, we expect to see a plot with random and uniform distribution of points. If we notice any specific pattern in the distribution of points, we need to look into the model structure and response variable distribution closely. 
 
 
-Residual normality: Check using Q-Q plots.
+To check the normality of the residuals, we need to extract the residuals first using the `resid()` function and then generate a qq-plot and line:
 
-Homoscedasticity: Plot residuals vs. fitted values.
+::: panel-tabset
+### lme4
+```{r, eval=FALSE}
+qqnorm(resid(model_lmer), main = NULL); qqline(resid(model_lmer))
+```
 
-Influential points: Use Cook’s distance or leverage analysis.
+### nlme
+```{r, eval=FALSE}
+qqnorm(resid(model_lme), main = NULL); qqline(resid(model_lme))
+```
+:::
 
-Random effect distribution: Examine estimated BLUPs.
+The interpretation of the qq-plots generated from this code chunk is : if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. However, if there is strong deviation of residual points from the qq-line, consider model adjustments or data transformation.
+
+### New Method {#new-iid-checks}
+
+Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/){.external target="_blank"} package package, which provides a comprehensive suite of diagnostic plots.
+
+The diagnostic plots we created above can be created using one function `check_model()` from the **performance** package. 
+
+::::: column-margin
+::: callout-note
+Please look for `check_model()` in help tab to find what other checks you can perform using this function. If you would like to check all assumptions you can use the argument `check = "all"`.
+:::
+:::::
+
+::: panel-tabset
+### lme4
+```{r, eval=FALSE}
+check_model(model_lmer, check = c('normality', 'linearity'))
+```
+
+### nlme
+```{r, eval=FALSE}
+check_model(model_lme, check = c('normality', 'linearity'))
+```
+:::
 
 ## Inference
-
 
 The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
 
