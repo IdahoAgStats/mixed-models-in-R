@@ -356,8 +356,8 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="background"><span class="header-section-number">13.1</span> Background</h2>
-<p>To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a “population-level” average.</p>
-<p>The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as <strong>least-squares means</strong>) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html"><strong>vignettes</strong></a> and works with a lot of different model objects.</p>
+<p>To start off with, we need to define estimated marginal means. Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a “population-level” average.</p>
+<p>The emmeans package is one of the most commonly used package in R in determine marginal means. This package provides methods for obtaining marginal means (also known as <strong>least-squares means</strong>) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html"><strong>vignettes</strong></a> and works with a lot of different model objects.</p>
 <p>In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.</p>
 <p>To demonstrate the use of the emmeans package. We will pull the model from split plot lesson (<a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in <a href="../chapters/split-plot-design.html"><strong>Chapter 6</strong></a>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -492,11 +492,11 @@ Degrees-of-freedom method: containment
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
-<p>Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it’s N treatments, respectively.</p>
+<p>Make sure to read and interpret marginal means carefully. Here, when we calculated marginal means for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it’s N treatments, respectively.</p>
 </section>
 <section id="interaction-effects" class="level4" data-number="13.2.5.2">
 <h4 data-number="13.2.5.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">13.2.5.2</span> Interaction effects</h4>
-<p>Now let’s evaluate the EMMs for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
+<p>Now let’s evaluate the marginal means for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V<span class="sc">*</span>N)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>m3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -551,7 +551,21 @@ Degrees-of-freedom method: containment
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
-<p>The EMMs (m3 and m4) gives the same results but the outcome style is litte more explanatory in m4.</p>
+<p>The marginal means (m3 and m4) gives the same results but the outcome style is bit more explanatory in m4.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Here, note that we estimated marginal means in two ways: <code>V*N</code> estimate the marginal means for each combination and when we do pairwise compariosn on these, all combinations are compared to one another simultaneously.</p>
+<p><code>V|N</code> estimates the marginal means for each V at a given level of N. When we do pairwise comparison on this, V groups are compared among each other at a given level of N, not across all levels of N.</p>
+</div>
+</div>
 </section>
 </section>
 </section>
@@ -654,6 +668,137 @@ contrast() vs pairs()
 <p>Using custom contrast() is strongly recommended instead of <code>pairs()</code> when you are comparing multiple treatment groups (&gt;5).</p>
 </div>
 </div>
+<p>In addition to these conventional custom contrast options, <strong>emmeans</strong> package allows to do some easy contrasts such as comparing all the treatments to control or estimating custom contrast to compare one treatment level to all other groups.</p>
+<p>We will start with running ‘m1’ emmeans object</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>m1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> V           emmean  SE df lower.CL upper.CL
+ Golden.rain  104.5 7.8  5     84.5      125
+ Marvellous   109.8 7.8  5     89.7      130
+ Victory       97.6 7.8  5     77.6      118
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+<p>Based on m1 object, let’s assume we want to compare all varieties with Marvellous. The code shown below estimates custom contrast for treatments vs control and here we are referring Marvellous variety as a control.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrl"</span>, <span class="at">ref =</span> <span class="st">"Marvellous"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                 estimate   SE df t.ratio p.value
+ Golden.rain - Marvellous    -5.29 7.08 10  -0.748  0.6833
+ Victory - Marvellous       -12.17 7.08 10  -1.719  0.2045
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+P value adjustment: dunnettx method for 2 tests </code></pre>
+</div>
+</div>
+<p>Or we can refer control group by the appearance order of varieties in m1. In m1, order of Golden rain, Marvellous, and Victory are ordered as 1, 2, and 3 respenctively.</p>
+<p>Let’s suppose we want to compare Golden rain to other varieties, we can do this by either <code>trt.vs.ctrl1' code, or</code>trt.vs.ctrlk` and referring to group 1. Both code options will generate same results.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrl1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                 estimate   SE df t.ratio p.value
+ Marvellous - Golden.rain     5.29 7.08 10   0.748  0.6833
+ Victory - Golden.rain       -6.88 7.08 10  -0.971  0.5476
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+P value adjustment: dunnettx method for 2 tests </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrlk"</span>, <span class="at">ref =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                 estimate   SE df t.ratio p.value
+ Marvellous - Golden.rain     5.29 7.08 10   0.748  0.6833
+ Victory - Golden.rain       -6.88 7.08 10  -0.971  0.5476
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+P value adjustment: dunnettx method for 2 tests </code></pre>
+</div>
+</div>
+<p>We can further customize the contrasts by excluding specific treatment groups from the comparison.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>m1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> V           emmean  SE df lower.CL upper.CL
+ Golden.rain  104.5 7.8  5     84.5      125
+ Marvellous   109.8 7.8  5     89.7      130
+ Victory       97.6 7.8  5     77.6      118
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> N      emmean   SE df lower.CL upper.CL
+ 0.0cwt   79.4 7.17  5     60.9     97.8
+ 0.2cwt   98.9 7.17  5     80.4    117.3
+ 0.4cwt  114.2 7.17  5     95.8    132.7
+ 0.6cwt  123.4 7.17  5    104.9    141.8
+
+Results are averaged over the levels of: V 
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrl"</span>, <span class="at">ref =</span> <span class="st">"Marvellous"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                 estimate   SE df t.ratio p.value
+ Golden.rain - Marvellous    -5.29 7.08 10  -0.748  0.6833
+ Victory - Marvellous       -12.17 7.08 10  -1.719  0.2045
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+P value adjustment: dunnettx method for 2 tests </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrlk"</span>, <span class="at">ref =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast              estimate   SE df t.ratio p.value
+ Golden.rain - Victory     6.88 7.08 10   0.971  0.5476
+ Marvellous - Victory     12.17 7.08 10   1.719  0.2045
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+P value adjustment: dunnettx method for 2 tests </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"pairwise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast                 estimate   SE df t.ratio p.value
+ Golden.rain - Marvellous    -5.29 7.08 10  -0.748  0.7419
+ Golden.rain - Victory        6.88 7.08 10   0.971  0.6104
+ Marvellous - Victory        12.17 7.08 10   1.719  0.2458
+
+Results are averaged over the levels of: N 
+Degrees-of-freedom method: containment 
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m2, <span class="at">exclude =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast        estimate   SE df t.ratio p.value
+ 0.0cwt - 0.4cwt   -34.83 4.44 45  -7.853  &lt;.0001
+ 0.0cwt - 0.6cwt   -44.00 4.44 45  -9.919  &lt;.0001
+ 0.4cwt - 0.6cwt    -9.17 4.44 45  -2.067  0.1084
+
+Results are averaged over the levels of: V 
+Degrees-of-freedom method: containment 
+P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="st">"consec"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast        estimate   SE df t.ratio p.value
+ 0.2cwt - 0.0cwt    19.50 4.44 45   4.396  0.0002
+ 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0033
+ 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1150
+
+Results are averaged over the levels of: V 
+Degrees-of-freedom method: containment 
+P value adjustment: mvt method for 3 tests </code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="compact-letter-displays" class="level2" data-number="13.4">
@@ -662,7 +807,7 @@ contrast() vs pairs()
 <p>The <code>cld()</code> function from the <strong>multcomp</strong> package is used to implement CLDs in the form of symbols or letters. The <code>emmeans</code> package provides a emmGrid objects for cld() method.</p>
 <p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> V           emmean  SE df lower.CL upper.CL .group
  Victory       97.6 7.8  5     77.6      118  a    
@@ -680,7 +825,7 @@ NOTE: If two or more means share the same grouping symbol,
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> N      emmean   SE df lower.CL upper.CL .group
  0.0cwt   79.4 7.17  5     60.9     97.8  a    
@@ -700,8 +845,8 @@ NOTE: If two or more means share the same grouping symbol,
 </div>
 <p>Let’s have a look at the CLDs for the interaction effect:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>cld3 <span class="ot">&lt;-</span> <span class="fu">cld</span>(m3, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>cld3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>cld3 <span class="ot">&lt;-</span> <span class="fu">cld</span>(m3, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">Letters=</span>letters)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>cld3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> V           N      emmean   SE df lower.CL upper.CL .group    
  Victory     0.0cwt   71.5 9.11  5     48.1     94.9  a        
@@ -736,7 +881,7 @@ NOTE: If two or more means share the same grouping symbol,
 </ol>
 <p>Let’s assume based on subject matter considerations, if mean yield of two groups differ by less than 30 can be considered equivalent. Let’s try equivalence test on clds of nitrogen treatment emmeans (m2)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">delta =</span> <span class="dv">30</span>, <span class="at">adjust =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">delta =</span> <span class="dv">30</span>, <span class="at">adjust =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> N      emmean   SE df lower.CL upper.CL .equiv.set
  0.0cwt   79.4 7.17  5     60.9     97.8  1        
@@ -759,7 +904,7 @@ Estimates sharing the same symbol test as equivalent </code></pre>
 </ol>
 <p>Another alternative is to simply reverse all the boolean flags we used in constructing CLDs for m3 first time.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">signif =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">signif =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> N      emmean   SE df lower.CL upper.CL .signif.set
  0.0cwt   79.4 7.17  5     60.9     97.8  12        
@@ -795,51 +940,51 @@ Cautionary Note about CLD
 <h2 data-number="13.6" class="anchored" data-anchor-id="export-emmeans-to-excel-sheet"><span class="header-section-number">13.6</span> Export emmeans to excel sheet</h2>
 <p>The outputs from <code>emmeans()</code> or <code>cld()</code> objects can exported by firstly converting outputs to a data frame and then using writexlsx() function from the ‘writexl’ package to export the outputs.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>result_n <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">summary</span>(m1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>result_n <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">summary</span>(m1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(result_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>writexl<span class="sc">::</span><span class="fu">write_xlsx</span>(result_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="graphical-display-of-emmeans" class="level2" data-number="13.7">
 <h2 data-number="13.7" class="anchored" data-anchor-id="graphical-display-of-emmeans"><span class="header-section-number">13.7</span> Graphical display of emmeans</h2>
 <p>The easiest optionp is to use default plotting functions that accompany the emmeans package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Eventually, you are likely to want customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented using different colors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cld3) <span class="sc">+</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> V, <span class="at">y =</span> emmean, <span class="at">color =</span> N) <span class="sc">+</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), </span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">1</span>),</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">label =</span> .group, <span class="at">y =</span> upper.CL <span class="sc">*</span> <span class="fl">1.05</span>), </span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.8</span>), </span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.legend =</span> F)<span class="sc">+</span></span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text=</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>,</span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>                                <span class="at">size =</span><span class="dv">12</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cld3) <span class="sc">+</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> V, <span class="at">y =</span> emmean, <span class="at">color =</span> N) <span class="sc">+</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">ymin =</span> lower.CL, <span class="at">ymax =</span> upper.CL), </span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="dv">1</span>),</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">label =</span> .group, <span class="at">y =</span> upper.CL <span class="sc">*</span> <span class="fl">1.05</span>), </span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.8</span>), </span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">show.legend =</span> F)<span class="sc">+</span></span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text=</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"black"</span>,</span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>                                <span class="at">size =</span><span class="dv">12</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -847,11 +992,11 @@ Cautionary Note about CLD
 <p>Recall: groups that do not differ significantly from each other share the same letter.</p>
 <p>we can also use <code>emmip()</code> built in emmeans package to look at the trend in interaction of variety and nitrogen factors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmip</span>(model1, N <span class="sc">~</span> V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmip</span>(model1, N <span class="sc">~</span> V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="means-and-contrasts_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
