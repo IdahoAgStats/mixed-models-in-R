@@ -4,9 +4,9 @@ title: Marginal Means & Contrasts
 
 ## Background
 
-To start off with, we need to define estimated marginal means (EMM). Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
+To start off with, we need to define estimated marginal means. Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
 
-The emmeans package is one of the most commonly used package in R in determine EMMs. This package provides methods for obtaining EMMs (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
+The emmeans package is one of the most commonly used package in R in determine marginal means. This package provides methods for obtaining marginal means (also known as **least-squares means**) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html) and works with a lot of different model objects. 
 
 In this chapter, we will demonstrate the extended use of the emmeans package to calculate estimated marginal means and contrasts.
 
@@ -83,11 +83,11 @@ m2 <- emmeans(model1, ~N)
 m2
 ```
 
-Make sure to read and interpret EMMs carefully. Here, when we calculated EMMs for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it's N treatments, respectively.
+Make sure to read and interpret marginal means carefully. Here, when we calculated marginal means for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over it's N treatments, respectively.
 
 #### Interaction effects
 
-Now let's evaluate the EMMs for the interaction effect of V and N. These can be calculated either using `V*N` or `V|N`. 
+Now let's evaluate the marginal means for the interaction effect of V and N. These can be calculated either using `V*N` or `V|N`. 
 ```{r}
 m3 <- emmeans(model1, ~V*N)
 m3
@@ -97,7 +97,14 @@ m3
 m4 <- emmeans(model1, ~V|N)
 m4
 ```
-The EMMs (m3 and m4) gives the same results but the outcome style is litte more explanatory in m4.
+The marginal means (m3 and m4) gives the same results but the outcome style is bit more explanatory in m4.
+
+:::{.callout-note}
+Here, note that we estimated marginal means in two ways: 
+`V*N` estimate the marginal means for each combination and when we do pairwise compariosn on these, all combinations are compared to one another simultaneously. 
+
+`V|N` estimates the marginal means for each V at a given level of N. When we do pairwise comparison on this, V groups are compared among each other at a given level of N, not across all levels of N. 
+:::
 
 ## Contrasts using emmeans
 
@@ -143,6 +150,42 @@ Here the output shows the difference in mean yield between control and 3 N treat
 ::: {.callout-tip title="contrast() vs pairs()"}
 Using custom contrast() is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
 :::
+
+
+In addition to these conventional custom contrast options, **emmeans** package allows to do some easy contrasts such as comparing all the treatments to control or estimating custom contrast to compare one treatment level to all other groups.
+
+We will start with running 'm1' emmeans object
+```{r}
+m1
+```
+Based on m1 object, let's assume we want to compare all varieties with Marvellous. The code shown below estimates custom contrast for treatments vs control and here we are referring Marvellous variety as a control.
+```{r}
+contrast(m1, "trt.vs.ctrl", ref = "Marvellous")
+```
+Or we can refer control group by the appearance order of varieties in m1. In m1, order of Golden rain, Marvellous, and Victory are ordered as 1, 2, and 3 respenctively. 
+
+Let's suppose we want to compare Golden rain to other varieties, we can do this by either `trt.vs.ctrl1' code, or `trt.vs.ctrlk` and referring to group 1. Both code options will generate same results.
+
+```{r}
+contrast(m1, "trt.vs.ctrl1")
+
+contrast(m1, "trt.vs.ctrlk", ref = 1)
+```
+
+We can further customize the contrasts by excluding specific treatment groups from the comparison. 
+
+```{r}
+m1
+m2
+contrast(m1, "trt.vs.ctrl", ref = "Marvellous")
+
+contrast(m1, "trt.vs.ctrlk", ref = 3)
+contrast(m1, "pairwise")
+
+pairs(m2, exclude = 2)
+contrast(m2, "consec")
+```
+
 
 ## Compact letter displays
 Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. 
