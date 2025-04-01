@@ -11,7 +11,7 @@ In this tutorial, we have demonstrated how to use linear mixed models for differ
 
 ## Common errors we encounter
 
-1. Singular fit error 
+1. **Singular fit error** 
 
 ```
 boundary (singular) fit: see ?isSingular
@@ -26,9 +26,12 @@ First, look at the summary of the fitted model using `summary()` function, If ra
 
 Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` in **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
 
+**fixed-effect model matrix is rank deficient**
 
+Harpreet: Do we need to discuss this?
 
-2.  Model failed to converge. There are several different error messages for non-convergence, depending on what happened:
+2.  **Model failed to converge**. 
+There are several different error messages for non-convergence, depending on what happened:
 
 ```convergence error code = 1 message = iteration limit reached without convergence (10)```
 
@@ -37,12 +40,32 @@ Or other option is to include the block as a fixed effects and re-analyze the ex
 
 There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.
 
-Running this is an R console will bring up a useful help file with details on how to address convergence issues.
+Running this code in an R console will bring up a useful help file with details on how to address convergence issues.
 
-```
+```{r, eval=FALSE}
 ?convergence
 ```
 
+Possible solutions to fix this error are:
+- Try a different optimizer
+```{r, eval=FALSE}
+model <- lmer(y ~ x + (1|block), data = dataset)
+model1 <- update(model, control = lmerControl(optimizer = "bobyqa"))
+```
+
+default optimizer used in `lmer()` is "Nelder_Mead", "bobyqa" optimizer is recommended for stability. 
+
+- Increase iterations for convergence.
+
+We can update our existing model by increasing max iterations to 100,000. 
+```{r}
+model <- lmer(y ~ x + (1|block), data = dataset)
+model2 <- update(model1, control = lmerControl(optCtrl = list(maxfun = 100000)))
+
+
+```
+
+- Last, we can simplfy the model by reducing random effects. 
 ### Other Tools
 
 Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well. 
