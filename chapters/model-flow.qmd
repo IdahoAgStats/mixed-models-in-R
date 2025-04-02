@@ -41,12 +41,13 @@ data$yield <- as.numeric(data$yield)
 ```
 
 ::: column-margin
-factor v character
-integer v numeric
+Often, factor and character data class are used interchangeable. But we need to keep in mind the difference in these two classes. A character variable represents data stored in a text format. A factor variable is categorical variable type with values stored as levels.  =factor v character
+
+Likewise, there is a difference in 'integer' and 'numeric' data class. A 'integer' class stores data as a whole number. A 'numeric' class stores decimal values as well (this is a default data class for numbers in R). 
 :::
 
 
-3.  Inspect the independent variables
+2.  Inspect the independent variables
 
 Running a cross tabulations across treatments and replications is generally enough to make sure the expected levels are present in the data.
 
@@ -128,8 +129,8 @@ The parentheses are used to indicate a random effect, and this particular notati
 You may have noticed the final argument for `na.action` in the model statement:
 
 ```         
-model_rcbd_lmer <- lmer(yield_bu_a ~ variety + (1|block),
-                   data = var_trial, 
+model_lmer <- lmer(response ~ fixed + (1|random),
+                   data = data1, 
                    na.action = na.exclude)
 ```
 
@@ -211,9 +212,9 @@ check_model(model_lme, check = c('normality', 'linearity'))
 
 ## Inference
 
-The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
+After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using `anova()` function or we can estimate marginal means using `emmeans()` function from the **emmeans** package.
+Further, we can also run a post-hoc comparison to evaluate the pairwise comparison or contrasts using estimated means.
 
-The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.
 
 ::: callout-warning
 ## Model inference

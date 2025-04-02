@@ -134,7 +134,7 @@ The 'time', 'manage', and 'rep' are character and variable height is numeric. Th
 -   Check the number of missing values in each column.
 
 ```{r}
-apply(height_data, 2, function(x) sum(is.na(x)))
+colSums(is.na(height_data))
 ```
 
 -   Exploratory boxplot to look at the height observations at different times with variable managements. This helps in identifying any patterns in the dependent vraiable in response to differnt treatments.
@@ -195,7 +195,7 @@ tidy(model_lme)
 
 #### Check Model Assumptions
 
-Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.
+Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals.
 
 We will use `check_model()` function from **performance** package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.
 
@@ -213,7 +213,7 @@ check_model(model_lme, check = c('normality', 'linearity'))
 ```
 :::
 
-In this case the residuals fit the assumptions of the model well.
+In this case, the residuals fit the assumptions of the model well.
 
 #### Inference
 
@@ -258,13 +258,11 @@ Here's a example using `pairs()` function to compare difference in height among 
 
 ::: panel-tabset
 #### lme4
-
 ```{r}
 pairs(m1)
 ```
 
 #### nlme
-
 ```{r}
 pairs(m2)
 ```
@@ -303,26 +301,29 @@ head(oats,5)
 ```
 
 #### Data integrity checks
+ 
+- Check structure of the data
 
-As shown in previous example, we will first examine the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
-
+we will first examine the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
 ```{r}
 str(oats)
 ```
+- Inspect the independent variables
 
--   Next, run the `table()` command to verify the levels of main-plots and sub-plots.
+Next, run the `table()` command to verify the levels of main-plots and sub-plots.
 
 ```{r}
 table(oats$V, oats$N)
 ```
 
--   Check the number of missing values in each column.
+- Check the extent of missing data
 
 ```{r}
-apply(oats, 2, function(x) sum(is.na(x)))
+colSums(is.na(oats))
 ```
+- Inspect the dependent variable
 
--   Last, check the distribution of the dependent variable by plotting a histogram of yield data. 
+Last, check the distribution of the dependent variable by plotting a histogram of yield data. 
 ```{r, echo=FALSE}
 #| label: fig-split-rcbd_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -334,7 +335,7 @@ hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = "tu
 hist(oats$Y, main = "", xlab = "yield", col = "turquoise")
 ```
 
-#### Model Building the Model
+#### Model Building
 
 We are evaluating the effect of V, N and their interaction on yield. The `1|B/V` implies that random intercepts vary with block and V within each block.
 
@@ -373,31 +374,29 @@ As shown in example 1, We need to verify the normality of residuals and homogene
 
 ::: panel-tabset
 ### lme4
-
 ```{r,  fig.height=3}
 check_model(model2_lmer, check = c('normality', 'linearity'))
 ```
 
 ### nlme
-
 ```{r,  fig.height=3}
 check_model(model2_lme, check = c('normality', 'linearity'))
 ```
 :::
 
+Residuals from the model follows normal distribution and no evidence of Homoscedasticity.
+
 #### Inference
 
-We can evaluate the model for the analysis of variance, for V, N and their interaction effect.
+Let's have a look at the analysis of variance, for V, N and their interaction effect.
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 car::Anova(model2_lmer, type = "III", test.statistics = "F")
 ```
 
 ### nlme
-
 ```{r}
 anova(model2_lme, type = "marginal")
 ```
@@ -407,20 +406,18 @@ Next, we can estimate marginal means for V, N, or their interaction (V\*N) effec
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 emm1 <- emmeans(model2_lmer, ~ V *N) 
 emm1
 ```
 
 ### nlme
-
 ```{r}
 emm1 <- emmeans(model2_lme, ~ V *N) 
 emm1
 ```
 :::
 
-The estimated means for Marvellous variety were higher compared to varieties across all N treatments.
+The estimated means for Marvellous variety were higher compared to other varieties across all N treatments.
 
 In the next chapter, we will continue with extension of split plot design called split-split plot design.

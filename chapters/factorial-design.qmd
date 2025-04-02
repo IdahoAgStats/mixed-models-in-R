@@ -73,6 +73,8 @@ data1 <- agridat::cochran.factorial %>%
 
 ### Data Integrity Checks
 
+- Check structure of the data 
+
 First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and yield should be numeric.
 
 ```{r}
@@ -81,7 +83,9 @@ str(data1)
 
 This looks good.
 
-The next step is to inspect the independent variables and make sure the expected levels are present in the data.
+- Inspect the independent variables
+
+we are inspecting levels of independent variables to make sure the expected levels are present in the data.
 
 ```{r}
 table(data1$d, data1$n, data1$p, data1$k)
@@ -89,7 +93,18 @@ table(data1$d, data1$n, data1$p, data1$k)
 
 The design looks well balanced.
 
-The last step is to inspect the dependent variable to ensure it looks as expected.
+- Check the extent of missing data
+
+
+```{r}
+colSums(is.na(data1))
+```
+
+There are no missing values in this data set.
+
+- Inspect the dependent variable 
+
+This is the last step is to inspect the dependent variable to ensure it looks as expected.
 
 ```{r, echo=FALSE}
 #| label: fig-factorial_hist
@@ -162,10 +177,8 @@ check_model(model2_lme, check = c('normality', 'linearity'))
 ```
 :::
 
-The linearity and homogeneity of variance plots show no trend.
+The linearity and homogeneity of variance plots show no trend. There are modest departure in the normality of residuals with heavy tails. 
 
-this is not qq-plot -- The normal Q-Q plots for the overall residuals and for the random effects all fall nearly on a straight line so we can be satisfied with that.
-mention: modest departures
 
 ### Inference
 

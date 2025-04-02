@@ -1,6 +1,12 @@
-# Randomized Complete Block Design
+---
+title: Randomized Complete Block Design
+reference-location: margin
+nocite: |
+  @broman, @pvals, @greenland
+---
 
-```{r, include=FALSE, echo=FALSE}
+
+```{r, include=FALSE, echo=FALSE, eval=FALSE}
 source(here::here("settings.r"))
 
 par(mar=c(5.1, 6, 4.1, 2.1))
@@ -176,7 +182,7 @@ Remember those iid assumptions? Let's make sure we actually met them.
 
 #### Original Method {#old-iid-checks}
 
-There are special plotting function written for lme4 and nlme objects (ie.`plot(lmer_object)`) for checking the homoscedasticity (constant variance).
+We will start inspecting the model assumptions by for checking the homoscedasticity (constant variance) first using a `plot()` function in base R.
 
 ```{r, echo=FALSE}
 #| label: fig-rcbd_error-1
@@ -194,9 +200,9 @@ plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.),
      xlab = "fitted values", ylab = "studentized residuals")
 ```
 
-We are looking for a random and uniform distribution of points. This looks good!
+We have observed a random and uniform distribution of points. This looks good!
 
-Checking normality requiring first extracting the model residuals with `resid()` and then generating a qq-plot and line.
+As explained in [**Chapter 4**](model-flow.qmd) we will first extract residuals using`resid()` and then generate a qq-plot and line.
 
 ```{r, echo=FALSE}
 #| label: fig-rcbd_norm-1
@@ -215,9 +221,7 @@ This is reasonably good. Things do tend to fall apart at the tails a little, so 
 
 #### New Method {#new-iid-checks}
 
-Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/){.external target="_blank"} package, which provides a comprehensive suite of diagnostic plots.
-
-
+Here, we will use the `check_model()` function from the **performance** package to look at the normality and linearity of the residuals. 
 
 ```{r, fig.height=3}
 check_model(model_rcbd_lmer, check = c('normality', 'linearity'))
@@ -242,12 +246,18 @@ This table indicates the estimated marginal means ("emmeans", sometimes called "
 
 At this point, the analysis goals have been met: we know the estimated means for each treatment and their rankings.
 
-If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by **nlme**, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in **nlme**. The lmer-extender package **lmerTest* implements type 3 tests and the Kenward-Rogers method of degrees of freedom approximation by default.[^rcbd-1]
+If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by **nlme**, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in **nlme**. The lmer-extender package **lmerTest* implements type 3 tests and the Kenward-Rogers method of degrees of freedom approximation by default.^[rcbd-1.]
 
 
 [^rcbd-1] The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 ("partial") drops model terms one at a time. This can effect the resuls of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points.
 
+[This is a span that has the class aside which places it in the margin without a footnote number.]{.aside}
+
+
+cat("This is an inline footnote.^[This is a footnote in the margin.]") 
+
 In this example, there is only one fixed effect, so the sums of squares choice is immaterial. 
+
 ::: panel-tabset
 ### lme4
 
