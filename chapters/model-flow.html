@@ -354,8 +354,9 @@ Note
 </div>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>factor v character integer v numeric</p>
-</div></div><ol start="3" type="1">
+<p>Often, factor and character data class are used interchangeable. But we need to keep in mind the difference in these two classes. A character variable represents data stored in a text format. A factor variable is categorical variable type with values stored as levels. =factor v character</p>
+<p>Likewise, there is a difference in ‘integer’ and ‘numeric’ data class. A ‘integer’ class stores data as a whole number. A ‘numeric’ class stores decimal values as well (this is a default data class for numbers in R).</p>
+</div></div><ol start="2" type="1">
 <li>Inspect the independent variables</li>
 </ol>
 <p>Running a cross tabulations across treatments and replications is generally enough to make sure the expected levels are present in the data.</p>
@@ -424,8 +425,8 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>You may have noticed the final argument for <code>na.action</code> in the model statement:</p>
-<pre><code>model_rcbd_lmer &lt;- lmer(yield_bu_a ~ variety + (1|block),
-                   data = var_trial, 
+<pre><code>model_lmer &lt;- lmer(response ~ fixed + (1|random),
+                   data = data1, 
                    na.action = na.exclude)</code></pre>
 <p>The argument <code>na.action = na.exclude</code> provides instructions for how to handle missing data. <code>na.exclude</code> removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g.&nbsp;predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.</p>
 <p>Even when there are no missing data and this step is not necessary, it’s a good habit to be in.</p>
@@ -514,8 +515,7 @@ Note
 </section>
 <section id="inference" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.5</span> Inference</h2>
-<p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle <a href="https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/">crossed</a> as well as nested random factors.</p>
-<p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
+<p>After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using <code>anova()</code> function or we can estimate marginal means using <code>emmeans()</code> function from the <strong>emmeans</strong> package. Further, we can also run a post-hoc comparison to evaluate the pairwise comparison or contrasts using estimated means.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">

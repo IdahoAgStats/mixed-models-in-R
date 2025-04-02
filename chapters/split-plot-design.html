@@ -484,7 +484,7 @@ window.Quarto = {
 <li>Check the number of missing values in each column.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(height_data, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(height_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  time manage    rep sample height 
      0      0      0      0      0 </code></pre>
@@ -592,7 +592,7 @@ levels of nesting</code></pre>
 </section>
 <section id="check-model-assumptions" class="level4" data-number="7.2.1.3">
 <h4 data-number="7.2.1.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">7.2.1.3</span> Check Model Assumptions</h4>
-<p>Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals 3. values with high leverage.</p>
+<p>Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals.</p>
 <p>We will use <code>check_model()</code> function from <strong>performance</strong> package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
@@ -623,7 +623,7 @@ levels of nesting</code></pre>
 </div>
 </div>
 </div>
-<p>In this case the residuals fit the assumptions of the model well.</p>
+<p>In this case, the residuals fit the assumptions of the model well.</p>
 </section>
 <section id="inference" class="level4" data-number="7.2.1.4">
 <h4 data-number="7.2.1.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">7.2.1.4</span> Inference</h4>
@@ -809,7 +809,10 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 <section id="data-integrity-checks-1" class="level4 page-columns page-full" data-number="7.2.2.1">
 <h4 data-number="7.2.2.1" class="anchored" data-anchor-id="data-integrity-checks-1"><span class="header-section-number">7.2.2.1</span> Data integrity checks</h4>
-<p>As shown in previous example, we will first examine the structure of the data. The “B”, “V”, and “N” needs to be a factor and “Y” should be numeric.</p>
+<ul>
+<li>Check structure of the data</li>
+</ul>
+<p>we will first examine the structure of the data. The “B”, “V”, and “N” needs to be a factor and “Y” should be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -821,8 +824,9 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 </div>
 <ul>
-<li>Next, run the <code>table()</code> command to verify the levels of main-plots and sub-plots.</li>
+<li>Inspect the independent variables</li>
 </ul>
+<p>Next, run the <code>table()</code> command to verify the levels of main-plots and sub-plots.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -834,18 +838,19 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 </div>
 <ul>
-<li>Check the number of missing values in each column.</li>
+<li>Check the extent of missing data</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(oats, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(oats))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>B V N Y 
 0 0 0 0 </code></pre>
 </div>
 </div>
 <ul>
-<li>Last, check the distribution of the dependent variable by plotting a histogram of yield data.</li>
+<li>Inspect the dependent variable</li>
 </ul>
+<p>Last, check the distribution of the dependent variable by plotting a histogram of yield data.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -864,8 +869,8 @@ Figure&nbsp;7.2: Histogram of the dependent variable.
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(oats<span class="sc">$</span>Y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="model-building-the-model" class="level4 page-columns page-full" data-number="7.2.2.2">
-<h4 data-number="7.2.2.2" class="anchored" data-anchor-id="model-building-the-model"><span class="header-section-number">7.2.2.2</span> Model Building the Model</h4>
+<section id="model-building-1" class="level4 page-columns page-full" data-number="7.2.2.2">
+<h4 data-number="7.2.2.2" class="anchored" data-anchor-id="model-building-1"><span class="header-section-number">7.2.2.2</span> Model Building</h4>
 <p>We are evaluating the effect of V, N and their interaction on yield. The <code>1|B/V</code> implies that random intercepts vary with block and V within each block.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -968,10 +973,11 @@ levels of nesting</code></pre>
 </div>
 </div>
 </div>
+<p>Residuals from the model follows normal distribution and no evidence of Homoscedasticity.</p>
 </section>
 <section id="inference-1" class="level4" data-number="7.2.2.4">
 <h4 data-number="7.2.2.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">7.2.2.4</span> Inference</h4>
-<p>We can evaluate the model for the analysis of variance, for V, N and their interaction effect.</p>
+<p>Let’s have a look at the analysis of variance, for V, N and their interaction effect.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -1060,7 +1066,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>The estimated means for Marvellous variety were higher compared to varieties across all N treatments.</p>
+<p>The estimated means for Marvellous variety were higher compared to other varieties across all N treatments.</p>
 <p>In the next chapter, we will continue with extension of split plot design called split-split plot design.</p>
 
 
