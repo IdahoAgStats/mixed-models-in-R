@@ -314,15 +314,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><strong>Singular fit error</strong></li>
 </ol>
-<pre><code>boundary (singular) fit: see ?isSingular</code></pre>
+<p><code>boundary (singular) fit: see ?isSingular</code></p>
 <p>This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.</p>
 <p>This error occurs because one of the variance component is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision will allow.</p>
 <p>There is no single solution for this problem. Here are the possible solutions that you can try:</p>
 <p>First, look at the summary of the fitted model using <code>summary()</code> function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.</p>
 <p>Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> in <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
-<p><strong>fixed-effect model matrix is rank deficient</strong></p>
-<p>Harpreet: Do we need to discuss this?</p>
 <ol start="2" type="1">
+<li><strong>fixed-effect model matrix is rank deficient</strong></li>
+</ol>
+<p>If you are getting a rank deficiency warning in <code>lmer()</code> (from the <strong>lme4</strong> package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.</p>
+<p>Here are methods to diagnose and fix it: - check rank of model matrix using <code>model.matrix()</code> function. If rank &lt; number of columns, your matrix is deficient.</p>
+<ul>
+<li><p>Drop empty factor levels from the data</p></li>
+<li><p>Use simpler random effects</p></li>
+</ul>
+<ol start="3" type="1">
 <li><strong>Model failed to converge</strong>. There are several different error messages for non-convergence, depending on what happened:</li>
 </ol>
 <p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
@@ -330,12 +337,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When there difference becomes sufficiently small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.</p>
 <p>Running this code in an R console will bring up a useful help file with details on how to address convergence issues.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Possible solutions to fix this error are: - Try a different optimizer</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">update</span>(model, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">update</span>(model, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>default optimizer used in <code>lmer()</code> is “Nelder_Mead”, “bobyqa” optimizer is recommended for stability.</p>
 <ul>
@@ -343,11 +350,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>We can update our existing model by increasing max iterations to 100,000.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">update</span>(model1, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optCtrl =</span> <span class="fu">list</span>(<span class="at">maxfun =</span> <span class="dv">100000</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">update</span>(model1, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optCtrl =</span> <span class="fu">list</span>(<span class="at">maxfun =</span> <span class="dv">100000</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
-<li>Last, we can simplfy the model by reducing random effects. ### Other Tools</li>
+<li>Last, we can simplify the model by reducing random effects. ### Other Tools</li>
 </ul>
 <p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well.</p>
 <p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A help ful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
