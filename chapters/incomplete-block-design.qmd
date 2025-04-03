@@ -1,5 +1,7 @@
 ---
 title: "Incomplete Block Design"
+reference-location: margin
+citation-location: margin
 ---
 
 ```{r, include=FALSE, echo=FALSE}
@@ -12,11 +14,13 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 The block design described in [**Chapter 4**](rcbd.qmd) was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g. limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.  
 
-In such cases, randomized incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936, @patterson_1976] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier){.external target="_blank"} by Lukas Meier.
+In such cases, randomized incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). [^icbd-1] [^icbd-2]  An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} is provided in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier){.external target="_blank"} by Lukas Meier.
+
+
 
 Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called "lattice designs" [need refs], but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used. 
 
-In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs" [@paterson]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. 
+In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs"  [@patterson_1976]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. 
 
 
 ### Statistical Model
@@ -100,6 +104,8 @@ desplot::desplot(dat,
 
 #### Data integrity checks
 
+- Check structure of the data 
+
 We will start inspecting the data set firstly by looking at the class of each variable:
 
 ```{r}
@@ -108,8 +114,9 @@ str(dat)
 
 The variables we need for the model are block, gen, and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we do not need to change class of any of the required variables.
 
-Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
+- Inspect the independent variables
 
+Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
 ```{r}
 agg_tbl <- dat %>% group_by(gen) %>% 
@@ -126,6 +133,8 @@ agg_df
 
 There are 31 varieties (levels of gen) and it is perfectly balanced, with exactly one observation per treatment per block.
 
+- Check the extent of missing data
+
 We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables: 
 
 ```{r}
@@ -133,6 +142,8 @@ apply(dat, 2, function(x) sum(is.na(x)))
 ```
 
 No missing data!
+
+- Inspect the dependent variable
 
 Last, let's plot a histogram of the dependent variable. This is a quick check before analysis to see if there is any strong deviation in values.
 ```{r, echo=FALSE}
@@ -151,7 +162,9 @@ This data set is ready for analysis!
 
 #### Model Building
 
-We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect).[^icb-1]
+We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect). ^[ Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.]
+
+[^icb-1]
 
 [^icb-1] Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.
 

@@ -46,8 +46,14 @@ library(dplyr); library(desplot); library(broom.mixed)
 
 For this example, we will use Rice strip-plot experiment data from the **agridat** package. This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.
 
+```{r, eval=FALSE, echo=FALSE}
+#save data from the package
+rice_stripplot <- agridat::gomez.stripplot
+write.csv(rice_stripplot, here::here("data", "rice_stripplot.csv"))
+```
+
 ```{r}
-data1 <- agridat::gomez.stripplot
+data1 <- read.csv(here::here("data", "rice_stripplot.csv"))
 ```
 
 |       |                              |
@@ -71,8 +77,9 @@ desplot(data1, gen ~ col*row,
 ```
 
 ### Data integrity checks
+- Check structure of the data
 
-First thing we need to verify is the class of the variables in data1. The 'rep', 'nitro', and 'gen' needs to be a factor/character variables and 'yield' should be numeric.
+The 'rep', 'nitro', and 'gen' variables in the data needs to be a factor/character variables and 'yield' should be numeric.
 
 ```{r}
 str(data1)
@@ -83,8 +90,9 @@ Let's convert 'nitro' from numeric to factor.
 ```{r}
 data1$nitro <- as.factor(data1$nitro)
 ```
+- Inspect the independent variables
 
-Let's have a look at the balance of treatment factors by running a a cross tabulation of independent variables.
+Let's running a a cross tabulation of independent variables to look at the balance of treatment factors.
 
 ```{r}
 table(data1$gen, data1$nitro)
@@ -92,15 +100,19 @@ table(data1$gen, data1$nitro)
 
 It looks balanced with 3 number of observations for each variety and nitrogen level.
 
+- Check the extent of missing data
+
 Next step is to identify if there are any missing observations in the data set.
 
 ```{r}
-apply(data1, 2, function(x) sum(is.na(x)))
+colSums(is.na(data1))
 ```
 
 We don't have any missing values in this data set.
 
-Lastly, let's check the distribution of dependent variable by plotting a histogram.
+- Inspect the dependent variable
+
+Let's check the distribution of dependent variable by plotting a histogram.
 
 ```{r, eval=FALSE}
 hist(data1$yield, main = "", xlab = "yield", col = "turquoise")
@@ -123,7 +135,6 @@ The rep, gen nested in rep, and nitro nested in rep were random effects in the m
 
 ::: panel-tabset
 #### lme4
-
 ```{r}
 model_lmer <- lmer(yield ~  nitro*gen +  (1|rep) + 
                    (1|rep:gen) + (1|rep:nitro), 
@@ -132,9 +143,7 @@ tidy(model_lmer)
 ```
 
 #### nlme
-
 ```{r}
-
 model_lme <-lme(yield ~  nitro*gen,
                 random = list(one = pdBlocked(list(
         pdIdent(~ 0 + rep), 
@@ -157,13 +166,11 @@ Let's evaluate the assumptions of linear mixed models by looking at the residual
 
 ::: panel-tabset
 #### lme4
-
 ```{r, fig.height=3}
 check_model(model_lmer, check = c('normality', 'linearity'))
 ```
 
 #### nlme
-
 ```{r, layout="[[1,1], [1]]"}
 plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
@@ -181,12 +188,11 @@ We can evaluate the model for the analysis of variance, for main and interaction
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 car::Anova(model_lmer, type = "III", test.statistics = "F")
 ```
-### nlme
 
+### nlme
 ```{r}
 anova(model_lme, type = "marginal")
 ```
@@ -198,21 +204,19 @@ Next, We can estimate marginal means for nitro and gen interaction effects using
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 emm1 <- emmeans(model_lmer, ~ nitro*gen) 
 emm1
 ```
 
 ### nlme
-
 ```{r}
 emm1 <- emmeans(model_lme, ~ nitro*gen)
 emm1
 ```
 :::
 
-Note that, confidence intervals were not estimated through emmeans from lme model.
+Note that, confidence intervals were not estimated through `emmeans()` from `lme()` model.
 
 ::: callout-note
 ## `lme vs lmer`
