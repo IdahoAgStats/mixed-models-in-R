@@ -4,7 +4,7 @@
 source(here::here("settings.r"))
 ```
 
-In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called "longtudinal data").
+In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called **"longtudinal data"**).
 
 Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
 
@@ -30,7 +30,7 @@ The repeated measures syntax in **nlme** follow this convention:
 
 The argument for 'value' is the starting value for iterations (zero, unless you specify something else), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t` or `~ t|g`, specifying a time covariate $t$ and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use `~t|g` form, the correlation structure is assumed to apply only to observations within the same grouping level. The covariate for this correlation structure must be a integer value. `corCompSymm()` and `corSymm()` follow the same argument syntax. 
 
-There are other covariance structures (e.g. `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Type `??cor` in an R console for more options and details on the syntax
+There are other covariance structures (e.g. `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Type `?cor` in an R console for more options and details on the syntax
 
 For examples used in this chapter we will fitting model using `mmrm` and `lme` packages. So, let's start with loading the required libraries for this analysis.
 
@@ -58,10 +58,17 @@ The example shown below contains data from a sorghum trial laid out as a randomi
 
 We need to have time as numeric and factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).
 
-```{r}
-dat <- agriTutorial::sorghum %>%   
+```{r, eval=FALSE, echo=FALSE}
+#save data from the package
+repeated_meas <- agriTutorial::sorghum %>%   
   mutate(week = as.numeric(factweek),
          block = as.character(varblock)) 
+
+write.csv(repeated_meas, here::here("data", "repeated_meas.csv"))
+```
+
+```{r}
+dat <- read.csv(here::here("data", "repeated_meas.csv"))
 ```
 
 |           |                                     |
@@ -76,6 +83,8 @@ dat <- agriTutorial::sorghum %>%
 
 ### Data Integrity Checks
 
+- Check structure of the data
+
 Let's do preliminary data check including evaluating data structure, distribution of treatments, number of missing values, and distribution of response variable.
 
 ```{r}
@@ -87,6 +96,8 @@ In this data, we have block, factplot, factweek as factor variables and y & week
 ```{r}
 table(dat$variety, dat$block)
 ```
+
+- Inspect the independent variables
 
 The cross tabulation shows a equal number of variety treatments in each block.
 

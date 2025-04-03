@@ -221,14 +221,12 @@ The `anova()` function prints the the rows of analysis of variance table for who
 
 ::: panel-tabset
 #### lme4
-
 ```{r}
 anova(model_lmer, type = '3')
 #car::Anova(model_lmer, type = 'III', test.statistics = "F")
 ```
 
 #### nlme
-
 ```{r}
 anova(model_lme, type = "marginal")
 ```
@@ -238,14 +236,12 @@ We can further compute estimated marginal means for each fixed effect and intera
 
 ::: panel-tabset
 #### lme4
-
 ```{r}
 m1 <- emmeans(model_lmer, ~ time)
 m1
 ```
 
 #### nlme
-
 ```{r}
 m2 <- emmeans(model_lme, ~ time)
 m2
@@ -349,7 +345,6 @@ $\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = ma
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 model2_lmer <- lmer(Y ~  V + N + V:N + (1|B/V), 
                    data = oats, 
@@ -358,7 +353,6 @@ tidy(model2_lmer)
 ```
 
 ### nlme
-
 ```{r}
 model2_lme <- lme(Y ~  V + N + V:N ,
                   random = ~1|B/V,

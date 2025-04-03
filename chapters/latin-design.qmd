@@ -38,24 +38,26 @@ Let's start the analysis firstly by loading the required libraries:
 
 ::: panel-tabset
 ### lme4
-
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans); library(performance)
-library(dplyr); library(broom.mixed); library(agridat); library(desplot)
+library(dplyr); library(broom.mixed)
 ```
 
 ### nlme
-
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans); library(performance)
-library(dplyr); library(agridat); library(desplot)
+library(dplyr)
 ```
 :::
 
-The data used in this example is extracted from the **agridat** package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.
-
+The data used in this example was extracted from the **agridat** package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.
+```{r, eval=FALSE, echo=FALSE}
+#save data from the package
+latin_square <- agridat::goulden.latin
+write.csv(latin_square, here::here("data", "latin_square.csv"))
+```
 ```{r}
-dat <- agridat::goulden.latin
+dat <- read.csv(here::here("data", "latin_square.csv"))
 ```
 
 |       |                               |
@@ -69,12 +71,13 @@ dat <- agridat::goulden.latin
 
 ### Data integrity checks
 
-Firstly, let's verify the class of variables in the dataset using `str()` function in base R
+- Check structure of the data
+
+First, let's verify the class of variables in the dataset using `str()` function in base R
 
 ```{r}
 str(dat)
 ```
-
 Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer to factor/character.
 
 ```{r}
@@ -83,28 +86,32 @@ dat1 <- dat |>
                col = as.factor(col))
 ```
 
+- Inspect the independent variables
+
 Next, to verify if the data meets the assumption of the Latin square design let's plot the field layout for this experiment.
 
 ```{r, echo=FALSE, warning=FALSE}
-
 desplot::desplot(data = dat1, flip = TRUE,
         form = trt ~ col + row,         
         text = trt, cex = 0.7, shorten = "no", 
         out1 = trt,                          
        # out2 = block,  
         main = "Alpha Lattice Design", show.key =F) 
-
 ```
 
 This looks great! Here we can see that there are equal number (5) of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn't appear more than once in each row and column.
 
+- Check the extent of missing data
+
 Next step is to check if there are any missing values in response variable.
 
 ```{r}
-apply(dat, 2, function(x) sum(is.na(x)))
+colSums(is.na(dat))
 ```
 
 No missing values detected in this data set.
+
+- Inspect the dependent variable
 
 Before fitting the model, let's create a histogram of response variable to see if there are extreme values.
 
@@ -113,11 +120,11 @@ Before fitting the model, let's create a histogram of response variable to see i
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$yield, main = "", xlab = "yield", col = "turquoise")
+hist(dat1$yield, main = "", xlab = "yield", col = "turquoise")
 ```
 
 ```{r, eval=FALSE}
-hist(dat$yield, main = "", xlab = "yield", col = "turquoise")
+hist(dat1$yield, main = "", xlab = "yield", col = "turquoise")
 ```
 
 ### Model fitting
@@ -160,13 +167,13 @@ check_model(m1_a, check = c("linearity", "normality"))
 #### nlme
 
 ::: {.column-body layout-ncol="2"}
-```{r echo=FALSE, eval=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 par(mar=c(5.1, 5, 2.1, 2.1))
 plot(residuals(m1_b), xlab = "fitted values", ylab = "residuals",
      cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
 ```
 
-```{r echo=FALSE, eval=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 par(mar=c(5.1, 5, 2.1, 2.1))
 qqvals <- qqnorm(residuals(m1_b), plot.it=FALSE)
 qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(m1_b))
@@ -182,7 +189,7 @@ These visuals imply that assumptions of linear model have been met.
 
 ### Inference
 
-We can now proceed to the variance partioning. In this case, we will use `anova()` with `type = 1` or `type = "sequesntial"` for lmer() and lme() models, respectively.
+We can now proceed to the variance partioning. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for lmer() and lme() models, respectively.
 
 ::: panel-tabset
 #### lme4
