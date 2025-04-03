@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Mixed model terms – Field Guide to the R Mixed Model Wilderness</title>
+<title>3&nbsp; Mixed Model Background – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -311,11 +311,12 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#models" id="toc-models" class="nav-link active" data-scroll-target="#models"><span class="header-section-number">3.1</span> Models</a>
+  <li><a href="#mixed-model-terms" id="toc-mixed-model-terms" class="nav-link active" data-scroll-target="#mixed-model-terms"><span class="header-section-number">3.1</span> Mixed model terms</a></li>
+  <li><a href="#models" id="toc-models" class="nav-link" data-scroll-target="#models"><span class="header-section-number">3.2</span> Models</a>
   <ul class="collapse">
-  <li><a href="#random-slopes-models" id="toc-random-slopes-models" class="nav-link" data-scroll-target="#random-slopes-models"><span class="header-section-number">3.1.1</span> Random slopes models</a></li>
+  <li><a href="#random-slopes-models" id="toc-random-slopes-models" class="nav-link" data-scroll-target="#random-slopes-models"><span class="header-section-number">3.2.1</span> Random slopes models</a></li>
   </ul></li>
-  <li><a href="#formula-notation" id="toc-formula-notation" class="nav-link" data-scroll-target="#formula-notation"><span class="header-section-number">3.2</span> R Formula Syntax for Random and Fixed Effects</a></li>
+  <li><a href="#formula-notation" id="toc-formula-notation" class="nav-link" data-scroll-target="#formula-notation"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</a></li>
   </ul>
 </nav>
     </div>
@@ -324,7 +325,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed model terms</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed Model Background</span></h1>
 </div>
 
 
@@ -341,16 +342,19 @@ window.Quarto = {
 </header>
 
 
+<section id="mixed-model-terms" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="mixed-model-terms"><span class="header-section-number">3.1</span> Mixed model terms</h2>
 <p>Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. These are also called “multilevel or”hierarchical” models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.</p>
 <p>This tutorial concerns (general) linear mixed models (sometimes abbreviated as “LMM”) where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of <em>generalized</em> linear mixed models (sometimes abbreviated “GLMM”), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.</p>
 <p><em>Fixed effects</em> represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g.&nbsp;levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares.</p>
 <p><em>Random effects</em> are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are inherently categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are especially useful when we have (1) many levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and/or (3) uneven sampling across levels. The general thinking is that random effects represent a small sample of a population you want to make inference on.</p>
-<section id="models" class="level2 page-columns page-full" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="models"><span class="header-section-number">3.1</span> Models</h2>
+</section>
+<section id="models" class="level2 page-columns page-full" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="models"><span class="header-section-number">3.2</span> Models</h2>
 <p>Recall simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>):</p>
 <p><span class="math display">\[  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i \]</span></p>
 <p><span class="math inline">\(Y_i\)</span> is the dependent variable, and <span class="math inline">\(x_i\)</span> is the independent variable. The value for <span class="math inline">\(\beta_0\)</span> is the overall average for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\beta_1\)</span> is the change in <span class="math inline">\(Y\)</span> as <span class="math inline">\(X\)</span> changes. The slope for <span class="math inline">\(\beta_1\)</span> could represent the effects of increasing quantities of nitrogen fertilizer on crop growth.</p>
-<p>The errors,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (sometimes called “iid”) following a normal distribution for general linear mixed models. Later on we will explore relaxing these assumptions.</p>
+<div class="page-columns page-full"><p>The errors,  <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (sometimes called “iid”) following a normal distribution for general linear mixed models. Later on we will explore relaxing these assumptions.</p><div class="no-row-height column-margin column-container"><span class="margin-aside">For the rest of this tutorial we will be using the term “residual” and not error term to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, it is the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></span></div></div>
 <p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> This is an important model assumption we will revisit frequently in this tutorial.</p>
 <p>There is also an expected distribution for <span class="math inline">\(Y_i\)</span>, but we will not be looking at this again.</p>
 <p><span class="math display">\[ Y_i|x_i \sim𝑁(X\beta, \sigma^2) \]</span></p>
@@ -366,8 +370,8 @@ window.Quarto = {
 <figcaption>Example mixed model with random intercepts but identical slopes</figcaption>
 </figure>
 </div>
-</div></div><section id="random-slopes-models" class="level3 page-columns page-full" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="random-slopes-models"><span class="header-section-number">3.1.1</span> Random slopes models</h3>
+</div></div><section id="random-slopes-models" class="level3 page-columns page-full" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="random-slopes-models"><span class="header-section-number">3.2.1</span> Random slopes models</h3>
 <p>Other alternatives to the random intercept model include modelling random slopes where the slope between X and Y changes according to the random effect:</p>
 <p><span class="math display">\[  Y_{ij} = \beta_0 + (\beta_1 + r_j)X_{ij} + \epsilon_{ij}\]</span></p>
 <p>In this model, the <span class="math inline">\(\beta\)</span> is the overage effect of X on Y, and <span class="math inline">\(r_i\)</span> is a random effect for block <span class="math inline">\(j\)</span>, and all observations share a common intercept, <span class="math inline">\(\beta_0\)</span>.</p>
@@ -393,8 +397,8 @@ window.Quarto = {
 </div></div><p>Anecdotally, these models appear to be uncommon in agronomic trials.</p>
 </section>
 </section>
-<section id="formula-notation" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="formula-notation"><span class="header-section-number">3.2</span> R Formula Syntax for Random and Fixed Effects</h2>
+<section id="formula-notation" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="formula-notation"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</h2>
 <p>Formula notation is often used in the R syntax for linear models. It follows this convention: <span class="math inline">\(Y ~ X\)</span>, where <span class="math inline">\(Y\)</span> is the dependent variable (the response) and <span class="math inline">\(X\)</span> is/are the independent variable(s) that is, the experimental treatments or interventions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>my_formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(Y <span class="sc">~</span> treatment1 <span class="sc">+</span> treatment2)</span>
@@ -450,12 +454,6 @@ window.Quarto = {
 <p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
 
 
-</section>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="fn1"><p>For the rest of this tutorial we will be using the term “residual” and not error term to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, it is the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
 </section>
 
 </main> <!-- /main -->

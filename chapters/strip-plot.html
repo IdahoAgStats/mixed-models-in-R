@@ -376,7 +376,7 @@ window.Quarto = {
 </div>
 <p>For this example, we will use Rice strip-plot experiment data from the <strong>agridat</strong> package. This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> agridat<span class="sc">::</span>gomez.stripplot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_stripplot.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -412,22 +412,26 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="9.2.1">
 <h3 data-number="9.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">9.2.1</span> Data integrity checks</h3>
-<p>First thing we need to verify is the class of the variables in data1. The ‘rep’, ‘nitro’, and ‘gen’ needs to be a factor/character variables and ‘yield’ should be numeric.</p>
+<ul>
+<li>Check structure of the data</li>
+</ul>
+<p>The ‘rep’, ‘nitro’, and ‘gen’ variables in the data needs to be a factor/character variables and ‘yield’ should be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   54 obs. of  6 variables:
+<pre><code>'data.frame':   54 obs. of  7 variables:
+ $ X    : int  1 2 3 4 5 6 7 8 9 10 ...
  $ yield: int  2373 4076 7254 4007 5630 7053 2620 4676 7666 2726 ...
- $ rep  : Factor w/ 3 levels "R1","R2","R3": 1 1 1 1 1 1 1 1 1 1 ...
+ $ rep  : chr  "R1" "R1" "R1" "R1" ...
  $ nitro: int  0 60 120 0 60 120 0 60 120 0 ...
- $ gen  : Factor w/ 6 levels "G1","G2","G3",..: 1 1 1 2 2 2 3 3 3 4 ...
+ $ gen  : chr  "G1" "G1" "G1" "G2" ...
  $ col  : int  1 3 2 1 3 2 1 3 2 1 ...
  $ row  : int  1 1 1 3 3 3 4 4 4 2 ...</code></pre>
 </div>
@@ -436,7 +440,10 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>nitro <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data1<span class="sc">$</span>nitro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s have a look at the balance of treatment factors by running a a cross tabulation of independent variables.</p>
+<ul>
+<li>Inspect the independent variables</li>
+</ul>
+<p>Let’s running a a cross tabulation of independent variables to look at the balance of treatment factors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data1<span class="sc">$</span>gen, data1<span class="sc">$</span>nitro)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -451,16 +458,22 @@ window.Quarto = {
 </div>
 </div>
 <p>It looks balanced with 3 number of observations for each variety and nitrogen level.</p>
+<ul>
+<li>Check the extent of missing data</li>
+</ul>
 <p>Next step is to identify if there are any missing observations in the data set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(data1, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(data1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>yield   rep nitro   gen   col   row 
-    0     0     0     0     0     0 </code></pre>
+<pre><code>    X yield   rep nitro   gen   col   row 
+    0     0     0     0     0     0     0 </code></pre>
 </div>
 </div>
 <p>We don’t have any missing values in this data set.</p>
-<p>Lastly, let’s check the distribution of dependent variable by plotting a histogram.</p>
+<ul>
+<li>Inspect the dependent variable</li>
+</ul>
+<p>Let’s check the distribution of dependent variable by plotting a histogram.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -648,7 +661,7 @@ Crossed random effects
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -662,10 +675,10 @@ Crossed random effects
 <div class="cell quarto-layout-panel" data-layout="[[1,1], [1]]">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="672"></p>
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -748,14 +761,8 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in model.matrix.default(trms, m, contrasts.arg = contrasts): variable
-'rep' is absent, its contrast will be ignored
-Warning in model.matrix.default(trms, m, contrasts.arg = contrasts): variable
-'rep' is absent, its contrast will be ignored</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in qt((1 - level)/adiv, df): NaNs produced</code></pre>
 </div>
@@ -787,7 +794,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>Note that, confidence intervals were not estimated through emmeans from lme model.</p>
+<p>Note that, confidence intervals were not estimated through <code>emmeans()</code> from <code>lme()</code> model.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">

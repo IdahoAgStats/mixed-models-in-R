@@ -365,13 +365,17 @@ window.Quarto = {
 </header>
 
 
-<section id="background" class="level2" data-number="10.1">
+<section id="background" class="level2 page-columns page-full" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="background"><span class="header-section-number">10.1</span> Background</h2>
 <p>The block design described in <a href="../chapters/rcbd.html"><strong>Chapter 4</strong></a> was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g.&nbsp;limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.</p>
-<p>In such cases, randomized incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches <span class="citation" data-cites="yates_1936">Patterson and Williams (<a href="../references.html#ref-patterson_1976" role="doc-biblioref">1976</a>)</span> for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An <a href="https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html" class="external" target="_blank">excellent description of incomplete block design</a> is provided in <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier" class="external" target="_blank"><em>ANOVA and Mixed Models</em></a> by Lukas Meier.</p>
-<p>Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called “lattice designs” [need refs], but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used.</p>
-<p>In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as “resolvable incomplete block designs” or “partially balanced incomplete block designs” <span class="citation" data-cites="paterson">(<a href="../references.html#ref-paterson" role="doc-biblioref"><strong>paterson?</strong></a>)</span>. This design has been more commonly used instead of balanced IBD because of it’s practicability, flexibility, and versatility.</p>
-<section id="statistical-model" class="level3" data-number="10.1.1">
+<p>In such cases, randomized incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches <span class="citation" data-cites="yates_1936">(<a href="../references.html#ref-yates_1936" role="doc-biblioref">Yates 1936</a>)</span> for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). [^icbd-1] [^icbd-2] An <a href="https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html" class="external" target="_blank">excellent description of incomplete block design</a> is provided in <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier" class="external" target="_blank"><em>ANOVA and Mixed Models</em></a> by Lukas Meier.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-yates_1936" class="csl-entry" role="listitem">
+Yates, F. 1936. <span>“A New Method of Arranging Variety Trials Involving a Large Number of Varieties.”</span> <em>J Agric Sci</em> 26: 424–55.
+</div></div><p>Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called “lattice designs” [need refs], but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used.</p>
+<p>In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as “resolvable incomplete block designs” or “partially balanced incomplete block designs” <span class="citation" data-cites="patterson_1976">(<a href="../references.html#ref-patterson_1976" role="doc-biblioref">Patterson and Williams 1976</a>)</span>. This design has been more commonly used instead of balanced IBD because of it’s practicability, flexibility, and versatility.</p>
+<div class="no-row-height column-margin column-container"><div id="ref-patterson_1976" class="csl-entry" role="listitem">
+Patterson, H. D., and E. R. Williams. 1976. <span>“A <span>New</span> <span>Class</span> of <span>Resolvable</span> <span>Incomplete</span> <span>Block</span> <span>Designs</span>.”</span> <em>Biometrika</em> 63 (1): 83–92. <a href="https://doi.org/10.2307/2335087">https://doi.org/10.2307/2335087</a>.
+</div></div><section id="statistical-model" class="level3" data-number="10.1.1">
 <h3 data-number="10.1.1" class="anchored" data-anchor-id="statistical-model"><span class="header-section-number">10.1.1</span> Statistical Model</h3>
 <p>The statistical model for a balanced incomplete block design is:</p>
 <p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span></p>
@@ -466,6 +470,9 @@ Note on Sums of Squares
 </div>
 <section id="data-integrity-checks" class="level4 page-columns page-full" data-number="10.2.1.1">
 <h4 data-number="10.2.1.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">10.2.1.1</span> Data integrity checks</h4>
+<ul>
+<li>Check structure of the data</li>
+</ul>
 <p>We will start inspecting the data set firstly by looking at the class of each variable:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -479,6 +486,9 @@ Note on Sums of Squares
 </div>
 </div>
 <p>The variables we need for the model are block, gen, and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we do not need to change class of any of the required variables.</p>
+<ul>
+<li>Inspect the independent variables</li>
+</ul>
 <p>Next, let’s check the independent variables. We can look at this by running a cross tabulations among block and gen factors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
@@ -541,6 +551,9 @@ Note on Sums of Squares
 </div>
 </div>
 <p>There are 31 varieties (levels of gen) and it is perfectly balanced, with exactly one observation per treatment per block.</p>
+<ul>
+<li>Check the extent of missing data</li>
+</ul>
 <p>We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -550,6 +563,9 @@ Note on Sums of Squares
 </div>
 </div>
 <p>No missing data!</p>
+<ul>
+<li>Inspect the dependent variable</li>
+</ul>
 <p>Last, let’s plot a histogram of the dependent variable. This is a quick check before analysis to see if there is any strong deviation in values.</p>
 <div class="cell page-columns page-full">
 
@@ -570,9 +586,10 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 </div>
 <p>Response variable values fall within expected range, with few extreme values on right tail. This data set is ready for analysis!</p>
 </section>
-<section id="model-building" class="level4" data-number="10.2.1.2">
+<section id="model-building" class="level4 page-columns page-full" data-number="10.2.1.2">
 <h4 data-number="10.2.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">10.2.1.2</span> Model Building</h4>
-<p>We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect).[^icb-1]</p>
+<p>We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect). <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp; Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.</p></div></div><p>[^icb-1]</p>
 <p>[^icb-1] Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
@@ -795,7 +812,9 @@ Confidence level used: 0.95 </code></pre>
 <span class="math inline">\(\tau\)</span> = treatment effect (fixed)<br>
 <span class="math inline">\(\epsilon_{ij(l)}\)</span> = intra-block residual</p>
 <p>The data used in this example is published in <em>Cyclic and Computer Generated Designs</em> <span class="citation" data-cites="john_cyclic">(<a href="../references.html#ref-john_cyclic" role="doc-biblioref">John and Williams 1995</a>)</span>. The trial was laid out in an alpha lattice design. This trial data had 24 genotypes (“gen”), 6 incomplete blocks, each replicated 3 times.</p>
-<p>Let’s start analyzing this example first by loading the required libraries for linear mixed models:</p>
+<div class="no-row-height column-margin column-container"><div id="ref-john_cyclic" class="csl-entry" role="listitem">
+John, JA, and ER Williams. 1995. <em>Cyclic and <span>Computer</span> <span>Generated</span> <span>Designs</span></em>. 2nd ed. New York: Chapman; Hall/CRC Press. <a href="https://doi.org/10.1201/b15075">https://doi.org/10.1201/b15075</a>.
+</div></div><p>Let’s start analyzing this example first by loading the required libraries for linear mixed models:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -1126,20 +1145,11 @@ Confidence level used: 0.95 </code></pre>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-john_cyclic" class="csl-entry" role="listitem">
-John, JA, and ER Williams. 1995. <em>Cyclic and <span>Computer</span> <span>Generated</span> <span>Designs</span></em>. 2nd ed. New York: Chapman; Hall/CRC Press. <a href="https://doi.org/10.1201/b15075">https://doi.org/10.1201/b15075</a>.
-</div>
-<div id="ref-patterson_1976" class="csl-entry" role="listitem">
-Patterson, H. D., and E. R. Williams. 1976. <span>“A <span>New</span> <span>Class</span> of <span>Resolvable</span> <span>Incomplete</span> <span>Block</span> <span>Designs</span>.”</span> <em>Biometrika</em> 63 (1): 83–92. <a href="https://doi.org/10.2307/2335087">https://doi.org/10.2307/2335087</a>.
-</div>
-<div id="ref-yates_1936" class="csl-entry" role="listitem">
-Yates, F. 1936. <span>“A New Method of Arranging Variety Trials Involving a Large Number of Varieties.”</span> <em>J Agric Sci</em> 26: 424–55.
-</div>
-</div>
+
 </section>
 </section>
 </section>
+
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
