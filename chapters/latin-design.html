@@ -372,20 +372,20 @@ window.Quarto = {
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(lmerTest); <span class="fu">library</span>(emmeans); <span class="fu">library</span>(performance)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(agridat); <span class="fu">library</span>(desplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(emmeans); <span class="fu">library</span>(performance)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(agridat); <span class="fu">library</span>(desplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
-<p>The data used in this example is extracted from the <strong>agridat</strong> package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.</p>
+<p>The data used in this example was extracted from the <strong>agridat</strong> package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> agridat<span class="sc">::</span>goulden.latin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"latin_square.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -410,12 +410,16 @@ window.Quarto = {
 </table>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="11.2.1">
 <h3 data-number="11.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">11.2.1</span> Data integrity checks</h3>
-<p>Firstly, let’s verify the class of variables in the dataset using <code>str()</code> function in base R</p>
+<ul>
+<li>Check structure of the data</li>
+</ul>
+<p>First, let’s verify the class of variables in the dataset using <code>str()</code> function in base R</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   25 obs. of  4 variables:
- $ trt  : Factor w/ 5 levels "A","B","C","D",..: 2 3 4 5 1 4 1 3 2 5 ...
+<pre><code>'data.frame':   25 obs. of  5 variables:
+ $ X    : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ trt  : chr  "B" "C" "D" "E" ...
  $ yield: num  4.9 9.3 7.6 5.3 9.3 6.4 4 15.4 7.6 6.3 ...
  $ row  : int  5 4 3 2 1 5 4 3 2 1 ...
  $ col  : int  1 1 1 1 1 2 2 2 2 2 ...</code></pre>
@@ -427,26 +431,35 @@ window.Quarto = {
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">row =</span> <span class="fu">as.factor</span>(row),</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">col =</span> <span class="fu">as.factor</span>(col))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<ul>
+<li>Inspect the independent variables</li>
+</ul>
 <p>Next, to verify if the data meets the assumption of the Latin square design let’s plot the field layout for this experiment.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>This looks great! Here we can see that there are equal number (5) of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn’t appear more than once in each row and column.</p>
+<ul>
+<li>Check the extent of missing data</li>
+</ul>
 <p>Next step is to check if there are any missing values in response variable.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  trt yield   row   col 
-    0     0     0     0 </code></pre>
+<pre><code>    X   trt yield   row   col 
+    0     0     0     0     0 </code></pre>
 </div>
 </div>
 <p>No missing values detected in this data set.</p>
+<ul>
+<li>Inspect the dependent variable</li>
+</ul>
 <p>Before fitting the model, let’s create a histogram of response variable to see if there are extreme values.</p>
 <div class="cell page-columns page-full">
 
@@ -459,7 +472,7 @@ window.Quarto = {
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="model-fitting" class="level3" data-number="11.2.2">
@@ -575,7 +588,7 @@ Number of Groups:
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -595,7 +608,7 @@ Number of Groups:
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -607,7 +620,7 @@ Number of Groups:
 </section>
 <section id="inference" class="level3" data-number="11.2.4">
 <h3 data-number="11.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">11.2.4</span> Inference</h3>
-<p>We can now proceed to the variance partioning. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequesntial"</code> for lmer() and lme() models, respectively.</p>
+<p>We can now proceed to the variance partioning. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequential"</code> for lmer() and lme() models, respectively.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
