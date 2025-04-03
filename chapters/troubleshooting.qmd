@@ -13,9 +13,9 @@ In this tutorial, we have demonstrated how to use linear mixed models for differ
 
 1. **Singular fit error** 
 
-```
-boundary (singular) fit: see ?isSingular
-```
+
+```boundary (singular) fit: see ?isSingular```
+
 This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.
 
 This error occurs because one of the variance component is approximately zero. If a model is "singular", this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer's precision will allow. 
@@ -26,11 +26,19 @@ First, look at the summary of the fitted model using `summary()` function, If ra
 
 Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` in **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
 
-**fixed-effect model matrix is rank deficient**
+2. **fixed-effect model matrix is rank deficient**
 
-Harpreet: Do we need to discuss this?
+If you are getting a rank deficiency warning in `lmer()` (from the **lme4** package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.
 
-2.  **Model failed to converge**. 
+Here are methods to diagnose and fix it:
+- check rank of model matrix using `model.matrix()` function. If rank < number of columns, your matrix is deficient.
+
+- Drop empty factor levels from the data 
+
+- Use simpler random effects
+
+
+3.  **Model failed to converge**. 
 There are several different error messages for non-convergence, depending on what happened:
 
 ```convergence error code = 1 message = iteration limit reached without convergence (10)```
@@ -62,10 +70,9 @@ We can update our existing model by increasing max iterations to 100,000.
 model <- lmer(y ~ x + (1|block), data = dataset)
 model2 <- update(model1, control = lmerControl(optCtrl = list(maxfun = 100000)))
 
-
 ```
 
-- Last, we can simplfy the model by reducing random effects. 
+- Last, we can simplify the model by reducing random effects. 
 ### Other Tools
 
 Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well. 
