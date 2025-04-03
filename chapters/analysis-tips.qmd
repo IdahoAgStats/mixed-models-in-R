@@ -1,8 +1,5 @@
 ---
 title: Tips on Analysis
-reference-location: margin
-nocite: |
-  @broman, @pvals, @greenland
 ---
 
 Statistical analysis is hard. Despite the common view that science produces unambiguous truths, science and statistics involve making decisions and judgement calls that affect the outcomes and conclusions of a study. These decisions are informed by our scientific thinking and (hopefully) justified in our manuscripts so they can be interrogated by other experts. The (now defunct) website 538 published a [well-researched article](https://fivethirtyeight.com/features/science-isnt-broken/#part1){.external target="_blank"} describing some of these difficulties, the temptation to "[p-hack](https://en.wikipedia.org/wiki/Data_dredging){.external target="_blank"}", and the consequences for scientific research. 
@@ -39,32 +36,27 @@ By taking the time to reflect on what it is you exactly want to analyze, this ca
 knitr::include_graphics(here::here("img", "pie_chart.png"))
 ```
 
-This has and will continue to occupy the majority of researcher's time when conducting an analysis. Truly, we are sorry for this. But, please know it is not you, it is the nature of data. Plan for and prepare yourself mentally to spend time cleaning and preparing your data for analysis.[^analysis-tips-1] This will likely take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence data cleaning is worth the time it requires. 
-
-[^analysis-tips-1]: For an excellent set of basic instructions on data preparation, please see: Broman, K. W., & Woo, K. H. (2018). [Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989){.external target="_blank"}. The American Statistician, 72(1), 2–10. 
+This has and will continue to occupy the majority of researcher's time when conducting an analysis. Truly, we are sorry for this. But, please know it is not you, it is the nature of data. Plan for and prepare yourself mentally to spend time cleaning and preparing your data for analysis. ^[For an excellent set of basic instructions on data preparation, please see @broman, [Data Organization in Spreadsheets](https://doi.org/10.1080/00031305.2017.1375989){.external target="_blank"}. The American Statistician, 72(1), 2–10.] This will likely take way longer than the actual analysis! It is needed to ensure you can actually get correct results in an analysis, and hence data cleaning is worth the time it requires. 
 
 
 ### Interpret ANOVA and P-values with Caution
 
 > Informally, a p-value is the probability under a specified statistical model that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be equal to or more extreme than its observed value.
 >
->     ---American Statistical Association
+> -- American Statistical Association/@pvals
 
 The great majority of researchers are deeply interested in p-values. This is not a bad thing *per se*, but sometimes the focus is so strong it comes at the expense of other valuable pieces of information, like treatment estimates! Russ Leanth, author of the [**emmeans package**](https://rvlenth.github.io/emmeans/articles/basics.html#pvalues){.external target="_blank"} refers to this particular practice as "star gazing". 
 
 It is important to evaluate why you want to do ANOVA, what extra information it will bring and what you plan to do with those results. Sometimes, researchers want to conduct an ANOVA even though the original goals of analysis were reached without it. Running an ANOVA may increase or decrease confidence in your other results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us. ANOVA compares across group variation to within group variation. It cannot tell us if anything is the 'same' (there's a separate branch of analysis, 'equivalence testing', for that), and it cannot tell us specifically what is different, unless you are fortunate enough to only have 2 levels in your treatment structure. P-values provide no guarantee that something is truly different or not; it only quantifies the probability you could have observed these results by chance.  
 
-The American Statistics Association recommends that **"Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold."**[^analysis-tips-2] That article also explains what p-values are telling us and how to avoid committing analytical errors and/or misinterpreting p-values. If you have time to read the full article, it will benefit your research!
-
-[^analysis-tips-2]: Wasserstein, R. L., & Lazar, N. A. (2016). [The ASA Statement on p-Values: Context, Process, and Purpose](https://doi.org/10.1080/00031305.2016.1154108){.external target="_blank"}. *The American Statistician,* 70(2), 129–133.
+The American Statistics Association recommends that **"Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold"** [@pvals]. That article also explains what p-values are telling us and how to avoid committing analytical errors and/or misinterpreting p-values. If you have time to read the full article, it will benefit your research!
  
-The main problematic behavior I see is researchers using p-values as the sole criteria on whether to present results:  "We wanted to test if x, y and z had an effect. We ran some model and found that that only x had a significant effect, and those results indicate..." (while results with a p-value \> 0.05 are ignored).
+The main problematic behavior I see is researchers using p-values as the sole criteria on whether to present results:  "We wanted to test if x, y and z had an effect. We ran some model and found that that only x had a significant effect, and those results indicate..." (while results with a p-value less than 0.05 are ignored).
 
 A better option would be to discuss the the results of the analysis and how they addressed the research questions: how did the dependent variable change (or not change) as a result of the treatments/interventions/independent variables? What are the parameters or treatment predictions and what do they tell us with regard to the research goals? And to bolster those estimates, what are the confidence intervals on those estimates? What are the p-values for the statistical tests? P-values can support the results and conclusions, but the main results desired by a researcher are usually the estimates themselves - so lead with that!
 
-To learn more about common pitfalls in interpreting p-values, check out our [blog post](https://agstats.io/posts/p-values/){.external target="_blank"} on the subject and/or this paper[^analysis-tips-3] on the subject. 
+To learn more about common pitfalls in interpreting p-values, check out our [blog post](https://agstats.io/posts/p-values/){.external target="_blank"} on the subject and/or @greenland on the subject. 
 
-[^analysis-tips-3]: Greenland S, Senn SJ, Rothman KJ, Carlin JB, Poole C, Goodman SN, Altman DG. (2016) [Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations](https://doi.org/10.1007/s10654-016-0149-3){.external target="_blank"}. *Eur J Epidemiol*. 31(4):337-50. 
 
 ### Comments on Hypothesis Testing and Usage of Treatment Letters {#sec-cld_warning}
 
