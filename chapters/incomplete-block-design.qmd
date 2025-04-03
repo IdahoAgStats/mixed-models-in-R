@@ -1,7 +1,6 @@
 ---
 title: "Incomplete Block Design"
 reference-location: margin
-citation-location: margin
 ---
 
 ```{r, include=FALSE, echo=FALSE}
@@ -76,10 +75,16 @@ library(dplyr); library(performance)
 
 The data used for this example analysis was extracted from the **agridat** package. This example is comprised of soybean balanced incomplete block experiment.
 
+```{r, eval=FALSE, echo=FALSE}
+#save data from the package
+incblock <- agridat::weiss.incblock
+write.csv(incblock, here::here("data", "incblock.csv"))
+```
 
 ```{r}
-dat <- agridat::weiss.incblock
+dat <- read.csv(here::here("data", "incblock.csv"))
 ```
+
 |       |                              |
 |-------|------------------------------|
 | block   | blocking unit             |
@@ -138,7 +143,7 @@ There are 31 varieties (levels of gen) and it is perfectly balanced, with exactl
 We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables: 
 
 ```{r}
-apply(dat, 2, function(x) sum(is.na(x)))
+colSums(is.na(dat))
 ```
 
 No missing data!
@@ -264,8 +269,15 @@ library(dplyr); library(performance)
 ```
 :::
 
+Let's import a data with partial balanced icomplete design. This data was obtained from the **agridat** package. 
+```{r, eval=FALSE, echo=FALSE}
+#save data from the package
+partial_incblock <- agridat::john.alpha
+write.csv(partial_incblock, here::here("data", "partial_incblock.csv"))
+```
+
 ```{r}
-data1 <- agridat::john.alpha
+data1 <- read.csv(here::here("data", "partial_incblock.csv"))
 ```
 |       |                              |
 |-------|------------------------------|
@@ -276,8 +288,6 @@ data1 <- agridat::john.alpha
 | yield | grain yield in tonnes/ha         |
 
 : Table of variables in the data set {tbl-incom_blk1}
-
-
 
 ```{r, echo=FALSE, fig.height=6, fig.width=8}
 desplot::desplot(data = data1, flip = TRUE,
@@ -291,11 +301,16 @@ desplot::desplot(data = data1, flip = TRUE,
 
 #### Data integrity checks
 
+- Check structure of the data
+
 Let's look into the structure of the data first to verify the class of the variables.
 
 ```{r}
 str(data1)
 ```
+Here, rep, block and gen are character and yield as a integer. We can continue with this. 
+
+- Inspect the independent variables
 
 Next step is to evaluate the independent variables. First, check the number of treatments per replication (each treatment should be replicated 3 times). 
 
@@ -315,6 +330,15 @@ agg_blk
 
 12 treatments randomly appear in incomplete block. Each incomplete block has same number of treatments. 
 
+- Check the extent of missing data
+
+```{r}
+colSums(is.na(data1))
+```
+No missing values in data!
+
+- Inspect the dependent variable
+
 Before fitting the model, it's a good idea to look at the distribution of dependent variable, yield.
 
 ```{r, echo=FALSE}
@@ -331,10 +355,11 @@ hist(data1$yield, main = "", xlab = "yield", col = "turquoise")
 The response variables seems to follow a normal distribution curve, with few values on extreme lower and higher ends. 
 
 #### Model Building
+We are evaluating the response of yield to Gen (fixed effect) and rep and block as a random effect.
+
 
 ::: panel-tabset
 ### lme4
-
 ```{r}
 mod_alpha <- lmer(yield ~ gen + (1|rep/block),
                    data = data1, 
@@ -344,7 +369,6 @@ tidy(mod_alpha)
 
 ### nlme
 ```{r}
-
 mod_alpha1 <- lme(yield ~ gen,
                   random = ~ 1|rep/block,
                   data = data1, 
@@ -367,10 +391,11 @@ check_model(mod_alpha1, check = c('normality', 'linearity'))
 ```
 :::
 
+Here a little skewness is present normality of residuals, but that's not a major deviation in the model assumptions.
 
 #### Inference
 
-Let's ANOVA table using `anova()` from lmer and lme models, respectively.
+Let's look at the ANOVA table using `anova()` from lmer and lme models, respectively.
 
 ::: panel-tabset
 #### lme4
