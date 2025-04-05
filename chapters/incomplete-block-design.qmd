@@ -72,16 +72,16 @@ library(dplyr); library(performance)
 ```
 :::
 
-The data used for this example analysis was extracted from the **agridat** package. This example is comprised of soybean balanced incomplete block experiment.
+The data used for this example analysis is from the **agridat** package (data set "weiss.incblock"). This example is comprised of soybean balanced incomplete block experiment.
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
 incblock <- agridat::weiss.incblock
-write.csv(incblock, here::here("data", "incblock.csv"))
+write.csv(incblock, here::here("data", "weiss_ICB.csv"), row.names = FALSE)
 ```
 
 ```{r}
-dat <- read.csv(here::here("data", "incblock.csv"))
+dat <- read.csv(here::here("data", "weiss_ICB.csv"))
 ```
 
 |       |                              |
@@ -155,11 +155,11 @@ Last, let's plot a histogram of the dependent variable. This is a quick check be
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = "turquoise")
+hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(dat$yield, main = "", xlab = "yield", col = "turquoise")
+hist(dat$yield, main = "", xlab = "yield", col = base_plot_color)
 ```
 Response variable values fall within expected range, with few extreme values on right tail.
 This data set is ready for analysis!
@@ -345,10 +345,10 @@ Before fitting the model, it's a good idea to look at the distribution of depend
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = "turquoise")
+hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 ```{r, eval=FALSE}
-hist(data1$yield, main = "", xlab = "yield", col = "turquoise")
+hist(data1$yield, main = "", xlab = "yield", col = base_plot_color)
 ```
 
 The response variables seems to follow a normal distribution curve, with few values on extreme lower and higher ends. 

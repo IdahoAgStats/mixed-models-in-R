@@ -5,9 +5,7 @@ source(here::here("settings.r"))
 ```
 
 
-In some multifactor factorial experiments, we may be unable to completely randomize the
-order of the treatments. This often results in a generalization of the factorial design called a
-split-plot design. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+In some multifactor factorial experiments, we may be unable to completely randomize the order of the treatments. This often results in a generalization of the factorial design called a split-plot design. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
 
 ## Details for Split Plot Designs
 
@@ -39,11 +37,6 @@ $$\ \delta  \sim N(0, \sigma_\delta)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_\delta$, respectively.
 
-::: callout-note
-#### 'iid' assumption for error terms
-
-In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.
-:::
 
 ```{r, echo=FALSE, fig.height=3.5}
 library(FielDHub)
@@ -93,14 +86,12 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 ```
 :::
 
-### Example model for CRD Split Plot Designs
+### Example model for CRD Split Plot Design
 
-Let's import height data. It is located [here](https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv) if you want to download it yourself (recommended).
-
-The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are time and management represents subplot and 3 replications.
+Let's import a data set that we will analyze for plant height. This experiment employed as CRD split plot design. The treatments are agronomic management (8 levels) and time (4 levels). The whole plot is time, the split plot is management represents, and there are 3 replications.
 
 ```{r}
-height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
+height_data <- read.csv(here::here("data", "height_data.csv"))
 ```
 
 |        |                                 |
@@ -111,14 +102,22 @@ height_data <- readxl::read_excel(here::here("data", "height_data.xlsx"))
 | sample | two sampling units per each rep |
 | height | yield (lbs per acre)            |
 
-: Table of variables in the oat data set {tbl-rcbd_split-plot}
+: Table of variables in the height data set {tbl-rcbd_split-plot}
+
+The data set has multiple samples per experimental unit, which can happen when researchers are interested in precision. For this analysis, the subsamples are pseudoreplicates and should be collapsed into a single unit. 
+
+```{r}
+height <- height_data |> group_by(time, manage, rep) |> 
+  summarise(ht = mean(height)) |> rename(height = "ht")
+```
+
 
 #### Data integrity checks
 
 -   Run a cross tabulation using `table()` to check the arrangement of whole-plots and sub-plots.
 
 ```{r}
-table(height_data$time, height_data$manage)
+table(height$time, height$manage)
 ```
 
 The levels of whole plots and subplots are balanced.
@@ -126,7 +125,7 @@ The levels of whole plots and subplots are balanced.
 -   Look at structure of the data using `str()`, this will help in identifying class of the variable. In this data set, class of the whole-plot, sub-plot, and block should be factor/character and response variable (height) should be numeric.
 
 ```{r}
-str(height_data)
+str(height)
 ```
 
 The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed. 
@@ -134,13 +133,13 @@ The 'time', 'manage', and 'rep' are character and variable height is numeric. Th
 -   Check the number of missing values in each column.
 
 ```{r}
-colSums(is.na(height_data))
+colSums(is.na(height))
 ```
 
 -   Exploratory boxplot to look at the height observations at different times with variable managements. This helps in identifying any patterns in the dependent vraiable in response to differnt treatments.
 
 ```{r}
-ggplot(data = height_data, aes(y = height, x = time)) +
+ggplot(data = height, aes(y = height, x = time)) +
   geom_boxplot(aes(fill = manage), alpha = 0.6)
 ```
 
@@ -152,14 +151,14 @@ Last, check the dependent variable by plotting a histogram of height data.
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(height_data$height, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = "turquoise")
+hist(height$height, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(height_data$height, main = "", xlab = "yield", , col = "turquoise")
+hist(height$height, main = "", xlab = "yield", , col = base_plot_color)
 ```
 
-The distribution of height data looks close to normal.
+The distribution of height data looks reasonable. 
 
 #### Model building
 
@@ -179,7 +178,7 @@ When dealing with split plot design across reps or blocks, the random effects ne
 #### lme4
 
 ```{r}
-model_lmer <- lmer(height ~ time*manage + (1|rep/time), data = height_data)
+model_lmer <- lmer(height ~ time*manage + (1|rep/time), data = height)
 tidy(model_lmer)
 ```
 
@@ -187,7 +186,7 @@ tidy(model_lmer)
 
 ```{r}
 model_lme <-lme(height ~ time*manage,
-             random = ~ 1|rep/time, data = height_data)
+             random = ~ 1|rep/time, data = height)
 
 tidy(model_lme)
 ```
@@ -223,7 +222,6 @@ The `anova()` function prints the the rows of analysis of variance table for who
 #### lme4
 ```{r}
 anova(model_lmer, type = '3')
-#car::Anova(model_lmer, type = 'III', test.statistics = "F")
 ```
 
 #### nlme
@@ -272,8 +270,6 @@ The default p-value adjustment in `pairs()` function is "tukey", other options i
 
 ### Example model for RCBD Split Plot Designs
 
-Recall, at the beginning of this chapter we discussed CRD and RCBD split plot design. 
-Now we will demonstrate how to analyze data from the RCBD split plot experiment design. 
 The oats data used in this example is from the **MASS** package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.
 
 |              |                          |
@@ -291,8 +287,7 @@ To fully examine the response of oat yield with different varieties and nutrient
 
 Let's start this example analysis by firstly loading the 'oat' data from the **MASS** package. 
 ```{r, message=FALSE}
-library(MASS)
-data("oats")
+data("oats", package = "MASS")
 head(oats,5)
 ```
 
@@ -300,7 +295,7 @@ head(oats,5)
  
 - Check structure of the data
 
-we will first examine the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
+We will first examine the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
 ```{r}
 str(oats)
 ```
@@ -325,10 +320,10 @@ Last, check the distribution of the dependent variable by plotting a histogram o
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = "turquoise")
+hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 ```{r, eval=FALSE}
-hist(oats$Y, main = "", xlab = "yield", col = "turquoise")
+hist(oats$Y, main = "", xlab = "yield", col = base_plot_color)
 ```
 
 #### Model Building
@@ -401,17 +396,17 @@ Next, we can estimate marginal means for V, N, or their interaction (V\*N) effec
 ::: panel-tabset
 ### lme4
 ```{r}
-emm1 <- emmeans(model2_lmer, ~ V *N) 
+emm1 <- emmeans(model2_lmer, ~ V|N) 
 emm1
 ```
 
 ### nlme
 ```{r}
-emm1 <- emmeans(model2_lme, ~ V *N) 
+emm1 <- emmeans(model2_lme, ~ V|N) 
 emm1
 ```
 :::
 
-The estimated means for Marvellous variety were higher compared to other varieties across all N treatments.
+The estimated means for the variety 'Marvellous' were higher compared to other varieties across all N treatments.
 
-In the next chapter, we will continue with extension of split plot design called split-split plot design.
+

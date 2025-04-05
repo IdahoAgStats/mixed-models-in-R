@@ -47,11 +47,11 @@ For this example, we will use Rice strip-plot experiment data from the **agridat
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
 rice_stripplot <- agridat::gomez.stripplot
-write.csv(rice_stripplot, here::here("data", "rice_stripplot.csv"))
+write.csv(rice_stripplot, here::here("data", "rice_stripplot.csv"), row.names = FALSE)
 ```
 
 ```{r}
-data1 <- read.csv(here::here("data", "rice_stripplot.csv"))
+rice <- read.csv(here::here("data", "rice_stripplot.csv"))
 ```
 
 |       |                              |
@@ -68,7 +68,7 @@ data1 <- read.csv(here::here("data", "rice_stripplot.csv"))
 For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors. The plot below shows the application of treatments in horizontal and vertical direction in a strip plot design.
 
 ```{r, echo=FALSE}
-desplot(data1, gen ~ col*row,
+desplot(rice, gen ~ col*row,
         # aspect unknown
         out1=rep, out2=nitro, num=nitro, cex=1,
         main="Strip Plot Design")
@@ -80,20 +80,20 @@ desplot(data1, gen ~ col*row,
 The 'rep', 'nitro', and 'gen' variables in the data needs to be a factor/character variables and 'yield' should be numeric.
 
 ```{r}
-str(data1)
+str(rice)
 ```
 
 Let's convert 'nitro' from numeric to factor.
 
 ```{r}
-data1$nitro <- as.factor(data1$nitro)
+rice$nitro <- as.factor(rice$nitro)
 ```
 - Inspect the independent variables
 
 Let's running a a cross tabulation of independent variables to look at the balance of treatment factors.
 
 ```{r}
-table(data1$gen, data1$nitro)
+table(rice$gen, rice$nitro)
 ```
 
 It looks balanced with 3 number of observations for each variety and nitrogen level.
@@ -103,7 +103,7 @@ It looks balanced with 3 number of observations for each variety and nitrogen le
 Next step is to identify if there are any missing observations in the data set.
 
 ```{r}
-colSums(is.na(data1))
+colSums(is.na(rice))
 ```
 
 We don't have any missing values in this data set.
@@ -113,7 +113,7 @@ We don't have any missing values in this data set.
 Let's check the distribution of dependent variable by plotting a histogram.
 
 ```{r, eval=FALSE}
-hist(data1$yield, main = "", xlab = "yield", col = "turquoise")
+hist(rice$yield, main = "", xlab = "yield", col = base_plot_color)
 ```
 
 ```{r, echo=FALSE}
@@ -121,22 +121,21 @@ hist(data1$yield, main = "", xlab = "yield", col = "turquoise")
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = "turquoise")
+hist(rice$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 No extreme values or skewness is present in the yield values.
 
 ### Model Building
 
-The goal of this analysis is to evaluate the impact of nitro, gen, and their interaction on rice yield.
-The rep, gen nested in rep, and nitro nested in rep were random effects in the model. All random effects are assumed to independent of each other and independent of within group errors.
+The goal of this analysis is to evaluate the impact of nitrogen, genotype, and their interaction on rice yield. The variables "rep", "gen" (nested in rep), and "nitro" (nested in rep) were random effects in the model. 
 
 ::: panel-tabset
 #### lme4
 ```{r}
 model_lmer <- lmer(yield ~  nitro*gen +  (1|rep) + 
                    (1|rep:gen) + (1|rep:nitro), 
-                   data = data1)
+                   data = rice)
 tidy(model_lmer)
 ```
 
@@ -147,16 +146,18 @@ model_lme <-lme(yield ~  nitro*gen,
         pdIdent(~ 0 + rep), 
          pdIdent(~ 0 + rep:gen), 
         pdIdent(~ 0 + rep:nitro)))),
-        data = data1 %>% mutate(one = factor(1)))
+        data = rice %>% mutate(one = factor(1)))
 
 summary(model_lme)
 ```
 :::
 
+:::: {.column-margin}
 ::: callout-note
 ## Crossed random effects
-This type of variance-covariance structure in `lme()` is represented by a **pdBlocked** object with **pdIdent** elements.
+This type of variance-covariance structure in `nlme::lme()` is represented by a `pdBlocked` object with `pdIdent` elements.
 :::
+::::
 
 ### Check Model Assumptions
 
@@ -187,7 +188,7 @@ We can evaluate the model for the analysis of variance, for main and interaction
 ::: panel-tabset
 ### lme4
 ```{r}
-car::Anova(model_lmer, type = "III", test.statistics = "F")
+anova(model_lmer)
 ```
 
 ### nlme

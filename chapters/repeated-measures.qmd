@@ -64,11 +64,11 @@ repeated_meas <- agriTutorial::sorghum %>%
   mutate(week = as.numeric(factweek),
          block = as.character(varblock)) 
 
-write.csv(repeated_meas, here::here("data", "repeated_meas.csv"))
+write.csv(repeated_meas, here::here("data", "sorghum.csv"), row.names = FALSE)
 ```
 
 ```{r}
-dat <- read.csv(here::here("data", "repeated_meas.csv")) |> 
+sorghum <- read.csv(here::here("data", "sorghum.csv")) |> 
   mutate(block = as.character(varblock),
          factweek = as.character(factweek),
          variety = as.character(variety))
@@ -91,7 +91,7 @@ Let's do preliminary data check including evaluating data structure, distributio
 - Check structure of the data
 
 ```{r}
-str(dat)
+str(sorghum)
 ```
 
 In this data, we have block, factplot, factweek as factor variables and y & week as numeric.
@@ -99,7 +99,7 @@ In this data, we have block, factplot, factweek as factor variables and y & week
 - Inspect the independent variables
 
 ```{r}
-table(dat$variety, dat$block)
+table(sorghum$variety, sorghum$block)
 ```
 
 The cross tabulation shows a equal number of variety treatments in each block.
@@ -107,14 +107,14 @@ The cross tabulation shows a equal number of variety treatments in each block.
 - Check the extent of missing data
 
 ```{r}
-colSums(is.na(dat))
+colSums(is.na(sorghum))
 ```
 No missing values 
 
 - Inspect the dependent variable
 
 ```{r}
-ggplot(data = dat, aes(y = y, x = factweek, fill = variety)) +
+ggplot(data = sorghum, aes(y = y, x = factweek, fill = variety)) +
   geom_boxplot() +  
     theme_bw()
 ```
@@ -122,7 +122,7 @@ Looks like variety '1' has the lowest yield and showed drastic reduction in yiel
 One last step before we fit model is to look at the distribution of response variable.
 
 ```{r, eval=FALSE}
-hist(dat$y, main = "", xlab = "leaf area index", col = "turquoise")
+hist(sorghum$y, main = "", xlab = "leaf area index", col = base_plot_color)
 ```
 
 ```{r, echo=FALSE}
@@ -130,7 +130,7 @@ hist(dat$y, main = "", xlab = "leaf area index", col = "turquoise")
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$y, main = "", xlab = "leaf area index", cex.lab = 1.8, cex.axis = 1.5, col = "turquoise")
+hist(sorghum$y, main = "", xlab = "leaf area index", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 ### Model Building
@@ -140,7 +140,7 @@ Let's fit the model first using `lme()` from the **nlme** package.
 ```{r}
 lm1 <- lme(y ~ variety + factweek + variety:factweek,
            random = ~1|block/factplot,
-           data = dat,
+           data = sorghum,
            na.action = na.exclude)
 ```
 
@@ -222,21 +222,24 @@ Here is a quick step to make sure your fitting model correctly: make sure to hav
 
 Recall, we have evaluated split plot design [**Chapter 7**](split-plot-design.qmd). In this example we will use the same methodology used in Chapter 5 and update it with repeated measures component.
 
-Next, let's load "Yield" data. It is located [here](https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/Yield.csv).
+Next, let's load an alfalfa intercropping data set. This was from an irrigation and intercropping experiment was conducted in southern Idaho. Irrigation is the main plot, intercropping is the split plot, and the in-season alfalfa cutting ("cutting") is the unit for repeated measures. 
 
 ```{r}
-Yield <- read.csv(here::here("data/Yield.csv"))
+alfalfa <- read.csv(here::here("data/alfalfa_intercropping.csv"))
 ```
 
 This example contains yield data in a split-plot design. The yield data was collected repeatedly from the same Reps over 5 Sample_times. In this data set, we have:
 
 |             |                                 |
 |-------------|---------------------------------|
-| Rep         | replication unit                |
-| Variety     | Main plot, 2 levels             |
-| Fertilizer  | Split plot, 3 levels            |
-| Yield       | crop yield                      |
-| Sample_time | time points for data collection |
+| cutting       | time points for data collection   |
+| irrigation    | Main plot, 2 levels             |
+| plot  |   experimental unit          |
+| block       |    replication unit     |
+| intercrop | Split plot, 3 levels |
+| yield | crop yield |
+| row |  spatial position by row |
+| col | spatial position by column |
 
 : Table of variables in the data set {tbl-split-plot-rp}
 
@@ -247,58 +250,51 @@ This example contains yield data in a split-plot design. The yield data was coll
 Firstly, we need to look at the class of variables in the data set.
 
 ```{r}
-str(Yield)
+str(alfalfa)
 ```
-We will now convert the fertilizer and Rep into factor. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
+
+We will now convert the fertilizer and rep to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
 
 ::: column-margin
-For lme(), independent variables in a character/factor form works fine. But, for mmrm() independent variables must be a factor. Thus, for sake of consistancy, we will be using independent variables in factor class.
+For `lme()`, independent variables in a character/factor form works fine. But, for `mmrm()` independent variables must be a factor. Thus, for consistency, we will be using independent variables in factor class.
 :::
 
 ```{r}
-Yield$Variety <- factor(Yield$Variety) 
-Yield$Fertilizer <- factor(Yield$Fertilizer) 
-Yield$Sample_time1 <- factor(Yield$Sample_time) 
-Yield$Rep <- factor(Yield$Rep)  
+alfalfa <- alfalfa |> 
+  mutate(cut_num = as.numeric(as.factor(cutting))) |> 
+  mutate_at(c("cutting", "irrigation", "plot", "block"), as.factor)
 ```
 
 
-To fit model, we first need to convert Variety, Fertilizer, and Sample_time as factors. In addition, we need to create a variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
+To fit the model, we first need to convert Variety, Fertilizer, and Sample_time to factors. In addition, we need to create a variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
 
 - Inspect the independent variables
 
-```{r}
-##creating a plot variable 
-Yield$plot <- factor(paste(Yield$Rep, Yield$Fertilizer, Yield$Variety, sep='-')) 
-
-table(Yield$plot) 
-```
 
 ```{r}
-table(Yield$Fertilizer, Yield$Variety) 
+table(alfalfa$intercrop, alfalfa$irrigation) 
 ```
-Looks like a well balanced design with 2 variety treatments and 3 fertilizer treatments.
+Looks like a balanced design with 2 irrigation treatments and 10 intercropping treatments.
 
 - Check the extent of missing data
 
 ```{r}
-colSums(is.na(Yield))
+colSums(is.na(alfalfa))
 ```
-No missing values in the dataset. 
 
 - Inspect the dependent variable
 
 Before fitting a model, let's check the distribution of the response variable.
 ```{r, echo=FALSE}
 #| label: fig-split-plot_hist
-#| fig-cap: "Histogram of the dependent variable."
+#| fig-cap: "Histogram of the dependent variable"
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(Yield$Yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5)
+hist(alfalfa$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(Yield$Yield, xlab = "yield", col = "turquoise")
+hist(Yield$Yield, xlab = "yield", col = base_plot_color)
 ```
 ### Model fit
 
@@ -306,107 +302,46 @@ This data can be analyzed either using `nlme` or `mmrm`.
 
 Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. In addition, instead of `summary()` function we will use `tidy()`  function from the **broom.mixed** package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
-::: panel-tabset
-### nlme
 
 ```{r}
 #| warning: false
-corr_str1 = corAR1(form = ~ Sample_time|Rep/Variety/plot, value = 0.2, fixed = FALSE)
 
-fit1 <- lme(Yield ~ Sample_time1*Variety*Fertilizer,
-                random = ~ 1|Rep/Variety/plot,
+corr_str1 = corAR1(form = ~ cut_num|block/irrigation/intercrop/plot, value = 0.2, fixed = FALSE)
+
+fit1 <- lme(yield ~ irrigation*intercrop*cutting,
+                random = ~ 1|block/irrigation/intercrop/plot,
                 corr= corr_str1,
-                data = Yield, na.action= na.exclude)
-tidy(fit1)
+                data = alfalfa, na.action= na.exclude)
 ```
-
-### mmrm
-
-```{r}
-fit2 <- mmrm(formula = Yield ~ Sample_time1*Variety*Fertilizer +  
-             ar1(Sample_time1|Rep/plot),
-             data = Yield)
-
-tidy(fit2)
-```
-:::
 
 ### Check Model Assumptions
 
 We will use `check_model()` from **performance** package to evaluate the model fitness of model fitted using nlme (mod1). However, the `mmrm()` model class doesn't work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.
 
-::: panel-tabset
-### nlme
-
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(fit1, check = c('normality', 'linearity'))
+check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
 ```
 
-### mmrm
-```{r eval=FALSE, echo=TRUE}
-plot(residuals(fit2), xlab = "fitted values", ylab = "residuals")
-qqnorm(residuals(fit2)); qqline(residuals(fit2))
-```
 
-::: {layout-ncol=2 .column-body}
-
-```{r echo=FALSE}
-par(mar=c(5.1, 5, 2.1, 2.1))
-plot(residuals(fit2), xlab = "fitted values", ylab = "residuals",
-     cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
-```
-
-```{r echo=FALSE}
-par(mar=c(5.1, 5, 2.1, 2.1))
-qqvals <- qqnorm(residuals(fit2), plot.it=FALSE)
-qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(fit2))
-```
-::: 
-
-:::
-
-These diagnostic plots look great! The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.
+These diagnostic plots look fine. The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.
 
 ### Inference
-
-::: panel-tabset
-### nlme
 
 ```{r}
 #| warning: false
 #| message: false
 anova(fit1, type = "marginal")
 ```
-
-### mmrm
-
-```{r}
-car::Anova(fit2, type = "III")
-```
-:::
-
-The ANOVA showed a significant effect of sample time and sample time-by-fertilizer interaction effect. 
  
 Next, we can estimate marginal means and confidence intervals at different levels of the independent variables using `emmeans()`.
-
-::: panel-tabset
-### nlme
 
 ```{r}
 emmeans(fit1,~ Sample_time1)
 emmeans(fit1,~ Sample_time1|Fertilizer)
-
 ```
 
-### mmrm
-
-```{r}
-emmeans(fit2,~ Sample_time1)
- emmeans(fit2,~ Sample_time1|Fertilizer)
-```
-:::
 
 ::: column-margin
 To explore more about contrasts and emmeans please refer to [**Chapter 13**](means-and-contrasts.qmd).
@@ -439,12 +374,13 @@ str(phos)
 ```
 We need to have two variables for time one being a factor other being a numeric.
 
-```{r}
-phos$time = as.factor(phos$time)
+```{r, warning=FALSE, message=FALSE}
 phos1 <- phos %>%   
-  mutate(time1 = as.numeric(time),
-        rep = as.character(bloc),
-        plot = as.character(plot)) 
+  mutate(
+    time = as.factor(time), 
+    time1 = as.numeric(time),
+    rep = as.character(bloc),
+    plot = as.character(plot)) 
 ```
 
 - Inspect the independent variables
@@ -469,7 +405,7 @@ Before fitting a model, let's check the distribution of the response variable.
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5)
+hist(phos1$P_leaf, main = "", xlab = "P leaf", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 ```{r, echo=FALSE}
@@ -492,9 +428,9 @@ Here note that we observed uneven distribution of response variable with a bimod
 #| warning: false
 corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
 
-fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
+pfit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
                 random = ~ 1|rep/Ptrt/Inoc/plot,
-                corr = corr_str1,
+                #corr = corr_str1,
                 data = phos1, na.action= na.exclude)
 
 ```
@@ -504,18 +440,18 @@ fit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
+check_model(pfit1, check = c('qq', 'linearity'), detrend=FALSE)
 ```
 
 This model fit a first glance is not ideal, but that LOESS line is trying to model a space where there are no data (between 500 and 1500 ppm P leaf concentration), so that can introduce artifacts. **Performance** does have an option for testing for heteroscedascity:
 
 ```{r}
-check_heteroscedasticity(fit1)
+check_heteroscedasticity(pfit1)
 ```
 These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a a difference in variance for each time time point. This addressed in the [chapter on variance components](variance-components.qmd). 
 
 ```{r, echo=FALSE, eval=FALSE}
-save(fit1, file = here::here("data/phos_fit1.RData"))
+save(pfit1, file = here::here("data/phos_fit1.RData"))
 ```
 
 
@@ -524,13 +460,13 @@ save(fit1, file = here::here("data/phos_fit1.RData"))
 ```{r}
 #| warning: false
 #| message: false
-anova(fit1, type = "marginal")
+anova(pfit1, type = "marginal")
 ```
 
 
 ```{r}
-emmeans(fit1, ~ Inoc|Cv)
-emmeans(fit1, ~ time|Cv)
+emmeans(pfit1, ~ Inoc|Cv)
+emmeans(pfit1, ~ time|Cv)
 ```
 
 

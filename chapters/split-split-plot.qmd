@@ -45,7 +45,7 @@ library(broom.mixed); library(performance)
 ```
 :::
 
-In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae) package. The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.
+In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae) package (data set "ssp"). The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.
 
 ```{r, echo=FALSE, eval=FALSE}
 library(agricolae)
@@ -98,7 +98,7 @@ It looks perfectly balanced, with exactly 3 observation per treatment group.
 Last, check the distribution of the dependent variable by plotting a histogram of yield values using `hist()` in R.
 
 ```{r, eval=FALSE}
-hist(rice$yield, col = "turquoise")
+hist(rice$yield, col = base_plot_color)
 ```
 
 ```{r, echo=FALSE}
@@ -106,7 +106,7 @@ hist(rice$yield, col = "turquoise")
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(rice$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, , col = "turquoise")
+hist(rice$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, , col = base_plot_color)
 ```
 
 ### Model Building
@@ -169,7 +169,7 @@ Let's look at the analysis of variance for fixed effects and their interaction e
 ### lme4
 
 ```{r}
-car::Anova(model_lmer, type = 'III', test.statistic="F")
+anova(model_lmer)
 ```
 
 ### nlme

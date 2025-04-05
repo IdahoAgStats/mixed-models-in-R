@@ -43,3 +43,6 @@ theme_set(
       legend.position = "bottom"
     )
 )
+
+base_plot_color = "turquoise"
+

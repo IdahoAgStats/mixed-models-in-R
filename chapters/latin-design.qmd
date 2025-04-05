@@ -50,14 +50,17 @@ library(dplyr)
 ```
 :::
 
-The data used in this example was extracted from the **agridat** package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.
+The data used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.
+
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
 latin_square <- agridat::goulden.latin
-write.csv(latin_square, here::here("data", "latin_square.csv"))
+write.csv(latin_square, here::here("data", "goulden_latin.csv"), row.names = FALSE)
 ```
+
+
 ```{r}
-dat <- read.csv(here::here("data", "latin_square.csv"))
+dat <- read.csv(here::here("data", "goulden_latin.csv"))
 ```
 
 |       |                               |
@@ -73,7 +76,7 @@ dat <- read.csv(here::here("data", "latin_square.csv"))
 
 - Check structure of the data
 
-First, let's verify the class of variables in the dataset using `str()` function in base R
+First, let's verify the class of variables in the data set using `str()` function in base R
 
 ```{r}
 str(dat)
@@ -120,11 +123,11 @@ Before fitting the model, let's create a histogram of response variable to see i
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat1$yield, main = "", xlab = "yield", col = "turquoise")
+hist(dat1$yield, main = "", xlab = "yield", col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(dat1$yield, main = "", xlab = "yield", col = "turquoise")
+hist(dat1$yield, main = "", xlab = "yield", col = base_plot_color)
 ```
 
 ### Model fitting

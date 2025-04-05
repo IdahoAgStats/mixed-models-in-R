@@ -34,7 +34,6 @@ A set of tutorial for running mixed models in R
 (who knows when we get to this)
 
 - address or add [afex](https://CRAN.R-project.org/package=afex)
-- `car::Anova()` v the others
 - effect sizes in mixed models and all that funny stuff with the error term and EDF
 
 
