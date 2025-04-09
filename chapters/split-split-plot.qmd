@@ -98,9 +98,8 @@ It looks perfectly balanced, with exactly 3 observation per treatment group.
 Last, check the distribution of the dependent variable by plotting a histogram of yield values using `hist()` in R.
 
 ```{r, eval=FALSE}
-hist(rice$yield, col = base_plot_color)
+hist(rice$yield, main = "", xlab = "yield")
 ```
-
 ```{r, echo=FALSE}
 #| label: fig-split-split-plot_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -111,7 +110,7 @@ hist(rice$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, , col
 
 ### Model Building
 
-The variance analysis of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis.
+The model and analysis of variance of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis.
 We can use the nesting notation in the random part because nitrogen and management are nested in blocks.
 We can do blocks as fixed or random.
 
@@ -120,7 +119,7 @@ We can do blocks as fixed or random.
 
 ```{r}
 model_lmer <- lmer(yield ~ nitrogen * management * variety +
-                     (1 | block / nitrogen / management),
+                     (1|block/nitrogen/management),
                    data = rice,
                    na.action = na.exclude)
 

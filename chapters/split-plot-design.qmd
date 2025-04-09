@@ -4,8 +4,7 @@
 source(here::here("settings.r"))
 ```
 
-
-In some multifactor factorial experiments, we may be unable to completely randomize the order of the treatments. This often results in a generalization of the factorial design called a split-plot design. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.
+Split plot designs are needed when we cannot randomly assign mutiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In such designs, we can incorporate one of the completely randomized (CRD) or the completely randomized block (RCBD) design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole-plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly. 
 
 ## Details for Split Plot Designs
 
@@ -37,7 +36,6 @@ $$\ \delta  \sim N(0, \sigma_\delta)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_\delta$, respectively.
 
-
 ```{r, echo=FALSE, fig.height=3.5}
 library(FielDHub)
 spd <- split_plot(
@@ -66,18 +64,19 @@ spd1 <- split_plot(
 plot(spd1)
 ```
 
-
 ## Analysis Examples
 
 Let's start analyzing by loading required libraries.
 
 ::: panel-tabset
 ### lme4
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(performance); library(ggplot2)
 library(broom.mixed)
 ```
+
 ### nlme
 
 ```{r, message=FALSE, warning=FALSE}
@@ -100,17 +99,16 @@ height_data <- read.csv(here::here("data", "height_data.csv"))
 | time   | Main plot with 4 levels         |
 | Manage | Split-plot with 8 levels        |
 | sample | two sampling units per each rep |
-| height | plant height (cm)            |
+| height | plant height (cm)               |
 
 : Table of variables in the height data set {tbl-rcbd_split-plot}
 
-The data set has multiple samples per experimental unit, which can happen when researchers are interested in precision. For this analysis, the subsamples are pseudoreplicates and should be collapsed into a single unit. 
+The data set has multiple samples per experimental unit, which can happen when researchers are interested in precision. For this analysis, the subsamples are pseudoreplicates and should be collapsed into a single unit.
 
 ```{r}
 height <- height_data |> group_by(time, manage, rep) |> 
   summarise(ht = mean(height)) |> rename(height = "ht")
 ```
-
 
 #### Data integrity checks
 
@@ -128,7 +126,7 @@ The levels of whole plots and subplots are balanced.
 str(height)
 ```
 
-The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed. 
+The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed.
 
 -   Check the number of missing values in each column.
 
@@ -145,20 +143,21 @@ ggplot(data = height, aes(y = height, x = time)) +
 
 Here we observed any greater height with manage 'M1" and comparatively less variability across all times compared to other management treatments.
 
-Last, check the dependent variable by plotting a histogram of height data. 
+Last, check the dependent variable by plotting a histogram of height data.
+
 ```{r, echo=FALSE}
 #| label: fig-split_hist
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(height$height, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
+hist(height$height, main = "", xlab = "height", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(height$height, main = "", xlab = "yield", , col = base_plot_color)
+hist(height$height, main = "", xlab = "height")
 ```
 
-The distribution of height data looks reasonable. 
+The distribution of height data looks reasonable.
 
 #### Model building
 
@@ -172,7 +171,7 @@ For this model, $\gamma$ = block/rep effect (random), $\alpha$ = main effect of 
 
 In order to test the main effects of the treatments as well as the interaction between two factors, we can specify that in model as: `time + manage + time:manage` or `time*manage`.
 
-When dealing with split plot design across reps or blocks, the random effects needs to be nested hierarchically, from largest unit to smallest. For example, in this example the random effects will be designated as `(1 | rep/time)`. This implies that we use random intercept at each of the rep and time (whole-plot) level. 
+When dealing with split plot design across reps or blocks, the random effects needs to be nested hierarchically, from largest unit to smallest. For example, in this example the random effects will be designated as `(1 | rep/time)`. This implies that we use random intercept at each of the rep and time (whole-plot) level.
 
 ::: panel-tabset
 #### lme4
@@ -220,11 +219,13 @@ The `anova()` function prints the the rows of analysis of variance table for who
 
 ::: panel-tabset
 #### lme4
+
 ```{r}
 anova(model_lmer, type = '3')
 ```
 
 #### nlme
+
 ```{r}
 anova(model_lme, type = "marginal")
 ```
@@ -234,12 +235,14 @@ We can further compute estimated marginal means for each fixed effect and intera
 
 ::: panel-tabset
 #### lme4
+
 ```{r}
 m1 <- emmeans(model_lmer, ~ time)
 m1
 ```
 
 #### nlme
+
 ```{r}
 m2 <- emmeans(model_lme, ~ time)
 m2
@@ -252,11 +255,13 @@ Here's a example using `pairs()` function to compare difference in height among 
 
 ::: panel-tabset
 #### lme4
+
 ```{r}
 pairs(m1)
 ```
 
 #### nlme
+
 ```{r}
 pairs(m2)
 ```
@@ -265,7 +270,7 @@ pairs(m2)
 ::: callout-note
 ## `pairs()`
 
-The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts please visit [**Chapter 12**](means-and-contrasts.qmd). 
+The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts please visit [**Chapter 12**](means-and-contrasts.qmd).
 :::
 
 ### Example model for RCBD Split Plot Designs
@@ -285,21 +290,24 @@ The objective of this analysis is to study the impact of different varieties and
 
 To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.
 
-Let's start this example analysis by first loading the 'oat' data from the **MASS** package. 
+Let's start this example analysis by first loading the 'oat' data from the **MASS** package.
+
 ```{r, message=FALSE}
 data("oats", package = "MASS")
 head(oats,5)
 ```
 
 #### Data integrity checks
- 
-- Check structure of the data
 
-We will first examine the structure of the data. The "B", "V", and "N" needs to be a  factor and "Y" should be numeric.
+-   Check structure of the data
+
+We will first examine the structure of the data. The "B", "V", and "N" needs to be a factor and "Y" should be numeric.
+
 ```{r}
 str(oats)
 ```
-- Inspect the independent variables
+
+-   Inspect the independent variables
 
 Next, run the `table()` command to verify the levels of main-plots and sub-plots.
 
@@ -307,14 +315,16 @@ Next, run the `table()` command to verify the levels of main-plots and sub-plots
 table(oats$V, oats$N)
 ```
 
-- Check the extent of missing data
+-   Check the extent of missing data
 
 ```{r}
 colSums(is.na(oats))
 ```
-- Inspect the dependent variable
 
-Last, check the distribution of the dependent variable by plotting a histogram of yield data. 
+-   Inspect the dependent variable
+
+Last, check the distribution of the dependent variable by plotting a histogram of yield data.
+
 ```{r, echo=FALSE}
 #| label: fig-split-rcbd_hist
 #| fig-cap: "Histogram of the dependent variable."
@@ -322,6 +332,7 @@ Last, check the distribution of the dependent variable by plotting a histogram o
 par(mar=c(5.1, 5, 2.1, 2.1))
 hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
 ```
+
 ```{r, eval=FALSE}
 hist(oats$Y, main = "", xlab = "yield", col = base_plot_color)
 ```
@@ -340,6 +351,7 @@ $\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = ma
 
 ::: panel-tabset
 ### lme4
+
 ```{r}
 model2_lmer <- lmer(Y ~  V + N + V:N + (1|B/V), 
                    data = oats, 
@@ -348,6 +360,7 @@ tidy(model2_lmer)
 ```
 
 ### nlme
+
 ```{r}
 model2_lme <- lme(Y ~  V + N + V:N ,
                   random = ~1|B/V,
@@ -363,11 +376,13 @@ As shown in example 1, We need to verify the normality of residuals and homogene
 
 ::: panel-tabset
 ### lme4
+
 ```{r,  fig.height=3}
 check_model(model2_lmer, check = c('normality', 'linearity'))
 ```
 
 ### nlme
+
 ```{r,  fig.height=3}
 check_model(model2_lme, check = c('normality', 'linearity'))
 ```
@@ -381,11 +396,13 @@ Let's have a look at the analysis of variance, for V, N and their interaction ef
 
 ::: panel-tabset
 ### lme4
+
 ```{r}
 car::Anova(model2_lmer, type = "III", test.statistics = "F")
 ```
 
 ### nlme
+
 ```{r}
 anova(model2_lme, type = "marginal")
 ```
@@ -395,12 +412,14 @@ Next, we can estimate marginal means for V, N, or their interaction (V\*N) effec
 
 ::: panel-tabset
 ### lme4
+
 ```{r}
 emm1 <- emmeans(model2_lmer, ~ V|N) 
 emm1
 ```
 
 ### nlme
+
 ```{r}
 emm1 <- emmeans(model2_lme, ~ V|N) 
 emm1
@@ -408,5 +427,3 @@ emm1
 :::
 
 The estimated means for the variety 'Marvellous' were higher compared to other varieties across all N treatments.
-
-

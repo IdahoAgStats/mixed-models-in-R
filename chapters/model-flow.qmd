@@ -1,6 +1,8 @@
 ---
 title: "Model Preparation and Flow"
 format: html
+mermaid:
+  theme: default
 ---
 
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
@@ -11,22 +13,14 @@ The steps explained below were applied to all the chapters.
 
 Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
 
-```{r}
-#| echo: false
-#| eval: false
-#| warning: false
-library(DiagrammeR)
-library(htmltools)
-mermaid("
-  %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FF5733', 'secondaryColor': '#33FF57'}}}%%
-  graph TD;
-  A(Research Question)--> B(Data Quality)
-  B --> C{Model fit}
-  C --> D[Model assumptions]
-    D -->|Proceed| E[Results];
-    D -->|Stop| F[Check data & model];
-    classDef someclass fill:#f96
-")
+```{mermaid}
+%%| fig-height: 3
+graph TD
+  A[Research Question] --> B(Data Quality)
+  B --> C(Model fit)
+  C -- assumptions --> D[Assumptions met?]
+  D -- Yes --> E[Results]
+  D -- No --> F[Check data & model]
 ```
 
 ## Define the Research Question 
