@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -315,7 +315,7 @@ window.Quarto = {
   <li><a href="#details-for-split-plot-designs" id="toc-details-for-split-plot-designs" class="nav-link active" data-scroll-target="#details-for-split-plot-designs"><span class="header-section-number">7.1</span> Details for Split Plot Designs</a></li>
   <li><a href="#analysis-examples" id="toc-analysis-examples" class="nav-link" data-scroll-target="#analysis-examples"><span class="header-section-number">7.2</span> Analysis Examples</a>
   <ul class="collapse">
-  <li><a href="#example-model-for-crd-split-plot-designs" id="toc-example-model-for-crd-split-plot-designs" class="nav-link" data-scroll-target="#example-model-for-crd-split-plot-designs"><span class="header-section-number">7.2.1</span> Example model for CRD Split Plot Designs</a></li>
+  <li><a href="#example-model-for-crd-split-plot-design" id="toc-example-model-for-crd-split-plot-design" class="nav-link" data-scroll-target="#example-model-for-crd-split-plot-design"><span class="header-section-number">7.2.1</span> Example model for CRD Split Plot Design</a></li>
   <li><a href="#example-model-for-rcbd-split-plot-designs" id="toc-example-model-for-rcbd-split-plot-designs" class="nav-link" data-scroll-target="#example-model-for-rcbd-split-plot-designs"><span class="header-section-number">7.2.2</span> Example model for RCBD Split Plot Designs</a></li>
   </ul></li>
   </ul>
@@ -343,7 +343,7 @@ window.Quarto = {
 </header>
 
 
-<p>In some multifactor factorial experiments, we may be unable to completely randomize the order of the treatments. This often results in a generalization of the factorial design called a split-plot design. Such design may incorporate one or more of the completely randomized (CRD), completely randomized block (RCBD). The main principle is that there are whole plots or whole units, to which the levels of one or more factors are applied. Thus each whole plot becomes a block for the subplot treatments.</p>
+<p>Split plot designs are needed when we cannot randomly assign mutiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In such designs, we can incorporate one of the completely randomized (CRD) or the completely randomized block (RCBD) design. In split-plot design, the experimental units are called <em>split-plots</em> , and are nested within <em>whole-plots</em>. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly.</p>
 <section id="details-for-split-plot-designs" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="details-for-split-plot-designs"><span class="header-section-number">7.1</span> Details for Split Plot Designs</h2>
 <ol type="1">
@@ -364,19 +364,6 @@ window.Quarto = {
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma_\epsilon)\]</span></p>
 <p><span class="math display">\[\ \delta  \sim N(0, \sigma_\delta)\]</span></p>
 <p>Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\sigma_\delta\)</span>, respectively.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-‘iid’ assumption for error terms
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In these model, the error terms, <span class="math inline">\(\epsilon\)</span> are assumed to be “iid”, that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.</p>
-</div>
-</div>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -417,15 +404,14 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<section id="example-model-for-crd-split-plot-designs" class="level3 page-columns page-full" data-number="7.2.1">
-<h3 data-number="7.2.1" class="anchored" data-anchor-id="example-model-for-crd-split-plot-designs"><span class="header-section-number">7.2.1</span> Example model for CRD Split Plot Designs</h3>
-<p>Let’s import height data. It is located <a href="https://raw.githubusercontent.com/IdahoAgStats/mixed-models-in-R/main/data/aberdeen2015.csv">here</a> if you want to download it yourself (recommended).</p>
-<p>The data (Height data) for this example involves a CRD split plot designed experiment. Treatments are 4 Timings (times) and 8 managements (manage). The whole plots are time and management represents subplot and 3 replications.</p>
+<section id="example-model-for-crd-split-plot-design" class="level3 page-columns page-full" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="example-model-for-crd-split-plot-design"><span class="header-section-number">7.2.1</span> Example model for CRD Split Plot Design</h3>
+<p>Let’s import a data set that we will analyze for plant height. This experiment employed as CRD split plot design. The treatments are agronomic management (8 levels) and time (4 levels). The whole plot is time, the split plot is management represents, and there are 3 replications.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>height_data <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"height_data.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>height_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"height_data.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
-<caption>Table of variables in the oat data set</caption>
+<caption>Table of variables in the height data set</caption>
 <tbody>
 <tr class="odd">
 <td>rep</td>
@@ -445,24 +431,33 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>height</td>
-<td>yield (lbs per acre)</td>
+<td>plant height (cm)</td>
 </tr>
 </tbody>
 </table>
+<p>The data set has multiple samples per experimental unit, which can happen when researchers are interested in precision. For this analysis, the subsamples are pseudoreplicates and should be collapsed into a single unit.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>height <span class="ot">&lt;-</span> height_data <span class="sc">|&gt;</span> <span class="fu">group_by</span>(time, manage, rep) <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ht =</span> <span class="fu">mean</span>(height)) <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">height =</span> <span class="st">"ht"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'time', 'manage'. You can override using
+the `.groups` argument.</code></pre>
+</div>
+</div>
 <section id="data-integrity-checks" class="level4 page-columns page-full" data-number="7.2.1.1">
 <h4 data-number="7.2.1.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">7.2.1.1</span> Data integrity checks</h4>
 <ul>
 <li>Run a cross tabulation using <code>table()</code> to check the arrangement of whole-plots and sub-plots.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(height_data<span class="sc">$</span>time, height_data<span class="sc">$</span>manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(height<span class="sc">$</span>time, height<span class="sc">$</span>manage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    
      M1 M2 M3 M4 M5 M6 M7 M8
-  T1  6  6  6  6  6  6  6  6
-  T2  6  6  6  6  6  6  6  6
-  T3  6  6  6  6  6  6  6  6
-  T4  6  6  6  6  6  6  6  6</code></pre>
+  T1  3  3  3  3  3  3  3  3
+  T2  3  3  3  3  3  3  3  3
+  T3  3  3  3  3  3  3  3  3
+  T4  3  3  3  3  3  3  3  3</code></pre>
 </div>
 </div>
 <p>The levels of whole plots and subplots are balanced.</p>
@@ -470,14 +465,51 @@ window.Quarto = {
 <li>Look at structure of the data using <code>str()</code>, this will help in identifying class of the variable. In this data set, class of the whole-plot, sub-plot, and block should be factor/character and response variable (height) should be numeric.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(height_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(height)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>tibble [192 × 5] (S3: tbl_df/tbl/data.frame)
- $ time  : chr [1:192] "T1" "T1" "T1" "T1" ...
- $ manage: chr [1:192] "M1" "M2" "M3" "M4" ...
- $ rep   : chr [1:192] "R1" "R1" "R1" "R1" ...
- $ sample: chr [1:192] "S1" "S1" "S1" "S1" ...
- $ height: num [1:192] 104.5 92.3 96.8 94.7 105.7 ...</code></pre>
+<pre><code>gropd_df [96 × 4] (S3: grouped_df/tbl_df/tbl/data.frame)
+ $ time  : chr [1:96] "T1" "T1" "T1" "T1" ...
+ $ manage: chr [1:96] "M1" "M1" "M1" "M2" ...
+ $ rep   : chr [1:96] "R1" "R2" "R3" "R1" ...
+ $ height: num [1:96] 105.5 110.7 108 92.2 111.5 ...
+ - attr(*, "groups")= tibble [32 × 3] (S3: tbl_df/tbl/data.frame)
+  ..$ time  : chr [1:32] "T1" "T1" "T1" "T1" ...
+  ..$ manage: chr [1:32] "M1" "M2" "M3" "M4" ...
+  ..$ .rows : list&lt;int&gt; [1:32] 
+  .. ..$ : int [1:3] 1 2 3
+  .. ..$ : int [1:3] 4 5 6
+  .. ..$ : int [1:3] 7 8 9
+  .. ..$ : int [1:3] 10 11 12
+  .. ..$ : int [1:3] 13 14 15
+  .. ..$ : int [1:3] 16 17 18
+  .. ..$ : int [1:3] 19 20 21
+  .. ..$ : int [1:3] 22 23 24
+  .. ..$ : int [1:3] 25 26 27
+  .. ..$ : int [1:3] 28 29 30
+  .. ..$ : int [1:3] 31 32 33
+  .. ..$ : int [1:3] 34 35 36
+  .. ..$ : int [1:3] 37 38 39
+  .. ..$ : int [1:3] 40 41 42
+  .. ..$ : int [1:3] 43 44 45
+  .. ..$ : int [1:3] 46 47 48
+  .. ..$ : int [1:3] 49 50 51
+  .. ..$ : int [1:3] 52 53 54
+  .. ..$ : int [1:3] 55 56 57
+  .. ..$ : int [1:3] 58 59 60
+  .. ..$ : int [1:3] 61 62 63
+  .. ..$ : int [1:3] 64 65 66
+  .. ..$ : int [1:3] 67 68 69
+  .. ..$ : int [1:3] 70 71 72
+  .. ..$ : int [1:3] 73 74 75
+  .. ..$ : int [1:3] 76 77 78
+  .. ..$ : int [1:3] 79 80 81
+  .. ..$ : int [1:3] 82 83 84
+  .. ..$ : int [1:3] 85 86 87
+  .. ..$ : int [1:3] 88 89 90
+  .. ..$ : int [1:3] 91 92 93
+  .. ..$ : int [1:3] 94 95 96
+  .. ..@ ptype: int(0) 
+  ..- attr(*, ".drop")= logi TRUE</code></pre>
 </div>
 </div>
 <p>The ‘time’, ‘manage’, and ‘rep’ are character and variable height is numeric. The structure of the data is in format as needed.</p>
@@ -485,22 +517,22 @@ window.Quarto = {
 <li>Check the number of missing values in each column.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(height_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(height))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  time manage    rep sample height 
-     0      0      0      0      0 </code></pre>
+<pre><code>  time manage    rep height 
+     0      0      0      0 </code></pre>
 </div>
 </div>
 <ul>
 <li>Exploratory boxplot to look at the height observations at different times with variable managements. This helps in identifying any patterns in the dependent vraiable in response to differnt treatments.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> height_data, <span class="fu">aes</span>(<span class="at">y =</span> height, <span class="at">x =</span> time)) <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> manage), <span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> height, <span class="fu">aes</span>(<span class="at">y =</span> height, <span class="at">x =</span> time)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">fill =</span> manage), <span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -522,9 +554,9 @@ Figure&nbsp;7.1: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(height_data<span class="sc">$</span>height, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, , <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(height<span class="sc">$</span>height, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"height"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The distribution of height data looks close to normal.</p>
+<p>The distribution of height data looks reasonable.</p>
 </section>
 <section id="model-building" class="level4 page-columns page-full" data-number="7.2.1.2">
 <h4 data-number="7.2.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">7.2.1.2</span> Model building</h4>
@@ -540,32 +572,35 @@ Figure&nbsp;7.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time), <span class="at">data =</span> height_data)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time), <span class="at">data =</span> height)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 35 × 8
-   effect group term        estimate std.error statistic     df    p.value
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;
- 1 fixed  &lt;NA&gt;  (Intercept)   108.        3.19    33.9     4.38 0.00000181
- 2 fixed  &lt;NA&gt;  timeT2          3.18      2.63     1.21  104.   0.229     
- 3 fixed  &lt;NA&gt;  timeT3         -2.25      2.63    -0.855 104.   0.394     
- 4 fixed  &lt;NA&gt;  timeT4          1.28      2.63     0.488 104.   0.627     
- 5 fixed  &lt;NA&gt;  manageM2       -4.45      2.55    -1.74  152.   0.0832    
- 6 fixed  &lt;NA&gt;  manageM3       -5.30      2.55    -2.08  152.   0.0395    
- 7 fixed  &lt;NA&gt;  manageM4       -6.18      2.55    -2.42  152.   0.0166    
- 8 fixed  &lt;NA&gt;  manageM5       -5.02      2.55    -1.97  152.   0.0511    
- 9 fixed  &lt;NA&gt;  manageM6       -3.42      2.55    -1.34  152.   0.183     
-10 fixed  &lt;NA&gt;  manageM7       -9.75      2.55    -3.82  152.   0.000193  
+   effect group term        estimate std.error statistic    df  p.value
+   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+ 1 fixed  &lt;NA&gt;  (Intercept)   108.        3.82    28.3    8.72 6.97e-10
+ 2 fixed  &lt;NA&gt;  timeT2          3.18      4.00     0.796 62.0  4.29e- 1
+ 3 fixed  &lt;NA&gt;  timeT3         -2.25      4.00    -0.562 62.0  5.76e- 1
+ 4 fixed  &lt;NA&gt;  timeT4          1.28      4.00     0.321 62.0  7.49e- 1
+ 5 fixed  &lt;NA&gt;  manageM2       -4.45      4.00    -1.11  62.0  2.70e- 1
+ 6 fixed  &lt;NA&gt;  manageM3       -5.30      4.00    -1.32  62.0  1.90e- 1
+ 7 fixed  &lt;NA&gt;  manageM4       -6.18      4.00    -1.55  62.0  1.27e- 1
+ 8 fixed  &lt;NA&gt;  manageM5       -5.02      4.00    -1.25  62.0  2.15e- 1
+ 9 fixed  &lt;NA&gt;  manageM6       -3.42      4.00    -0.854 62.0  3.96e- 1
+10 fixed  &lt;NA&gt;  manageM7       -9.75      4.00    -2.44  62.0  1.77e- 2
 # ℹ 25 more rows</code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span><span class="fu">lme</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time, <span class="at">data =</span> height_data)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span><span class="fu">lme</span>(height <span class="sc">~</span> time<span class="sc">*</span>manage,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>time, <span class="at">data =</span> height)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in tidy.lme(model_lme): ran_pars not yet implemented for multiple
 levels of nesting</code></pre>
@@ -574,16 +609,16 @@ levels of nesting</code></pre>
 <pre><code># A tibble: 32 × 7
    effect term        estimate std.error    df statistic  p.value
    &lt;chr&gt;  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)   108.        3.19   152    33.9   9.58e-73
- 2 fixed  timeT2          3.18      2.63     6     1.21  2.72e- 1
- 3 fixed  timeT3         -2.25      2.63     6    -0.855 4.25e- 1
- 4 fixed  timeT4          1.28      2.63     6     0.488 6.43e- 1
- 5 fixed  manageM2       -4.45      2.55   152    -1.74  8.32e- 2
- 6 fixed  manageM3       -5.30      2.55   152    -2.08  3.95e- 2
- 7 fixed  manageM4       -6.18      2.55   152    -2.42  1.66e- 2
- 8 fixed  manageM5       -5.02      2.55   152    -1.97  5.11e- 2
- 9 fixed  manageM6       -3.42      2.55   152    -1.34  1.83e- 1
-10 fixed  manageM7       -9.75      2.55   152    -3.82  1.93e- 4
+ 1 fixed  (Intercept)   108.        3.82    56    28.3   7.85e-35
+ 2 fixed  timeT2          3.18      4.00     6     0.796 4.57e- 1
+ 3 fixed  timeT3         -2.25      4.00     6    -0.562 5.94e- 1
+ 4 fixed  timeT4          1.28      4.00     6     0.321 7.59e- 1
+ 5 fixed  manageM2       -4.45      4.00    56    -1.11  2.71e- 1
+ 6 fixed  manageM3       -5.30      4.00    56    -1.32  1.91e- 1
+ 7 fixed  manageM4       -6.18      4.00    56    -1.55  1.28e- 1
+ 8 fixed  manageM5       -5.02      4.00    56    -1.25  2.15e- 1
+ 9 fixed  manageM6       -3.42      4.00    56    -0.854 3.97e- 1
+10 fixed  manageM7       -9.75      4.00    56    -2.44  1.80e- 2
 # ℹ 22 more rows</code></pre>
 </div>
 </div>
@@ -600,11 +635,11 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -612,11 +647,11 @@ levels of nesting</code></pre>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -634,28 +669,27 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer, <span class="at">type =</span> <span class="st">'3'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer, <span class="at">type =</span> <span class="st">'3'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-             Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
-time         546.78 182.260     3     6  9.3314    0.0112 *  
-manage      1482.42 211.774     7   152 10.8425 4.695e-11 ***
-time:manage  475.31  22.634    21   152  1.1588    0.2955    
+            Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
+time        410.41 136.803     3    62  5.6975 0.0016423 ** 
+manage      741.21 105.887     7    62  4.4099 0.0005003 ***
+time:manage 237.65  11.317    21    62  0.4713 0.9711030    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#car::Anova(model_lmer, type = 'III', test.statistics = "F")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>            numDF denDF   F-value p-value
-(Intercept)     1   152 1148.6222  &lt;.0001
-time            3     6    1.5046  0.3061
-manage          7   152    2.2727  0.0315
-time:manage    21   152    1.1588  0.2955</code></pre>
+<pre><code>            numDF denDF  F-value p-value
+(Intercept)     1    56 798.9494  &lt;.0001
+time            3     6   0.6503  0.6111
+manage          7    56   0.9244  0.4949
+time:manage    21    56   0.4713  0.9701</code></pre>
 </div>
 </div>
 </div>
@@ -667,17 +701,17 @@ time:manage    21   152    1.1588  0.2955</code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>m1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>m1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> time emmean  SE   df lower.CL upper.CL
- T1      103 2.7 2.27     92.8      114
- T2      106 2.7 2.27     95.5      116
- T3      100 2.7 2.27     89.8      111
- T4      104 2.7 2.27     94.0      115
+<pre><code> time emmean   SE   df lower.CL upper.CL
+ T1      103 2.76 2.45     93.2      113
+ T2      106 2.76 2.45     95.9      116
+ T3      100 2.76 2.45     90.2      110
+ T4      104 2.76 2.45     94.4      114
 
 Results are averaged over the levels of: manage 
 Degrees-of-freedom method: kenward-roger 
@@ -687,17 +721,17 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> time emmean  SE df lower.CL upper.CL
- T1      103 2.7  2     91.6      115
- T2      106 2.7  2     94.2      118
- T3      100 2.7  2     88.6      112
- T4      104 2.7  2     92.8      116
+<pre><code> time emmean   SE df lower.CL upper.CL
+ T1      103 2.76  2     91.3      115
+ T2      106 2.76  2     94.0      118
+ T3      100 2.76  2     88.4      112
+ T4      104 2.76  2     92.5      116
 
 Results are averaged over the levels of: manage 
 Degrees-of-freedom method: containment 
@@ -714,15 +748,15 @@ Confidence level used: 0.95 </code></pre>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast estimate   SE df t.ratio p.value
- T1 - T2     -2.68 1.11  6  -2.426  0.1719
- T1 - T3      2.95 1.11  6   2.665  0.1287
- T1 - T4     -1.21 1.11  6  -1.091  0.7072
- T2 - T3      5.63 1.11  6   5.091  0.0089
- T2 - T4      1.48 1.11  6   1.334  0.5767
- T3 - T4     -4.15 1.11  6  -3.756  0.0358
+ T1 - T2     -2.68 1.41  6  -1.895  0.3213
+ T1 - T3      2.95 1.41  6   2.083  0.2588
+ T1 - T4     -1.21 1.41  6  -0.853  0.8283
+ T2 - T3      5.63 1.41  6   3.978  0.0280
+ T2 - T4      1.48 1.41  6   1.043  0.7330
+ T3 - T4     -4.15 1.41  6  -2.935  0.0930
 
 Results are averaged over the levels of: manage 
 Degrees-of-freedom method: kenward-roger 
@@ -732,15 +766,15 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast estimate   SE df t.ratio p.value
- T1 - T2     -2.68 1.11  6  -2.426  0.1719
- T1 - T3      2.95 1.11  6   2.665  0.1287
- T1 - T4     -1.21 1.11  6  -1.091  0.7072
- T2 - T3      5.63 1.11  6   5.091  0.0089
- T2 - T4      1.48 1.11  6   1.334  0.5767
- T3 - T4     -4.15 1.11  6  -3.756  0.0358
+ T1 - T2     -2.68 1.41  6  -1.895  0.3213
+ T1 - T3      2.95 1.41  6   2.083  0.2588
+ T1 - T4     -1.21 1.41  6  -0.853  0.8283
+ T2 - T3      5.63 1.41  6   3.978  0.0280
+ T2 - T4      1.48 1.41  6   1.043  0.7330
+ T3 - T4     -4.15 1.41  6  -2.935  0.0930
 
 Results are averaged over the levels of: manage 
 Degrees-of-freedom method: containment 
@@ -767,7 +801,7 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </section>
 <section id="example-model-for-rcbd-split-plot-designs" class="level3 page-columns page-full" data-number="7.2.2">
 <h3 data-number="7.2.2" class="anchored" data-anchor-id="example-model-for-rcbd-split-plot-designs"><span class="header-section-number">7.2.2</span> Example model for RCBD Split Plot Designs</h3>
-<p>Recall, at the beginning of this chapter we discussed CRD and RCBD split plot design. Now we will demonstrate how to analyze data from the RCBD split plot experiment design. The oats data used in this example is from the <strong>MASS</strong> package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.</p>
+<p>The oats data used in this example is from the <strong>MASS</strong> package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.</p>
 <table class="caption-top table">
 <caption>Table of variables in the oat data set</caption>
 <tbody>
@@ -791,11 +825,10 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </table>
 <p>The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.</p>
 <p>To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.</p>
-<p>Let’s start this example analysis by firstly loading the ‘oat’ data from the <strong>MASS</strong> package.</p>
+<p>Let’s start this example analysis by first loading the ‘oat’ data from the <strong>MASS</strong> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"oats"</span>, <span class="at">package =</span> <span class="st">"MASS"</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oats,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  B           V      N   Y
 1 I     Victory 0.0cwt 111
@@ -810,9 +843,9 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 <ul>
 <li>Check structure of the data</li>
 </ul>
-<p>we will first examine the structure of the data. The “B”, “V”, and “N” needs to be a factor and “Y” should be numeric.</p>
+<p>We will first examine the structure of the data. The “B”, “V”, and “N” needs to be a factor and “Y” should be numeric.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(oats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   72 obs. of  4 variables:
  $ B: Factor w/ 6 levels "I","II","III",..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -826,7 +859,7 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </ul>
 <p>Next, run the <code>table()</code> command to verify the levels of main-plots and sub-plots.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(oats<span class="sc">$</span>V, oats<span class="sc">$</span>N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             
               0.0cwt 0.2cwt 0.4cwt 0.6cwt
@@ -839,7 +872,7 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 <li>Check the extent of missing data</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(oats))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(oats))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>B V N Y 
 0 0 0 0 </code></pre>
@@ -864,7 +897,7 @@ Figure&nbsp;7.2: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(oats<span class="sc">$</span>Y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(oats<span class="sc">$</span>Y, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> base_plot_color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="model-building-1" class="level4 page-columns page-full" data-number="7.2.2.2">
@@ -880,10 +913,10 @@ Figure&nbsp;7.2: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>model2_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V), </span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> oats, </span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>model2_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V), </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> oats, </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 15 × 8
    effect   group    term            estimate std.error statistic    df  p.value
@@ -908,11 +941,11 @@ Figure&nbsp;7.2: Histogram of the dependent variable.
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>model2_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> oats, </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>model2_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(Y <span class="sc">~</span>  V <span class="sc">+</span> N <span class="sc">+</span> V<span class="sc">:</span>N ,</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>B<span class="sc">/</span>V,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> oats, </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in tidy.lme(model2_lme): ran_pars not yet implemented for multiple
 levels of nesting</code></pre>
@@ -947,11 +980,11 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2_lmer, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -959,11 +992,11 @@ levels of nesting</code></pre>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model2_lme, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'normality'</span>, <span class="st">'linearity'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-plot-design_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-plot-design_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -981,7 +1014,7 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model2_lmer, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model2_lmer, <span class="at">type =</span> <span class="st">"III"</span>, <span class="at">test.statistics =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
 
@@ -998,7 +1031,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1    45 77.16732  &lt;.0001
@@ -1016,22 +1049,32 @@ V:N             6    45  0.30282  0.9322</code></pre>
 <div class="tab-content">
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2_lmer, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2_lmer, <span class="sc">~</span> V<span class="sc">|</span>N) </span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> V           N      emmean   SE   df lower.CL upper.CL
- Golden.rain 0.0cwt   80.0 9.11 16.1     60.7     99.3
- Marvellous  0.0cwt   86.7 9.11 16.1     67.4    106.0
- Victory     0.0cwt   71.5 9.11 16.1     52.2     90.8
- Golden.rain 0.2cwt   98.5 9.11 16.1     79.2    117.8
- Marvellous  0.2cwt  108.5 9.11 16.1     89.2    127.8
- Victory     0.2cwt   89.7 9.11 16.1     70.4    109.0
- Golden.rain 0.4cwt  114.7 9.11 16.1     95.4    134.0
- Marvellous  0.4cwt  117.2 9.11 16.1     97.9    136.5
- Victory     0.4cwt  110.8 9.11 16.1     91.5    130.1
- Golden.rain 0.6cwt  124.8 9.11 16.1    105.5    144.1
- Marvellous  0.6cwt  126.8 9.11 16.1    107.5    146.1
- Victory     0.6cwt  118.5 9.11 16.1     99.2    137.8
+<pre><code>N = 0.0cwt:
+ V           emmean   SE   df lower.CL upper.CL
+ Golden.rain   80.0 9.11 16.1     60.7     99.3
+ Marvellous    86.7 9.11 16.1     67.4    106.0
+ Victory       71.5 9.11 16.1     52.2     90.8
+
+N = 0.2cwt:
+ V           emmean   SE   df lower.CL upper.CL
+ Golden.rain   98.5 9.11 16.1     79.2    117.8
+ Marvellous   108.5 9.11 16.1     89.2    127.8
+ Victory       89.7 9.11 16.1     70.4    109.0
+
+N = 0.4cwt:
+ V           emmean   SE   df lower.CL upper.CL
+ Golden.rain  114.7 9.11 16.1     95.4    134.0
+ Marvellous   117.2 9.11 16.1     97.9    136.5
+ Victory      110.8 9.11 16.1     91.5    130.1
+
+N = 0.6cwt:
+ V           emmean   SE   df lower.CL upper.CL
+ Golden.rain  124.8 9.11 16.1    105.5    144.1
+ Marvellous   126.8 9.11 16.1    107.5    146.1
+ Victory      118.5 9.11 16.1     99.2    137.8
 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
@@ -1040,22 +1083,32 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2_lme, <span class="sc">~</span> V <span class="sc">*</span>N) </span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model2_lme, <span class="sc">~</span> V<span class="sc">|</span>N) </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>emm1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> V           N      emmean   SE df lower.CL upper.CL
- Golden.rain 0.0cwt   80.0 9.11  5     56.6    103.4
- Marvellous  0.0cwt   86.7 9.11  5     63.3    110.1
- Victory     0.0cwt   71.5 9.11  5     48.1     94.9
- Golden.rain 0.2cwt   98.5 9.11  5     75.1    121.9
- Marvellous  0.2cwt  108.5 9.11  5     85.1    131.9
- Victory     0.2cwt   89.7 9.11  5     66.3    113.1
- Golden.rain 0.4cwt  114.7 9.11  5     91.3    138.1
- Marvellous  0.4cwt  117.2 9.11  5     93.8    140.6
- Victory     0.4cwt  110.8 9.11  5     87.4    134.2
- Golden.rain 0.6cwt  124.8 9.11  5    101.4    148.2
- Marvellous  0.6cwt  126.8 9.11  5    103.4    150.2
- Victory     0.6cwt  118.5 9.11  5     95.1    141.9
+<pre><code>N = 0.0cwt:
+ V           emmean   SE df lower.CL upper.CL
+ Golden.rain   80.0 9.11  5     56.6    103.4
+ Marvellous    86.7 9.11  5     63.3    110.1
+ Victory       71.5 9.11  5     48.1     94.9
+
+N = 0.2cwt:
+ V           emmean   SE df lower.CL upper.CL
+ Golden.rain   98.5 9.11  5     75.1    121.9
+ Marvellous   108.5 9.11  5     85.1    131.9
+ Victory       89.7 9.11  5     66.3    113.1
+
+N = 0.4cwt:
+ V           emmean   SE df lower.CL upper.CL
+ Golden.rain  114.7 9.11  5     91.3    138.1
+ Marvellous   117.2 9.11  5     93.8    140.6
+ Victory      110.8 9.11  5     87.4    134.2
+
+N = 0.6cwt:
+ V           emmean   SE df lower.CL upper.CL
+ Golden.rain  124.8 9.11  5    101.4    148.2
+ Marvellous   126.8 9.11  5    103.4    150.2
+ Victory      118.5 9.11  5     95.1    141.9
 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
@@ -1064,8 +1117,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>The estimated means for Marvellous variety were higher compared to other varieties across all N treatments.</p>
-<p>In the next chapter, we will continue with extension of split plot design called split-split plot design.</p>
+<p>The estimated means for the variety ‘Marvellous’ were higher compared to other varieties across all N treatments.</p>
 
 
 </section>

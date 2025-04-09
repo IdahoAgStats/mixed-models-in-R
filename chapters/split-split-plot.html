@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -376,7 +376,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>In this example, we have a rice yield data from the <a href="https://CRAN.R-project.org/package=agricolae">agricolae</a> package. The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.</p>
+<p>In this example, we have a rice yield data from the <a href="https://CRAN.R-project.org/package=agricolae">agricolae</a> package (data set “ssp”). The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_ssp.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -416,8 +416,7 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   135 obs. of  6 variables:
- $ X         : int  1 2 3 4 5 6 7 8 9 10 ...
+<pre><code>'data.frame':   135 obs. of  5 variables:
  $ block     : int  1 1 1 1 1 1 1 1 1 1 ...
  $ nitrogen  : int  0 0 0 50 50 50 80 80 80 110 ...
  $ management: chr  "m1" "m2" "m3" "m1" ...
@@ -464,7 +463,7 @@ window.Quarto = {
 <p>It looks perfectly balanced, with exactly 3 observation per treatment group.</p>
 <p>Last, check the distribution of the dependent variable by plotting a histogram of yield values using <code>hist()</code> in R.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rice<span class="sc">$</span>yield, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rice<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -483,14 +482,14 @@ Figure&nbsp;8.1: Histogram of the dependent variable.
 </section>
 <section id="model-building" class="level3 page-columns page-full" data-number="8.2.2">
 <h3 data-number="8.2.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">8.2.2</span> Model Building</h3>
-<p>The variance analysis of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.</p>
+<p>The model and analysis of variance of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis. We can use the nesting notation in the random part because nitrogen and management are nested in blocks. We can do blocks as fixed or random.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> nitrogen <span class="sc">*</span> management <span class="sc">*</span> variety <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                     (<span class="dv">1</span> <span class="sc">|</span> block <span class="sc">/</span> nitrogen <span class="sc">/</span> management),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                     (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>nitrogen<span class="sc">/</span>management),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> rice,</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -591,20 +590,17 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer, <span class="at">type =</span> <span class="st">'III'</span>, <span class="at">test.statistic=</span><span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
-
-Response: yield
-                                   F Df Df.res  Pr(&gt;F)    
-(Intercept)                 102.1211  1 89.706 &lt; 2e-16 ***
-nitrogen                      1.9160  4 86.474 0.11496    
-management                    3.6962  2 77.143 0.02932 *  
-variety                       4.9129  2 60.000 0.01057 *  
-nitrogen:management           0.2118  8 77.143 0.98797    
-nitrogen:variety              2.6681  8 60.000 0.01413 *  
-management:variety            2.2193  4 60.000 0.07754 .  
-nitrogen:management:variety   0.5289 16 60.000 0.92105    
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+                             Sum Sq Mean Sq NumDF DenDF  F value    Pr(&gt;F)    
+nitrogen                     51.982  12.995     4    10  29.7303 1.576e-05 ***
+management                   42.936  21.468     2    80  49.1136 1.215e-14 ***
+variety                     206.013 103.007     2    80 235.6534 &lt; 2.2e-16 ***
+nitrogen:management           1.103   0.138     8    80   0.3154 0.9580761    
+nitrogen:variety             14.145   1.768     8    80   4.0449 0.0004459 ***
+management:variety            3.852   0.963     4    80   2.2030 0.0760336 .  
+nitrogen:management:variety   3.699   0.231    16    80   0.5289 0.9240996    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -355,20 +355,6 @@ window.Quarto = {
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[ \beta \sim N(0, \sigma_b)\]</span></p>
 <p>Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\sigma_B\)</span>, respectively.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-‘iid’ assumption for error terms
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>In this model, the error terms, <span class="math inline">\(\epsilon\)</span> are assumed to be “iid”, that is, independently and identically distributed. This means they have constant variance and they each individual error term is independent from the others.</p>
-<p>This guide will later address examples when this assumption is violated and how to handle it.</p>
-</div>
-</div>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">5.2</span> Example Analysis</h2>
@@ -445,17 +431,12 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(var_trial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   168 obs. of  10 variables:
- $ block                 : int  4 4 4 4 4 4 4 4 4 4 ...
- $ range                 : int  1 1 1 1 1 1 1 1 1 1 ...
- $ row                   : int  1 2 3 4 5 6 7 8 9 10 ...
- $ variety               : chr  "DAS004" "Kaseberg" "Bruneau" "OR2090473" ...
- $ stand_pct             : int  100 98 96 100 98 100 100 100 99 100 ...
- $ days_to_heading_julian: int  149 146 149 146 146 151 145 145 146 146 ...
- $ height                : int  39 35 33 31 33 44 30 36 36 29 ...
- $ lodging               : int  0 0 0 0 0 0 0 0 0 0 ...
- $ yield_bu_a            : num  128 130 119 115 141 ...
- $ test_weight           : num  56.4 55 55.3 54.1 54.1 56.4 54.7 57.5 56.1 53.8 ...</code></pre>
+<pre><code>'data.frame':   168 obs. of  5 variables:
+ $ block     : int  4 4 4 4 4 4 4 4 4 4 ...
+ $ range     : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ row       : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ variety   : chr  "DAS004" "Kaseberg" "Bruneau" "OR2090473" ...
+ $ yield_bu_a: num  128 130 119 115 141 ...</code></pre>
 </div>
 </div>
 <p>These look okay except for block, which is currently coded as integer (numeric). We don’t want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will fix that. It can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion</p>
@@ -523,14 +504,8 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(var_trial))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                 block                  range                    row 
-                     0                      0                      0 
-               variety              stand_pct days_to_heading_julian 
-                     0                      0                      0 
-                height                lodging             yield_bu_a 
-                     0                      0                      0 
-           test_weight 
-                     0 </code></pre>
+<pre><code>     block      range        row    variety yield_bu_a 
+         0          0          0          0          0 </code></pre>
 </div>
 </div>
 <p>Alas, no missing data!</p>
@@ -553,7 +528,7 @@ Figure&nbsp;5.1: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> base_plot_color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.</p>
 <p>This data set is ready for analysis!</p>

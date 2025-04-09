@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -347,17 +347,17 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="background"><span class="header-section-number">11.1</span> Background</h2>
-<p>In the Latin Square design, two blocking factors are arranged across the row and the column of the square. This allows blocking of two nuisance factors across rows and columns to reduce even more experimental error. The requirement of Latin square design is that all t treatments appears only once in each row and column and number of replications is equal to number of treatments.</p>
+<p>In the Latin Square design, two blocking factors are laid out across the row and the column of the square. This allows blocking of two nuisance factors across rows and columns to reduce even more experimental error. The requirement of Latin square design is that all ‘t’ treatments appears only once in each row and column and number of replications is equal to number of treatments.</p>
 <p>Advantages of Latin square design are:</p>
 <ol type="1">
-<li><p>The design is particularly appropriate for comparing t treatment means in the presence of two sources of extraneous variation, each measured at t levels.</p></li>
-<li><p>The analysis is quite simple.</p></li>
+<li><p>The design is particularly appropriate for comparing ‘t’ treatment means in the presence of two sources of extraneous variation, each measured at ‘t’ levels.</p></li>
+<li><p>Easy to analyze.</p></li>
 </ol>
 <p>Disadvantages:</p>
 <ol type="1">
 <li><p>A Latin square can be constructed for any value of t, however, it is best suited for comparing t treatments when 5≤ t≤ 10.</p></li>
-<li><p>Any additional extraneous sources of variability tend to inflate the error term, making it more difficult to detect differences among the treatment means.</p></li>
-<li><p>The effect of each treatment on the response must be approximately same across the rows and columns.</p></li>
+<li><p>Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.</p></li>
+<li><p>There must be no interaction of rows and columns with treatment effect.</p></li>
 </ol>
 <p>Statistical model for a response in Latin square design is:</p>
 <p><span class="math inline">\(Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}\)</span></p>
@@ -366,7 +366,7 @@ window.Quarto = {
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="11.2">
 <h2 data-number="11.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">11.2</span> Example Analysis</h2>
-<p>Let’s start the analysis firstly by loading the required libraries:</p>
+<p>Let’s start the analysis first by loading the required libraries:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -384,9 +384,9 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used in this example was extracted from the <strong>agridat</strong> package. In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.</p>
+<p>The data used in this example is from the <strong>agridat</strong> package (data set “goulden.latin”). In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"latin_square.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"goulden_latin.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -414,12 +414,11 @@ window.Quarto = {
 <ul>
 <li>Check structure of the data</li>
 </ul>
-<p>First, let’s verify the class of variables in the dataset using <code>str()</code> function in base R</p>
+<p>First, let’s verify the class of variables in the data set using <code>str()</code> function in base R</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   25 obs. of  5 variables:
- $ X    : int  1 2 3 4 5 6 7 8 9 10 ...
+<pre><code>'data.frame':   25 obs. of  4 variables:
  $ trt  : chr  "B" "C" "D" "E" ...
  $ yield: num  4.9 9.3 7.6 5.3 9.3 6.4 4 15.4 7.6 6.3 ...
  $ row  : int  5 4 3 2 1 5 4 3 2 1 ...
@@ -453,8 +452,8 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    X   trt yield   row   col 
-    0     0     0     0     0 </code></pre>
+<pre><code>  trt yield   row   col 
+    0     0     0     0 </code></pre>
 </div>
 </div>
 <p>No missing values detected in this data set.</p>
@@ -473,7 +472,7 @@ window.Quarto = {
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> <span class="st">"turquoise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat1<span class="sc">$</span>yield, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">col =</span> base_plot_color)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="model-fitting" class="level3" data-number="11.2.2">
