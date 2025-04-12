@@ -81,7 +81,7 @@ write.csv(incblock, here::here("data", "weiss_ICB.csv"), row.names = FALSE)
 ```
 
 ```{r}
-dat <- read.csv(here::here("data", "weiss_ICB.csv"))
+weiss <- read.csv(here::here("data", "weiss_ICB.csv"))
 ```
 
 |       |                              |
@@ -95,12 +95,14 @@ dat <- read.csv(here::here("data", "weiss_ICB.csv"))
 : Table of variables in the data set {tbl-incom_blk}
 
 ```{r, fig.height= 9, echo=FALSE}
-desplot::desplot(dat, 
+desplot::desplot(weiss, 
         block ~ col+row, 
          text=gen, cex=1, out1=block,
+        #col.regions = 
         out2=gen, out2.gpar=list(col = "black", lwd = 1, lty = 1),
          main="Incomplete block design")
-# desplot::desplot(dat, yield~col*row,
+
+# desplot::desplot(weiss, yield~col*row,
 #           text=gen, shorten='none', cex=.6, out1=block,
 #           aspect=252/96, # true aspect
 #           main="weiss.incblock")
@@ -113,7 +115,7 @@ desplot::desplot(dat,
 We will start inspecting the data set firstly by looking at the class of each variable:
 
 ```{r}
-str(dat)
+str(weiss)
 ```
 
 The variables we need for the model are block, gen, and yield. The block and gen are classified as factor variables and yield is numeric. Therefore, we do not need to change class of any of the required variables.
@@ -123,14 +125,14 @@ The variables we need for the model are block, gen, and yield. The block and gen
 Next, let's check the independent variables. We can look at this by running a cross tabulations among block and gen factors.
 
 ```{r}
-agg_tbl <- dat %>% group_by(gen) %>% 
+agg_tbl <- weiss %>% group_by(gen) %>% 
   summarise(total_count=n(),
             .groups = 'drop')
 agg_tbl
 ```
 
 ```{r}
-agg_df <- aggregate(dat$gen, by=list(dat$block), FUN=length)
+agg_df <- aggregate(weiss$gen, by=list(weiss$block), FUN=length)
 agg_df
 ```
 
@@ -142,7 +144,7 @@ There are 31 varieties (levels of gen) and it is perfectly balanced, with exactl
 We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables: 
 
 ```{r}
-colSums(is.na(dat))
+colSums(is.na(weiss))
 ```
 
 No missing data!
@@ -155,11 +157,11 @@ Last, let's plot a histogram of the dependent variable. This is a quick check be
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
+hist(weiss$yield, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(dat$yield, main = "", xlab = "yield")
+hist(weiss$yield, main = NA, xlab = "yield")
 ```
 Response variable values fall within expected range, with few extreme values on right tail.
 This data set is ready for analysis!
@@ -173,7 +175,7 @@ We will be evaluating the response of yield as affected by gen (fixed effect) an
 
 ```{r}
 model_icbd <- lmer(yield ~ gen + (1|block),
-                   data = dat, 
+                   data = weiss, 
                    na.action = na.exclude)
 tidy(model_icbd)
 ```
@@ -182,7 +184,7 @@ tidy(model_icbd)
 ```{r}
 model_icbd1 <- lme(yield ~ gen,
                   random = ~ 1|block,
-                  data = dat, 
+                  data = weiss, 
                   na.action = na.exclude)
 tidy(model_icbd1)
 ```
@@ -276,7 +278,7 @@ write.csv(partial_incblock, here::here("data", "partial_incblock.csv"))
 ```
 
 ```{r}
-data1 <- read.csv(here::here("data", "partial_incblock.csv"))
+p_icb <- read.csv(here::here("data", "partial_incblock.csv"))
 ```
 |       |                              |
 |-------|------------------------------|
@@ -289,7 +291,7 @@ data1 <- read.csv(here::here("data", "partial_incblock.csv"))
 : Table of variables in the data set {tbl-incom_blk1}
 
 ```{r, echo=FALSE, fig.height=6, fig.width=8}
-desplot::desplot(data = data1, flip = TRUE,
+desplot::desplot(data = p_icb, flip = TRUE,
         form = block ~ col + row | rep,          # fill color per genotype, headers per replicate
         text = gen, cex = 0.7, shorten = "no", # show genotype names per plot
         out1 = rep,                            # lines between complete blocks/replicates
@@ -305,7 +307,7 @@ desplot::desplot(data = data1, flip = TRUE,
 Let's look into the structure of the data first to verify the class of the variables.
 
 ```{r}
-str(data1)
+str(p_icb)
 ```
 Here, rep, block and gen are character and yield as a integer. We can continue with this. 
 
@@ -314,7 +316,7 @@ Here, rep, block and gen are character and yield as a integer. We can continue w
 Next step is to evaluate the independent variables. First, check the number of treatments per replication (each treatment should be replicated 3 times). 
 
 ```{r}
-agg_tbl <- data1 %>% group_by(gen) %>% 
+agg_tbl <- p_icb %>% group_by(gen) %>% 
   summarise(total_count=n(),
             .groups = 'drop')
 agg_tbl
@@ -323,8 +325,7 @@ agg_tbl
 This looks balanced, as expected. Also, let's have a look at the number of times each treatment appear per block.
 
 ```{r}
-agg_blk <- aggregate(data1$gen, by=list(data1$block), FUN=length)
-agg_blk
+(agg_blk <- aggregate(p_icb$gen, by=list(p_icb$block), FUN=length))
 ```
 
 12 treatments randomly appear in incomplete block. Each incomplete block has same number of treatments. 
@@ -332,7 +333,7 @@ agg_blk
 - Check the extent of missing data
 
 ```{r}
-colSums(is.na(data1))
+colSums(is.na(p_icb))
 ```
 No missing values in data!
 
@@ -345,10 +346,11 @@ Before fitting the model, it's a good idea to look at the distribution of depend
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(data1$yield, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
+hist(p_icb$yield, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
+
 ```{r, eval=FALSE}
-hist(data1$yield, main = "", xlab = "yield")
+hist(p_icb$yield, main = NA, xlab = "yield")
 ```
 
 The response variables seems to follow a normal distribution curve, with few values on extreme lower and higher ends. 
@@ -361,7 +363,7 @@ We are evaluating the response of yield to Gen (fixed effect) and rep and block 
 ### lme4
 ```{r}
 mod_alpha <- lmer(yield ~ gen + (1|rep/block),
-                   data = data1, 
+                   data = p_icb, 
                    na.action = na.exclude)
 tidy(mod_alpha)
 ```
@@ -370,7 +372,7 @@ tidy(mod_alpha)
 ```{r}
 mod_alpha1 <- lme(yield ~ gen,
                   random = ~ 1|rep/block,
-                  data = data1, 
+                  data = p_icb, 
                   na.action = na.exclude)
 tidy(mod_alpha1)
 ```

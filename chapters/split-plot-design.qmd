@@ -36,8 +36,9 @@ $$\ \delta  \sim N(0, \sigma_\delta)$$
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_\delta$, respectively.
 
-```{r, echo=FALSE, fig.height=3.5}
+```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
+library(dplyr)
 spd <- split_plot(
   wp = c("A", "B", "C"),
   sp = c("1", "2", "3"),
@@ -48,11 +49,12 @@ spd <- split_plot(
   seed = 12
 ) 
 
-plot(spd)
-```
+dframe <- spd$fieldBook |> arrange(ID) |> 
+  mutate(ROWS = rep(1:3, each = 9), COLUMNS = c(1:9, 9:1, 1:9))
+write.csv(dframe, here::here("data/split_plot_crd.csv"), row.names=FALSE)
 
-```{r, echo=FALSE, , fig.height=3.5}
-spd1 <- split_plot(
+
+spd2 <- split_plot(
   wp = c("A", "B", "C"),
   sp = c("1", "2", "3"),
   reps = 3, 
@@ -61,7 +63,57 @@ spd1 <- split_plot(
   l = 1,
   seed = 12
 ) 
-plot(spd1)
+
+dframe2 <- spd2$fieldBook |> arrange(ID) |> 
+  mutate(ROWS = c(rep(1:3, 3), rep(4:6, 3), rep(7:9, 3)), 
+         COLUMNS = rep(rep(1:3, each = 3), 3))
+
+write.csv(dframe2, here::here("data/split_plot_rcbd.csv"), row.names=FALSE)
+```
+
+```{r, echo=FALSE, message=FALSE, fig.height=3.5}
+library(ggplot2)
+spd <- read.csv(here::here("data/split_plot_crd.csv"))
+
+ggplot(spd, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
+  geom_tile() +
+  scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(breaks = 1:3) +
+  geom_text(aes(label = TRT_COMB)) +
+  guides(fill = "none") + 
+  ggtitle("Split Plot Design (CRD) 3x9") +
+  geom_hline(yintercept = 1.5, linewidth = 1.5) + 
+  geom_hline(yintercept = 2.5, linewidth = 1.5) +
+  geom_vline(xintercept = 3.5, linewidth = 1.5) + 
+  geom_vline(xintercept = 6.5, linewidth = 1.5) +
+  scale_x_continuous(expand = c(0, 0)) + # Remove x-axis expansion
+  scale_y_continuous(expand = c(0, 0)) + # Remove y-axis expansion
+  theme_classic() +
+  scale_color_okabe_ito(alpha = 0.5, aesthetics = "fill") + 
+  theme(axis.line = element_blank(),
+        axis.ticks = element_blank()) 
+
+```
+
+
+```{r, echo=FALSE, fig.height=3.5}
+spd2 <- read.csv(here::here("data/split_plot_RCBD.csv")) 
+
+ggplot(spd2, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
+  geom_tile() +
+  scale_x_continuous(breaks = 1:3, expand = c(0, 0)) +
+  scale_y_continuous(breaks = 1:9, expand = c(0, 0)) +
+  geom_text(aes(label = TRT_COMB)) +
+  guides(fill = "none") + 
+  ggtitle("Split Plot Design (RCBD) 9x3") +
+  geom_hline(yintercept = 3.5, linewidth = 1.5) + 
+  geom_hline(yintercept = 6.5, linewidth = 1.5) +
+  theme_classic() +
+  scale_color_okabe_ito(alpha = 0.5, aesthetics = "fill") + 
+  theme(axis.line = element_blank(),
+        axis.ticks = element_blank()) 
+
+```
 ```
 
 ## Analysis Examples
@@ -150,11 +202,11 @@ Last, check the dependent variable by plotting a histogram of height data.
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(height$height, main = "", xlab = "height", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
+hist(height$height, main = NA, xlab = "height", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(height$height, main = "", xlab = "height")
+hist(height$height, main = NA, xlab = "height")
 ```
 
 The distribution of height data looks reasonable.
@@ -330,11 +382,11 @@ Last, check the distribution of the dependent variable by plotting a histogram o
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(oats$Y, main = "", xlab = "yield", cex.lab = 1.8, cex.axis = 1.5, col = base_plot_color)
+hist(oats$Y, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(oats$Y, main = "", xlab = "yield", col = base_plot_color)
+hist(oats$Y, main = NA, xlab = "yield", col = base_plot_color)
 ```
 
 #### Model Building

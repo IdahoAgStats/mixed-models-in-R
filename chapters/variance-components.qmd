@@ -4,6 +4,13 @@ execute:
   eval: false
 ---
 
+```{r, include=FALSE, echo=FALSE}
+source(here::here("settings.r"))
+
+par(mar=c(5.1, 6, 4.1, 2.1))
+```
+
+
 Mixed, hierarchical or multilevel models provide the advantage of being able to estimate the variance of random variables and model correlations within the grouping structure of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random draw from a probability distribution. 
 
 The decision of how to designate a variable as random or fixed depends on (1) your experimental aims with regard to inference and (2) your data structure. ^[[This animation](http://mfviz.com/hierarchical-models/){.external target="_blank"} show how accounting for grouping structure as random effects can impact the results of a linear model. ]
@@ -68,7 +75,7 @@ Distribution of the dependent variable, LxW or length-to-width ratio:
 ```{r}
 #| fig-cap: "Distribution of Length-to-Width Ratio"
 #| column: margin
-hist(potato$LxW, ylab=NULL, xlab = NULL, main = "Potato Clone LxW Ratio", col = base_plot_color, breaks = 20)
+hist(potato$LxW, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = "Potato Clone LxW Ratio", col = base_plot_color, breaks = 20)
 ```
 
 ### Model fitting
@@ -128,7 +135,7 @@ clone_re <- filter(random_effects, groupFctr == "clone") |>
 ```{r}
 #| fig-cap: "Histogram of Clone BLUPs"
 #| column: margin
-hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = "Clone Random Effects", col = base_plot_color)
+hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = "Clone Random Effects", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 Below are the BLUPs (in red) and standard errors for each clone, arranged from lowest to highest length-to-width ratio. The horizontal gray dotted line indicates the average clone effect. 
@@ -192,13 +199,22 @@ load(here::here("data/salary_models.RData"))
 
 Salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum value of \$3.1 million. We will log transform the data in a log-linear model for analysis. This is a special case of generalized linear mixed model (GLMM) and the only GLMM model used because it still follow the assumption of normally-distributed residuals terms when a the dependent variable is log-transformed. 
 
-```{r}
-#| fig-cap: "Histogram of Log of Salaries"
-#| column: margin
-hist(log(wa_salary$salary), ylab=NULL, xlab = NULL, main = "Washington Higher Ed Salaries", col = base_plot_color)
+```{r, eval=FALSE}
+hist(log(wa_salary$salary), ylab=NULL, xlab = NULL, main = "Washington Higher Ed Salaries")
 ```
 
-```{r}
+
+```{r, echo=FALSE}
+#| fig-cap: "Histogram of Log of Salaries"
+#| column: margin
+hist(log(wa_salary$salary), ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = "Washington Higher Ed Salaries", col = base_plot_color)
+```
+
+```{r, eval=FALSE}
+boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main = "Salaries by Year")
+```
+
+```{r, echo=FALSE}
 #| fig-cap: "Boxpplot of Log Salaries by Year"
 #| column: margin
 boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main = "Salaries by Year", col = base_plot_color)
@@ -245,7 +261,7 @@ clone_re <- filter(random_effects, groupFctr == "id:agency") |>
 
 > In the "general" linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject $H_0$, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model. 
 > 
-> -- Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, $2^{nd}$ Ed, Section 7.2.3.1
+> -- Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, 2nd Ed, Section 7.2.3.1
 
 In previous sections, we have assumed the error terms or residuals were "i.i.d.", that is "independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity. 
 
@@ -260,8 +276,13 @@ var_ex1 <- read.csv(here::here("data", "MET_trial_variance.csv")) |>
 ```
 
 Exploratory data visualizations indicate that the dependent variable, seed yield, varied greatly overall and certain locations had smaller variance compared to others. 
-```{r}
-hist(var_ex1$yield)
+```{r, echo=FALSE}
+hist(var_ex1$yield, main=NA, col = base_plot_color)
+boxplot(yield ~ site, data = var_ex1, col = base_plot_color)
+```
+
+```{r, eval=FALSE}
+hist(var_ex1$yield, main=NA)
 boxplot(yield ~ site, data = var_ex1)
 ```
 
@@ -326,9 +347,13 @@ var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv")) |>
   dplyr::mutate(block = as.character(block))
 ```
 
-A histogram does indicate there is anything unusual about the dependent variabe (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.
-```{r}
-hist(var_ex2$yield)
+A histogram does indicate there is anything unusual about the dependent variable (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.
+```{r, eval=FALSE}
+hist(var_ex2$yield, main = NA)
+```
+
+```{r, echo=FALSE}
+hist(var_ex2$yield, main = NA, col = base_plot_color)
 ```
 
 Since this experiment has a single fixed effect and is arranged using a RCBD, the model is same as described in [the RCBD chapter](rcbd.qmd).
@@ -386,8 +411,13 @@ check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
 #| fig-cap: "Boxplot of P concentration by stage"
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
+boxplot(P_leaf ~ time, data = phos1, cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
+```
+
+```{r, echo=FALSE}
 boxplot(P_leaf ~ time, data = phos1)
 ```
+
 
 We can model the variance as a function of time point by using the `varIdent()` function shown earlier. 
 

@@ -18,11 +18,12 @@
 
 library(ggplot2)
 library(viridis)
-#library(ggsci)
-#library(RColorBrewer)
+
 library(scales)
+library(ggokabeito)
 
 options(
+  #ggplot2.discrete.fill = scale_color_okabe_ito(alpha = 0.7, aesthetics = "fill"), 
   ggplot2.discrete.color = viridis_pal(option = "D")(5),  # Discrete colors
   ggplot2.discrete.fill = viridis_pal(option = "D")(5),
   ggplot2.continuous.color = scale_color_viridis_c(),
@@ -44,5 +45,7 @@ theme_set(
     )
 )
 
-base_plot_color = "turquoise"
+base_plot_color = '#b0f4f0'
+cex_lab = 1.8
+cex_axis = 1.5
 
