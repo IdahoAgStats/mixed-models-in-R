@@ -8,8 +8,6 @@ reference-location: margin
 source(here::here("settings.r"))
 ```
 
-This is a simple model that can serve as a good entrance point to mixed models.
-
 Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks.
 
 ## Background
@@ -48,7 +46,7 @@ library(dplyr)
 :::
 
 
-This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the rankings of each variety for the variable.
+This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the relative rankings of the varieties.
 
 ```{r}
 var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
@@ -60,14 +58,10 @@ var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 | range | column position for each plot |
 | row | row position for each plot |
 | variety | crop variety (the treatment) being evaluated |
-| stand_pct | percentage of the plot with actual plants growing in them |
-| days_to_heading_julian | Julian days (starting January 1st) until plot "headed" (first spike emerged) |
-| lodging | percentage of plants in the plot that fell down and hence could not be harvested |
 | yield_bu_a | yield (bushels per acre) |
 
 : Table of variables in the data set {tbl-rcbd}
 
-There are several variables present that are not useful for this analysis. The only thing we are concerned about is **block**, **variety**, **yield_bu_a**, and **test_weight**.
 
 ### Data integrity checks
 
@@ -93,7 +87,7 @@ Next, check the independent variables. Running a cross tabulations is often suff
 table(var_trial$variety, var_trial$block)
 ```
 
-There are 42 varieties and there appears to be no mis-spellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
+There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
 - Check the extent of missing data 
 
@@ -103,7 +97,7 @@ Here is a quick check to count the number of missing data in each column.
 colSums(is.na(var_trial))
 ```
 
-Alas, no missing data!
+Alas, no missing data.
 
 - Inspect the dependent variable
 
@@ -239,7 +233,7 @@ At this point, the analysis goals have been met: we know the estimated means for
 If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by **nlme**, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in **nlme**. The lmer-extender package **lmerTest* implements type 3 tests and the Kenward-Rogers method of degrees of freedom approximation by default.^[The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 ("partial") drops model terms one at a time. This can effect the results of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points.]
 
 
-In this example, there is only one fixed effect, so the sums of squares choice is immaterial. 
+In this example, there is only one fixed effect (and the experiment is perfectly balanced), so the sums of squares choice is immaterial. 
 
 ::: panel-tabset
 ### lme4

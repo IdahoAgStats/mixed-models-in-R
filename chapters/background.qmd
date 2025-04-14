@@ -8,9 +8,9 @@ Mixed-effects models are called “mixed” because they simultaneously model fi
 
 This tutorial concerns (general) linear mixed models (sometimes abbreviated as "LMM") where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of *generalized* linear mixed models (sometimes abbreviated "GLMM"), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial. 
 
-*Fixed effects* represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g. levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares. 
+*Fixed effects* represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g. levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in traditional regression techniques like ordinary least squares. 
 
-*Random effects* are discrete units sampled from some population (e.g. plots, participants), and thus they are inherently categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are especially useful when we have (1) many levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and/or (3) uneven sampling across levels. The general thinking is that random effects represent a small sample of a population you want to make inference on. 
+*Random effects* are discrete units sampled from some population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are especially useful when we have (1) many levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and/or (3) uneven sampling across levels. The general thinking is that random effects represent a sample of a population you want to make inference on. 
 
 Please read this section and refer back to if when you forget what these terms mean.
 
@@ -31,21 +31,22 @@ $$  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i $$
 
 $Y_i$ is the dependent variable, and $x_i$ is the independent variable. The value for $\beta_0$ is the overall average for $Y_i$ and $\beta_1$ is the change in $Y$ as $X$ changes. The slope for $\beta_1$ could represent the effects of increasing quantities of nitrogen fertilizer on crop growth.
 
-The errors, ^[For the rest of this tutorial we will be using the term "residual" and not error term to reflect current practices. The residual is calculated as $Y - XB$, it is the gap between the observed value for $Y_i$ and the predicted value, $\hat{Y_i}$] $\epsilon_i$, or residual are independently and identically distributed (sometimes called "iid") following a normal distribution for general linear mixed models. Later on we will explore relaxing these assumptions. 
+The errors,^[For the rest of this tutorial we will be using the term "residual" and not "error term" to reflect current practices. The residual is calculated as $Y - XB$, the gap between the observed value for $Y_i$ and the predicted value, $\hat{Y_i}$] $\epsilon_i$, or residual are independently and identically distributed (sometimes called "iid") following a normal distribution for general linear mixed models.  
 
 $$e_i \sim N(0, \sigma I_n)$$
-This is an important model assumption we will revisit frequently in this tutorial.
+These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions). 
 
-There is also an expected distribution for $Y_i$, but we will not be looking at this again. 
+
+There is also an expected conditional distribution for $Y_i$, but we will not be discussing this again. 
 
 $$ Y_i|x_i \sim𝑁(X\beta, \sigma^2) $$
 
-The slope and intercept are chosen in a way so that the residual sum of squares is minimized. If we consider this model in a mixed model framework, $\beta_0$ and $\beta_1$ would be fixed effects (also known as the population-averaged values).  
+In least squares estimation, the slope and intercept are chosen in a way so that the residual sum of squares is minimized. If we consider this model in a mixed model framework, $\beta_0$ and $\beta_1$ would be fixed effects (also known as the population-averaged values).  
 
-Extending this example to a mixed model, we can consider adding another term, $r_{ij}$ that reflects levels sampled from a population that represent a random subset of a larger population: 
+Extending this example to a mixed model, we can consider adding another term, $r_{j}$ that reflects levels sampled from a population that represent a random subset of a larger population: 
 
 $$  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} $$
-In an agronomic field trial, $r_{ij}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). The random effect can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\beta_0$). Like the residuals term, $r_i$ is independently and identically distributed (sometimes referred to as "iid"): 
+In an agronomic field trial, $r_{j}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). The random effect can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\beta_0$). Like the residuals term, $r_i$ is independently and identically distributed (sometimes referred to as "iid"): 
 
 
 $$r_i \sim N(0, \sigma_b)$$
@@ -102,6 +103,5 @@ The package '**lme4**' has some additional conventions regarding the formula. Ra
 The first example, `(1|g)` suffices for most mixed models and is the only structure used in this guide.
 
 
-The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle [crossed](https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/) as well as nested random factors.
+The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures. They handle crossed as well as nested random factors. The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge can be dangerous.
 
-The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.

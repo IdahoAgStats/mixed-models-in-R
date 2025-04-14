@@ -2,8 +2,6 @@
 title: "Model Preparation and Flow"
 mermaid:
   theme: forest
-execute: 
-  eval: false
 ---
 
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
@@ -15,7 +13,7 @@ The steps explained below were applied to all the chapters.
 Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
 
 
-```{mermaid, eval=TRUE}
+```{mermaid}
 %%| fig-align: center
 %%| fig-width: 6.5
 graph TD
@@ -23,7 +21,7 @@ graph TD
   B --> C[Fit Model]
   C --> D[Check Model Assumptions]
   D -- Met --> E[Conduct Inference]
-  D -- Unmet --> F[Check data &/| consider others models]
+  D -- Unmet --> F[Check data and|or consider others models]
 
 ```
 
@@ -50,22 +48,22 @@ The first thing is to make sure the data is what we expect. Here are the steps t
 
 ### 1.  Check structure of the data 
 
-In this step, we need to make sure that class of variables in data is as expected e.g. replication or block and Year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical (no one views 2025 as 2,205) needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases^[Since this tutorial is exclusively focused on general linear models and is not addressing *generalized* scenarios at all.], although categorical outcomes are certainly plausible. 
+In this step, we need to make sure that class of variables in data is as expected e.g. replication or block and Year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical^[no one views 2025 as 2,205.] needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases^[Since this tutorial is exclusively focused on general linear models and is not addressing *generalized* scenarios at all.], although categorical outcomes are certainly plausible. 
 
 ::: callout-warning
-Usually R functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) imports continuously varying numbers as numerical variables, but if it does not, that is often a signal that there is an unexpected character in a particular column of data. Perhaps a comma when a period is expected, or "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors in it.
+Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interprets continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors in it.
 :::
 
 
 We can use the base code `str()` in R to look at the class of each variable in the data set. 
-```{r}
+```{r, eval=FALSE}
 str(dataset)
 ```
 
 This code output the data class of each variable present in the data set. 
 
 The example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.
-```{r}
+```{r, eval=FALSE}
 dataset$block <- as.factor(dataset$block)
 dataset$yield <- as.numeric(dataset$yield)
 ```
@@ -83,7 +81,7 @@ Often, factor and character object classes are used interchangeable. But we need
 
 Running a cross tabulation across treatments and replications is generally enough to make sure the expected levels are present in the data.
 
-```{r}
+```{r, eval=FALSE}
 table(dataset$trt, dataset$block)
 ```
 
@@ -92,47 +90,54 @@ The output from this code will give us the number of observations in each replic
 ### 3.  Check the extent of missing data
 
 
-```{r}
+```{r, eval=FALSE}
 colSums(is.na(dataset))
 ```
 
-This will give you a number of missing values in each variable. Missing data are a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correct and nothing wrong happened during import. 
+This will give you a number of missing values in each variable. Missing data are a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and nothing wrong happened during import.
+
+::: callout-tip
+## Missingness versus Zeros
+
+We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to yield at all due to a field conditions, it is reasonable to assign a zero to that plot and variable. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. 
+:::
+
 
 ### 4.  Inspect the dependent variable and all over continuous variables
 
-Check the dependent variable and all continuous variables (covariates) to ensure their distributions are following expectations. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so no need to spend time making the plot look good.
+Check the dependent variable and all continuous variables (i.e. covariates) to ensure their distributions are following expectations. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so there is no need to spend time prettifying the plot.
 
-The target of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme high/low observations. 
+The goal of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme observations (high or low). 
 
-```{r}
+```{r, eval=FALSE}
 hist(data$yield)
 ```
 
-Data are not expected to be normally distributed at this point, so don't bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and they appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots with regularity, you will gain a feel for what your data should look like at this stage.
+Data are not expected to be normally distributed at this point, so don't bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots regularly, you will gain a feel for what your data should look like at this stage.
 
 ### Next Steps
 
 The purpose of these checks is to help us find any data errors that ought to be fixed prior to model fitting. They are designed to be done quickly and should be conducted for **every analysis** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis. 
 
-If do you identify issues, check your data and correct as neccesary. Once a data ses passes these checks, we can move to next step: model fitting.  
+If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
 
 
 ## Model fitting - Formula syntax and expectations
 
-In this guide, we use **lme4** and **nlme** packages to fit linear mixed models. These are similar packages that follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html) for `formula()`. For this demonstration, let's assume the dependent variable is "yield", "trt" is a fixed effect and "block" is a random effect.
+In this guide, we use **lme4** and **nlme** packages to fit linear mixed models. These are similar packages that follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is "yield", "trt" is a fixed effect and "block" is a random effect.
 
 The code below shows the R syntax for a mixed model with one fixed and one random effect:
 
 ::: panel-tabset
 ### lme4
-```{r}
+```{r, eval=FALSE}
 model_lmer <- lmer(yield ~ trt + (1|block),
                    data = dataset, 
                    na.action = na.exclude)
 ```
 
 ### nlme
-```{r}
+```{r, eval=FALSE}
 model_lme <- lme(yield ~ trt ,
                   random = ~ 1|block,
                   data = data1, 
@@ -173,13 +178,13 @@ We can use base `plot()` function in R for **lme4** and **nlme** objects to chec
 
 ::: panel-tabset
 ### lme4
-```{r}
+```{r, eval=FALSE}
 plot(model_lmer, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
 ```
 
 ### nlme
-```{r}
+```{r, eval=FALSE}
 plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
 ```
@@ -192,12 +197,12 @@ To check the normality of the residuals, we need to extract the residuals first 
 
 ::: panel-tabset
 ### lme4
-```{r}
+```{r, eval=FALSE}
 qqnorm(resid(model_lmer), main = NULL); qqline(resid(model_lmer))
 ```
 
 ### nlme
-```{r}
+```{r, eval=FALSE}
 qqnorm(resid(model_lme), main = NULL); qqline(resid(model_lme))
 ```
 :::
@@ -218,12 +223,12 @@ Read the documentation for `check_model()` to find what other checks this functi
 
 ::: panel-tabset
 ### lme4
-```{r}
+```{r, eval=FALSE}
 check_model(model_lmer, check = c('normality', 'linearity'))
 ```
 
 ### nlme
-```{r}
+```{r, eval=FALSE}
 check_model(model_lme, check = c('normality', 'linearity'))
 ```
 :::
