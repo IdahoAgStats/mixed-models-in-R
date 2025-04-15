@@ -29,7 +29,9 @@ jobs:
           r-version: '4.4.1'
           
       - name: fix quarto set-up issues
-        run: quarto install tinytex
+        run: | 
+          export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          quarto install tinytex
       
       - name: manual installtion of 'digest'
         run: |
