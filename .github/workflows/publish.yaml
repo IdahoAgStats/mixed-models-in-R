@@ -18,7 +18,8 @@ jobs:
       - name: install linux dependencies
         run: |
           sudo apt-get update 
-          sudo apt-get install --fix-missing -y --no-install-recommends build-essential libcurl4-openssl-dev 
+          sudo apt-get install --fix-missing -y --no-install-recommends build-essential 
+      # libcurl4-openssl-dev 
 
       - name: set up R
         uses: r-lib/actions/setup-r@v2 
@@ -33,12 +34,12 @@ jobs:
           export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           quarto install tinytex
       
-      - name: manual installtion of 'digest'
-        run: |
-          R -e "install.packages('digest', repos='http://cran.us.r-project.org')"
-      
-      - name: clear renv cache
-        run: sudo rm -rf ~/.cache/R/renv
+      # - name: manual installtion of 'digest'
+      #   run: |
+      #     R -e "install.packages('digest', repos='http://cran.us.r-project.org')"
+      # 
+      # - name: clear renv cache
+      #   run: sudo rm -rf ~/.cache/R/renv
       
       - name: set up renv
         uses: r-lib/actions/setup-renv@v2
