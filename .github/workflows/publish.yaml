@@ -31,9 +31,10 @@ jobs:
       - name: fix quarto set-up issues
         run: quarto install tinytex
       
-      - name: Clean renv cache (debugging)
-        run: rm -rf ~/.cache/R/renv
-         
+      - name: manual installtion of 'digest'
+        run: |
+          Rscript install.packages('digest', repos='http://cran.us.r-project.org')
+      
       - name: set up renv
         uses: r-lib/actions/setup-renv@v2
         with:
