@@ -10,21 +10,37 @@ editor:
 source(here::here("settings.r"))
 ```
 
-The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a **split-split plot design**. The split-split-plot design is an extension of the split-plot design to accommodate a third factor: one factor in main-plot, other in subplot and the third factor in sub-subplot. The example shown below illustrates this experiment layout.
+The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a **split-split plot design**. The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in in the main plot, another in the split plot and a third factor in the split-split plot. The example shown below illustrates this experiment layout.
 
 ## Details for split-split plot designs
 
 The statistical model structure this design:
 
-$$y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha\beta)_{ik} + \tau_n + (\alpha\tau)_{in} + (\tau\beta)_{nk} + (\alpha\beta\tau)_{ikn} + \epsilon_{ijk} + \delta_{ijkn}$$ Where:
+$$y_{ijk} = \mu + r_j +  \alpha_i + \beta_k + (\alpha\beta)_{ik} + \gamma_n + (\alpha\gamma)_{in} + (\gamma\beta)_{nk} + (\alpha\beta\gamma)_{ikn} + \epsilon_{ijk} + \delta_{ijkn}$$ 
 
-$\mu$= overall experimental mean, $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\tau$ = main effect of sub-subplot, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+Where:
 
-$$ \epsilon \sim N(0, \sigma_\epsilon)$$
+$\mu$ = overall experimental mean
 
-$$\ \delta  \sim N(0, \sigma_\delta)$$
+$\alpha$ = main effect of whole plot (fixed)
 
-The assumptions of the model includes normal distribution of both the error and the rep effects with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
+$\beta$ = main effect of split plot (fixed)
+
+$\gamma$ = main effect of split-split plot (fixed)
+
+$\epsilon_{ij}$ = whole plot error
+
+$\delta_{ijk}$ = split plot error
+
+$\tau_{xxx}$ = split-split plot error
+
+The assumptions of the model includes normal distribution of both the error and the rep effects with a mean of zero and standard deviations of $\sigma$ and $\sigma_{sp}$, respectively.
+
+$$\epsilon \sim N(0, \sigma_\epsilon)$$
+
+$$\delta  \sim N(0, \sigma_{sp})$$
+
+$$\tau  \sim N(0, \sigma_{ssp})$$
 
 ## Example Analysis
 ::: panel-tabset
@@ -45,7 +61,7 @@ library(broom.mixed); library(performance)
 ```
 :::
 
-In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae) package (data set "ssp"). The experiment consists of 3 different rice varieties grown under 3 management practices and 5 Nitrogen levels in the split-split plot design.
+In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae){.external target="_blank"} package (data set "ssp"). The experiment consists of 3 different rice varieties grown under 3 management practices and 5 nitrogen levels in the split-split plot design.
 
 ```{r, echo=FALSE, eval=FALSE}
 library(agricolae)
@@ -61,13 +77,13 @@ rice <- read.csv(here::here("data", "rice_ssp.csv"))
 |-------------------|-----------------------------------------------------|
 | block      | blocking unit                                                  |
 | nitrogen   | different nitrogen fertilizer rates as main plot with 5 levels |
-| management | management practices as subplot with 3 levels                  |
-| variety    | crop variety being a sub-subplot with 3 levels                 |
+| management | management practices as split plot with 3 levels                  |
+| variety    | crop variety being a split-split plot with 3 levels                 |
 | yield      | yield (bushels per acre)                                       |
 
 : Table of variables in the rice data set {tbl-split_split}
 
-In this example, note that there are two randomization restrictions within each block: nitrogen & management. The order is which nitrogen treatments are applied is randomly selected. The 3 management practices are randomly assigned to the sub-plots. Finally, within a particular management, the 3 varieties are tested in a random order, forming 3 sub-subplots. 
+In this example, note that there are two randomization restrictions within each block: nitrogen & management. The order is which nitrogen treatments are applied is randomly selected. The 3 management practices are randomly assigned to the split plots. Finally, within a particular management, the 3 varieties are tested in a random order, forming 3 split-split plots. 
 
 
 ### Data integrity checks
@@ -81,7 +97,8 @@ We will start with evaluation of the structure of the data where class of block,
 ```{r}
 str(rice)
 ```
-Here we need to convert block, nitrogen, variety, and management to characters.
+
+Here we need to convert block, nitrogen, variety, and management to data type character.
 
 ```{r}
 rice$block <- as.character(rice$block)
@@ -126,7 +143,7 @@ hist(rice$yield, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_ax
 
 ### Model Building
 
-The model and analysis of variance of a split-split plot design is divided into three parts: the main-plot, subplot and sub-subplot analysis.
+The model and analysis of variance of a split-split plot design is divided into three parts: the main plot, split plot and split-split plot analysis.
 We can use the nesting notation in the random part because nitrogen and management are nested in blocks.
 We can do blocks as fixed or random.
 
@@ -163,18 +180,18 @@ For information on what `boundary (singular) fit` means, please refer to [**Chap
 ### lme4
 
 ```{r,  fig.height=3}
-check_model(model_lmer, check = c('normality', 'linearity'))
+check_model(model_lmer,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 
 ### nlme
 
 ```{r,  fig.height=3}
-check_model(model_lme, check = c('normality', 'linearity'))
+check_model(model_lme,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 
 :::
 
-Constant variance and normality of residuals looks good. Here, we didn't observe any anomalies in the model assumptions.
+The assumptions of homescedascity and normality of residuals appear met. 
 
 ### Inference
 
@@ -228,6 +245,7 @@ model_lme <- lme(yield ~ nitrogen*management*variety,
                   data = rice, 
                   na.action = na.exclude)
 ```
-The random effects follow the order of `~1|block/main-plot/split-plot`. While fitting the model for split-split plot design please make sure to have a clear understanding of the main plot, split-plot and split-split plot factors to avoid having an erroneous model. 
+
+The random effects follow the order of `~1|block/main plot/split-plot`. While fitting the model for split-split plot design please make sure to have a clear understanding of the main plot, split-plot and split-split plot factors to avoid having an erroneous model. 
 
 :::

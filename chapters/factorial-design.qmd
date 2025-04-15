@@ -167,22 +167,22 @@ The `tidy()` function from the **broom.mixed** package provides a short summary 
 ### lme4
 
 ```{r, fig.height=3}
-check_model(model1_lmer, check = c('normality', 'linearity'))
+check_model(model1_lmer,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 
 ### nlme
 
 ```{r, fig.height=3}
-check_model(model2_lme, check = c('normality', 'linearity'))
+check_model(model2_lme,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 :::
 
-The linearity and homogeneity of variance plots show no trend. There are modest departure in the normality of residuals with heavy tails. 
+The linearity and homogeneity of variance plots show no trend. There are modest departures in the normality of residuals as indicated by the heavy tails. 
 
 
 ### Inference
 
-We can get an ANOVA table for the linear mixed model using the function `anova()`, which works for both `lmer()` and `lme()` models.
+We can obtain an ANOVA table for the linear mixed model using the function `anova()`, which works for both `lmer()` and `lme()` models.
 
 ::: panel-tabset
 ### lme4
@@ -196,7 +196,7 @@ anova(model2_lme, type = "marginal")
 ```
 :::
 
-Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only "p" had a significant effect on bean yield when evaluated at significance level of 0.05.
+Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only "p" had a significant effect on bean yield when evaluated at significance threshold of 0.05.
 
 
 Let’s find estimates for some of the factors such as N, P and the N-by-K interactions in order to understand the combined effect of nitrogen and potassium on bean yield.
@@ -217,4 +217,4 @@ emmeans(model2_lme, specs = ~ n:p)
 ```
 :::
 
-The code chunks showed above estimated marginal means for individual effects of "n" and "p" and their interaction (n:p) effect on bean yield. Make sure to give an attention to the warning message that means are averaged over the "d", "p", and "k" levels. It's an important detail that needs to be pointed out while making conclusions. When working with factorial designs make sure to carefully interpret ANOVA and estimated marginal means for main and interaction effects.
+The code above is calculating the estimated marginal means for main effects of "n" and "p" and their interaction (n:p) effect on bean yield. Make sure to pay attention to the warning message that means are averaged over the "d", "p", and "k" levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.

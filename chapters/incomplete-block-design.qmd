@@ -112,7 +112,7 @@ desplot::desplot(weiss,
 
 - Check structure of the data 
 
-We will start inspecting the data set firstly by looking at the class of each variable:
+We will start inspecting the data set first by looking at the class of each variable:
 
 ```{r}
 str(weiss)
@@ -196,13 +196,13 @@ Let's verify the assumption of linear mixed models including normal distribution
 
 ::: panel-tabset
 #### lme4
-```{r, fig.height=3}
-check_model(model_icbd, check = c('normality', 'linearity'))
+```{r, fig.height=6}
+check_model(model_icbd, check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 
 #### nlme
-```{r, fig.height=3}
-check_model(model_icbd1, check = c('normality', 'linearity'))
+```{r, fig.height=6}
+check_model(model_icbd1, check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 :::
 

@@ -19,16 +19,13 @@ A set of tutorial for running mixed models in R
 - strip plot
 - repeated measures 
 - means-and-contrasts
+- analytical flow chart
 
 ### Section in progress
 
-- analytical flow chart
+
 - variance and variance components
 
-
-### Other TODO
-
-- remove extra columns from each data set
 
 ### Long-term TODO
 (who knows when we get to this)

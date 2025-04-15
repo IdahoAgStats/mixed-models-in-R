@@ -1,34 +1,19 @@
 
 # code from https://www.r-causal.org/
 
-
-# options(
-  # set default colors in ggplot2 to colorblind-friendly
-  # Okabe-Ito and Viridis palettes
-  # ggplot2.discrete.colour = ggokabeito::palette_okabe_ito(aesthetics = "colour", order = 1:9),
-  # ggplot2.discrete.fill = ggokabeito::palette_okabe_ito(aesthetics = "colour", order = 1:9),
-  # ggplot2.discrete.colour = harrypotter::hp(10, option = "Always"),
-  # ggplot2.discrete.fill = harrypotter::hp(10, option = "Always"),
-  # ggplot2.continuous.colour = "viridis",
-  # ggplot2.continuous.fill = "viridis",
-  # set theme font and size
-  # book.base_family = "sans",
-  # book.base_size = 14
-# )
-
 library(ggplot2)
-library(viridis)
+library(viridis); library(scales)
 
-library(scales)
-library(ggokabeito)
+### Set ggplot defaults
 
 options(
-  #ggplot2.discrete.fill = scale_color_okabe_ito(alpha = 0.7, aesthetics = "fill"), 
-  ggplot2.discrete.color = viridis_pal(option = "D")(5),  # Discrete colors
-  ggplot2.discrete.fill = viridis_pal(option = "D")(5),
+  ggplot2.discrete.color = viridis_pal(option = "C")(8),  # Discrete colors
+  ggplot2.discrete.fill = viridis_pal(option = "D", alpha=0.6)(8),
   ggplot2.continuous.color = scale_color_viridis_c(),
   ggplot2.continuous.fill = scale_fill_viridis_c(),
-  # set theme font and size
+  #ggplot2.discrete.colour = harrypotter::hp(10, option = "Always"),
+  #ggplot2.discrete.fill = harrypotter::hp(10, option = "Always"),
+# set theme font and size
   book.base_family = "sans",
   book.base_size = 14
 )
@@ -44,6 +29,8 @@ theme_set(
       legend.position = "bottom"
     )
 )
+
+## Set Base blotting defaults
 
 base_plot_color = '#b0f4f0'
 cex_lab = 1.8

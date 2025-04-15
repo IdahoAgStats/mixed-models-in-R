@@ -8,7 +8,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-In the Latin Square design, two blocking factors are laid out across the row and the column of the square. This allows blocking across rows and columns to reduce even more experimental variability in the trial. The requirement of Latin square design is that all 't' treatments appears only once in each row and column and number of replications is equal to number of treatments.
+In the Latin Square design, two blocking factors are are assigned to rows and columns, respectively of the square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all 't' treatments appears only once in each row and column and number of replications is equal to number of treatments.
 
 Advantages of Latin square design are:
 
@@ -22,13 +22,13 @@ Disadvantages:
 
 2. Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.
 
-3. There must be no interaction of rows and columns with treatment effect. 
+3. There must be no interaction of rows and columns with treatment effects. 
 
-Statistical model for a response in Latin square design is:
+The statistical model for the Latin square design:
 
 $Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}$
 
-where, $\mu$ is the experiment mean, $\alpha_i$ represents treatment effect, $\beta$ and $\gamma$ are the row- and column specific effects.
+where, $\mu$ is the experiment mean, $\alpha_i$ represents treatment effect, $\beta$ and $\gamma$ are the row- and column-specific effects.
 
 Assumptions of this design includes normality and independent distribution of error ($\epsilon_{ijk}$) terms. And there is no interaction between two blocking (rows & columns) factors and treatments.
 
@@ -50,7 +50,7 @@ library(dplyr)
 ```
 :::
 
-The data used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatments (A = Dusted before rains. B = Dusted after rains. C = Dusted once each week. D = Drifting, once each week. E = Not dusted) were tested to control stem rust in wheat.
+The data used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatmentswere tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -81,7 +81,7 @@ First, let's verify the class of variables in the data set using `str()` functio
 ```{r}
 str(dat)
 ```
-Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer to factor/character.
+Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer to factors (characeter is also a valid choice).
 
 ```{r}
 dat1 <- dat |> 
@@ -91,7 +91,7 @@ dat1 <- dat |>
 
 - Inspect the independent variables
 
-Next, to verify if the data meets the assumption of the Latin square design let's plot the field layout for this experiment.
+Next, to verify if the data meets the assumption of the Latin square design, let's plot the field layout for this experiment.
 
 ```{r, echo=FALSE, warning=FALSE}
 desplot::desplot(data = dat1, flip = TRUE,
@@ -132,7 +132,7 @@ hist(dat1$yield, main = NA, xlab = "yield")
 
 ### Model fitting
 
-Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row & col as a random effect.
+Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with "trt" as a fixed effect and "row" and "col" as a random effects.
 
 ::: panel-tabset
 ### lme4
@@ -188,7 +188,7 @@ check_model(m1_b, check = c("linearity", "normality"))
 ```
 ::::
 
-These visuals imply that assumptions of linear model have been met.
+These visuals support that assumptions of linear model have been met.
 
 ### Inference
 
@@ -208,7 +208,7 @@ anova(m1_b, type = "sequential")
 ```
 :::
 
-Both models have detected a significant treatment effect. Here we observed a significant impact on fungicide treatment on crop yield. Let's have a look at the estimated marginal means of wheat yield with each treatment using `emmeans()` function.
+Here we observed a statistically significant impact on fungicide treatment on crop yield. Let's have a look at the estimated marginal means of wheat yield with each treatment using the `emmeans()` function.
 
 ::: panel-tabset
 #### lme4
@@ -224,4 +224,4 @@ emmeans(m1_b, ~ trt)
 ```
 :::
 
-We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study. Which implies that 'C' fungicide was more efficient in controlling the stem rust in wheat.
+We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study, indicating that 'C' fungicide was more efficient in controlling the stem rust in wheat.

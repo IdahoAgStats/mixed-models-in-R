@@ -4,37 +4,9 @@
 source(here::here("settings.r"))
 ```
 
-Split plot designs are needed when we cannot randomly assign mutiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In such designs, we can incorporate one of the completely randomized (CRD) or the completely randomized block (RCBD) design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole-plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly. 
+## Background
 
-## Details for Split Plot Designs
-
-1.  Whole Plot Randomized as a completely randomized design
-
-The statistical model structure this design:
-
-$$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha_i\beta_j) + \epsilon_{ij} + \delta_{ijk} $$ Where:
-
-$\mu$= overall experimental mean, $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
-
-$$ \epsilon \sim N(0, \sigma_\epsilon)$$
-
-$$\ \delta  \sim N(0, \sigma_\delta)$$
-
-Both the error and replication effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma_\epsilon$ and $\sigma_\delta$, respectively.
-
-2.  Whole Plot Randomized as an RCBD
-
-This is also referred as "Split-Block RCB" design. The statistical model structure for split plot design:
-
-$$y_{ijk} = \mu + \rho_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ij} + \delta_{ijk}$$ Where:
-
-$\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
-
-$$ \epsilon \sim N(0, \sigma_\epsilon)$$
-
-$$\ \delta  \sim N(0, \sigma_\delta)$$
-
-Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_\delta$, respectively.
+Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In such designs, we can incorporate one of the completely randomized (CRD) or the completely randomized block (RCBD) design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly. 
 
 ```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
@@ -71,8 +43,9 @@ dframe2 <- spd2$fieldBook |> arrange(ID) |>
 write.csv(dframe2, here::here("data/split_plot_rcbd.csv"), row.names=FALSE)
 ```
 
-```{r, echo=FALSE, message=FALSE, fig.height=3.5}
-library(ggplot2)
+
+```{r fig.height=3.5,include=FALSE, eval=FALSE}
+library(ggplot2); library(ggokabeito)
 spd <- read.csv(here::here("data/split_plot_crd.csv"))
 
 ggplot(spd, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
@@ -97,6 +70,7 @@ ggplot(spd, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
 
 
 ```{r, echo=FALSE, fig.height=3.5}
+library(ggokabeito)
 spd2 <- read.csv(here::here("data/split_plot_RCBD.csv")) 
 
 ggplot(spd2, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
@@ -114,7 +88,28 @@ ggplot(spd2, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
         axis.ticks = element_blank()) 
 
 ```
-```
+
+
+## Statistical Details 
+
+$$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + r_k + \epsilon_{ik} + \delta_{ijk}$$ 
+
+Where:
+
+$\mu$ = overall experimental mean   
+$\alpha$ = main effect of whole plot (fixed)    
+$\beta$ = main effect of split plot (fixed)
+$\alpha\beta$ = interaction between factors A and B 
+$r$ = block effect (random)
+$\epsilon_{ij}$ = whole plot error  
+$\delta_{ijk}$ = split plot error.
+
+Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_{sp}$, respectively. 
+
+$$ \epsilon \sim N(0, \sigma)$$
+
+$$\ \delta  \sim N(0, \sigma_{sp})$$
+
 
 ## Analysis Examples
 
@@ -137,197 +132,10 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 ```
 :::
 
-### Example model for CRD Split Plot Design
 
-Let's import a data set that we will analyze for plant height. This experiment employed as CRD split plot design. The treatments are agronomic management (8 levels) and time (4 levels). The whole plot is time, the split plot is management represents, and there are 3 replications.
+### Example Model for RCBD Split Plot Designs
 
-```{r}
-height_data <- read.csv(here::here("data", "height_data.csv"))
-```
-
-|        |                                 |
-|--------|---------------------------------|
-| rep    | replication unit                |
-| time   | Main plot with 4 levels         |
-| Manage | Split-plot with 8 levels        |
-| sample | two sampling units per each rep |
-| height | plant height (cm)               |
-
-: Table of variables in the height data set {tbl-rcbd_split-plot}
-
-The data set has multiple samples per experimental unit, which can happen when researchers are interested in precision. For this analysis, the subsamples are pseudoreplicates and should be collapsed into a single unit.
-
-```{r}
-height <- height_data |> group_by(time, manage, rep) |> 
-  summarise(ht = mean(height)) |> rename(height = "ht")
-```
-
-#### Data integrity checks
-
--   Run a cross tabulation using `table()` to check the arrangement of whole-plots and sub-plots.
-
-```{r}
-table(height$time, height$manage)
-```
-
-The levels of whole plots and subplots are balanced.
-
--   Look at structure of the data using `str()`, this will help in identifying class of the variable. In this data set, class of the whole-plot, sub-plot, and block should be factor/character and response variable (height) should be numeric.
-
-```{r}
-str(height)
-```
-
-The 'time', 'manage', and 'rep' are character and variable height is numeric. The structure of the data is in format as needed.
-
--   Check the number of missing values in each column.
-
-```{r}
-colSums(is.na(height))
-```
-
--   Exploratory boxplot to look at the height observations at different times with variable managements. This helps in identifying any patterns in the dependent vraiable in response to differnt treatments.
-
-```{r}
-ggplot(data = height, aes(y = height, x = time)) +
-  geom_boxplot(aes(fill = manage), alpha = 0.6)
-```
-
-Here we observed any greater height with manage 'M1" and comparatively less variability across all times compared to other management treatments.
-
-Last, check the dependent variable by plotting a histogram of height data.
-
-```{r, echo=FALSE}
-#| label: fig-split_hist
-#| fig-cap: "Histogram of the dependent variable."
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-hist(height$height, main = NA, xlab = "height", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
-```
-
-```{r, eval=FALSE}
-hist(height$height, main = NA, xlab = "height")
-```
-
-The distribution of height data looks reasonable.
-
-#### Model building
-
-::: column-margin
-Recall the model:
-
-$$y_{ijk} = \mu + \gamma_i +  \alpha_j + \beta_k + (\alpha_j\beta_k) + \epsilon_{ijk}$$
-
-For this model, $\gamma$ = block/rep effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B (fixed).
-:::
-
-In order to test the main effects of the treatments as well as the interaction between two factors, we can specify that in model as: `time + manage + time:manage` or `time*manage`.
-
-When dealing with split plot design across reps or blocks, the random effects needs to be nested hierarchically, from largest unit to smallest. For example, in this example the random effects will be designated as `(1 | rep/time)`. This implies that we use random intercept at each of the rep and time (whole-plot) level.
-
-::: panel-tabset
-#### lme4
-
-```{r}
-model_lmer <- lmer(height ~ time*manage + (1|rep/time), data = height)
-tidy(model_lmer)
-```
-
-#### nlme
-
-```{r}
-model_lme <-lme(height ~ time*manage,
-             random = ~ 1|rep/time, data = height)
-
-tidy(model_lme)
-```
-:::
-
-#### Check Model Assumptions
-
-Before interpreting the model we should investigate the assumptions of the model to ensure any conclusions we draw are valid. The assumptions that we can check are: 1. Homogeneity (equal variance) 2. normality of residuals.
-
-We will use `check_model()` function from **performance** package. The plots generated using this code gives a visual check of various assumptions including normality of residuals, normality of random effects, heteroscedasticity, homogeneity of variance, and multicollinearity.
-
-::: panel-tabset
-#### lme4
-
-```{r, fig.height=3}
-check_model(model_lmer, check = c('normality', 'linearity'))
-```
-
-#### nlme
-
-```{r, fig.height=3}
-check_model(model_lme, check = c('normality', 'linearity'))
-```
-:::
-
-In this case, the residuals fit the assumptions of the model well.
-
-#### Inference
-
-The `anova()` function prints the the rows of analysis of variance table for whole-plot, sub-plot, and their interactions. We observed a significant effect of manage factor only.
-
-::: panel-tabset
-#### lme4
-
-```{r}
-anova(model_lmer, type = '3')
-```
-
-#### nlme
-
-```{r}
-anova(model_lme, type = "marginal")
-```
-:::
-
-We can further compute estimated marginal means for each fixed effect and interaction effect using `emmeans()` from the **emmeans** package.
-
-::: panel-tabset
-#### lme4
-
-```{r}
-m1 <- emmeans(model_lmer, ~ time)
-m1
-```
-
-#### nlme
-
-```{r}
-m2 <- emmeans(model_lme, ~ time)
-m2
-```
-:::
-
-Further, a pairwise comparison or contrasts can be made using estimated means. In this model, 'time' factor has 4 levels. We can use `pairs()` function to evaluate pairwise comparison among different 'time' levels.
-
-Here's a example using `pairs()` function to compare difference in height among different time points.
-
-::: panel-tabset
-#### lme4
-
-```{r}
-pairs(m1)
-```
-
-#### nlme
-
-```{r}
-pairs(m2)
-```
-:::
-
-::: callout-note
-## `pairs()`
-
-The default p-value adjustment in `pairs()` function is "tukey", other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. In addition, it's okay to use this function when independent variable has few factors (2-4). For variable with multiple levels, it's better to use custom contrasts. For more information on custom contrasts please visit [**Chapter 12**](means-and-contrasts.qmd).
-:::
-
-### Example model for RCBD Split Plot Designs
-
-The oats data used in this example is from the **MASS** package. The design is RCBD split plot with 6 blocks, 3 main plots and 4 subplots. The primary outcome variable was oat yield.
+The oats data used in this example is from the **MASS** package. The design is RCBD split plot with 6 blocks, 3 levels for the main plots and 4 levels for the split plot. The primary outcome variable is yield.
 
 |              |                          |
 |--------------|--------------------------|
@@ -340,7 +148,7 @@ The oats data used in this example is from the **MASS** package. The design is R
 
 The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.
 
-To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (subplot), their interaction.
+To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (split plot), their interaction.
 
 Let's start this example analysis by first loading the 'oat' data from the **MASS** package.
 
@@ -361,7 +169,7 @@ str(oats)
 
 -   Inspect the independent variables
 
-Next, run the `table()` command to verify the levels of main-plots and sub-plots.
+Next, run the `table()` command to verify the levels of the main plot and the split plot.
 
 ```{r}
 table(oats$V, oats$N)
@@ -375,7 +183,7 @@ colSums(is.na(oats))
 
 -   Inspect the dependent variable
 
-Last, check the distribution of the dependent variable by plotting a histogram of yield data.
+Last, check the distribution of the dependent variable by plotting a histogram.
 
 ```{r, echo=FALSE}
 #| label: fig-split-rcbd_hist
@@ -386,39 +194,39 @@ hist(oats$Y, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_axis, 
 ```
 
 ```{r, eval=FALSE}
-hist(oats$Y, main = NA, xlab = "yield", col = base_plot_color)
+hist(oats$Y, main = NA, xlab = "yield")
 ```
 
 #### Model Building
 
-We are evaluating the effect of V, N and their interaction on yield. The `1|B/V` implies that random intercepts vary with block and V within each block.
+We are evaluating the effect of V, N and their interaction on yield. The `1|B/V` means that random intercepts vary with block and V nested within each block.
 
 ::: column-margin
 Recall the model:
 
 $$y_{ijk} = \mu + \rho_j +  \alpha_i + \beta_k + (\alpha_i\beta_k) + \epsilon_{ij} + \delta_{ijk}$$ Where:
 
-$\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of subplot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = subplot error.
+$\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = main effect of whole plot (fixed), $\beta$ = main effect of split plot (fixed), $\alpha$$\beta$ = interaction between factors A and B, $\epsilon_{ij}$ = whole plot error, $\delta_{ijk}$ = split plot error.
 :::
 
 ::: panel-tabset
 ### lme4
 
 ```{r}
-model2_lmer <- lmer(Y ~  V + N + V:N + (1|B/V), 
+oats_lmer <- lmer(Y ~  V + N + V:N + (1|B/V), 
                    data = oats, 
                    na.action = na.exclude)
-tidy(model2_lmer)
+tidy(oats_lmer)
 ```
 
 ### nlme
 
 ```{r}
-model2_lme <- lme(Y ~  V + N + V:N ,
+oats_lme <- lme(Y ~  V + N + V:N ,
                   random = ~1|B/V,
                   data = oats, 
                   na.action = na.exclude)
-tidy(model2_lme)
+tidy(oats_lme)
 ```
 :::
 
@@ -429,14 +237,15 @@ As shown in example 1, We need to verify the normality of residuals and homogene
 ::: panel-tabset
 ### lme4
 
-```{r,  fig.height=3}
-check_model(model2_lmer, check = c('normality', 'linearity'))
+```{r,  fig.height=6}
+check_model(oats_lmer, check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
+check_model(oats_lmer, check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 
 ### nlme
 
-```{r,  fig.height=3}
-check_model(model2_lme, check = c('normality', 'linearity'))
+```{r,  fig.height=6}
+check_model(oats_lme, check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
 ```
 :::
 
@@ -450,13 +259,13 @@ Let's have a look at the analysis of variance, for V, N and their interaction ef
 ### lme4
 
 ```{r}
-car::Anova(model2_lmer, type = "III", test.statistics = "F")
+car::Anova(oats_lmer, type = "3", test.statistics = "Chisq")
 ```
 
 ### nlme
 
 ```{r}
-anova(model2_lme, type = "marginal")
+anova(oats_lme, type = "marginal")
 ```
 :::
 
@@ -466,14 +275,14 @@ Next, we can estimate marginal means for V, N, or their interaction (V\*N) effec
 ### lme4
 
 ```{r}
-emm1 <- emmeans(model2_lmer, ~ V|N) 
+emm1 <- emmeans(oats_lmer, ~ V|N) 
 emm1
 ```
 
 ### nlme
 
 ```{r}
-emm1 <- emmeans(model2_lme, ~ V|N) 
+emm1 <- emmeans(oats_lme, ~ V|N) 
 emm1
 ```
 :::
