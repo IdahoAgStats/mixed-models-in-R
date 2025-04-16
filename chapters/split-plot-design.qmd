@@ -6,7 +6,7 @@ source(here::here("settings.r"))
 
 ## Background
 
-Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In such designs, we can incorporate one of the completely randomized (CRD) or the completely randomized block (RCBD) design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly. 
+Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly. 
 
 ```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
@@ -69,7 +69,7 @@ ggplot(spd, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
 ```
 
 
-```{r, echo=FALSE, fig.height=3.5}
+```{r, echo=FALSE, fig.height=3.5, warning = FALSE}
 library(ggokabeito)
 spd2 <- read.csv(here::here("data/split_plot_RCBD.csv")) 
 
@@ -100,9 +100,11 @@ $\mu$ = overall experimental mean
 $\alpha$ = main effect of whole plot (fixed)    
 $\beta$ = main effect of split plot (fixed)
 $\alpha\beta$ = interaction between factors A and B 
+
 $r$ = block effect (random)
-$\epsilon_{ij}$ = whole plot error  
-$\delta_{ijk}$ = split plot error.
+
+$\epsilon_{ij}$ = whole plot error 
+$\delta_{ijk}$ = split plot error
 
 Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_{sp}$, respectively. 
 
