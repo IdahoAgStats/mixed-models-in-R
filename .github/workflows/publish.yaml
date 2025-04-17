@@ -33,12 +33,12 @@ jobs:
           export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           quarto install tinytex
       
-      # - name: manual installtion of 'digest'
-      #   run: |
-      #     R -e "install.packages('digest', repos='http://cran.us.r-project.org')"
-      # 
-      # - name: clear renv cache
-      #   run: sudo rm -rf ~/.cache/R/renv
+      - name: manual installtion of 'digest'
+        run: |
+          R -e "install.packages('data.table', repos='http://cran.us.r-project.org')"
+
+      - name: clear renv cache
+        run: sudo rm -rf ~/.cache/R/renv
       
       - name: set up renv
         uses: r-lib/actions/setup-renv@v2
