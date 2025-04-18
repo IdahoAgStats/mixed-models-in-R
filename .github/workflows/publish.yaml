@@ -33,9 +33,9 @@ jobs:
           export GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           quarto install tinytex
       
-      # - name: manual installtion of 'digest'
-      #   run: |
-      #     R -e "install.packages('data.table', repos='http://cran.us.r-project.org')"
+      - name: manual installtion of 'data.table'
+        run: |
+          R -e "install.packages('data.table', repos='http://cran.us.r-project.org')"
       # 
       # - name: clear renv cache
       #   run: sudo rm -rf ~/.cache/R/renv
@@ -45,7 +45,6 @@ jobs:
         with:
           cache-version: 1
           
-
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
