@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-5286be76762942acc98d23652a7a5739.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d40af2622b51b2d62d65f1c69169178e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -103,6 +103,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZZST40VXE1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@300..700&amp;family=Public+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet">
+
+
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -135,6 +151,10 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
+<meta name="twitter:title" content="3&nbsp; Mixed Model Background – Field Guide to the R Mixed Model Wilderness">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="../img/random_intercept_same_slope.png">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="nav-sidebar docked nav-fixed slimcontent">
@@ -149,6 +169,7 @@ window.Quarto = {
     </a>
   </div>
         <div class="quarto-navbar-tools tools-end">
+    <a href="https://github.com/IdahoAgStats/mixed-models-in-R" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
           <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
@@ -171,10 +192,13 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header sidebar-header-stacked">
       <a href="../index.html" class="sidebar-logo-link">
       <img src="../img/hexLogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
+      <div class="sidebar-tools-main">
+    <a href="https://github.com/IdahoAgStats/mixed-models-in-R" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
@@ -319,7 +343,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#formula-notation" id="toc-formula-notation" class="nav-link" data-scroll-target="#formula-notation"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/background.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content page-columns page-full column-body" id="quarto-document-content">
@@ -347,21 +371,57 @@ window.Quarto = {
 <h2 data-number="3.1" class="anchored" data-anchor-id="mixed-model-terms"><span class="header-section-number">3.1</span> Mixed model terms</h2>
 <p>Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. These are also called “multilevel or”hierarchical” models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.</p>
 <p>This tutorial concerns (general) linear mixed models (sometimes abbreviated as “LMM”) where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of <em>generalized</em> linear mixed models (sometimes abbreviated “GLMM”), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.</p>
-<p><em>Fixed effects</em> represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g.&nbsp;levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in “traditional” regression techniques like ordinary least squares.</p>
-<p><em>Random effects</em> are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are inherently categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are especially useful when we have (1) many levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and/or (3) uneven sampling across levels. The general thinking is that random effects represent a small sample of a population you want to make inference on.</p>
+<p><em>Fixed effects</em> represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g.&nbsp;levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in traditional regression techniques like ordinary least squares.</p>
+<p><em>Random effects</em> are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are especially useful when we have (1) many levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and/or (3) uneven sampling across levels. The general thinking is that random effects represent a sample of a population you want to make inference on.</p>
+<p>Please read this section and refer back to if when you forget what these terms mean.</p>
+<div id="tbl-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.1: Terms definitions
+</figcaption>
+<div aria-describedby="tbl-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 73%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Random effect</td>
+<td style="text-align: left;">An independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fixed effect</td>
+<td style="text-align: left;">An independent variable with specific, predefined levels to estimate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Experimental unit</td>
+<td style="text-align: left;">The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
 <section id="models" class="level2 page-columns page-full" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="models"><span class="header-section-number">3.2</span> Models</h2>
 <p>Recall simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>):</p>
 <p><span class="math display">\[  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i \]</span></p>
 <p><span class="math inline">\(Y_i\)</span> is the dependent variable, and <span class="math inline">\(x_i\)</span> is the independent variable. The value for <span class="math inline">\(\beta_0\)</span> is the overall average for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\beta_1\)</span> is the change in <span class="math inline">\(Y\)</span> as <span class="math inline">\(X\)</span> changes. The slope for <span class="math inline">\(\beta_1\)</span> could represent the effects of increasing quantities of nitrogen fertilizer on crop growth.</p>
-<p>The errors, <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (sometimes called “iid”) following a normal distribution for general linear mixed models. Later on we will explore relaxing these assumptions.</p>
-<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For the rest of this tutorial we will be using the term “residual” and not error term to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, it is the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></p></div></div><p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> This is an important model assumption we will revisit frequently in this tutorial.</p>
-<p>There is also an expected distribution for <span class="math inline">\(Y_i\)</span>, but we will not be looking at this again.</p>
-<p><span class="math display">\[ Y_i|x_i \sim𝑁(X\beta, \sigma^2) \]</span></p>
-<p>The slope and intercept are chosen in a way so that the residual sum of squares is minimized. If we consider this model in a mixed model framework, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> would be fixed effects (also known as the population-averaged values).</p>
-<p>Extending this example to a mixed model, we can consider adding another term, <span class="math inline">\(r_{ij}\)</span> that reflects levels sampled from a population that represent a random subset of a larger population:</p>
-<p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{ij}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). The random effect can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\beta_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (sometimes referred to as “iid”):</p>
+<p>The errors,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (sometimes called “iid”) following a normal distribution for general linear mixed models.</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For the rest of this tutorial we will be using the term “residual” and not “error term” to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></p></div></div><p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions).</p>
+<p>There is also an expected conditional distribution for <span class="math inline">\(Y_i\)</span>, but we will not be discussing this again.</p>
+<p><span class="math display">\[ Y_i|x_i \sim𝑁(\mathbf{X \beta}, \sigma^2/r_i) \]</span></p>
+<p>In least squares estimation, the slope and intercept are chosen in a way so that the residual sum of squares is minimized. If we consider this model in a mixed model framework, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> would be fixed effects (also known as the population-averaged values).</p>
+<p>Extending this example to a mixed model, we can consider adding another term, <span class="math inline">\(r_{j}\)</span> that reflects levels sampled from a population that represent a random subset of a larger population:</p>
+<p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{j}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). The random effect can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\beta_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (sometimes referred to as “iid”):</p>
 <p><span class="math display">\[r_i \sim N(0, \sigma_b)\]</span> While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered “random intercepts” where they all share a common <span class="math inline">\(B_0\)</span> and <span class="math inline">\(B_1\)</span>.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -451,8 +511,7 @@ window.Quarto = {
 </tbody>
 </table>
 <p>The first example, <code>(1|g)</code> suffices for most mixed models and is the only structure used in this guide.</p>
-<p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures (even in the same model). They handle <a href="https://www.theanalysisfactor.com/multilevel-models-with-crossed-random-effects/">crossed</a> as well as nested random factors.</p>
-<p>The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge is definitely dangerous.</p>
+<p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures. They handle crossed as well as nested random factors. The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge can be dangerous.</p>
 
 
 </section>
@@ -889,6 +948,19 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025</p>
+</div>   
+    <div class="nav-footer-center">
+<p><a href="https://www.uidaho.edu"><img src="https://github.com/IdahoAgStats/r-for-ag-scientists/raw/main/images/UI_Main_horizontal_4c.png" class="img-fluid" style="width:50.0%" alt="Uidaho Logo"></a></p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/background.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
