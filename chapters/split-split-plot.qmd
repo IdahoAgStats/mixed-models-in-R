@@ -10,7 +10,7 @@ editor:
 source(here::here("settings.r"))
 ```
 
-The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a **split-split plot design**. The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in in the main plot, another in the split plot and a third factor in the split-split plot. The example shown below illustrates this experiment layout.
+The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a **split-split plot design**. The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in the main plot, another in the split plot and a third factor in the split-split plot. The example shown below illustrates this experiment layout.
 
 ## Details for split-split plot designs
 
@@ -179,14 +179,14 @@ For information on what `boundary (singular) fit` means, please refer to [**Chap
 ::: panel-tabset 
 ### lme4
 
-```{r,  fig.height=3}
-check_model(model_lmer,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
+```{r,  fig.height=6, fig.width=8}
+check_model(model_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
 
 ### nlme
 
 ```{r,  fig.height=3}
-check_model(model_lme,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
+check_model(model_lme,  check = c('qq', 'linearity'), detrend=FALSE)
 ```
 
 :::
@@ -201,7 +201,7 @@ Let's look at the analysis of variance for fixed effects and their interaction e
 ### lme4
 
 ```{r}
-anova(model_lmer)
+car::Anova(model_lmer, type = "III")
 ```
 
 ### nlme

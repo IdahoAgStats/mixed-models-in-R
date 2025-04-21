@@ -165,8 +165,8 @@ Let's evaluate the assumptions of linear mixed models by looking at the residual
 
 ::: panel-tabset
 #### lme4
-```{r, fig.height=3}
-check_model(model_lmer,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
+```{r, fig.height=6, fig.width=8}
+check_model(model_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha =0)
 ```
 
 #### nlme
@@ -188,7 +188,7 @@ We can evaluate the model for the analysis of variance, for main and interaction
 ::: panel-tabset
 ### lme4
 ```{r}
-anova(model_lmer)
+car::Anova(model_lmer, type = "III")
 ```
 
 ### nlme

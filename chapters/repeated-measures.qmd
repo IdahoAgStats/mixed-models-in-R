@@ -4,7 +4,7 @@
 source(here::here("settings.r"))
 ```
 
-In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called **"longtudinal data"**).
+In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called **"longitudinal data"**).
 
 Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
 
@@ -192,7 +192,7 @@ tidy(lm2)
 ```{r, fig.height=3}
 #| message: false
 #| warning: false
-check_model(lm2,  check = c('qq', 'homogeneity', 'reqq'), detrend=FALSE)
+check_model(lm2,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
 ```
 
 ### Inference
@@ -321,7 +321,7 @@ We will use `check_model()` from **performance** package to evaluate the model f
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
+check_model(fit1, check = c('linearity', 'qq'), detrend=FALSE, alpha = 0)
 ```
 
 
@@ -444,7 +444,7 @@ pfit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(pfit1, check = c('qq', 'linearity'), detrend=FALSE)
+check_model(pfit1, check = c('linearity', 'qq'), detrend=FALSE, alpha =0)
 ```
 
 This model fit a first glance is not ideal, but that LOESS line is trying to model a space where there are no data (between 500 and 1500 ppm P leaf concentration), so that can introduce artifacts. **Performance** does have an option for testing for heteroscedascity:

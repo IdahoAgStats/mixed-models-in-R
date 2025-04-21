@@ -163,8 +163,8 @@ This step involves inspection of the model residuals by using `check_model()` fu
 :::: panel-tabset
 #### lme4
 
-```{r, fig.height=3}
-check_model(m1_a, check = c("linearity", "normality"))
+```{r, fig.height=6}
+check_model(m1_a, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
 
 #### nlme
@@ -184,7 +184,7 @@ qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quanti
 :::
 
 ```{r, fig.height=3}
-check_model(m1_b, check = c("linearity", "normality"))
+check_model(m1_b, check = c('qq', 'linearity'), detrend=FALSE, alpha = 0)
 ```
 ::::
 
