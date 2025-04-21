@@ -369,7 +369,7 @@ window.Quarto = {
 </header>
 
 
-<p>The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a <strong>split-split plot design</strong>. The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in in the main plot, another in the split plot and a third factor in the split-split plot. The example shown below illustrates this experiment layout.</p>
+<p>The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a <strong>split-split plot design</strong>. The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in the main plot, another in the split plot and a third factor in the split-split plot. The example shown below illustrates this experiment layout.</p>
 <section id="details-for-split-split-plot-designs" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="details-for-split-split-plot-designs"><span class="header-section-number">8.1</span> Details for split-split plot designs</h2>
 <p>The statistical model structure this design:</p>
@@ -609,11 +609,11 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'homogeneity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="split-split-plot_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="split-split-plot_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -621,7 +621,7 @@ levels of nesting</code></pre>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'homogeneity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lme,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -643,17 +643,20 @@ levels of nesting</code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer, <span class="at">type =</span> <span class="st">"III"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-                             Sum Sq Mean Sq NumDF DenDF  F value    Pr(&gt;F)    
-nitrogen                     51.982  12.995     4    10  29.7303 1.576e-05 ***
-management                   42.936  21.468     2    80  49.1136 1.215e-14 ***
-variety                     206.013 103.007     2    80 235.6534 &lt; 2.2e-16 ***
-nitrogen:management           1.103   0.138     8    80   0.3154 0.9580761    
-nitrogen:variety             14.145   1.768     8    80   4.0449 0.0004459 ***
-management:variety            3.852   0.963     4    80   2.2030 0.0760336 .  
-nitrogen:management:variety   3.699   0.231    16    80   0.5289 0.9240996    
+<pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: yield
+                               Chisq Df Pr(&gt;Chisq)    
+(Intercept)                 102.1211  1  &lt; 2.2e-16 ***
+nitrogen                      7.6641  4   0.104685    
+management                    7.3923  2   0.024819 *  
+variety                       9.8259  2   0.007351 ** 
+nitrogen:management           1.6941  8   0.988997    
+nitrogen:variety             21.3448  8   0.006286 ** 
+management:variety            8.8771  4   0.064245 .  
+nitrogen:management:variety   8.4629 16   0.933876    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>

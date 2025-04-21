@@ -683,11 +683,11 @@ Crossed random effects
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'homogeneity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_lmer,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -721,13 +721,16 @@ Crossed random effects
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">Anova</span>(model_lmer, <span class="at">type =</span> <span class="st">"III"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-            Sum Sq  Mean Sq NumDF   DenDF F value    Pr(&gt;F)    
-nitro     28047925 14023963     2  3.9999 34.0682 0.0030751 ** 
-gen       15751150  3150230     5  9.9999  7.6528 0.0033724 ** 
-nitro:gen 23877979  2387798    10 20.0001  5.8006 0.0004271 ***
+<pre><code>Analysis of Deviance Table (Type III Wald chisquare tests)
+
+Response: yield
+              Chisq Df Pr(&gt;Chisq)    
+(Intercept) 38.9728  1  4.298e-10 ***
+nitro       51.5701  2  6.334e-12 ***
+gen          6.8343  5     0.2333    
+nitro:gen   58.0064 10  8.621e-09 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>

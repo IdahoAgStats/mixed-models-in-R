@@ -385,7 +385,7 @@ window.Quarto = {
 </header>
 
 
-<p>In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called <strong>“longtudinal data”</strong>).</p>
+<p>In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called <strong>“longitudinal data”</strong>).</p>
 <p>Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.</p>
 <p>In these models, the ‘iid’ assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
 <p>Fitting models with correlated observations requires new libraries including <strong>mmrm</strong> and <strong>nlme</strong>. The <strong>lme4</strong> package allows random effects only. In this chapter, we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.</p>
@@ -722,7 +722,7 @@ nesting</code></pre>
 <section id="check-model-assumptions" class="level3" data-number="13.1.3">
 <h3 data-number="13.1.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">13.1.3</span> Check Model Assumptions</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(lm2,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'homogeneity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(lm2,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>,<span class="st">'qq'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -954,7 +954,7 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 <h3 data-number="13.2.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">13.2.3</span> Check Model Assumptions</h3>
 <p>We will use <code>check_model()</code> from <strong>performance</strong> package to evaluate the model fitness of model fitted using nlme (mod1). However, the <code>mmrm()</code> model class doesn’t work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1192,7 +1192,7 @@ distribution of dependent variables
 <section id="check-model-assumptions-2" class="level3" data-number="13.3.3">
 <h3 data-number="13.3.3" class="anchored" data-anchor-id="check-model-assumptions-2"><span class="header-section-number">13.3.3</span> Check model assumptions</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(pfit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(pfit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
