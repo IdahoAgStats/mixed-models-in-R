@@ -67,7 +67,7 @@ length(unique(potato$clone))
 
 Total counts for how often invividual clones were evaluated:
 ```{r}
-potato |> count(clone, name = "Frequency of Evaluation") |> count(`Frequency of Evaluation`)
+potato |> count(clone, name = "Frequency of Evaluation") |> count(`Frequency of Evaluation`, name = "No. of Clones") 
 ```
 
 Distribution of the dependent variable, LxW or length-to-width ratio:
@@ -75,20 +75,28 @@ Distribution of the dependent variable, LxW or length-to-width ratio:
 ```{r}
 #| fig-cap: "Distribution of Length-to-Width Ratio"
 #| column: margin
-hist(potato$LxW, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = "Potato Clone LxW Ratio", col = base_plot_color, breaks = 20)
+#| echo: false
+#| 
+hist(1/potato$LxW, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = "Potato Clone LxW Ratio", col = base_plot_color, breaks = 20)
 ```
 
 ### Model fitting
 
 For this analysis, location ("state") is a fixed effect because it only has 3 levels, and the researchers are only interested in understanding clone performance in those locations (Idaho, Oregon and Washington). The remaining effects are random because (1) they represent a sample of the full population that inference is desired for, and (2) each has a sufficient number of levels to make estimation feasible. 
 
-```{r}
+```{r, eval=FALSE}
 potato_m1 <- lmer(LxW ~ state + (1|year) + (1|state:year) + (1|clone),
                   data = potato)
 ```
 
 ```{r}
-performance::check_model(potato_m1, check = c('qq', 'linearity'), detrend=FALSE)
+#| include: false
+potato_m1 <- lmer((1/LxW) ~ state + (1|year) + (1|state:year) + (1|clone),
+                  data = potato)
+```
+
+```{r}
+performance::check_model(potato_m1, check = c('qq', 'linearity'), detrend=FALSE, alpha = 0)
 ```
 ### Inference on random effects
 
@@ -135,7 +143,9 @@ clone_re <- filter(random_effects, groupFctr == "clone") |>
 ```{r}
 #| fig-cap: "Histogram of Clone BLUPs"
 #| column: margin
-hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = "Clone Random Effects", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
+#| echo: false
+
+hist(clone_re$BLUP, ylab=NULL, xlab = NULL, main = "Clone Random Effects", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color, breaks = 14)
 ```
 
 Below are the BLUPs (in red) and standard errors for each clone, arranged from lowest to highest length-to-width ratio. The horizontal gray dotted line indicates the average clone effect. 
@@ -144,7 +154,7 @@ Below are the BLUPs (in red) and standard errors for each clone, arranged from l
 ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
   geom_hline(yintercept = intercept, color = "gray", linetype = 2) + 
   geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE)) +
-    geom_point(size = 0.7, col = "red3") + 
+    geom_point(size = 0.7, col = "violetred1") + 
   theme_classic(base_size = 14) +
   ggtitle("length-to-width ratio") + 
   ylab("BLUP + intercept") + 
@@ -154,7 +164,10 @@ ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
 ```
 
 
-```{r, eval = FALSE, echo=FALSE}
+```{r}
+#| eval: false
+#| include: false
+
 new_data <- data.frame(clone = unique(potato$clone))
 new_data$clone_blups <- predict(potato_m1, newdata = new_data, re.form = ~ (1|clone))
 
@@ -168,6 +181,9 @@ PI <- predictInterval(merMod = potato_m1,
 
 ```{r, echo=FALSE, include=FALSE}
 rm(list = ls())
+
+source(here::here("settings.r"))
+par(mar=c(5.1, 6, 4.1, 2.1))
 ```
 
 ## Nested variance components
@@ -207,7 +223,7 @@ hist(log(wa_salary$salary), ylab=NULL, xlab = NULL, main = "Washington Higher Ed
 ```{r, echo=FALSE}
 #| fig-cap: "Histogram of Log of Salaries"
 #| column: margin
-hist(log(wa_salary$salary), ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = "Washington Higher Ed Salaries", col = base_plot_color)
+hist(log(wa_salary$salary), ylab=NULL, xlab = "log of salaries", cex.lab = cex_lab, cex.axis = cex_axis, main = "Washington Higher Ed Salaries", col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
@@ -222,22 +238,48 @@ boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main = "Sa
 
 
 The analysis is derived from this model:
+
+```{r}
+#| eval: false
+#| include: false
+m1 <- lmer(log(salary) ~ factor(year) + (year|agency/id), 
+           data = wa_salary, REML = FALSE)
+
+random_effects <- REextract(m1)
+
+save(m1, wa_salary, random_effects, file = here::here("data", "salary_modeldata.RData"))
+```
+
 ```{r, eval=FALSE}
-m1 <- lmer(log(salary) ~ factor(year0) + (year0|agency/id), 
+m1 <- lmer(log(salary) ~ factor(year) + (year|agency/id), 
            data = wa_salary, REML = FALSE)
 ```
+
+```{r}
+#| eval: false
+#| include: false
+plot(m1)
+```
+
 
 Random intercepts and slopes were fit for agency and id nested within agency. 
 
 ### Inference
 
 ```{r}
+VarCorr(m1)
+```
+
+```{r}
 var_comps_salary <- tidy(m1, "ran_pars", scales = "vcov") |> 
-  dplyr::select(group, variance = "estimate") |> 
+  filter(grepl("^var.*", term)) |> 
+  dplyr::select(group, term, variance = "estimate") |> 
   mutate(`percent variance` = round(variance/sum(variance) * 100, 1))
 
 var_comps_salary
 ```
+
+Extract BLUPs
 
 ```{r, eval=FALSE}
 # the model intercept
@@ -245,12 +287,61 @@ intercept = fixef(m1)[1]
 
 # all random effects from the model
 random_effects <- REextract(m1)
+```
 
-# filter to clone BLUPs and add the intercept
-clone_re <- filter(random_effects, groupFctr == "id:agency") |> 
+Filter BLUPs to a single factor, "agency" (i.e. institute of higher education). 
+
+```{r}
+agency_re <- filter(random_effects, groupFctr == "agency") |> 
+  rename(Institution = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
+  mutate(blup_adj = BLUP + intercept) 
+```
+
+Plot Salaries by Institution
+
+```{r}
+ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
+  geom_hline(yintercept = intercept, color = "gray", linetype = 2) + 
+  geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE)) +
+    geom_point(size = 3, col = "violetred", shape = 18, alpha = 0.6) + 
+  theme_classic(base_size = 14) +
+  labs(title = "Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
+  ylab("BLUP + intercept") + 
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(), 
+        axis.title.x = element_blank())
+```
+
+Plot Salary Changes by Institution
+```{r}
+ggplot(agency_re, aes(x = 1:5 y = ...)) + # need sequence -0.4 to 0.4
+  geom_abline(aes(slope = year, intercept = BLUP)) +
+  labs(title = "Changes in Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
+  ylab("BLUP + intercept") + 
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(), 
+        axis.title.x = element_blank())
+```
+
+
+
+```{r}
+person_re <- filter(random_effects, groupFctr == "id:agency") |> 
   rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
   mutate(blup_adj = BLUP + intercept)
 ```
+
+```{r, echo=FALSE}
+# the model intercept
+intercept = fixef(m1)[1]
+
+# filter to clone BLUPs and add the intercept
+person_re <- filter(random_effects, groupFctr == "id:agency") |> 
+  rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
+  mutate(blup_adj = BLUP + intercept)
+```
+
+Plot histogram of year slope and year BLUP
 
 ```{r, echo=FALSE}
 # person 30780:University of Washington (highest paid)
@@ -260,8 +351,9 @@ clone_re <- filter(random_effects, groupFctr == "id:agency") |>
 ## Variance estimation under heteroscedasticity
 
 > In the "general" linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject $H_0$, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the equal variance model. 
-> 
-> -- Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, 2nd Ed, Section 7.2.3.1
+
+
+-- Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), *Generalized Linear Mixed Models*, 2nd Ed, Section 7.2.3.1
 
 In previous sections, we have assumed the error terms or residuals were "i.i.d.", that is "independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity. 
 
