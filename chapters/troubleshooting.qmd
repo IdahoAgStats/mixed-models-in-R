@@ -28,15 +28,25 @@ Or other option is to include the block as a fixed effects and re-analyze the ex
 
 2. **fixed-effect model matrix is rank deficient**
 
+```
+Error in MEestimate(lmeSt, grps) :
+  Singularity in backsolve at level 0, block 1
+```
+
+This error from **nlme** is indicating a rank deficient model that cannot be estimated as it is currently specified.
+
+``` 
+[lme4 example]
+```
+
 If you are getting a rank deficiency warning in `lmer()` (from the **lme4** package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.
 
 Here are methods to diagnose and fix it:
 - check rank of model matrix using `model.matrix()` function. If the rank is less than the number of columns, the model matrix is deficient.
 
-- Drop empty factor levels from the data 
-
 
 3.  **Model failed to converge**. 
+
 There are several different error messages for non-convergence, depending on what happened:
 
 ```convergence error code = 1 message = iteration limit reached without convergence (10)```
@@ -59,7 +69,7 @@ model <- lmer(y ~ x + (1|block), data = dataset)
 model1 <- update(model, control = lmerControl(optimizer = "bobyqa"))
 ```
 
-default optimizer used in `lmer()` is "Nelder_Mead", "bobyqa" optimizer is recommended for stability. 
+The default optimizer used in `lmer()` is "Nelder_Mead", "bobyqa" optimizer is recommended for stability. 
 
 - Increase iterations for convergence.
 
@@ -70,7 +80,9 @@ model2 <- update(model1, control = lmerControl(optCtrl = list(maxfun = 100000)))
 
 ```
 
-- Last, we can simplify the model by reducing random effects. 
+- Last, we can simplify the model by removing random effects that do not appear to be detectable.
+
+
 ### Other Tools
 
 Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well. 

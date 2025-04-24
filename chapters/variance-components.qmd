@@ -190,19 +190,17 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These end up being truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied. 
 
-This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized.[^vc-3]
-
-
-[^vc-3] This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only. 
+This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized.^[This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only.]
 
 
 For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. While this reflects a complete data set for Washington State (all institutions, all employees), the interest is inference for other U.S. higher education institutions. This is an example where we will use random slopes to examine how an individual's salary changed over time. The data set:
 
-|-------|-------------------------------|
+|            |                                     |
+|------------|-------------------------------------|
 | agency   | educational institution, 36 levels    |
-| id   | anonymized employee within each agency   |
-| salary  | annual salary |
-| year | year of salary, set to 0 for 2019     |
+| id   |  anonymized employee within each agency   |
+| salary  |                          annual salary |
+| year |     year of salary, set to 0 for 2019     |
 
 
 This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a .RData file. Now let's load this object into an R session. 
@@ -314,22 +312,32 @@ ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
 
 Plot Salary Changes by Institution
 ```{r}
-ggplot(agency_re, aes(x = 1:5 y = ...)) + # need sequence -0.4 to 0.4
+ggplot(agency_re) + 
   geom_abline(aes(slope = year, intercept = BLUP)) +
   labs(title = "Changes in Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
+  xlim(c(1, 5)) +
+  ylim(c(-0.4, 0.4)) +
   ylab("BLUP + intercept") + 
   theme(axis.text.x = element_blank(),
         axis.ticks.x = element_blank(), 
         axis.title.x = element_blank())
 ```
 
-
-
 ```{r}
 person_re <- filter(random_effects, groupFctr == "id:agency") |> 
   rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
   mutate(blup_adj = BLUP + intercept)
 ```
+
+Histograms of BLUPs for salary intercept and slopes
+```{r}
+p1 <- ggplot(person_re, aes(x = ...)) +
+  geom_histogram() +
+  xlab("slope of salary increase") +
+  ylab("frequency") +
+  theme_bw() 
+```
+
 
 ```{r, echo=FALSE}
 # the model intercept
