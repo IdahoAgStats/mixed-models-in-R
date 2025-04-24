@@ -44,30 +44,29 @@ library(dplyr); library(performance)
 ```
 :::
 
-The data used in this example analysis is from the **agridat** package (data set "yates.missing"). This data comprises a infection intensity (y) response of potato tubers to different levels of  nitrogen (n), phosphorus (p), potassium (k) treatments.
 
-The objective of this example is evaluate the individual and interactive effect of  "n", "p", and "k" treatments on bean yield.
+This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the relative rankings of the varieties.
 
-Note, while importing the data, d, n, p, and k were converted into factor variables using the `mutate()` function from **dplyr** package. This helps in reducing the extra steps of converting each single variable to factor manually.
+The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. The trial includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.
 
-```{r, eval=FALSE, echo=FALSE}
-#save data from the package
-factorial <- agridat::yates.missing
-factorial <- factorial %>% select(-trt)
-write.csv(factorial, here::here("data", "factorial.csv"), row.names = FALSE)
-```
+ **agridat** package (data set "yates.missing"). This data comprises a infection intensity (y) response of potato tubers to different levels of  nitrogen (n), phosphorus (p), potassium (k) treatments.
+
+The objective of this example is to evaluate the individual and interactive effect of  location and treatment on, "p", and "k" treatments on bean yield.
+
+
 
 ```{r warning=FALSE, message=FALSE}
-data1 <- read.csv(here::here("data", "factorial.csv"))
+library(readxl)
+factorial <- read_excel(here::here("data/factorial.xlsx"))
+data1<- factorial 
 ```
 
 |       |                                |
 |-------|--------------------------------|
-| block | blocking unit                  |
-| n     | nitrogen treatment, 2 levels   |
-| p     | phosphorus treatment, 2 levels  |
-| k     | potassium treatment, 2 levels  |
-| y | intensity of infection of potato tubers                    |
+| animal | random variable                 |
+| location     | location factor, 2 levels   |
+| trt     | treatment, 2 levels  |
+|b1     | response variable |
 
 : Table of variables in the data set {tbl-factorial}
 
@@ -75,16 +74,14 @@ data1 <- read.csv(here::here("data", "factorial.csv"))
 
 - Check structure of the data 
 
-First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and y should be numeric.
+First step is to Verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.
 
 ```{r}
 str(data1)
 ```
 In this data, treatment factors, 'n', 'p', & 'k' are integers, we need to convert these variables to factor.
 ```{r}
-dat2 <- data1 |> mutate(n = as.factor(n),
-               p = as.factor(p),
-               k = as.factor(k))
+dat2 <- data1 |> mutate(animal = as.factor(animal))
 ```
 
 
@@ -93,7 +90,8 @@ dat2 <- data1 |> mutate(n = as.factor(n),
 we are inspecting levels of independent variables to make sure the expected levels are present in the data.
 
 ```{r}
-table(dat2$n, dat2$p, dat2$k)
+table(dat2$animal)
+table(dat2$location, dat2$trt)
 ```
 
 The design looks well balanced.
@@ -102,17 +100,9 @@ The design looks well balanced.
 
 ```{r}
 colSums(is.na(dat2))
-
 ```
 
-There are 9 missing values in this data set.
-Let's look into those missing values
-
-```{r}
-dat2[is.na(dat2$y),]
-```
-
-These values are randomly missing in different blocks, and treatments. These are not from any specific block or treatment factor. There are different methods of handling with missing values, but for this chapter we will exclude these missing values using `na.action = exclude` option in model. 
+There are no missing values in this data set.
 
 - Inspect the dependent variable 
 
@@ -123,11 +113,11 @@ This is the last step is to inspect the dependent variable to ensure it looks as
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat2$y, main = "", xlab = "Infection intensity", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
+hist(dat2$b1, main = "", xlab = "Infection intensity", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(dat2$y, main = NA, xlab = "Infection intensity")
+hist(dat2$b1, main = NA, xlab = "b1")
 ```
 
 No extreme values are observed in the dependent variable, and the distribution looks as expected.  
@@ -150,7 +140,7 @@ In this analysis, "n", "p", & "k" are fixed factors and block is a random effect
 ### lme4
 
 ```{r, warning=FALSE}
-model1_lmer <- lmer(y ~ n*p*k + (1|block),
+model1_lmer <- lmer(b1 ~ location*trt + (1|animal),
                    data = dat2, 
                    na.action = na.exclude)
 tidy(model1_lmer)
@@ -159,8 +149,8 @@ tidy(model1_lmer)
 ### nlme
 
 ```{r}
-model2_lme <- lme(y ~ n*p*k,
-              random = ~ 1|block,
+model2_lme <- lme(b1 ~ location*trt,
+              random = ~ 1|animal,
               data = dat2, 
               na.action = na.exclude)
 tidy(model2_lme)
@@ -216,17 +206,17 @@ Let’s find estimates for some of the factors such as N, P and the N-by-K inter
 ::: panel-tabset
 ### lme4
 ```{r}
-emmeans(model1_lmer, specs = ~ n)
-emmeans(model1_lmer, specs = ~ p)
-emmeans(model1_lmer, specs = ~ n:p)
+emmeans(model1_lmer, specs = ~ location)
+emmeans(model1_lmer, specs = ~ location)
+emmeans(model1_lmer, specs = ~ location:trt)
 ```
 
 ### nlme
 ```{r}
-emmeans(model2_lme, specs = ~ n)
-emmeans(model2_lme, specs = ~ p)
-emmeans(model2_lme, specs = ~ n:p)
+emmeans(model2_lme, specs = ~ location)
+emmeans(model2_lme, specs = ~ trt)
+emmeans(model2_lme, specs = ~ location:trt)
 ```
 :::
 
-The code above is calculating the estimated marginal means for main effects of "n" and "p" and their interaction (n:p) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the "k" levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.
+The code above is calculating the estimated marginal means for main effects of "location" and "trt" and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the "k" levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.
