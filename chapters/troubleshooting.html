@@ -307,7 +307,10 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#common-errors-we-encounter" id="toc-common-errors-we-encounter" class="nav-link active" data-scroll-target="#common-errors-we-encounter"><span class="header-section-number">15.1</span> Common errors we encounter</a></li>
+  <li><a href="#common-errors-we-encounter" id="toc-common-errors-we-encounter" class="nav-link active" data-scroll-target="#common-errors-we-encounter"><span class="header-section-number">15.1</span> Common errors we encounter</a>
+  <ul class="collapse">
+  <li><a href="#other-tools" id="toc-other-tools" class="nav-link" data-scroll-target="#other-tools"><span class="header-section-number">15.1.1</span> Other Tools</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/troubleshooting.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -348,43 +351,48 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
 <ol start="2" type="1">
 <li><strong>fixed-effect model matrix is rank deficient</strong></li>
 </ol>
+<pre><code>Error in MEestimate(lmeSt, grps) :
+  Singularity in backsolve at level 0, block 1</code></pre>
+<p>This error from <strong>nlme</strong> is indicating a rank deficient model that cannot be estimated as it is currently specified.</p>
+<pre><code>[lme4 example]</code></pre>
 <p>If you are getting a rank deficiency warning in <code>lmer()</code> (from the <strong>lme4</strong> package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.</p>
 <p>Here are methods to diagnose and fix it: - check rank of model matrix using <code>model.matrix()</code> function. If the rank is less than the number of columns, the model matrix is deficient.</p>
-<ul>
-<li>Drop empty factor levels from the data</li>
-</ul>
 <ol start="3" type="1">
-<li><strong>Model failed to converge</strong>. There are several different error messages for non-convergence, depending on what happened:</li>
+<li><strong>Model failed to converge</strong>.</li>
 </ol>
+<p>There are several different error messages for non-convergence, depending on what happened:</p>
 <p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
 <p><code>Hessian that is not positive definite</code></p>
 <p>There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When the difference becomes in estimates beacome substantially small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.</p>
 <p>Running this code in an R console will bring up a useful help file with details on how to address convergence issues.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Possible solutions to fix this error are: - Try a different optimizer</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">update</span>(model, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">update</span>(model, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>default optimizer used in <code>lmer()</code> is “Nelder_Mead”, “bobyqa” optimizer is recommended for stability.</p>
+<p>The default optimizer used in <code>lmer()</code> is “Nelder_Mead”, “bobyqa” optimizer is recommended for stability.</p>
 <ul>
 <li>Increase iterations for convergence.</li>
 </ul>
 <p>We can update our existing model by increasing max iterations to 100,000.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">update</span>(model1, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optCtrl =</span> <span class="fu">list</span>(<span class="at">maxfun =</span> <span class="dv">100000</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">update</span>(model1, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optCtrl =</span> <span class="fu">list</span>(<span class="at">maxfun =</span> <span class="dv">100000</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
-<li>Last, we can simplify the model by reducing random effects. ### Other Tools</li>
+<li>Last, we can simplify the model by removing random effects that do not appear to be detectable.</li>
 </ul>
+<section id="other-tools" class="level3" data-number="15.1.1">
+<h3 data-number="15.1.1" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">15.1.1</span> Other Tools</h3>
 <p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well.</p>
 <p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A help ful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
 <p>Posit (née RStudio) has published a <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html" class="external" target="_blank">rather useful guide</a> for advanced troubleshooting of convergence issues in <strong>lme4</strong>. Phillip Alday wrote a <a href="https://rpubs.com/palday/lme4-singular-convergence" class="external" target="_blank">detailed tutorial</a> on <strong>lme4</strong> convergence warnings.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
