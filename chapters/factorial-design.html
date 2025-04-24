@@ -508,10 +508,10 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">6.2.2</span> Model fitting</h3>
 <p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon indicator ‘:’.</p>
 <p>The model syntax is:</p>
-<p><code>yield ~  n + p + k + n:p + n:k + p:k + n:p:k</code></p>
+<p><code>b1 ~  trt + location + trt:location</code></p>
 <p>which can be abbreviated as:</p>
-<p><code>yield ~ n*p*k</code></p>
-<p>In this analysis, “n”, “p”, &amp; “k” are fixed factors and block is a random effect.</p>
+<p><code>b1 ~  location*trt</code></p>
+<p>In this analysis, location and trt are fixed factors and animal is a random effect.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -728,7 +728,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>The code above is calculating the estimated marginal means for main effects of “location” and “trt” and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the “k” levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
+<p>The code above is calculating the estimated marginal means for main effects of “location” and “trt” and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
 
 
 </section>
