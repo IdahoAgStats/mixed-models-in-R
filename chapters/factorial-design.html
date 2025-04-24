@@ -398,34 +398,33 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used in this example analysis is from the <strong>agridat</strong> package (data set “yates.missing”). This data comprises a infection intensity (y) response of potato tubers to different levels of nitrogen (n), phosphorus (p), potassium (k) treatments.</p>
-<p>The objective of this example is evaluate the individual and interactive effect of “n”, “p”, and “k” treatments on bean yield.</p>
-<p>Note, while importing the data, d, n, p, and k were converted into factor variables using the <code>mutate()</code> function from <strong>dplyr</strong> package. This helps in reducing the extra steps of converting each single variable to factor manually.</p>
+<p>This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the relative rankings of the varieties.</p>
+<p>The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. The trial includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.</p>
+<p><strong>agridat</strong> package (data set “yates.missing”). This data comprises a infection intensity (y) response of potato tubers to different levels of nitrogen (n), phosphorus (p), potassium (k) treatments.</p>
+<p>The objective of this example is to evaluate the individual and interactive effect of location and treatment on, “p”, and “k” treatments on bean yield.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"factorial.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>factorial <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/factorial.xlsx"</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>data1<span class="ot">&lt;-</span> factorial </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
 <tbody>
 <tr class="odd">
-<td>block</td>
-<td>blocking unit</td>
+<td>animal</td>
+<td>random variable</td>
 </tr>
 <tr class="even">
-<td>n</td>
-<td>nitrogen treatment, 2 levels</td>
+<td>location</td>
+<td>location factor, 2 levels</td>
 </tr>
 <tr class="odd">
-<td>p</td>
-<td>phosphorus treatment, 2 levels</td>
+<td>trt</td>
+<td>treatment, 2 levels</td>
 </tr>
 <tr class="even">
-<td>k</td>
-<td>potassium treatment, 2 levels</td>
-</tr>
-<tr class="odd">
-<td>y</td>
-<td>intensity of infection of potato tubers</td>
+<td>b1</td>
+<td>response variable</td>
 </tr>
 </tbody>
 </table>
@@ -434,44 +433,40 @@ window.Quarto = {
 <ul>
 <li>Check structure of the data</li>
 </ul>
-<p>First step is to Verify the class of variables, where rep, block, d, n, p, and k are supposed to be a factor/character and y should be numeric.</p>
+<p>First step is to Verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   80 obs. of  5 variables:
- $ block: chr  "B01" "B01" "B01" "B01" ...
- $ y    : num  3.55 2.3 3.96 2.99 NA 2.36 2.16 3.16 2.29 4.03 ...
- $ n    : int  1 0 1 1 0 0 1 0 1 0 ...
- $ p    : int  1 1 1 0 1 0 0 0 1 1 ...
- $ k    : int  1 1 0 1 0 1 0 0 1 1 ...</code></pre>
+<pre><code>tibble [44 × 6] (S3: tbl_df/tbl/data.frame)
+ $ animal   : num [1:44] 1 1 1 1 2 2 2 2 3 3 ...
+ $ side     : chr [1:44] "left" "left" "right" "right" ...
+ $ location : chr [1:44] "superficial" "deep" "superficial" "deep" ...
+ $ trt      : chr [1:44] "alt" "alt" "traditional" "traditional" ...
+ $ retailday: num [1:44] 0 0 0 0 0 0 0 0 0 0 ...
+ $ b1       : num [1:44] 21.5 20.1 17.9 20 16.8 15.2 18.2 18.5 20.3 24.5 ...</code></pre>
 </div>
 </div>
 <p>In this data, treatment factors, ‘n’, ‘p’, &amp; ‘k’ are integers, we need to convert these variables to factor.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> data1 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">as.factor</span>(n),</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">p =</span> <span class="fu">as.factor</span>(p),</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">k =</span> <span class="fu">as.factor</span>(k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> data1 <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">animal =</span> <span class="fu">as.factor</span>(animal))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
 <p>we are inspecting levels of independent variables to make sure the expected levels are present in the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat2<span class="sc">$</span>n, dat2<span class="sc">$</span>p, dat2<span class="sc">$</span>k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat2<span class="sc">$</span>animal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>, ,  = 0
-
-   
-     0  1
-  0 10 10
-  1 10 10
-
-, ,  = 1
-
-   
-     0  1
-  0 10 10
-  1 10 10</code></pre>
+<pre><code>
+ 1  2  3  4  5  6  7  8  9 10 11 
+ 4  4  4  4  4  4  4  4  4  4  4 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat2<span class="sc">$</span>location, dat2<span class="sc">$</span>trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             
+              alt traditional
+  deep         11          11
+  superficial  11          11</code></pre>
 </div>
 </div>
 <p>The design looks well balanced.</p>
@@ -479,29 +474,13 @@ window.Quarto = {
 <li>Check the extent of missing data</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dat2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dat2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>block     y     n     p     k 
-    0     9     0     0     0 </code></pre>
+<pre><code>   animal      side  location       trt retailday        b1 
+        0         0         0         0         0         0 </code></pre>
 </div>
 </div>
-<p>There are 9 missing values in this data set. Let’s look into those missing values</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dat2[<span class="fu">is.na</span>(dat2<span class="sc">$</span>y),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   block  y n p k
-5    B01 NA 0 1 0
-17   B03 NA 1 1 1
-40   B05 NA 0 0 0
-47   B06 NA 1 0 0
-48   B06 NA 0 0 0
-50   B07 NA 0 1 1
-54   B07 NA 0 0 1
-60   B08 NA 1 0 1
-62   B08 NA 0 0 1</code></pre>
-</div>
-</div>
-<p>These values are randomly missing in different blocks, and treatments. These are not from any specific block or treatment factor. There are different methods of handling with missing values, but for this chapter we will exclude these missing values using <code>na.action = exclude</code> option in model.</p>
+<p>There are no missing values in this data set.</p>
 <ul>
 <li>Inspect the dependent variable</li>
 </ul>
@@ -521,7 +500,7 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat2<span class="sc">$</span>y, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"Infection intensity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat2<span class="sc">$</span>b1, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"b1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>No extreme values are observed in the dependent variable, and the distribution looks as expected.</p>
 </section>
@@ -538,48 +517,40 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model1_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> n<span class="sc">*</span>p<span class="sc">*</span>k <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model1_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(b1 <span class="sc">~</span> location<span class="sc">*</span>trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>animal),</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dat2, </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model1_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 8
-   effect   group    term           estimate std.error statistic    df   p.value
-   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
- 1 fixed    &lt;NA&gt;     (Intercept)       3.27      0.224    14.6    55.4  1.31e-20
- 2 fixed    &lt;NA&gt;     n1               -0.404     0.279    -1.45   54.1  1.54e- 1
- 3 fixed    &lt;NA&gt;     p1               -0.116     0.281    -0.413  54.9  6.81e- 1
- 4 fixed    &lt;NA&gt;     k1               -0.176     0.290    -0.607  55.5  5.47e- 1
- 5 fixed    &lt;NA&gt;     n1:p1             0.593     0.384     1.54   54.1  1.28e- 1
- 6 fixed    &lt;NA&gt;     n1:k1             1.10      0.395     2.77   54.2  7.56e- 3
- 7 fixed    &lt;NA&gt;     p1:k1            -0.169     0.396    -0.427  54.6  6.71e- 1
- 8 fixed    &lt;NA&gt;     n1:p1:k1         -1.07      0.546    -1.95   54.0  5.64e- 2
- 9 ran_pars block    sd__(Intercep…    0.290    NA        NA      NA   NA       
-10 ran_pars Residual sd__Observati…    0.573    NA        NA      NA   NA       </code></pre>
+<pre><code># A tibble: 6 × 8
+  effect   group    term            estimate std.error statistic    df   p.value
+  &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1 fixed    &lt;NA&gt;     (Intercept)        19.5      0.868     22.5   24.1  1.20e-17
+2 fixed    &lt;NA&gt;     locationsuperf…    -2.87     0.893     -3.22  30.0  3.11e- 3
+3 fixed    &lt;NA&gt;     trttraditional     -1.18     0.893     -1.32  30.0  1.96e- 1
+4 fixed    &lt;NA&gt;     locationsuperf…     1.81     1.26       1.43  30.0  1.62e- 1
+5 ran_pars animal   sd__(Intercept)     1.97    NA         NA     NA   NA       
+6 ran_pars Residual sd__Observation     2.09    NA         NA     NA   NA       </code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model2_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> n<span class="sc">*</span>p<span class="sc">*</span>k,</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model2_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(b1 <span class="sc">~</span> location<span class="sc">*</span>trt,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>animal,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat2, </span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.action =</span> na.exclude)</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model2_lme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 8
-   effect   group    term           estimate std.error    df statistic   p.value
-   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 fixed    &lt;NA&gt;     (Intercept)       3.27      0.224    54    14.6    2.28e-20
- 2 fixed    &lt;NA&gt;     n1               -0.404     0.279    54    -1.45   1.54e- 1
- 3 fixed    &lt;NA&gt;     p1               -0.116     0.281    54    -0.413  6.81e- 1
- 4 fixed    &lt;NA&gt;     k1               -0.176     0.290    54    -0.607  5.47e- 1
- 5 fixed    &lt;NA&gt;     n1:p1             0.593     0.384    54     1.54   1.28e- 1
- 6 fixed    &lt;NA&gt;     n1:k1             1.10      0.395    54     2.77   7.57e- 3
- 7 fixed    &lt;NA&gt;     p1:k1            -0.169     0.396    54    -0.427  6.71e- 1
- 8 fixed    &lt;NA&gt;     n1:p1:k1         -1.07      0.546    54    -1.95   5.64e- 2
- 9 ran_pars block    sd_(Intercept)    0.290    NA        NA    NA     NA       
-10 ran_pars Residual sd_Observation    0.573    NA        NA    NA     NA       </code></pre>
+<pre><code># A tibble: 6 × 8
+  effect   group    term            estimate std.error    df statistic   p.value
+  &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 fixed    &lt;NA&gt;     (Intercept)        19.5      0.868    30     22.5   2.58e-20
+2 fixed    &lt;NA&gt;     locationsuperf…    -2.87     0.893    30     -3.22  3.11e- 3
+3 fixed    &lt;NA&gt;     trttraditional     -1.18     0.893    30     -1.32  1.96e- 1
+4 fixed    &lt;NA&gt;     locationsuperf…     1.81     1.26     30      1.43  1.62e- 1
+5 ran_pars animal   sd_(Intercept)      1.97    NA        NA     NA    NA       
+6 ran_pars Residual sd_Observation      2.09    NA        NA     NA    NA       </code></pre>
 </div>
 </div>
 </div>
@@ -612,7 +583,7 @@ Note
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="factorial-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="factorial-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -624,7 +595,7 @@ Note
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="factorial-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="factorial-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -645,14 +616,10 @@ Note
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_lmer, <span class="at">type =</span> <span class="st">"3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type III Analysis of Variance Table with Satterthwaite's method
-       Sum Sq Mean Sq NumDF  DenDF F value  Pr(&gt;F)  
-n     0.53388 0.53388     1 54.345  1.6265 0.20762  
-p     0.50458 0.50458     1 54.743  1.5372 0.22032  
-k     0.00778 0.00778     1 55.315  0.0237 0.87823  
-n:p   0.01620 0.01620     1 54.025  0.0494 0.82502  
-n:k   1.38802 1.38802     1 54.476  4.2286 0.04455 *
-p:k   2.13878 2.13878     1 54.897  6.5157 0.01350 *
-n:p:k 1.24751 1.24751     1 54.038  3.8005 0.05644 .
+             Sum Sq Mean Sq NumDF DenDF F value   Pr(&gt;F)   
+location     42.611  42.611     1    30  9.7104 0.004016 **
+trt           0.846   0.846     1    30  0.1927 0.663810   
+location:trt  9.000   9.000     1    30  2.0510 0.162442   
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -662,15 +629,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model2_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>            numDF denDF   F-value p-value
-(Intercept)     1    54 212.59527  &lt;.0001
-n               1    54   2.09204  0.1538
-p               1    54   0.17072  0.6811
-k               1    54   0.36786  0.5467
-n:p             1    54   2.38310  0.1285
-n:k             1    54   7.69884  0.0076
-p:k             1    54   0.18234  0.6711
-n:p:k           1    54   3.80049  0.0564</code></pre>
+<pre><code>             numDF denDF  F-value p-value
+(Intercept)      1    30 504.2656  &lt;.0001
+location         1    30  10.3435  0.0031
+trt              1    30   1.7506  0.1958
+location:trt     1    30   2.0510  0.1624</code></pre>
 </div>
 </div>
 </div>
@@ -683,44 +646,40 @@ n:p:k           1    54   3.80049  0.0564</code></pre>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> n emmean    SE   df lower.CL upper.CL
- 0   3.08 0.135 16.7     2.79     3.36
- 1   3.25 0.132 15.4     2.97     3.53
+<pre><code> location    emmean    SE   df lower.CL upper.CL
+ deep          18.9 0.744 14.7     17.3     20.5
+ superficial   16.9 0.744 14.7     15.3     18.5
 
-Results are averaged over the levels of: p, k 
+Results are averaged over the levels of: trt 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> p emmean    SE   df lower.CL upper.CL
- 0   3.25 0.135 16.8     2.97     3.54
- 1   3.08 0.132 15.4     2.80     3.36
+<pre><code> location    emmean    SE   df lower.CL upper.CL
+ deep          18.9 0.744 14.7     17.3     20.5
+ superficial   16.9 0.744 14.7     15.3     18.5
 
-Results are averaged over the levels of: n, k 
+Results are averaged over the levels of: trt 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> location<span class="sc">:</span>trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> n p emmean    SE   df lower.CL upper.CL
- 0 0   3.18 0.171 35.1     2.83     3.53
- 1 0   3.32 0.164 31.4     2.99     3.66
- 0 1   2.98 0.164 31.5     2.65     3.31
- 1 1   3.18 0.161 30.0     2.86     3.51
+<pre><code> location    trt         emmean    SE   df lower.CL upper.CL
+ deep        alt           19.5 0.868 24.1     17.7     21.3
+ superficial alt           16.6 0.868 24.1     14.8     18.4
+ deep        traditional   18.3 0.868 24.1     16.5     20.1
+ superficial traditional   17.2 0.868 24.1     15.4     19.0
 
-Results are averaged over the levels of: k 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -728,44 +687,40 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> n emmean    SE df lower.CL upper.CL
- 0   3.08 0.135  9     2.77     3.38
- 1   3.25 0.132  9     2.96     3.55
+<pre><code> location    emmean    SE df lower.CL upper.CL
+ deep          18.9 0.744 10     17.2     20.5
+ superficial   16.9 0.744 10     15.3     18.6
 
-Results are averaged over the levels of: p, k 
+Results are averaged over the levels of: trt 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code> p emmean    SE df lower.CL upper.CL
- 0   3.25 0.135  9     2.95     3.56
- 1   3.08 0.132  9     2.78     3.38
+<pre><code> trt         emmean    SE df lower.CL upper.CL
+ alt           18.0 0.744 10     16.4     19.7
+ traditional   17.8 0.744 10     16.1     19.4
 
-Results are averaged over the levels of: n, k 
+Results are averaged over the levels of: location 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> n<span class="sc">:</span>p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> location<span class="sc">:</span>trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> n p emmean    SE df lower.CL upper.CL
- 0 0   3.18 0.171  9     2.79     3.57
- 1 0   3.32 0.164  9     2.95     3.69
- 0 1   2.98 0.164  9     2.61     3.35
- 1 1   3.18 0.161  9     2.82     3.55
+<pre><code> location    trt         emmean    SE df lower.CL upper.CL
+ deep        alt           19.5 0.868 10     17.5     21.4
+ superficial alt           16.6 0.868 10     14.7     18.5
+ deep        traditional   18.3 0.868 10     16.4     20.2
+ superficial traditional   17.2 0.868 10     15.3     19.2
 
-Results are averaged over the levels of: k 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
@@ -773,7 +728,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>The code above is calculating the estimated marginal means for main effects of “n” and “p” and their interaction (n:p) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the “k” levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
+<p>The code above is calculating the estimated marginal means for main effects of “location” and “trt” and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the “k” levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
 
 
 </section>
