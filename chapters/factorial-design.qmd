@@ -128,13 +128,13 @@ Model fitting with R is exactly the same as shown in previous chapters: we need 
 
 The model syntax is:
 
-`yield ~  n + p + k + n:p + n:k + p:k + n:p:k`
+`b1 ~  trt + location + trt:location`
 
 which can be abbreviated as:
 
-`yield ~ n*p*k`
+`b1 ~  location*trt`
 
-In this analysis, "n", "p", & "k" are fixed factors and block is a random effect.
+In this analysis, location and trt are fixed factors and animal is a random effect.
 
 ::: panel-tabset
 ### lme4
@@ -219,4 +219,4 @@ emmeans(model2_lme, specs = ~ location:trt)
 ```
 :::
 
-The code above is calculating the estimated marginal means for main effects of "location" and "trt" and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the "k" levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.
+The code above is calculating the estimated marginal means for main effects of "location" and "trt" and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.
