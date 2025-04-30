@@ -37,16 +37,17 @@ library(dplyr); library(broom.mixed); library(performance)
 ```
 
 ### nlme
-
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans)
 library(dplyr); library(performance)
 ```
 :::
 
-The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. The trial includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.
+The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two fabrication methods (trt) on beef top round quality. It includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.
 
-The objective of this example is to evaluate the individual and interactive effect of  location and treatment on response variable (b1). 
+There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements are taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.
+
+The objective of this example is to evaluate the individual and interactive effect of location and treatment factors on the yellowness of the meat sample. 
 
 ```{r warning=FALSE, message=FALSE}
 library(readxl)
@@ -59,7 +60,7 @@ data1<- factorial
 | animal | random variable                 |
 | location     | location factor, 2 levels   |
 | trt     | treatment, 2 levels  |
-|b1     | response variable |
+|b_star     | response variable |
 
 : Table of variables in the data set {tbl-factorial}
 
@@ -106,11 +107,11 @@ This is the last step is to inspect the dependent variable to ensure it looks as
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat2$b1, main = "", xlab = "Infection intensity", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
+hist(dat2$b_star, main = "", xlab = "Infection intensity", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(dat2$b1, main = NA, xlab = "b1")
+hist(dat2$b_star, main = NA, xlab = "b1")
 ```
 
 No extreme values are observed in the dependent variable, and the distribution looks as expected.  
@@ -121,11 +122,11 @@ Model fitting with R is exactly the same as shown in previous chapters: we need 
 
 The model syntax is:
 
-`b1 ~  trt + location + trt:location`
+`b_star ~  trt + location + trt:location`
 
 which can be abbreviated as:
 
-`b1 ~  location*trt`
+`b_star ~  location*trt`
 
 In this analysis, location and trt are fixed factors and animal is a random effect.
 
@@ -133,7 +134,7 @@ In this analysis, location and trt are fixed factors and animal is a random effe
 ### lme4
 
 ```{r, warning=FALSE}
-model1_lmer <- lmer(b1 ~ location*trt + (1|animal),
+model1_lmer <- lmer(b_star ~ location*trt + (1|animal),
                    data = dat2, 
                    na.action = na.exclude)
 tidy(model1_lmer)
@@ -142,7 +143,7 @@ tidy(model1_lmer)
 ### nlme
 
 ```{r}
-model2_lme <- lme(b1 ~ location*trt,
+model2_lme <- lme(b_star ~ location*trt,
               random = ~ 1|animal,
               data = dat2, 
               na.action = na.exclude)
@@ -212,4 +213,4 @@ emmeans(model2_lme, specs = ~ location:trt)
 ```
 :::
 
-The code above is calculating the estimated marginal means for main effects of "location" and "trt" and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.
+The code above is calculating the estimated marginal means for main effects of "location" and "trt" and their interaction (location:trt) effect on yellowness in meat sample. Make sure to pay attention to the warning message that means are averaged over the levels. It's an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to  interpret ANOVA and estimated marginal means for main and interaction effects with care.
