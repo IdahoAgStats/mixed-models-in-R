@@ -400,8 +400,9 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. The trial includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.</p>
-<p>The objective of this example is to evaluate the individual and interactive effect of location and treatment on response variable (b1).</p>
+<p>The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two fabrication methods (trt) on beef top round quality. It includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.</p>
+<p>There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements are taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.</p>
+<p>The objective of this example is to evaluate the individual and interactive effect of location and treatment factors on the yellowness of the meat sample.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>factorial <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/factorial.xlsx"</span>))</span>
@@ -423,7 +424,7 @@ window.Quarto = {
 <td>treatment, 2 levels</td>
 </tr>
 <tr class="even">
-<td>b1</td>
+<td>b_star</td>
 <td>response variable</td>
 </tr>
 </tbody>
@@ -437,13 +438,11 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>tibble [44 × 6] (S3: tbl_df/tbl/data.frame)
- $ animal   : num [1:44] 1 1 1 1 2 2 2 2 3 3 ...
- $ side     : chr [1:44] "left" "left" "right" "right" ...
- $ location : chr [1:44] "superficial" "deep" "superficial" "deep" ...
- $ trt      : chr [1:44] "alt" "alt" "traditional" "traditional" ...
- $ retailday: num [1:44] 0 0 0 0 0 0 0 0 0 0 ...
- $ b1       : num [1:44] 21.5 20.1 17.9 20 16.8 15.2 18.2 18.5 20.3 24.5 ...</code></pre>
+<pre><code>tibble [44 × 4] (S3: tbl_df/tbl/data.frame)
+ $ animal  : num [1:44] 1 1 1 1 2 2 2 2 3 3 ...
+ $ location: chr [1:44] "superficial" "deep" "superficial" "deep" ...
+ $ trt     : chr [1:44] "alt" "alt" "traditional" "traditional" ...
+ $ b_star  : num [1:44] 21.5 20.1 17.9 20 16.8 15.2 18.2 18.5 20.3 24.5 ...</code></pre>
 </div>
 </div>
 <p>In this data, treatment factors, ‘n’, ‘p’, &amp; ‘k’ are integers, we need to convert these variables to factor.</p>
@@ -476,8 +475,8 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dat2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   animal      side  location       trt retailday        b1 
-        0         0         0         0         0         0 </code></pre>
+<pre><code>  animal location      trt   b_star 
+       0        0        0        0 </code></pre>
 </div>
 </div>
 <p>There are no missing values in this data set.</p>
@@ -500,7 +499,7 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 </div>
 </div></div></div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat2<span class="sc">$</span>b1, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"b1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(dat2<span class="sc">$</span>b_star, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"b1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>No extreme values are observed in the dependent variable, and the distribution looks as expected.</p>
 </section>
@@ -508,16 +507,16 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">6.2.2</span> Model fitting</h3>
 <p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon indicator ‘:’.</p>
 <p>The model syntax is:</p>
-<p><code>b1 ~  trt + location + trt:location</code></p>
+<p><code>b_star ~  trt + location + trt:location</code></p>
 <p>which can be abbreviated as:</p>
-<p><code>b1 ~  location*trt</code></p>
+<p><code>b_star ~  location*trt</code></p>
 <p>In this analysis, location and trt are fixed factors and animal is a random effect.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model1_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(b1 <span class="sc">~</span> location<span class="sc">*</span>trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>animal),</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model1_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(b_star <span class="sc">~</span> location<span class="sc">*</span>trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>animal),</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dat2, </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model1_lmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -536,7 +535,7 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model2_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(b1 <span class="sc">~</span> location<span class="sc">*</span>trt,</span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model2_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(b_star <span class="sc">~</span> location<span class="sc">*</span>trt,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>animal,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat2, </span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">na.action =</span> na.exclude)</span>
@@ -728,7 +727,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>The code above is calculating the estimated marginal means for main effects of “location” and “trt” and their interaction (location:trt) effect on infection intensity in potato tubers. Make sure to pay attention to the warning message that means are averaged over the levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
+<p>The code above is calculating the estimated marginal means for main effects of “location” and “trt” and their interaction (location:trt) effect on yellowness in meat sample. Make sure to pay attention to the warning message that means are averaged over the levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
 
 
 </section>
