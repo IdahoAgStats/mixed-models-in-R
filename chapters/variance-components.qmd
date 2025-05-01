@@ -239,6 +239,8 @@ boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main = "Sa
 
 The analysis is derived from this model:
 
+$$y_ij = \mu + x_i +   $$
+
 ```{r}
 #| eval: false
 #| include: false
@@ -289,12 +291,14 @@ intercept = fixef(m1)[1]
 random_effects <- REextract(m1)
 ```
 
+
 Filter BLUPs to a single factor, "agency" (i.e. institute of higher education). 
 
 ```{r}
 agency_re <- filter(random_effects, groupFctr == "agency") |> 
   rename(Institution = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
-  mutate(blup_adj = BLUP + intercept) 
+  mutate(blup_adj = BLUP + intercept) |> 
+  mutate(`salary slope` = ifelse(year > 0, "+", "-"))
 ```
 
 Plot Salaries by Institution
@@ -304,9 +308,9 @@ ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
   geom_hline(yintercept = intercept, color = "gray", linetype = 2) + 
   geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE)) +
     geom_point(size = 3, col = "violetred", shape = 18, alpha = 0.6) + 
-  theme_classic(base_size = 14) +
   labs(title = "Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
-  ylab("BLUP + intercept") + 
+  ylab("BLUP + mean") + 
+  theme_classic(base_size = 14) +
   theme(axis.text.x = element_blank(),
         axis.ticks.x = element_blank(), 
         axis.title.x = element_blank())
@@ -314,13 +318,16 @@ ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
 
 Plot Salary Changes by Institution
 ```{r}
-ggplot(agency_re, aes(x = 1:5 y = ...)) + # need sequence -0.4 to 0.4
-  geom_abline(aes(slope = year, intercept = BLUP)) +
+ggplot(agency_re) +  # need sequence -0.4 to 0.4
+  geom_abline(aes(slope = year, intercept = blup_adj, col = `salary slope`), alpha = 0.7, size = 0.75) +
+  geom_hline(yintercept = intercept, color = "black", linetype = 2) + 
   labs(title = "Changes in Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
-  ylab("BLUP + intercept") + 
-  theme(axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title.x = element_blank())
+  xlim(c(0, 4)) +
+  ylim(c(10.75, 11.3)) + 
+  scale_color_manual(values = c("springgreen3", "violetred")) +
+  #ylim(c(-0.25, 0.3)) +
+  ylab("log salary") + xlab("year") + 
+  theme_bw(base_size = 14) 
 ```
 
 
@@ -328,22 +335,37 @@ ggplot(agency_re, aes(x = 1:5 y = ...)) + # need sequence -0.4 to 0.4
 ```{r}
 person_re <- filter(random_effects, groupFctr == "id:agency") |> 
   rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
-  mutate(blup_adj = BLUP + intercept)
+  mutate(blup_adj = BLUP + intercept) |> 
+  mutate(`salary slope` = ifelse(year > 0, "+", "-"))
 ```
 
-```{r, echo=FALSE}
-# the model intercept
-intercept = fixef(m1)[1]
-
-# filter to clone BLUPs and add the intercept
-person_re <- filter(random_effects, groupFctr == "id:agency") |> 
-  rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
-  mutate(blup_adj = BLUP + intercept)
+```{r}
+ggplot(person_re, aes(x = BLUP, y = year)) +
+  geom_point(alpha = 0.4, color = "royalblue") +
+  geom_hline(yintercept = 0, col = "black", linetype = 2) +
+  geom_vline(xintercept = 0, col = "black", linetype = 2) +
+  labs(title = "Changes in Employee Salaries, 2019 - 2024", subtitle = "Log of Salaries") +
+  xlab("random intercept (BLUP) for Employee Salary") +
+  ylab("random slope for Employee salary increase") +
+  theme_bw()
 ```
+
+```{r}
+uw <- filter(wa_salary, agency == "University of Washington", person = "person 30780") 
+
+PI <- predictInterval(merMod = m1, newdata = uw,
+                      level = 0.95, n.sims = 1000, which = "random", 
+                      stat = "median", type="linear.prediction",
+                      include.resid.var = FALSE) |> 
+  bind_cols(uw)
+```
+
+
 
 Plot histogram of year slope and year BLUP
 
 ```{r, echo=FALSE}
+ex_person <- person_re |> arrange(desc(year)) |> slice(1)
 # person 30780:University of Washington (highest paid)
 ```
 
