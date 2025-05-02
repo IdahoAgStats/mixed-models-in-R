@@ -1,7 +1,7 @@
 ---
 title: Variance & Variance Components
 execute: 
-  eval: false
+  eval: true
 ---
 
 ```{r, include=FALSE, echo=FALSE}
@@ -205,8 +205,8 @@ For this data set, we are concerned with what is contributing to employee salari
 
 This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a .RData file. Now let's load this object into an R session. 
 
-```{r}
-load(here::here("data/salary_models.RData"))
+```{r message=FALSE, warning=FALSE}
+load(here::here("data/salary_modeldata.RData"))
 ```
 
 ### Model fitting
@@ -241,7 +241,6 @@ $$y_ij = \mu + x_i +   $$
 
 ```{r}
 #| eval: false
-#| include: false
 m1 <- lmer(log(salary) ~ factor(year) + (year|agency/id), 
            data = wa_salary, REML = FALSE)
 
@@ -266,6 +265,8 @@ Random intercepts and slopes were fit for agency and id nested within agency.
 
 ### Inference
 
+#### Look at Variance Components
+
 ```{r}
 VarCorr(m1)
 ```
@@ -279,7 +280,12 @@ var_comps_salary <- tidy(m1, "ran_pars", scales = "vcov") |>
 var_comps_salary
 ```
 
-Extract BLUPs
+#### Extract BLUPs
+
+```{r, echo=FALSE}
+# the model intercept
+intercept = fixef(m1)[1]
+```
 
 ```{r, eval=FALSE}
 # the model intercept
@@ -289,8 +295,10 @@ intercept = fixef(m1)[1]
 random_effects <- REextract(m1)
 ```
 
+#### Visualize Random Effects 
+*(intercepts and slopes)*
 
-Filter BLUPs to a single factor, "agency" (i.e. institute of higher education). 
+* Filter BLUPs to a single factor, "agency" (i.e. institute of higher education). 
 
 ```{r}
 agency_re <- filter(random_effects, groupFctr == "agency") |> 
@@ -299,7 +307,7 @@ agency_re <- filter(random_effects, groupFctr == "agency") |>
   mutate(`salary slope` = ifelse(year > 0, "+", "-"))
 ```
 
-Plot Salaries by Institution
+* Plot Salaries by Institution
 
 ```{r}
 ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
@@ -307,17 +315,18 @@ ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
   geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE)) +
     geom_point(size = 3, col = "violetred", shape = 18, alpha = 0.6) + 
   labs(title = "Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
-  ylab("BLUP + mean") + 
+  ylab("BLUP + mean and standard error") + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_blank(),
         axis.ticks.x = element_blank(), 
         axis.title.x = element_blank())
 ```
 
-Plot Salary Changes by Institution
+* Plot Salary Changes by Institution
+
 ```{r}
 ggplot(agency_re) +  # need sequence -0.4 to 0.4
-  geom_abline(aes(slope = year, intercept = blup_adj, col = `salary slope`), alpha = 0.7, size = 0.75) +
+  geom_abline(aes(slope = year, intercept = blup_adj, col = `salary slope`), alpha = 0.7, linewidth = 0.75) +
   geom_hline(yintercept = intercept, color = "black", linetype = 2) + 
   labs(title = "Changes in Institutional Salaries, 2019 - 2024", subtitle = "Log of Salaries") + 
   xlim(c(0, 4)) +
@@ -325,10 +334,15 @@ ggplot(agency_re) +  # need sequence -0.4 to 0.4
   scale_color_manual(values = c("springgreen3", "violetred")) +
   #ylim(c(-0.25, 0.3)) +
   ylab("log salary") + xlab("year") + 
-  theme_bw(base_size = 14) 
+  theme_bw(base_size = 14) +
+  theme(legend.position = c(0.98, 0.98),
+        legend.justification = c(1,1),
+        legend.background = element_rect(color = "gray60", fill = rgb(1, 1, 1, alpha = 0.8)),
+        legend.key = element_rect(fill = "transparent"))
 ```
 
-Look at Employee Changes in Salary
+* Examine Relationship Between Employee Salary and Changes in Salary
+
 ```{r}
 person_re <- filter(random_effects, groupFctr == "id:agency") |> 
   rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
@@ -336,45 +350,33 @@ person_re <- filter(random_effects, groupFctr == "id:agency") |>
   mutate(`salary slope` = ifelse(year > 0, "+", "-"))
 ```
 
-<<<<<<< HEAD
 ```{r}
 ggplot(person_re, aes(x = BLUP, y = year)) +
   geom_point(alpha = 0.4, color = "royalblue") +
   geom_hline(yintercept = 0, col = "black", linetype = 2) +
   geom_vline(xintercept = 0, col = "black", linetype = 2) +
-  labs(title = "Changes in Employee Salaries, 2019 - 2024", subtitle = "Log of Salaries") +
+  labs(title = "Changes in Employee Salaries, 2019 - 2024", subtitle = "(Log of Salaries)") +
   xlab("random intercept (BLUP) for Employee Salary") +
   ylab("random slope for Employee salary increase") +
   theme_bw()
 ```
+There is a negative correlation between employee salary and employee salary change, which is also indicated when `VarCorr(m1)` was run. 
 
-
-```{r, echo=FALSE}
-# the model intercept
-intercept = fixef(m1)[1]
-
-# filter to clone BLUPs and add the intercept
-person_re <- filter(random_effects, groupFctr == "id:agency") |> 
-  rename(employee = groupID, BLUP = "(Intercept)", SE = "(Intercept)_se") |> 
-  mutate(blup_adj = BLUP + intercept)
-```
+There are other functions in [**merTools**](https://CRAN.R-project.org/package=merTools){.external target="_blank"} to explore random effects and variances from an `lme4` analysis.
 
 ```{r}
-uw <- filter(wa_salary, agency == "University of Washington", person = "person 30780") 
+#| eval: false
+#| include: false
+#| echo: false
+# impossibly slow - do not try
+
+uw <- filter(wa_salary, agency == "University of Washington", id == "person 30780") 
 
 PI <- predictInterval(merMod = m1, newdata = uw,
                       level = 0.95, n.sims = 1000, which = "random", 
                       stat = "median", type="linear.prediction",
                       include.resid.var = FALSE) |> 
   bind_cols(uw)
-```
-
-
-Plot histogram of year slope and year BLUP
-
-```{r, echo=FALSE}
-ex_person <- person_re |> arrange(desc(year)) |> slice(1)
-# person 30780:University of Washington (highest paid)
 ```
 
 
@@ -410,6 +412,8 @@ boxplot(yield ~ site, data = var_ex1)
 
 The study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model. 
 
+While it may be possible to implement heterogenous error structures with **lme4**, it requires a good working knowledge of that R package.  is requires extensive comfort programming in **lme4**. However, the package **nlme** contains  relatively straightforward implementations that are illustrated below.
+
 ```{r}
 m1_a <- lme(yield ~ site:variety + variety, 
                 random = ~ 1 |site/block, 
@@ -418,7 +422,8 @@ m1_a <- lme(yield ~ site:variety + variety,
 
 ```
 
-The residual plot indicates some association between the residuals and fitted values. 
+The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption
+
 ```{r}
 plot(m1_a)
 ```
@@ -457,6 +462,14 @@ The residual plot is now much cleaner. The result is a better-fitting model and 
 ```{r}
 plot(m1_b)
 anova(m1_a, m1_b)
+```
+
+
+```{r}
+m1_c <- lmer(yield ~ site:variety + variety + (1|site/block),
+                #weights = varIdent(form = ~1|site), 
+                na.action = na.exclude, 
+                data = var_ex1)
 ```
 
 
