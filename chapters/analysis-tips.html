@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Tips on Analysis – Field Guide to the R Mixed Model Wilderness</title>
+<title>2&nbsp; Zen and the Art of Statistical Analysis – Field Guide to the R Mixed Model Wilderness</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -138,7 +138,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../styles.css">
-<meta name="twitter:title" content="2&nbsp; Tips on Analysis – Field Guide to the R Mixed Model Wilderness">
+<meta name="twitter:title" content="2&nbsp; Zen and the Art of Statistical Analysis – Field Guide to the R Mixed Model Wilderness">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="../img/pie_chart.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -166,7 +166,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/analysis-tips.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tao of Analysis</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/analysis-tips.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Zen and the Art of Statistical Analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -209,7 +209,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/analysis-tips.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tao of Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Zen and the Art of Statistical Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -336,7 +336,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Tips on Analysis</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Zen and the Art of Statistical Analysis</span></h1>
 </div>
 
 
@@ -354,7 +354,7 @@ window.Quarto = {
 
 
 <p>Statistical analysis is hard. Despite the common view that science produces unambiguous truths, science and statistics involve making decisions and judgement calls that affect the outcomes and conclusions of a study. These decisions are informed by our scientific thinking and (hopefully) justified in our manuscripts so they can be interrogated by other experts. The (now defunct) website 538 published a <a href="https://fivethirtyeight.com/features/science-isnt-broken/#part1" class="external" target="_blank">well-researched article</a> describing some of these difficulties, the temptation to “<a href="https://en.wikipedia.org/wiki/Data_dredging" class="external" target="_blank">p-hack</a>”, and the consequences for scientific research.</p>
-<p>This does not mean we should resign ourselves to get it wrong, but try our best to approach analysis remembering that the goal is to obtain truth and/or answer a specific research question, not obtain a low p-value.</p>
+<p>This does not mean we should resign ourselves to get it wrong, but try our best to approach analysis remembering that the goal is to obtain truth and answer a specific research question, not obtain a low p-value.</p>
 <blockquote class="blockquote">
 <p>The scientific method is the most rigorous path to knowledge, but it’s also messy and tough. Science deserves respect exactly because it is difficult — not because it gets everything correct on the first try. The uncertainty inherent in science doesn’t mean that we can’t use it to make important policies or decisions. It just means that we should remain cautious and adopt a mindset that’s open to changing course if new data arises. We should make the best decisions we can with the current evidence and take care not to lose sight of its strength and degree of certainty. It’s no accident that every good paper includes the phrase “more study is needed” — there is always more to learn.</p>
 <p>– Christie Aschwanden/538, <a href="https://fivethirtyeight.com/features/science-isnt-broken/#part1" class="external" target="_blank">Science Isn’t Broken</a></p>
@@ -393,7 +393,7 @@ Figure&nbsp;2.1: How you will spend your time
 <p>Informally, a p-value is the probability under a specified statistical model that a statistical summary of the data (e.g., the sample mean difference between two compared groups) would be equal to or more extreme than its observed value.</p>
 <p>– American Statistical Association/<span class="citation" data-cites="pvals">Wasserstein and Lazar (<a href="../references.html#ref-pvals" role="doc-biblioref">2016</a>)</span></p>
 </blockquote>
-<p>The great majority of researchers are deeply interested in p-values. This is not a bad thing <em>per se</em>, but sometimes the focus is so strong it comes at the expense of other valuable pieces of information, like treatment estimates! Russ Leanth, author of the <a href="https://rvlenth.github.io/emmeans/articles/basics.html#pvalues" class="external" target="_blank"><strong>emmeans package</strong></a> refers to this particular practice as “star gazing”.</p>
+<p>The great majority of researchers are deeply interested in p-values. This is not a bad thing <em>per se</em>, but sometimes the focus is so strong it comes at the expense of other valuable pieces of information, like treatment estimates! Russ Leanth, author of the <a href="https://rvlenth.github.io/emmeans/articles/basics.html#pvalues" class="external" target="_blank"><strong>emmeans package</strong>,</a> refers to this particular practice as “star gazing”.</p>
 <p>It is important to evaluate why you want to do ANOVA, what extra information it will bring and what you plan to do with those results. Sometimes, researchers want to conduct an ANOVA even though the original goals of analysis were reached without it. Running an ANOVA may increase or decrease confidence in your other results. That is not at all what ANOVA is intended to do, nor is this what p-values can tell us. ANOVA compares across group variation to within group variation. It cannot tell us if anything is the ‘same’ (there is a separate branch of analysis, ‘equivalence testing’, for that), and it cannot tell us specifically what is different, unless you are fortunate enough to only have two levels in your treatment structure. P-values provide no guarantee that something is truly different or not; it only quantifies the probability you could have observed these results by chance.</p>
 <p>The American Statistics Association recommends that <strong>“Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold”</strong> <span class="citation" data-cites="pvals">(<a href="../references.html#ref-pvals" role="doc-biblioref">Wasserstein and Lazar 2016</a>)</span>. That article also explains what p-values are telling us and how to avoid committing analytical errors and/or misinterpreting p-values. If you have time to read the full article, it will benefit your research!</p>
 <p>The main problematic behavior I see is researchers using p-values as the sole criteria on whether to present results: “We wanted to test if x, y and z had an effect. We ran some model and found that that only x had a significant effect, and those results indicate…” (while results with a p-value less than 0.05 are ignored).</p>
@@ -428,7 +428,7 @@ The Great Debate Over Hypothesis Testing
 </div></div><p>Implementing compact letter display can kill statistical power (the probability of detecting true differences) because it requires that all pairwise comparison being made. Doing this, especially when there are many treatment levels, has its perils. The biggest problem is that this creates a multiple testing problem. The RCBD example in this guide has 42 treatments, resulting in a total of 861 comparisons (<span class="math inline">\(=42*(42-1)/2\)</span>), that are then adjusted for multiple tests. With that many tests, a severe adjustment is likely and hence things that are different are not detected. With so many tests, it could be that there is an overall effect due to treatment, but they all share the same letter!</p>
 <p>The second problem is one of interpretation. Just because two treatments or varieties share a letter does not mean they are equivalent. It only means that they were not found to be different. A funny distinction, but alas. There is an entire branch of statistics, ‘equivalence testing’ devoted to just this topic - how to test if two things are actually the same. This involves the user declaring a maximum allowable numeric difference for a variable in order to determine if two items are statistically different or equivalent - something that these pairwise comparisons are not doing.]</p>
 <p>Another problem is that doing all pairwise comparison may not align with experimental goals. In many circumstances, not every pairwise combination is of any interest or relevance to the study. Additionally, complex treatment structure may necessitate custom contrasts that highlight differences between the marginal estimate of multiple treatments versus another. For example, there may be two levels of ‘high’ nitrogen fertilizer treatment with two different sources (i.e.&nbsp;types of fertilizer). A researcher may want to contrast those two levels together against ‘low’ nitrogen treatment levels.</p>
-<p>Often, researchers have embedded additional structure in the treatments that is not fully reflected in the statistical model. For example, perhaps a study is looking at five different intercropping mixtures, two that incorporate a legume and three that do not. Conducting all pairwise comparisons with miss estimating the difference due to including a legume in an intercropping mix and not incorporating one. Soil fertility and other agronomic studies often have complex treatment structure. When it is not practical or financially feasible to have a full factorial experiment, embedding different treatment combinations in the main factor of analysis can accomplish this. This is a good study design approach, but compact letter display is an efficient way to report results. In such cases, custom contrasts are a better choice for hypothesis testing.The <a href="../chapters/means-and-contrasts.html">emmeans chapter</a> covers how to do this.</p>
+<p>Often, researchers have embedded additional structure in the treatments that is not fully reflected in the statistical model. For example, perhaps a study is looking at five different intercropping mixtures, two that incorporate a legume and three that do not. Conducting all pairwise comparisons with miss estimating the difference due to including a legume in an intercropping mix and not incorporating one. Soil fertility and other agronomic studies often have complex treatment structure. When it is not practical or financially feasible to have a full factorial experiment, embedding different treatment combinations in the main factor of analysis can accomplish this. This is a good study design approach, but compact letter display is an inefficient way to report results. In such cases, custom contrasts are a better choice for hypothesis testing.The <a href="../chapters/means-and-contrasts.html">emmeans chapter</a> covers how to do this.</p>
 </section>
 <section id="final-thoughts" class="level3" data-number="2.0.5">
 <h3 data-number="2.0.5" class="anchored" data-anchor-id="final-thoughts"><span class="header-section-number">2.0.5</span> Final Thoughts</h3>
