@@ -301,7 +301,7 @@ agency_re <- filter(random_effects, groupFctr == "agency") |>
   mutate(`salary slope` = ifelse(year > 0, "+", "-"))
 ```
 
-* Plot Salaries by Institution
+* Plot Salaries by Institution:
 
 ```{r}
 ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
@@ -316,7 +316,7 @@ ggplot(agency_re, aes(x = reorder(Institution, blup_adj), y = blup_adj)) +
         axis.title.x = element_blank())
 ```
 
-* Plot Salary Changes by Institution
+* Plot Salary Changes by Institution:
 
 ```{r}
 ggplot(agency_re) +  # need sequence -0.4 to 0.4
@@ -335,7 +335,7 @@ ggplot(agency_re) +  # need sequence -0.4 to 0.4
         legend.key = element_rect(fill = "transparent"))
 ```
 
-* Examine Relationship Between Employee Salary and Changes in Salary
+* Examine Relationship Between Employee Salary and Changes in Salary:
 
 ```{r}
 person_re <- filter(random_effects, groupFctr == "id:agency") |> 
@@ -416,7 +416,7 @@ m1_a <- lme(yield ~ site:variety + variety,
 
 ```
 
-The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption
+The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption.
 
 ```{r}
 plot(m1_a)
@@ -469,7 +469,7 @@ m1_c <- lmer(yield ~ site:variety + variety + (1|site/block),
 
 ### Case 2: Variance is related to the fitted values
 
-This is the infamous 'horn' pattern in the residuals-vs-fitted values plot. This is another canola trial using 38 varieties conducted at a single year and single location. 
+Below is the infamous 'horn' pattern in the residuals-vs-fitted values plot. This analysis is from a canola variety trial of 38 cultivars conducted at single location for one field season. 
 
 ```{r}
 var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv")) |> 
@@ -523,7 +523,7 @@ There are many other ways of using these functions for modeling heteroscedastici
 
 ### Case 3: Variance is related to a factor under other complex circumstances
 
-Recall the [repeated measures/split-split plot example](repeated-measures.qmd). There was some evidence of 
+Recall the [repeated measures/split-split plot example](repeated-measures.qmd) that indicated some evidence of heteroscedasticity.
 
 ```{r, echo=FALSE}
 load(here::here("data/phos_fit1.RData"))
@@ -574,6 +574,7 @@ emmeans(fit1_b, ~ time)
 
 
 #### Inference
+
 
 ```{r}
 #| warning: false
