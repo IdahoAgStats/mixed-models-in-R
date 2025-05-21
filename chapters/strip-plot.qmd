@@ -8,20 +8,15 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-Also referred by 'strip-plot design' or 'strip-split-plot design'. This design had an extensive application in the agricultural sciences. In the simplest case, we have two factors A and B. Factor A is applied to whole plots same as in the standard split-plot design. Then factor B is applied to **strips** (which are just another set of whole plots) that are orthogonal to the original whole plots used for factor A.  
-
+Also referred by 'strip-plot design' or 'strip-split-plot design'. This design had an extensive application in the agricultural sciences. In the simplest case, we have two factors A and B. Factor A is applied to whole plots same as in the standard split-plot design. Then factor B is applied to **strips** (which are just another set of whole plots) that are orthogonal to the original whole plots used for factor A.
 
 The statistical model for this design is:
 
-$$y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}$$ 
-Where:
+$$y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}$$ Where:
 
-$\mu$= overall experimental mean, 
-$(\tau\alpha)_{ij}$, $(\tau\beta)_{ik}$, and $\epsilon_{ijk}$ are the errors used to test factor A, B, and their interaction AB, respectively. 
-$\alpha$ and $\beta$ are the main effects applied A and B, and $\alpha_j\beta_k$ represents the interaction between main factors. 
+$\mu$= overall experimental mean, $(\tau\alpha)_{ij}$, $(\tau\beta)_{ik}$, and $\epsilon_{ijk}$ are the errors used to test factor A, B, and their interaction AB, respectively. $\alpha$ and $\beta$ are the main effects applied A and B, and $\alpha_j\beta_k$ represents the interaction between main factors.
 
 $$ \epsilon_{ijk} \sim N(0, \sigma^2)$$\
-
 
 ## Example Analysis
 
@@ -29,6 +24,7 @@ We will start the analysis first by loading the required libraries for this anal
 
 ::: panel-tabset
 ### lme4
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans)
 library(dplyr); library(performance); library(desplot)
@@ -36,6 +32,7 @@ library(broom.mixed)
 ```
 
 ### nlme
+
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(desplot); library(broom.mixed)
@@ -75,7 +72,8 @@ desplot(rice, gen ~ col*row,
 ```
 
 ### Data integrity checks
-- Check structure of the data
+
+-   Check structure of the data
 
 The 'rep', 'nitro', and 'gen' variables in the data needs to be a factor/character variables and 'yield' should be numeric.
 
@@ -88,7 +86,8 @@ Let's convert 'nitro' from numeric to factor.
 ```{r}
 rice$nitro <- as.factor(rice$nitro)
 ```
-- Inspect the independent variables
+
+-   Inspect the independent variables
 
 Let's running a a cross tabulation of independent variables to look at the balance of treatment factors.
 
@@ -98,7 +97,7 @@ table(rice$gen, rice$nitro)
 
 It looks balanced with 3 number of observations for each variety and nitrogen level.
 
-- Check the extent of missing data
+-   Check the extent of missing data
 
 Next step is to identify if there are any missing observations in the data set.
 
@@ -108,7 +107,7 @@ colSums(is.na(rice))
 
 We don't have any missing values in this data set.
 
-- Inspect the dependent variable
+-   Inspect the dependent variable
 
 Let's check the distribution of dependent variable by plotting a histogram.
 
@@ -128,10 +127,11 @@ No extreme values or skewness is present in the yield values.
 
 ### Model Building
 
-The goal of this analysis is to evaluate the impact of nitrogen, genotype, and their interaction on rice yield. The variables "rep", "gen" (nested in rep), and "nitro" (nested in rep) were random effects in the model. 
+The goal of this analysis is to evaluate the impact of nitrogen, genotype, and their interaction on rice yield. The variables "rep", "gen" (nested in rep), and "nitro" (nested in rep) were random effects in the model.
 
 ::: panel-tabset
 #### lme4
+
 ```{r}
 model_lmer <- lmer(yield ~  nitro*gen +  (1|rep) + 
                    (1|rep:gen) + (1|rep:nitro), 
@@ -140,6 +140,7 @@ tidy(model_lmer)
 ```
 
 #### nlme
+
 ```{r}
 model_lme <-lme(yield ~  nitro*gen,
                 random = list(one = pdBlocked(list(
@@ -152,9 +153,10 @@ summary(model_lme)
 ```
 :::
 
-:::: {.column-margin}
+:::: column-margin
 ::: callout-note
 ## Crossed random effects
+
 This type of variance-covariance structure in `nlme::lme()` is represented by a `pdBlocked` object with `pdIdent` elements.
 :::
 ::::
@@ -165,11 +167,13 @@ Let's evaluate the assumptions of linear mixed models by looking at the residual
 
 ::: panel-tabset
 #### lme4
+
 ```{r, fig.height=6, fig.width=8}
 check_model(model_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha =0)
 ```
 
 #### nlme
+
 ```{r, layout="[[1,1], [1]]"}
 plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
@@ -187,11 +191,13 @@ We can evaluate the model for the analysis of variance, for main and interaction
 
 ::: panel-tabset
 ### lme4
+
 ```{r}
 car::Anova(model_lmer, type = "III")
 ```
 
 ### nlme
+
 ```{r}
 anova(model_lme, type = "marginal")
 ```
@@ -203,12 +209,14 @@ Next, We can estimate marginal means for nitro and gen interaction effects using
 
 ::: panel-tabset
 ### lme4
+
 ```{r}
 emm1 <- emmeans(model_lmer, ~ nitro*gen) 
 emm1
 ```
 
 ### nlme
+
 ```{r}
 emm1 <- emmeans(model_lme, ~ nitro*gen)
 emm1
@@ -216,8 +224,6 @@ emm1
 :::
 
 Note that, confidence intervals were not estimated through `emmeans()` from `lme()` model. This was due to complex nested and crossed random effects in the strip-plot design. If the random-effects structure is too complex, emmeans might struggle to recover correct error terms.
-
-
 
 ::: callout-note
 ## `lme vs lmer`

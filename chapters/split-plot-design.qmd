@@ -6,7 +6,7 @@ source(here::here("settings.r"))
 
 ## Background
 
-Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly. 
+Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly.
 
 ```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
@@ -43,7 +43,6 @@ dframe2 <- spd2$fieldBook |> arrange(ID) |>
 write.csv(dframe2, here::here("data" "_split_plot_rcbd.csv"), row.names=FALSE)
 ```
 
-
 ```{r, fig.height=3.5,include=FALSE, eval=FALSE}
 library(ggplot2); library(ggokabeito)
 spd <- read.csv(here::here("data", "_split_plot_crd.csv"))
@@ -68,7 +67,6 @@ ggplot(spd, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
 
 ```
 
-
 ```{r, fig.height=3.5}
 #| echo: false
 #| warning: false
@@ -92,27 +90,31 @@ ggplot(spd2, aes(x = COLUMNS, y = ROWS, fill = TRT_COMB)) +
 
 ```
 
+## Statistical Details
 
-## Statistical Details 
-
-$$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + r_k + \epsilon_{ik} + \delta_{ijk}$$ 
+$$y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + r_k + \epsilon_{ik} + \delta_{ijk}$$
 
 Where:
 
-$\mu$ = overall experimental mean   
-$\alpha$ = main effect of whole plot (fixed)    
+$\mu$ = overall experimental mean
+
+$\alpha$ = main effect of whole plot (fixed)
+
 $\beta$ = main effect of split plot (fixed)
-$\alpha\beta$ = interaction between factors A and B 
+
+$\alpha\beta$ = interaction between factors A and B
+
 $r$ = block effect (random)
-$\epsilon_{ij}$ = whole plot error 
+
+$\epsilon_{ij}$ = whole plot error
+
 $\delta_{ijk}$ = split plot error
 
-Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_{sp}$, respectively. 
+Both the overall error and the rep effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ (whole-plot) and $\sigma_{sp}$ (split-plot), respectively.
 
 $$ \epsilon \sim N(0, \sigma)$$
 
 $$\ \delta  \sim N(0, \sigma_{sp})$$
-
 
 ## Analysis Examples
 
@@ -134,7 +136,6 @@ library(nlme); library(performance); library(emmeans)
 library(dplyr); library(ggplot2); library(broom.mixed)
 ```
 :::
-
 
 ### Example Model for RCBD Split Plot Designs
 
@@ -261,8 +262,6 @@ Let's have a look at the analysis of variance, for V, N and their interaction ef
 ### lme4
 
 ```{r}
-## check joint_test() from emmeans
-##
 anova(oats_lmer, type = "III") 
 car::Anova(oats_lmer, type = "3", test.statistics = "F")
 ```

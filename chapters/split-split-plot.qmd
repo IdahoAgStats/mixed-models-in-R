@@ -10,17 +10,22 @@ editor:
 source(here::here("settings.r"))
 ```
 
-The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment. If there are two levels of randomization restriction, the layout is called a **split-split plot design**. The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in the main plot, another in the split plot and a third factor in the split-split plot. The example shown below illustrates this experiment layout.
+The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment.
+If there are two levels of randomization restriction, the layout is called a **split-split plot design**.
+The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in the main plot, another in the split plot and a third factor in the split-split plot.
+The example shown below illustrates this experiment layout.
 
 ## Details for split-split plot designs
 
 The statistical model structure this design:
 
-$$y_{ijk} = \mu + r_j +  \alpha_i + \beta_k + (\alpha\beta)_{ik} + \gamma_n + (\alpha\gamma)_{in} + (\gamma\beta)_{nk} + (\alpha\beta\gamma)_{ikn} + \epsilon_{ijk} + \delta_{ijkn}$$ 
+$$y_{ijk} = \mu + r_j +  \alpha_i + \beta_k + (\alpha\beta)_{ik} + \gamma_n + (\alpha\gamma)_{in} + (\gamma\beta)_{nk} + (\alpha\beta\gamma)_{ikn} + \epsilon_{ijk} + \delta_{ijkn}$$
 
 Where:
 
 $\mu$ = overall experimental mean
+
+$r$ = replication effect (random)
 
 $\alpha$ = main effect of whole plot (fixed)
 
@@ -43,6 +48,7 @@ $$\delta  \sim N(0, \sigma_{sp})$$
 $$\tau  \sim N(0, \sigma_{ssp})$$
 
 ## Example Analysis
+
 ::: panel-tabset
 ### lme4
 
@@ -61,7 +67,8 @@ library(broom.mixed); library(performance)
 ```
 :::
 
-In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae){.external target="_blank"} package (data set "ssp"). The experiment consists of 3 different rice varieties grown under 3 management practices and 5 nitrogen levels in the split-split plot design.
+In this example, we have a rice yield data from the [agricolae](https://CRAN.R-project.org/package=agricolae){.external target="_blank"} package (data set "ssp").
+The experiment consists of 3 different rice varieties grown under 3 management practices and 5 nitrogen levels in the split-split plot design.
 
 ```{r, echo=FALSE, eval=FALSE}
 library(agricolae)
@@ -74,23 +81,25 @@ rice <- read.csv(here::here("data", "rice_ssp.csv"))
 ```
 
 |            |                                                                |
-|-------------------|-----------------------------------------------------|
+|--------------------|----------------------------------------------------|
 | block      | blocking unit                                                  |
 | nitrogen   | different nitrogen fertilizer rates as main plot with 5 levels |
-| management | management practices as split plot with 3 levels                  |
-| variety    | crop variety being a split-split plot with 3 levels                 |
+| management | management practices as split plot with 3 levels               |
+| variety    | crop variety being a split-split plot with 3 levels            |
 | yield      | yield (bushels per acre)                                       |
 
 : Table of variables in the rice data set {tbl-split_split}
 
-In this example, note that there are two randomization restrictions within each block: nitrogen & management. The order is which nitrogen treatments are applied is randomly selected. The 3 management practices are randomly assigned to the split plots. Finally, within a particular management, the 3 varieties are tested in a random order, forming 3 split-split plots. 
-
+In this example, note that there are two randomization restrictions within each block: nitrogen & management.
+The order is which nitrogen treatments are applied is randomly selected.
+The 3 management practices are randomly assigned to the split plots.
+Finally, within a particular management, the 3 varieties are tested in a random order, forming 3 split-split plots.
 
 ### Data integrity checks
 
-Before analyzing the data let's do some preliminary data quality checks. 
+Before analyzing the data let's do some preliminary data quality checks.
 
-- Check structure of the data
+-   Check structure of the data
 
 We will start with evaluation of the structure of the data where class of block, nitrogen, management and variety should be a character/factor and yield should be numeric.
 
@@ -107,7 +116,7 @@ rice$management <- as.character(rice$management)
 rice$variety <- as.character(rice$variety)
 ```
 
-- Inspect the independent variables
+-   Inspect the independent variables
 
 Next, run a cross tabulations to check balance of observations across independent variables:
 
@@ -117,15 +126,16 @@ table(rice$variety, rice$nitrogen, rice$management)
 
 It looks perfectly balanced, with exactly 3 observation per treatment group.
 
-- Check the extent of missing data 
+-   Check the extent of missing data
 
 ```{r}
 colSums(is.na(rice))
 ```
 
-Great! no missing values here. 
+Great!
+no missing values here.
 
-- Inspect the dependent variable
+-   Inspect the dependent variable
 
 Last, check the distribution of the dependent variable by plotting a histogram of yield values using `hist()` in R.
 
@@ -170,12 +180,13 @@ tidy(model_lme)
 :::
 
 ::: column-margin
-For information on what `boundary (singular) fit` means, please refer to [**Chapter 14**](troubleshooting.qmd). For now, this warning message will be ignored. 
+For information on what `boundary (singular) fit` means, please refer to [**Chapter 14**](troubleshooting.qmd).
+For now, this warning message will be ignored.
 :::
 
 ### Check Model Assumptions
 
-::: panel-tabset 
+::: panel-tabset
 ### lme4
 
 ```{r,  fig.height=6, fig.width=8}
@@ -187,10 +198,9 @@ check_model(model_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, al
 ```{r,  fig.height=3}
 check_model(model_lme,  check = c('qq', 'linearity'), detrend=FALSE)
 ```
-
 :::
 
-The assumptions of homescedascity and normality of residuals appear met. 
+The assumptions of homescedascity and normality of residuals appear met.
 
 ### Inference
 
@@ -210,8 +220,7 @@ anova(model_lme, type = "marginal")
 ```
 :::
 
-we observed a significant impact of management, variety, and nitrogen x variety interaction effect on rice yield. 
-
+we observed a significant impact of management, variety, and nitrogen x variety interaction effect on rice yield.
 
 Next, we can estimate the marginal means for each treatment factor (variety, nitrogen, management) which will be averaged across other factors and their interaction.
 
@@ -231,7 +240,8 @@ emmeans(model_lme, ~ nitrogen*variety)
 ```
 :::
 
-Notice we get a message that the estimated means for 'nitrogen x variety' are averaged over the levels of 'management'. So we need to be careful about this while making conslusions/recommendations. 
+Notice we get a message that the estimated means for 'nitrogen x variety' are averaged over the levels of 'management'.
+So we need to be careful about this while making conslusions/recommendations.
 
 ::: callout-note
 ## Nested random effects
@@ -245,6 +255,6 @@ model_lme <- lme(yield ~ nitrogen*management*variety,
                   na.action = na.exclude)
 ```
 
-The random effects follow the order of `~1|block/main plot/split-plot`. While fitting the model for split-split plot design please make sure to have a clear understanding of the main plot, split-plot and split-split plot factors to avoid having an erroneous model. 
-
+The random effects follow the order of `~1|block/main plot/split-plot`.
+While fitting the model for split-split plot design please make sure to have a clear understanding of the main plot, split-plot and split-split plot factors to avoid having an erroneous model.
 :::
