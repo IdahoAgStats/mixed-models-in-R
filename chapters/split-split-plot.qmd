@@ -151,8 +151,7 @@ We can do blocks as fixed or random.
 ### lme4
 
 ```{r}
-model_lmer <- lmer(yield ~ nitrogen * management * variety +
-                     (1|block/nitrogen/management),
+model_lmer <- lmer(yield ~ nitrogen * management * variety + (1|block/nitrogen/management),
                    data = rice,
                    na.action = na.exclude)
 
@@ -162,10 +161,10 @@ tidy(model_lmer)
 ### nlme
 
 ```{r}
-model_lme <- lme(yield ~ nitrogen*management*variety,
-                  random = ~ 1|block/nitrogen/management,
-                  data = rice, 
-                  na.action = na.exclude)
+model_lme <- lme(yield ~ nitrogen*management*variety, 
+                 random = ~ 1|block/nitrogen/management,
+                 data = rice,
+                 na.action = na.exclude)
 tidy(model_lme)
 ```
 :::

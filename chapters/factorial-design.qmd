@@ -10,7 +10,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 ## Background
 
 Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is:
-$$y_{ij} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \epsilon_{ij}$$ 
+$$y_{ijk} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \delta_k +  \epsilon_{ijk}$$ 
 Where: 
 
 $\mu$ = experiment mean
@@ -21,6 +21,7 @@ $\beta$ = effect of factor B
 
 $\tau\beta$ = interaction effect of factor A and B.
 
+$\delta$ = block effect (random) 
 
 Assumptions of this model includes: independent and identically distributed error terms with a constant variance $\sigma^2$.
 
@@ -45,7 +46,7 @@ library(dplyr); library(performance)
 
 The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two fabrication methods (trt) on beef top round quality. It includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.
 
-There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements are taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.
+There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements were taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.
 
 The objective of this example is to evaluate the individual and interactive effect of location and treatment factors on the yellowness of the meat sample. 
 
@@ -68,7 +69,7 @@ data1<- factorial
 
 - Check structure of the data 
 
-First step is to Verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.
+First step is to verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.
 
 ```{r}
 str(data1)
@@ -81,7 +82,7 @@ dat2 <- data1 |> mutate(animal = as.factor(animal))
 
 - Inspect the independent variables
 
-we are inspecting levels of independent variables to make sure the expected levels are present in the data.
+We are inspecting levels of independent variables to make sure the expected levels are present in the data.
 
 ```{r}
 table(dat2$animal)
@@ -192,10 +193,9 @@ anova(model2_lme, type = "marginal")
 ```
 :::
 
-Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only "p" had a significant effect on bean yield when evaluated at significance threshold of 0.05.
+Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only sampling location had a significant effect on the yellowness in the meat samples. 
 
-
-Let’s find estimates for some of the factors such as N, P and the N-by-K interactions in order to understand the combined effect of nitrogen and potassium on bean yield.
+Let’s find estimates for some of the main effects and intercation effects of fixed factors on yellowness in the meat samples.
 
 ::: panel-tabset
 ### lme4

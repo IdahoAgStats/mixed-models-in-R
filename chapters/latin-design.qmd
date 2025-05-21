@@ -147,12 +147,15 @@ summary(m1_a)
 ### nlme
 
 ```{r}
-m1_b <- lme(yield ~ trt,
-          random =list(~1|row, ~1|col),
-          data = dat, 
-          na.action = na.exclude)
+
+m1_b <-lme(yield ~ trt,
+                random = list(one = pdBlocked(list(
+        pdIdent(~ 0 + row), 
+         pdIdent(~ 0 + col)))),
+        data = dat %>% mutate(one = factor(1)))
 
 summary(m1_b)
+
 ```
 :::
 
@@ -166,33 +169,20 @@ This step involves inspection of the model residuals by using `check_model()` fu
 ```{r, fig.height=6}
 check_model(m1_a, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
-
 #### nlme
+```{r, layout="[[1,1], [1]]"}
+plot(m1_b, resid(., scaled=TRUE) ~ fitted(.), 
+     xlab = "fitted values", ylab = "studentized residuals")
 
-::: {.column-body layout-ncol="2"}
-```{r, echo=FALSE, eval=FALSE}
-par(mar=c(5.1, 5, 2.1, 2.1))
-plot(residuals(m1_b), xlab = "fitted values", ylab = "residuals",
-     cex.lab = 1.8, cex.axis = 1.5); abline(0,0)
+qqnorm(residuals(m1_b))
+qqline(residuals(m1_b))
 ```
-
-```{r, echo=FALSE, eval=FALSE}
-par(mar=c(5.1, 5, 2.1, 2.1))
-qqvals <- qqnorm(residuals(m1_b), plot.it=FALSE)
-qqplot(qqvals$x, qqvals$y, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", cex.lab = 1.7, cex.axis = 1.5); qqline(residuals(m1_b))
-```
-:::
-
-```{r, fig.height=3}
-check_model(m1_b, check = c('qq', 'linearity'), detrend=FALSE, alpha = 0)
-```
-::::
-
 These visuals support that assumptions of linear model have been met.
 
 ### Inference
 
-We can now proceed to the variance partioning. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for lmer() and lme() models, respectively.
+We can now proceed to the variance partioning. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for `lmer()` and `lme()` models, respectively.
+::::
 
 ::: panel-tabset
 #### lme4
@@ -212,16 +202,20 @@ Here we observed a statistically significant impact on fungicide treatment on cr
 
 ::: panel-tabset
 #### lme4
-
 ```{r, fig.height=3}
 emmeans(m1_a, ~ trt)
 ```
 
 #### nlme
-
 ```{r, fig.height=3}
 emmeans(m1_b, ~ trt)
 ```
 :::
 
 We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study, indicating that 'C' fungicide was more efficient in controlling the stem rust in wheat.
+
+::: callout-note
+## `CI with lme`
+
+Note that, confidence intervals were not estimated through `emmeans()` from `lme()` model due to complex crossed random effects in this model.
+:::
