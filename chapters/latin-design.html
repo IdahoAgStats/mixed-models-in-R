@@ -344,7 +344,6 @@ window.Quarto = {
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">11.2.1</span> Data integrity checks</a></li>
   <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">11.2.2</span> Model fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">11.2.3</span> Check Model Assumptions</a></li>
-  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">11.2.4</span> Inference</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/latin-design.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -553,61 +552,64 @@ trtE -0.513  0.500  0.500  0.500</code></pre>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> trt,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">random =</span><span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>row, <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>col),</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">data =</span> dat, </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>m1_b <span class="ot">&lt;-</span><span class="fu">lme</span>(yield <span class="sc">~</span> trt,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="fu">list</span>(<span class="at">one =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> row), </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> col)))),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> dat <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">one =</span> <span class="fu">factor</span>(<span class="dv">1</span>)))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed-effects model fit by REML
-  Data: dat 
+  Data: dat %&gt;% mutate(one = factor(1)) 
        AIC      BIC    logLik
-  106.0974 114.0633 -45.04872
+  105.2465 113.2124 -44.62327
 
 Random effects:
- Formula: ~1 | row
-        (Intercept)
-StdDev:    1.344469
+ Composite Structure: Blocked
 
- Formula: ~1 | col %in% row
-        (Intercept) Residual
-StdDev:    1.494696 0.628399
+ Block 1: row
+ Formula: ~0 + row | one
+              row
+StdDev: 0.7529153
+
+ Block 2: col
+ Formula: ~0 + col | one
+                 col Residual
+StdDev: 2.708438e-05 1.737645
 
 Fixed effects:  yield ~ trt 
-            Value Std.Error DF   t-value p-value
-(Intercept)  6.84 0.9419764 16  7.261328  0.0000
-trtB        -0.38 1.0254756 16 -0.370560  0.7158
-trtC         6.28 1.0254756 16  6.123987  0.0000
-trtD         1.12 1.0254756 16  1.092176  0.2909
-trtE        -1.92 1.0254756 16 -1.872302  0.0796
+                Value Std.Error DF   t-value p-value
+(Intercept)  8.987259  1.046448 20  8.588351  0.0000
+trtB        -0.380000  1.098983 20 -0.345774  0.7331
+trtC         6.280000  1.098983 20  5.714374  0.0000
+trtD         1.120000  1.098983 20  1.019124  0.3203
+trtE        -1.920000  1.098983 20 -1.747070  0.0960
  Correlation: 
      (Intr) trtB   trtC   trtD  
-trtB -0.544                     
-trtC -0.544  0.500              
-trtD -0.544  0.500  0.500       
-trtE -0.544  0.500  0.500  0.500
+trtB -0.525                     
+trtC -0.525  0.500              
+trtD -0.525  0.500  0.500       
+trtE -0.525  0.500  0.500  0.500
 
 Standardized Within-Group Residuals:
-       Min         Q1        Med         Q3        Max 
--0.5686726 -0.2469684 -0.1061146  0.2349101  0.7617205 
+        Min          Q1         Med          Q3         Max 
+-1.78646821 -0.20717699 -0.07394724  0.26228203  2.35462748 
 
 Number of Observations: 25
-Number of Groups: 
-         row col %in% row 
-           5           25 </code></pre>
+Number of Groups: 1 </code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="check-model-assumptions" class="level3 page-columns page-full" data-number="11.2.3">
+<section id="check-model-assumptions" class="level3" data-number="11.2.3">
 <h3 data-number="11.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">11.2.3</span> Check Model Assumptions</h3>
 <p>This step involves inspection of the model residuals by using <code>check_model()</code> function from the <strong>performance</strong> package.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset page-columns page-full">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
-<div class="tab-content page-columns page-full">
+<div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_a, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -620,30 +622,29 @@ Number of Groups:
 </div>
 </div>
 </div>
-<div id="tabset-3-2" class="tab-pane page-columns page-full" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<div class="column-body quarto-layout-panel" data-layout-ncol="2">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1_b, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(m1_b))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">residuals</span>(m1_b))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout="[[1,1], [1]]">
 <div class="quarto-layout-row">
-
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="latin-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m1_b, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="latin-design_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
 <p>These visuals support that assumptions of linear model have been met.</p>
-</section>
 <section id="inference" class="level3" data-number="11.2.4">
 <h3 data-number="11.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">11.2.4</span> Inference</h3>
-<p>We can now proceed to the variance partioning. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequential"</code> for lmer() and lme() models, respectively.</p>
+<p>We can now proceed to the variance partioning. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequential"</code> for <code>lmer()</code> and <code>lme()</code> models, respectively.</p>
+</section>
+</div>
+</div>
+</div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -664,8 +665,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_b, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF   F-value p-value
-(Intercept)     1    16 132.38123  &lt;.0001
-trt             4    16  18.69608  &lt;.0001</code></pre>
+(Intercept)     1    20 163.65015  &lt;.0001
+trt             4    20  16.27868  &lt;.0001</code></pre>
 </div>
 </div>
 </div>
@@ -694,13 +695,16 @@ Confidence level used: 0.95 </code></pre>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(m1_b, <span class="sc">~</span> trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in qt((1 - level)/adiv, df): NaNs produced</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
-<pre><code> trt emmean    SE df lower.CL upper.CL
- A     6.84 0.942  4     4.22     9.46
- B     6.46 0.942  4     3.84     9.08
- C    13.12 0.942  4    10.50    15.74
- D     7.96 0.942  4     5.34    10.58
- E     4.92 0.942  4     2.30     7.54
+<pre><code> trt emmean   SE df lower.CL upper.CL
+ A     8.99 1.05  0      NaN      NaN
+ B     8.61 1.05  0      NaN      NaN
+ C    15.27 1.05  0      NaN      NaN
+ D    10.11 1.05  0      NaN      NaN
+ E     7.07 1.05  0      NaN      NaN
 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
@@ -710,6 +714,19 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <p>We see that wheat yield was higher with ‘C’ fungicide treatment compared to other fungicides applied in this study, indicating that ‘C’ fungicide was more efficient in controlling the stem rust in wheat.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<code>CI with lme</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that, confidence intervals were not estimated through <code>emmeans()</code> from <code>lme()</code> model due to complex crossed random effects in this model.</p>
+</div>
+</div>
 
 
 </section>

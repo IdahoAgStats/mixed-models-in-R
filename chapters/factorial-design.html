@@ -373,11 +373,12 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="background"><span class="header-section-number">6.1</span> Background</h2>
-<p>Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: <span class="math display">\[y_{ij} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \epsilon_{ij}\]</span> Where:</p>
+<p>Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: <span class="math display">\[y_{ijk} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \delta_k +  \epsilon_{ijk}\]</span> Where:</p>
 <p><span class="math inline">\(\mu\)</span> = experiment mean</p>
 <p><span class="math inline">\(\tau\)</span> = effect of factor A</p>
 <p><span class="math inline">\(\beta\)</span> = effect of factor B</p>
 <p><span class="math inline">\(\tau\beta\)</span> = interaction effect of factor A and B.</p>
+<p><span class="math inline">\(\delta\)</span> = block effect (random)</p>
 <p>Assumptions of this model includes: independent and identically distributed error terms with a constant variance <span class="math inline">\(\sigma^2\)</span>.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="6.2">
@@ -401,7 +402,7 @@ window.Quarto = {
 </div>
 </div>
 <p>The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two fabrication methods (trt) on beef top round quality. It includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.</p>
-<p>There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements are taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.</p>
+<p>There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements were taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.</p>
 <p>The objective of this example is to evaluate the individual and interactive effect of location and treatment factors on the yellowness of the meat sample.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
@@ -434,7 +435,7 @@ window.Quarto = {
 <ul>
 <li>Check structure of the data</li>
 </ul>
-<p>First step is to Verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.</p>
+<p>First step is to verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -452,7 +453,7 @@ window.Quarto = {
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
-<p>we are inspecting levels of independent variables to make sure the expected levels are present in the data.</p>
+<p>We are inspecting levels of independent variables to make sure the expected levels are present in the data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat2<span class="sc">$</span>animal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -638,8 +639,8 @@ location:trt     1    30   2.0510  0.1624</code></pre>
 </div>
 </div>
 </div>
-<p>Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only “p” had a significant effect on bean yield when evaluated at significance threshold of 0.05.</p>
-<p>Let’s find estimates for some of the factors such as N, P and the N-by-K interactions in order to understand the combined effect of nitrogen and potassium on bean yield.</p>
+<p>Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only sampling location had a significant effect on the yellowness in the meat samples.</p>
+<p>Let’s find estimates for some of the main effects and intercation effects of fixed factors on yellowness in the meat samples.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
