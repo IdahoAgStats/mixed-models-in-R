@@ -532,7 +532,7 @@ corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = 
 ```
 
 ```{r}
-check_model(fit1, check = c('qq', 'linearity'), line_size = 0, detrend=FALSE)
+plot(fit1)
 ```
 
 ```{r, echo=FALSE}
@@ -543,10 +543,6 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 boxplot(P_leaf ~ time, data = phos1, cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
-```{r, echo=FALSE}
-boxplot(P_leaf ~ time, data = phos1)
-```
-
 
 We can model the variance as a function of time point by using the `varIdent()` function shown earlier. 
 
@@ -555,9 +551,7 @@ fit1_b <- update(fit1, weights = varIdent(form = ~1|time))
 ```
 
 ```{r, fig.height=3}
-#| warning: false
-#| message: false
-check_model(fit1_b, check = c('qq', 'linearity'), line_size = 0, detrend=FALSE)
+plot(fit1_b)
 ```
 
 A comparison of models indicates that 'fit1_b` (with heteroscedascity modelled) is a better fit.
