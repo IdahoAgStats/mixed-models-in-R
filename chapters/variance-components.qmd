@@ -523,7 +523,7 @@ There are many other ways of using these functions for modeling heteroscedastici
 
 ### Case 3: Variance is related to a factor under other complex circumstances
 
-Recall the [repeated measures/split-split plot example](repeated-measures.qmd) that indicated some evidence of heteroscedasticity.
+Recall the [repeated measures/split-split plot example](repeated-measures.qmd#ssp-rm) that indicated some evidence of heteroscedasticity.
 
 ```{r, echo=FALSE}
 load(here::here("data/phos_fit1.RData"))
@@ -532,7 +532,7 @@ corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = 
 ```
 
 ```{r}
-check_model(fit1, check = c('qq', 'linearity'), detrend=FALSE)
+check_model(fit1, check = c('qq', 'linearity'), line_size = 0, detrend=FALSE)
 ```
 
 ```{r, echo=FALSE}
@@ -565,29 +565,19 @@ A comparison of models indicates that 'fit1_b` (with heteroscedascity modelled) 
 ```{r}
 anova(fit1, fit1_b)
 ```
-The main impact of this change are the standard error for time:
+
+This change impacts the standard errors: 
 
 ```{r}
-emmeans(fit1, ~ time)
-emmeans(fit1_b, ~ time)
+#| echo: true
+
+suppressMessages({
+  em1 <- as.data.frame(emmeans(fit1, ~ time)) |> mutate(model = "equal variance")
+  em2 <- as.data.frame(emmeans(fit1_b, ~ time)) |> mutate(model = "unequal variance")
+})
+
+bind_rows(em1, em2) |> dplyr::select(model, time, emmean, SE, df) |> arrange(time, model)
 ```
-
-
-#### Inference
-
-
-```{r}
-#| warning: false
-#| message: false
-anova(fit1, type = "marginal")
-```
-
-
-```{r}
-emmeans(fit1_b, ~ Inoc|Cv)
-emmeans(fit1_b, ~ time|Cv)
-```
-
 
 
 ## Coefficient of Variation
