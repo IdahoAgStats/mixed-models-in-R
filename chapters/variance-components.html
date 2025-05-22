@@ -984,9 +984,9 @@ m2_b     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></pre
 </section>
 <section id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances" class="level3 page-columns page-full" data-number="14.4.3">
 <h3 data-number="14.4.3" class="anchored" data-anchor-id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances"><span class="header-section-number">14.4.3</span> Case 3: Variance is related to a factor under other complex circumstances</h3>
-<p>Recall the <a href="../chapters/repeated-measures.html">repeated measures/split-split plot example</a> that indicated some evidence of heteroscedasticity.</p>
+<p>Recall the <a href="../chapters/repeated-measures.html#ssp-rm">repeated measures/split-split plot example</a> that indicated some evidence of heteroscedasticity.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">line_size =</span> <span class="dv">0</span>, <span class="at">detrend=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1041,137 +1041,24 @@ fit1       1 66 2511.987 2722.722 -1189.993
 fit1_b     2 68 2508.314 2725.435 -1186.157 1 vs 2 7.672945  0.0216</code></pre>
 </div>
 </div>
-<p>The main impact of this change are the standard error for time:</p>
+<p>This change impacts the standard errors:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>({</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  em1 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">emmeans</span>(fit1, <span class="sc">~</span> time)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"equal variance"</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  em2 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"unequal variance"</span>)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(em1, em2) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(model, time, emmean, SE, df) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(time, model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> time emmean   SE df lower.CL upper.CL
- PT1    3096 47.2  3   2945.3     3246
- PT2    2270 47.2  3   2119.3     2420
- PT3     198 47.2  3     47.4      348
-
-Results are averaged over the levels of: Ptrt, Inoc, Cv 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code> time emmean   SE df lower.CL upper.CL
- PT1    3096 39.9  3   2968.5     3223
- PT2    2270 39.5  3   2143.9     2395
- PT3     198 37.6  3     78.1      317
-
-Results are averaged over the levels of: Ptrt, Inoc, Cv 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 </code></pre>
+<pre><code>             model time    emmean       SE df
+1   equal variance  PT1 3095.5645 47.21842  3
+2 unequal variance  PT1 3095.5645 39.92148  3
+3   equal variance  PT2 2269.5734 47.21842  3
+4 unequal variance  PT2 2269.5734 39.48225  3
+5   equal variance  PT3  197.6457 47.21842  3
+6 unequal variance  PT3  197.6458 37.57384  3</code></pre>
 </div>
 </div>
-<section id="inference-1" class="level4" data-number="14.4.3.1">
-<h4 data-number="14.4.3.1" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">14.4.3.1</span> Inference</h4>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                  numDF denDF   F-value p-value
-(Intercept)           1   120 1458.2396  &lt;.0001
-time                  2   120  518.4432  &lt;.0001
-Ptrt                  1     3    3.3677  0.1638
-Inoc                  1     6    1.7697  0.2317
-Cv                    4    48    7.6028  0.0001
-time:Ptrt             2   120    0.6790  0.5091
-time:Inoc             2   120    1.9811  0.1424
-Ptrt:Inoc             1     6    2.4919  0.1655
-time:Cv               8   120    2.4113  0.0189
-Ptrt:Cv               4    48    0.5082  0.7299
-Inoc:Cv               4    48    2.1349  0.0909
-time:Ptrt:Inoc        2   120    0.8410  0.4338
-time:Ptrt:Cv          8   120    0.2223  0.9863
-time:Inoc:Cv          8   120    0.9462  0.4816
-Ptrt:Inoc:Cv          4    48    0.4761  0.7530
-time:Ptrt:Inoc:Cv     8   120    0.3886  0.9249</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Cv = ALPOWA:
- Inoc emmean   SE df lower.CL upper.CL
- myco   1832 45.2  3     1688     1976
- none   1904 45.2  3     1760     2048
-
-Cv = BlancaG:
- Inoc emmean   SE df lower.CL upper.CL
- myco   1919 45.2  3     1775     2063
- none   1899 45.2  3     1755     2043
-
-Cv = LOUISE:
- Inoc emmean   SE df lower.CL upper.CL
- myco   1876 45.2  3     1732     2020
- none   1898 45.2  3     1754     2042
-
-Cv = OTIS:
- Inoc emmean   SE df lower.CL upper.CL
- myco   1855 45.2  3     1711     1998
- none   1956 45.2  3     1812     2099
-
-Cv = WALWORTH:
- Inoc emmean   SE df lower.CL upper.CL
- myco   1667 45.2  3     1523     1811
- none   1737 45.2  3     1593     1881
-
-Results are averaged over the levels of: time, Ptrt 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(fit1_b, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Cv = ALPOWA:
- time emmean   SE df lower.CL upper.CL
- PT1    3201 53.5  3   3031.1     3371
- PT2    2225 51.8  3   2059.7     2389
- PT3     178 44.1  3     37.7      319
-
-Cv = BlancaG:
- time emmean   SE df lower.CL upper.CL
- PT1    3183 53.5  3   3013.1     3353
- PT2    2334 51.8  3   2169.3     2499
- PT3     210 44.1  3     69.2      350
-
-Cv = LOUISE:
- time emmean   SE df lower.CL upper.CL
- PT1    3121 53.5  3   2950.9     3291
- PT2    2366 51.8  3   2201.4     2531
- PT3     174 44.1  3     33.8      315
-
-Cv = OTIS:
- time emmean   SE df lower.CL upper.CL
- PT1    3228 53.5  3   3058.2     3398
- PT2    2253 51.8  3   2088.5     2418
- PT3     234 44.1  3     93.1      374
-
-Cv = WALWORTH:
- time emmean   SE df lower.CL upper.CL
- PT1    2744 53.5  3   2573.9     2914
- PT2    2170 51.8  3   2004.7     2334
- PT3     193 44.1  3     52.1      333
-
-Results are averaged over the levels of: Ptrt, Inoc 
-Degrees-of-freedom method: containment 
-Confidence level used: 0.95 </code></pre>
-</div>
-</div>
-</section>
 </section>
 </section>
 <section id="coefficient-of-variation" class="level2" data-number="14.5">
@@ -1179,9 +1066,9 @@ Confidence level used: 0.95 </code></pre>
 <p>The coefficient of variation can be manually calculated as thus:</p>
 <p><span class="math display">\[ \frac {\sigma}{\mu} * 100 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>m1_ave <span class="ot">&lt;-</span> <span class="fu">mean</span>(var_ex1<span class="sc">$</span>yield, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>m1_cv <span class="ot">=</span> <span class="fu">sigma</span>(m1_b)<span class="sc">/</span>m1_ave<span class="sc">*</span><span class="dv">100</span></span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(m1_cv, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>m1_ave <span class="ot">&lt;-</span> <span class="fu">mean</span>(var_ex1<span class="sc">$</span>yield, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>m1_cv <span class="ot">=</span> <span class="fu">sigma</span>(m1_b)<span class="sc">/</span>m1_ave<span class="sc">*</span><span class="dv">100</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(m1_cv, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 23.3</code></pre>
 </div>
