@@ -3,7 +3,6 @@ title: Randomized Complete Block Design
 reference-location: margin
 ---
 
-
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
 ```
@@ -23,7 +22,6 @@ $$ \epsilon \sim N(0, \sigma)$$
 $$ \beta \sim N(0, \sigma_b)$$
 
 Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of $\sigma$ and $\sigma_B$, respectively.
-
 
 ## Example Analysis
 
@@ -45,29 +43,27 @@ library(dplyr)
 ```
 :::
 
-
 This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the relative rankings of the varieties.
 
 ```{r}
 var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 ```
 
-|  |  |
-|-------------------|-----------------------------------------------------|
-| block | blocking unit |
-| range | column position for each plot |
-| row | row position for each plot |
-| variety | crop variety (the treatment) being evaluated |
-| yield_bu_a | yield (bushels per acre) |
+|            |                                              |
+|------------|----------------------------------------------|
+| block      | blocking unit                                |
+| range      | column position for each plot                |
+| row        | row position for each plot                   |
+| variety    | crop variety (the treatment) being evaluated |
+| yield_bu_a | yield (bushels per acre)                     |
 
 : Table of variables in the data set {tbl-rcbd}
-
 
 ### Data integrity checks
 
 The first thing is to make sure the data is what we expect.We will the steps explained in [**Chapter 4**](model-flow.qmd). Here are the steps to verify our data:
 
-- Check structure of the data
+-   Check structure of the data
 
 ```{r}
 str(var_trial)
@@ -79,7 +75,7 @@ These look okay except for block, which is currently coded as integer (numeric).
 var_trial$block <- as.character(var_trial$block)
 ```
 
-- Inspect the independent variables
+-   Inspect the independent variables
 
 Next, check the independent variables. Running a cross tabulations is often sufficient to ascertain this.
 
@@ -89,9 +85,9 @@ table(var_trial$variety, var_trial$block)
 
 There are 42 varieties and there appears to be no misspellings among them that might confuse R into thinking varieties are different when they are actually the same. R is sensitive to case and white space, which can make it easy to create near duplicate treatments, such as "eltan" and "Eltan". There is no evidence of that in this data set. Additionally, it is perfectly balanced, with exactly one observation per treatment per rep. Please note that this does not tell us anything about the extent of missing data.
 
-- Check the extent of missing data 
+-   Check the extent of missing data
 
-Here is a quick check to count the number of missing data in each column. 
+Here is a quick check to count the number of missing data in each column.
 
 ```{r}
 colSums(is.na(var_trial))
@@ -99,7 +95,7 @@ colSums(is.na(var_trial))
 
 Alas, no missing data.
 
-- Inspect the dependent variable
+-   Inspect the dependent variable
 
 Last, check the dependent variable by creating a histogram.
 
@@ -116,7 +112,6 @@ hist(var_trial$yield_bu_a, main = NA, xlab = "yield")
 ```
 
 The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.
-
 
 This data set is ready for analysis!
 
@@ -151,16 +146,13 @@ model_rcbd_lme <- lme(yield_bu_a ~ variety,
 ```
 :::
 
-
-
 ### Check Model Assumptions
 
-::: column-margin
-
+:::: column-margin
 ::: callout-note
 R syntax for checking model assumptions is the same for lme4 and nlme.
 :::
-:::
+::::
 
 Remember those iid assumptions? Let's make sure we actually met them.
 
@@ -205,20 +197,19 @@ This is reasonably good. Things do tend to fall apart at the tails a little, so 
 
 #### New Method {#new-iid-checks}
 
-Here, we will use the `check_model()` function from the **performance** package to look at the normality and linearity of the residuals. 
+Here, we will use the `check_model()` function from the **performance** package to look at the normality and linearity of the residuals.
 
 ```{r, fig.height=6, fig.width=8}
 check_model(model_rcbd_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
 
-
 ### Inference
 
-::::: callout-note
+:::: callout-note
 ::: column-margin
 R syntax for estimating model marginal means is the same for lme4 and nlme.
 :::
-:::::
+::::
 
 Estimates for each treatment level can be obtained with the **emmeans** package.
 
@@ -231,10 +222,11 @@ This table indicates the estimated marginal means ("emmeans", sometimes called "
 
 At this point, the analysis goals have been met: we know the estimated means for each treatment and their rankings.
 
-If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by **nlme**, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in **nlme**. The lmer-extender package **lmerTest* implements type 3 tests and the Kenward-Rogers method of degrees of freedom approximation by default.^[The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 ("partial") drops model terms one at a time. This can effect the results of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points.]
+If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by **nlme**, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in **nlme**. The lmer-extender package \*\*lmerTest\* implements type 3 tests and the Kenward-Rogers method of degrees of freedom approximation by default.[^rcbd-1]
 
+[^rcbd-1]: The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 ("partial") drops model terms one at a time. This can effect the results of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points.
 
-In this example, there is only one fixed effect (and the experiment is perfectly balanced), so the sums of squares choice is immaterial. 
+In this example, there is only one fixed effect (and the experiment is perfectly balanced), so the sums of squares choice is immaterial.
 
 ::: panel-tabset
 ### lme4
@@ -249,5 +241,3 @@ anova(model_rcbd_lmer, type = "1")
 anova(model_rcbd_lme, type = "sequential")
 ```
 :::
-
-

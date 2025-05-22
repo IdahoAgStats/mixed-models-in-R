@@ -30,11 +30,9 @@ library(ggplot2)
 
 ## Multiple crossed variance components
 
-This is a common scenario: an experiment is conducted and their are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packges can handle crossed random effects, but **lme4** can! 
+This is a common scenario: an experiment is conducted and there are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packages can handle crossed random effects, but **lme4** can! 
 
-The data used in this example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones[^vc-1] are evaluated across all 3 locations, but each year, different clones are evaluated. Some clones are evaluted for multiple years, and a small number are evaluted each year. These potato clones were evaluated for the length-to-width ratio (LxW). We want to know how much location, year and clone contribute to this trait.  
-
-[^vc-1] A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line. 
+The data used in this example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones^[A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line] are evaluated across all 3 locations, but each year, different clones are evaluated. Some clones are evaluted for multiple years, and a small number are evaluted each year. These potato clones were evaluated for the length-to-width ratio (LxW). We want to know how much location, year and clone contribute to this trait.  
 
 
 |       |                               |
@@ -104,9 +102,11 @@ var_comps <- tidy(potato_m1, "ran_pars", scales = "vcov") |>
 var_comps
 ```
 
+
 ::: note-information, collapse=false
 ## log likelihood ratio tests
 ANOVA as classically defined (F-tests contrasting the between group and within group variation) is not an option for random effects. There are several ways to test if random effects are impactful on the model overall. One of the most reliable and popular methods is the log likelihood ratio test. In brief, a reduced model is refit from a full specified model omitting a random variable. The log likelihood from the two models (the full specified and reduced models) are compared and a p-value is computed for that difference given the change in number of parameters estimated. The null hypothesis is that the models are equivalent and the alternative hypothesis is that the models are not equivalent. Hence, low p-values provide evidence that the omitted factor is impactful on the dependent variable of interest. 
+
 :::
 
 The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model.[^vc-2] 
