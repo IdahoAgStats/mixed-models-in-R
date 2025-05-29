@@ -24,21 +24,20 @@ There is a philosophical consider and practical consideration. The philosophical
 ```{r}
 #| echo: true
 #| include: false
-library(dplyr)
+library(dplyr); library(tidyr)
 library(nlme); library(lme4); library(lmerTest)
 library(merTools); library(broom.mixed)
 library(emmeans); library(performance)
 library(ggplot2)
 ```
 
-## Variance component estimation for 2+ random effects
+## Variance component estimation for 2 or more random effects
 
-## Multiple crossed variance components
+### Multiple crossed variance components
 
 This is a common scenario: an experiment is conducted and there are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packages can handle crossed random effects, but **lme4** can! 
 
 The data used in this example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones^[A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line] are evaluated across all 3 locations, but each year, different clones are evaluated. Some clones are evaluted for multiple years, and a small number are evaluted each year. These potato clones were evaluated for the length-to-width ratio (LxW). We want to know how much location, year and clone contribute to this trait.  
-
 
 |       |                               |
 |-------|-------------------------------|
@@ -81,13 +80,13 @@ hist(1/potato$LxW, ylab=NULL, xlab = NULL,  main = NA, breaks = 20)
 hist(1/potato$LxW, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = NA, col = base_plot_color, breaks = 20)
 ```
 
-### Model fitting
+#### Model fitting
 
 For this analysis, location ("state") is a fixed effect because it only has 3 levels, and the researchers are only interested in understanding clone performance in those locations (Idaho, Oregon and Washington). The remaining effects are random because (1) they represent a sample of the full population that inference is desired for, and (2) each has a sufficient number of levels to make estimation feasible. 
 
 The statistical model:
 
-$$ y_{ijkl} = \mu + \alpha_i + b_j + (\alpha\beta)_{ij} + \gamma_k + \epsilon_{ijkl}$$
+$$ y_{ijk} = \mu + \alpha_i + b_j + (\alpha\beta)_{ij} + \gamma_k + \epsilon_{ijk}$$
 
 $\mu$ = model intercept
 
@@ -124,7 +123,7 @@ Model assumption evaluation:
 performance::check_model(potato_m1, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
 
-### Inference on random effects
+#### Inference on random effects
 
 Marginal means of fixed effects can be visualized as demonstrated in previous chapters (e.g. . 
 
@@ -196,7 +195,6 @@ ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
 
 
 ```{r}
-# stuff being ignored for now
 #| eval: false
 #| include: false
 
@@ -218,7 +216,7 @@ source(here::here("settings.r"))
 par(mar=c(5.1, 6, 4.1, 2.1))
 ```
 
-## Nested variance components
+### Nested variance components
 
 It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These end up being truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied. 
 
@@ -257,7 +255,7 @@ wa_salary |> group_by(agency) |> distinct(id) |>
 
 
 
-### Model fitting
+#### Model fitting
 
 Salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum value of \$3.1 million. In this analysis, the data are log transformed for a log-linear model. This is a special case of generalized linear mixed model (GLMM); log-linear model follow the assumption of normally-distributed residuals terms when the dependent variable is log-transformed. The salaries are observed to increase a small amount each year. 
 
@@ -331,7 +329,7 @@ Save all object to file for later usage:
 save(m1, wa_salary, random_effects, file = here::here("data", "salary_modeldata.RData"))
 ```
 
-### Inference
+#### Inference
 
 ##### 1. Variance Components
 
@@ -348,7 +346,7 @@ var_comps_salary <- tidy(m1, "ran_pars", scales = "vcov") |>
 var_comps_salary
 ```
 
-#### 2. BLUPs
+##### 2. BLUPs
 
 ```{r, echo=FALSE}
 # the model intercept
@@ -363,7 +361,7 @@ intercept = fixef(m1)[1]
 random_effects <- REextract(m1)
 ```
 
-#### 3. Visualize Random Effects 
+##### 3. Visualize Random Effects 
 *(intercepts and slopes)*
 
 * Filter BLUPs to a single factor, "agency" (i.e. institute of higher education). 
@@ -433,7 +431,7 @@ This plot illustrates the negative correlation between employee salary and emplo
 
 There are other functions in [**merTools**](https://CRAN.R-project.org/package=merTools){.external target="_blank"} to explore random effects and variances from an `lme4` analysis.
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 #| eval: false
 #| include: false
 #| echo: false
@@ -464,20 +462,32 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 In previous sections, we have assumed the error terms or residuals were "i.i.d.", that is "independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity. 
 
-### Case 1: unequal variance due to a factor
+### Case 1: Unequal variance due to a factor
 
-This data set is from a set of canola variety trials conducted in a single year across  multiple locations. The trials included 38 varieties that were evaluated at 9 locations using a RCBD design. The goal is to estimate varietal performance at each location as precisely as possible.
+This data set is a set of canola variety trials conducted within a single year across  multiple locations. The trials consist of 38 canola varieties that were evaluated at 9 locations using a RCB design. The goal is to estimate varietal performance at each location as precisely as possible.
 
 ```{r}
 var_ex1 <- read.csv(here::here("data", "MET_trial_variance.csv")) |> 
-  mutate(block = as.character(block)) |> 
-  tidyr::drop_na()
+  mutate(block = as.character(block)) #|> tidyr::drop_na()
 ```
 
-Exploratory data visualizations indicate that the dependent variable, seed yield, varied greatly overall and certain locations had smaller variance compared to others. 
+
+|       |                               |
+|-------|-------------------------------|
+| site   | location of trial, 9 levels    |
+| block   | within trial replication, 4 levels   |
+| variety   | canola genotype |
+| yield | oilseed yield     |
+
+Exploratory data visualizations indicate that the dependent variable, seed yield, varied greatly overall, and certain locations had noticeably smaller variance compared to others. 
+
+
 ```{r, echo=FALSE}
-hist(var_ex1$yield, main=NA, col = base_plot_color)
-boxplot(yield ~ site, data = var_ex1, col = base_plot_color)
+#| fig-cap: "Histogram of Oilseed Yield"
+#| column: margin
+#| echo: false
+
+hist(var_ex1$yield, main=NA, col = base_plot_color, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis,)
 ```
 
 ```{r, eval=FALSE}
@@ -485,22 +495,47 @@ hist(var_ex1$yield, main=NA)
 boxplot(yield ~ site, data = var_ex1)
 ```
 
-The study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model. 
+```{r, echo=FALSE}
+boxplot(yield ~ site, data = var_ex1, col = base_plot_color)
+```
 
-While it may be possible to implement heterogenous error structures with **lme4**, it requires a good working knowledge of that R package.  is requires extensive comfort programming in **lme4**. However, the package **nlme** contains relatively straightforward implementations that are illustrated below.
+#### Model Fitting
+
+This is a fully crossed design; all varieties were evaluated at all sites, but there is missing data, as is common in agricultural field trials. For this analysis, variety and variety-by-site are fixed effects while site and block are random effects. 
+
+$$ y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_{ij} + \gamma_k + \epsilon_{ijk}$$
+$\mu$ = model intercept
+
+$\alpha_i$ = fixed effect of variety (38 levels)
+
+$\beta_j$ = random effect of site (9 levels)
+
+$(\alpha\beta)_{ij}$ = fixed effect of variety-by-site interaction (342 levels)
+
+$\gamma_k$ = random effect of block (36 levels)
+
+$\epsilon_{ijkl}$ = error term 
+
+The error terms and all random effects are normally distributed with a mean of zero and a given variance for each term:
+
+$$ \epsilon \sim \mathcal{N}(0, \sigma^2) $$
+
+$$ \beta \sim \mathcal{N}(0, \sigma^2_b) $$
+$$ \gamma \sim \mathcal{N}(0, \sigma^2_S) $$
+
+The package **nlme** contains a relatively straightforward implementation for heteroscedasticity that are illustrated below.
 
 ```{r}
-m1_a <- lme(yield ~ site:variety + variety, 
+ex1_m1 <- lme(yield ~ site:variety + variety, 
                 random = ~ 1 |site/block, 
                 na.action = na.exclude, 
                 data = var_ex1)
-
 ```
 
-The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption.
+The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption.^[Since the focus of this section is on evaluating the homescedasticity assumption, the **nlme** residual plotting function is used for its simplicity of display.]
 
 ```{r}
-plot(m1_a)
+plot(ex1_m1)
 ```
 We can add a term to model the variance by site.
 
@@ -508,7 +543,7 @@ $$Var(\epsilon_{ij}) = \sigma^2 \delta^2_{s_{ij}} $$
 Details on the implementation can be found in [@nlme_book].
 
 ```{r}
-m1_b <- update(m1_a, weights = varIdent(form = ~1|site))
+ex1_m2 <- update(ex1_m1, weights = varIdent(form = ~1|site))
 ```
 
 The function `varIdent()` is used to set the stratifying variable at which to estimate variance. Like many functions in R, there are additional arguments to consider for more complex scenarios (type `?varIdent` in an R console to check). 
@@ -517,13 +552,13 @@ The function `varIdent()` is used to set the stratifying variable at which to es
 
 
 ```{r eval=FALSE}
-m1_b <- update(m1_a, weights = varIdent(form = ~1|site))
+ex1_m2 <- update(ex1_m1, weights = varIdent(form = ~1|site))
 ```
 
 is equivalent to
 
 ```{r eval=FALSE}
-m1_b <- lme(yield ~ site:variety + variety, 
+ex1_m2 <- lme(yield ~ site:variety + variety, 
                 random = ~ 1 |site/block,
                 weights = varIdent(form = ~1|site), 
                 na.action = na.exclude, 
@@ -532,20 +567,20 @@ m1_b <- lme(yield ~ site:variety + variety,
 
 :::
 
-The residual plot is now much cleaner. The result is a better-fitting model and with that, better inference for variety at the site level. 
-
+The residual plot from this updated model is now much cleaner and conforms to expectations. 
 ```{r}
-plot(m1_b)
-anova(m1_a, m1_b)
+plot(ex1_m2)
 ```
 
+When comparing the models with a log-likelihood ratio test, the model with hetergenous error structure has better fit statistics and is different from the unweighted model ($p<0.0001$). 
 
 ```{r}
-m1_c <- lmer(yield ~ site:variety + variety + (1|site/block),
-                #weights = varIdent(form = ~1|site), 
-                na.action = na.exclude, 
-                data = var_ex1)
+anova(ex1_m1, ex1_m2)
 ```
+
+The result is a better-fitting model and with that, better inference for variety at the site level. 
+
+While it may be possible to implement heterogenous error structures with **lme4**, it requires a good working knowledge of that R package. 
 
 
 ### Case 2: Variance is related to the fitted values
@@ -557,116 +592,155 @@ var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv")) |>
   dplyr::mutate(block = as.character(block))
 ```
 
+|       |                               |
+|-------|-------------------------------|
+| block   | replication, 4 levels   |
+| variety   | canola genotype, 38 levels |
+| yield | oilseed yield     |
+
 A histogram does indicate there is anything unusual about the dependent variable (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.
-```{r, eval=FALSE}
-hist(var_ex2$yield, main = NA)
-```
+
 
 ```{r, echo=FALSE}
-hist(var_ex2$yield, main = NA, col = base_plot_color)
+#| fig-cap: "Histogram of Oilseed Yield"
+#| column: margin
+#| echo: false
+
+hist(var_ex2$yield, main=NULL, col = base_plot_color, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis,)
 ```
+
+```{r, eval=FALSE}
+hist(var_ex2$yield)
+```
+
 
 Since this experiment has a single fixed effect and is arranged using a RCBD, the model is same as described in [the RCBD chapter](rcbd.qmd).
 
 ```{r}
-m2_a <- lme(yield ~ variety, 
+ex2_m1 <- lme(yield ~ variety, 
                random = ~ 1 |block, 
                na.action = na.exclude, 
                data = var_ex2)
 ```
 
 An inspection of the residual plot indicates a clear mean-variance relationship. 
+
 ```{r}
-plot(m2_a)
+plot(ex2_m1, pch = 16, col = rgb(6/255, 77/255, 135/255, 0.6))
 ```
-This mean-variance relationship can be mitigated by modelling the variance directly as a function of any covariate in the model using a power function. 
+This mean-variance relationship can be mitigated by modeling the variance directly as a function of any covariate in the model using a power function:
 
 
 $$ Var(\epsilon_{ij}) = \sigma^2|\nu_{ij}|^{2\delta}$$
 
-We can accomplish this using the **nlme** function `varPower()`. This function can take other covariates, but when there is no argument provided, it defaults to using the fitted values. 
+We can accomplish this using the **nlme** function `varPower()`. This function can take any model covariate, but when there is no argument provided, it defaults to using the fitted values. 
 
 ```{r}
-m2_b <- update(m2_a, weights = varPower())
+ex2_m2 <- update(ex2_m1, weights = varPower())
 ```
 
 The model fit is substantially improved according to visual inspection of the residuals and the results of a likelihood ratio test. 
 
 ```{r}
-plot(m2_b)
+plot(ex2_m2, pch = 16, col = rgb(6/255, 77/255, 135/255, 0.6))
 ```
 
 ```{r}
-anova(m2_a, m2_b)
+anova(ex2_m1, ex2_m2)
 ```
 
 There are many other ways of using these functions for modeling heteroscedasticity. For example, `varIdent()` can include a covariate, and `varPower()` can include a stratifying variable. All or some of the parameters can be fixed at set values. It's worth reading the documentation to understand what is possible.  
 
 ### Case 3: Variance is related to a factor under other complex circumstances
 
-Recall the [repeated measures/split-split plot example](repeated-measures.qmd#ssp-rm) that indicated some evidence of heteroscedasticity.
+Recall the [repeated measures split-split plot example](repeated-measures.qmd#ssp-rm) that indicated some evidence of heteroscedasticity. The model passed a Breusch-Pagan test, but these tests are imperfect, and it may be worthy to investigate if modelling heteroscedasticity improves the model fit. 
 
-```{r, echo=FALSE}
+The first step is to reload the data: 
+
+```{r}
 load(here::here("data/phos_fit1.RData"))
-phos1 <- getData(fit1)
-corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
+```
+
+Retrieve the original data set
+
+```{r}
+phos1 <- getData(pfit1)
+head(phos1)
+```
+
+Here is the original model: 
+
+```{r, eval=FALSE, echo=TRUE}
+corr_str1 = corCompSymm(form = ~ time_num|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
+
+pfit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
+                random = ~ 1|rep/Ptrt/Inoc/plot,
+                corr = corr_str1,
+                data = phos1, na.action= na.exclude)
+```
+
+While each time point appears to have different variance, the model residual plot is not obviously raising red flags of unequal variance. At this point, we have ambiguous evidence that there may be a problem with the variance across time points. 
+
+```{r}
+par(mar=c(4.1, 4, 2.1, 2.1))
+par(mfrow = c(1, 2))
+
+boxplot(P_leaf ~ time, data = phos1, col= base_plot_color, ylab = "dependent variable", xlab = "time point", main=NA)
+
+plot(fitted(pfit1), residuals(pfit1, type = "pearson"), ylab = "residuals", xlab = "fitted values", col = "maroon"); abline(h = 0, lty = 2, lwd = 1.5)
+```
+
+Given this uncertainty, it is worth exploring modelling heteroscedasticity. As shown earlier, we can model the variance as a function of a variable by using the `varIdent()` function. 
+
+```{r}
+pfit2 <- update(pfit1, weights = varIdent(form = ~1|time_num))
 ```
 
 ```{r}
-plot(fit1)
+par(mar=c(4.1, 2, 2.1, 4.1))
+par(mfrow = c(1, 2))
+
+plot(fitted(pfit2), residuals(pfit2, type = "pearson"), ylab = "residuals", xlab = NA, col = "maroon", ylim = c(-2.5, 3), main = "heteroscedasticity"); abline(h = 0, lty = 2, lwd = 1.5, ylim = c(-2.5, 3))
+#plot(pfit2, col = "maroon")
+
+plot(fitted(pfit1), residuals(pfit1, type = "pearson"), ylab = "residuals", xlab = NA, col = "maroon", ylim = c(-2.5, 3), main = "homoscedasticity"); abline(h = 0, lty = 2, lwd = 1.5)
+
+
 ```
-
-```{r, echo=FALSE}
-#| label: fig-split-split-plot_boxplot
-#| fig-cap: "Boxplot of P concentration by stage"
-#| column: margin
-par(mar=c(5.1, 5, 2.1, 2.1))
-boxplot(P_leaf ~ time, data = phos1, cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
-```
-
-
-We can model the variance as a function of time point by using the `varIdent()` function shown earlier. 
+These side-by-side plots indicate minor impacts on the results, which is confirmed by a log likelihood ratio test comparing the two models.
 
 ```{r}
-fit1_b <- update(fit1, weights = varIdent(form = ~1|time))
+anova(pfit1, pfit2)
 ```
 
-```{r, fig.height=3}
-plot(fit1_b)
-```
-
-A comparison of models indicates that 'fit1_b` (with heteroscedascity modelled) is a better fit.
+This change impacts the standard errors slightly. 
 
 ```{r}
-anova(fit1, fit1_b)
-```
-
-This change impacts the standard errors: 
-
-```{r}
-#| echo: true
-
 suppressMessages({
-  em1 <- as.data.frame(emmeans(fit1, ~ time)) |> mutate(model = "equal variance")
-  em2 <- as.data.frame(emmeans(fit1_b, ~ time)) |> mutate(model = "unequal variance")
+  em1 <- as.data.frame(emmeans(pfit1, ~ time)) |> mutate(model = "equal variance")
+  em2 <- as.data.frame(emmeans(pfit2, ~ time)) |> mutate(model = "unequal variance")
 })
 
-bind_rows(em1, em2) |> dplyr::select(model, time, emmean, SE, df) |> arrange(time, model)
+bind_rows(em1, em2) |> dplyr::select(model, time, emmean, SE, df) |> arrange(time, model) |> mutate(across(c("emmean", "SE"), ~ signif(.x, digits = 4)))
 ```
 
+It is the choice of the researcher whether to use this model or a simpler model assuming equal variance. 
 
-## Coefficient of Variation
+::: note-information, collapse=false
+## Coefficient of Variation and LSD
 
 The coefficient of variation can be manually calculated as thus:
 
 $$ \frac {\sigma}{\mu} * 100 $$
 
 ```{r}
-m1_ave <- mean(var_ex1$yield, na.rm = TRUE)
-m1_cv = sigma(m1_b)/m1_ave*100
-round(m1_cv, 1)
+ex1_ave <- mean(var_ex1$yield, na.rm = TRUE)
+ex1_cv = sigma(ex1_m1)/ex1_ave*100
+round(ex1_cv, 1)
 ```
 
 However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). Interpret the coefficient of variation from mixed models with caution. 
 
+Related is Fisher's least significant difference, i.e. LSD. While most mixed modelling packages do not calculate this (e.g. **nlme**, **lme4/lmerTest** or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly disadvised in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels. 
 
+:::

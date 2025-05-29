@@ -372,13 +372,14 @@ phos <- read.csv(here::here("data", "split_split_repeated.csv"))
 ```{r}
 str(phos)
 ```
-We need to have two variables for time one being a factor other being a numeric.
+
+We need two variables for time, one formatted as a factor and the other numeric.
 
 ```{r, warning=FALSE, message=FALSE}
 phos1 <- phos %>%   
   mutate(
     time = as.factor(time), 
-    time1 = as.numeric(time),
+    time_num = as.numeric(time),
     rep = as.character(bloc),
     plot = as.character(plot)) 
 ```
@@ -413,7 +414,6 @@ hist(phos1$P_leaf, main = NA, xlab = "P leaf", cex.lab = cex_lab, cex.axis = cex
 #| fig-cap: "Boxplot of P concentration by stage"
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-boxplot(P_leaf ~ time, data = phos1, col= base_plot_color, main=NA)
 ```
 
 ```{r, eval=FALSE}
@@ -430,11 +430,11 @@ Here note that we observed uneven distribution of response variable with a bimod
 
 ```{r}
 #| warning: false
-corr_str1 = corCompSymm(form = ~ time1|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
+corr_str1 = corCompSymm(form = ~ time_num|rep/Ptrt/Inoc/plot, value = 0.2, fixed = FALSE)
 
 pfit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
                 random = ~ 1|rep/Ptrt/Inoc/plot,
-                #corr = corr_str1,
+                corr = corr_str1,
                 data = phos1, na.action= na.exclude)
 
 ```
@@ -455,7 +455,7 @@ check_heteroscedasticity(pfit1)
 These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a a difference in variance for each time time point. This addressed in the [chapter on variance components](variance-components.qmd). 
 
 ```{r, echo=FALSE, eval=FALSE}
-save(pfit1, file = here::here("data/phos_fit1.RData"))
+save(pfit1, corr_str1, file = here::here("data/phos_fit1.RData"))
 ```
 
 
