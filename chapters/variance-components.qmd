@@ -1,10 +1,14 @@
 ---
 title: Variance & Variance Components
+execute:
+  warning: false
+  message: false
+  echo: true
+  error: false
 ---
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
-
 par(mar=c(5.1, 6, 4.1, 2.1))
 ```
 
@@ -17,12 +21,13 @@ There is a philosophical consider and practical consideration. The philosophical
 > Treating factors with small numbers of levels as random will in the best case lead to very small and/or imprecise estimates of random effects; in the worst case it will lead to various numerical difficulties such as lack of convergence, zero variance estimates, etc.. (A small simulation exercise shows that at least the estimates of the standard deviation are downwardly biased in this case; it’s not clear whether/how this bias would affect the point estimates of fixed effects or their estimated confidence intervals.) In the classical method-of-moments approach these problems may not arise (because the sums of squares are always well defined as long as there are at least two units), but the underlying problems of lack of power are there nevertheless.
 
 
-```{r, include=FALSE}
+```{r}
+#| echo: true
+#| include: false
 library(dplyr)
-library(lme4); library(nlme)
-library(lmerTest); library(merTools)
+library(nlme); library(lme4); library(lmerTest)
+library(merTools); library(broom.mixed)
 library(emmeans); library(performance)
-library(broom.mixed)
 library(ggplot2)
 ```
 
@@ -49,7 +54,7 @@ potato <- read.csv(here::here("data", "potato_tuber_size.csv"))
 
 Number of observations for each location and year: 
 ```{r}
-table(potato$year, potato$state)
+addmargins(table(potato$year, potato$state))
 ```
 
 Total number of clones evaluated: 
@@ -62,35 +67,66 @@ Total counts for how often invividual clones were evaluated:
 potato |> count(clone, name = "Frequency of Evaluation") |> count(`Frequency of Evaluation`, name = "No. of Clones") 
 ```
 
-Distribution of the dependent variable, LxW or length-to-width ratio:
+The dependent variable, LxW or length-to-width ratio, distribution had a slight left skew, so the the inverse of this trait was modelled. 
+
+```{r eval=FALSE}
+hist(1/potato$LxW, ylab=NULL, xlab = NULL,  main = NA, breaks = 20)
+```
 
 ```{r}
-#| fig-cap: "Distribution of Length-to-Width Ratio"
+#| fig-cap: "Distribution of Potato Clone Length-to-Width Ratio"
 #| column: margin
 #| echo: false
 #| 
-hist(1/potato$LxW, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = "Potato Clone LxW Ratio", col = base_plot_color, breaks = 20)
+hist(1/potato$LxW, ylab=NULL, xlab = NULL, cex.lab = cex_lab, cex.axis = cex_axis, main = NA, col = base_plot_color, breaks = 20)
 ```
 
 ### Model fitting
 
 For this analysis, location ("state") is a fixed effect because it only has 3 levels, and the researchers are only interested in understanding clone performance in those locations (Idaho, Oregon and Washington). The remaining effects are random because (1) they represent a sample of the full population that inference is desired for, and (2) each has a sufficient number of levels to make estimation feasible. 
 
-```{r, eval=FALSE}
-potato_m1 <- lmer(LxW ~ state + (1|year) + (1|state:year) + (1|clone),
-                  data = potato)
-```
+The statistical model:
+
+$$ y_{ijkl} = \mu + \alpha_i + b_j + (\alpha\beta)_{ij} + \gamma_k + \epsilon_{ijkl}$$
+
+$\mu$ = model intercept
+
+$\alpha_i$ = fixed effect of state (3 levels)
+
+$\beta_j$ = random effect of year (16 levels)
+
+$(\alpha\beta)_{ij}$ = random effect of state-by-year interaction (48 levels)
+
+$\gamma_k$ = random effect of clone (181 levels)
+
+$\epsilon_{ijkl}$ = error term 
+
+The error terms and all random effects are normally distributed with a mean of zero and a given variance for each term:
+
+$$ \epsilon \sim \mathcal{N}(0, \sigma^2) $$
+
+$$ \beta \sim \mathcal{N}(0, \sigma^2_b) $$
+$$ (\alpha\beta) \sim \mathcal{N}(0, \sigma^2_a) $$
+
+$$ \gamma \sim \mathcal{N}(0, \sigma^2_g) $$
+
+
+The **lme4** syntax:
 
 ```{r}
-#| include: false
 potato_m1 <- lmer((1/LxW) ~ state + (1|year) + (1|state:year) + (1|clone),
                   data = potato)
 ```
 
-```{r}
-performance::check_model(potato_m1, check = c('qq', 'linearity'), detrend=FALSE, alpha = 0)
+Model assumption evaluation: 
+
+```{r, fig.height=7}
+performance::check_model(potato_m1, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
+
 ### Inference on random effects
+
+Marginal means of fixed effects can be visualized as demonstrated in previous chapters (e.g. . 
 
 The variance components for each random effect can be extracted most easily using the `tidy()` function from **broom.mixed**. We can also a bit of extra code to calculate the percent of variance explained by each component. 
 
@@ -102,23 +138,24 @@ var_comps <- tidy(potato_m1, "ran_pars", scales = "vcov") |>
 var_comps
 ```
 
+This is a naive method to estimate relative variance components; in particular, heritablity estimates should also take into account the number of locations and year. 
 
 ::: note-information, collapse=false
 ## log likelihood ratio tests
-ANOVA as classically defined (F-tests contrasting the between group and within group variation) is not an option for random effects. There are several ways to test if random effects are impactful on the model overall. One of the most reliable and popular methods is the log likelihood ratio test. In brief, a reduced model is refit from a full specified model omitting a random variable. The log likelihood from the two models (the full specified and reduced models) are compared and a p-value is computed for that difference given the change in number of parameters estimated. The null hypothesis is that the models are equivalent and the alternative hypothesis is that the models are not equivalent. Hence, low p-values provide evidence that the omitted factor is impactful on the dependent variable of interest. 
+ANOVA as classically defined (F-tests contrasting the between group and within group variation) is not an option for evaluating random effects. There are several ways to test if random effects are impactful on the model overall. One of the most reliable and popular methods is the log likelihood ratio test. In brief, a reduced model is refit from a full specified model omitting a random variable. The log likelihood from the two models (the fully specified and reduced models) are compared, and a p-value is computed for that difference given the change in number of parameters estimated. The null hypothesis is that the models are equivalent and the alternative hypothesis is that the models are not equivalent. Hence, low p-values provide evidence that the omitted factor is impactful on the dependent variable of interest. 
 
 :::
 
-The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model.[^vc-2] 
+The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model.^[It is also possible to conduct likelihood tests manually by constructing reduced models and comparing it to the fully specificed (or more specified) model. In such cases, the fixed effects need to be identical between models, and they need to be fit using maximimun likelihood instead of REML.] 
+
 ```{r}
 ranova(potato_m1)
 ```
 
-[^vc-2] It is also possible to conduct likelihood tests manually by constructing reduced models and comparing it to the fully specificed (or more specified) model. In such cases, the fixed effects need to be identical between models, and they need to fit using maximimun likelihood instead of REML. 
-
+ 
 It is possible to make inferences on specific levels of random effects. This take a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called "BLUPs" (rhymes with "cups"). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs "shrink" the estimates towards zero, reducing their overall spread compared to fixed effects. [VSNi](https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/){.external target="_blank"} has a short summary on BLUPs and BLUEs. 
 
-Recall that random effects are distributed with a mean of zero and a standard deviation, $\sigma_b$ that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them (in this example, potato clones) is unchanged. 
+Recall that random effects are distributed with a mean of zero and a standard deviation, $\sigma_x$ that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them (in this example, potato clones) is unchanged. 
 
 ```{r}
 # the model intercept
@@ -159,6 +196,7 @@ ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
 
 
 ```{r}
+# stuff being ignored for now
 #| eval: false
 #| include: false
 
@@ -186,36 +224,51 @@ It is possible to have a nested data set: learners in a classroom and classrooms
 
 This example is looking at pay at institutions of higher education in Washington. All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized.^[This data set ([source](https://govsalaries.com/state/WA)) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only.]
 
-
-For this data set, we are concerned with what is contributing to employee salaries over time - to what extent did year, the institution itself and the individual employee contribute to salary changes over time. While this reflects a complete data set for Washington State (all institutions, all employees), the interest is inference for other U.S. higher education institutions. This is an example where we will use random slopes to examine how an individual's salary changed over time. The data set:
+For this example analysis, our interest is in understanding how much salarie vary within and across Washington State higher educational institutions. In particulr, to what extent did year, the institution itself and the individual employee contribute to salary changes over time. This is an example where we will use random slopes to examine how an individual's salary changed over time. The data set:
 
 |            |                                     |
 |------------|-------------------------------------|
 | agency   | educational institution, 36 levels    |
-| id   |  anonymized employee within each agency   |
-| salary  |                          annual salary |
-| year |     year of salary, set to 0 for 2019     |
+| id   |  anonymized employee within each agency, 46,164 levels   |
+| salary  |                          annual salary, continuous |
+| year |     year of salary, set to {0, 1,...4} for {2019, 2020,.. 2023 }    |
 
 
-This is a rather large data set, and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a .RData file. Now let's load this object into an R session. 
+This is a rather large data set (218,040 rows), and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a .RData file. Now let's load this object into an R session. 
 
 ```{r message=FALSE, warning=FALSE}
 load(here::here("data/salary_modeldata.RData"))
 ```
 
+There is a large number of individuals in this data set. 
+
+Total individuals: 
+```{r}
+wa_salary |> distinct(agency, id) |> summarise(N = n())
+```
+
+
+The number of employees per institution ranged dramatically from 107 to 26,568 employees. 
+
+```{r}
+wa_salary |> group_by(agency) |> distinct(id) |> 
+  summarise(N = n()) |> ungroup() |> arrange(N) |> print(n = 36)
+```
+
+
+
 ### Model fitting
 
-Salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum value of \$3.1 million. We will log transform the data in a log-linear model for analysis. This is a special case of generalized linear mixed model (GLMM) and the only GLMM model used because it still follow the assumption of normally-distributed residuals terms when a the dependent variable is log-transformed. 
+Salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum value of \$3.1 million. In this analysis, the data are log transformed for a log-linear model. This is a special case of generalized linear mixed model (GLMM); log-linear model follow the assumption of normally-distributed residuals terms when the dependent variable is log-transformed. The salaries are observed to increase a small amount each year. 
 
 ```{r, eval=FALSE}
 hist(log(wa_salary$salary), ylab=NULL, xlab = NULL, main = "Washington Higher Ed Salaries")
 ```
 
-
 ```{r, echo=FALSE}
-#| fig-cap: "Histogram of Log of Salaries"
+#| fig-cap: "Histogram of Log of Washington Higher Ed Salaries"
 #| column: margin
-hist(log(wa_salary$salary), ylab=NULL, xlab = "log of salaries", cex.lab = cex_lab, cex.axis = cex_axis, main = "Washington Higher Ed Salaries", col = base_plot_color)
+hist(log(wa_salary$salary), ylab=NULL, xlab = "log of salaries", cex.lab = cex_lab, cex.axis = cex_axis, main = NA, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
@@ -225,28 +278,40 @@ boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main = "Sa
 ```{r, echo=FALSE}
 #| fig-cap: "Boxpplot of Log Salaries by Year"
 #| column: margin
-boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main = "Salaries by Year", col = base_plot_color)
+boxplot(log(salary) ~ year, data = wa_salary, ylab=NULL, xlab = NULL, main.cex = 1.4, main = ' "0" = 2019', col = base_plot_color)
 ```
 
+The analysis is derived from this model where random intercepts and slopes were fit for institution and individuals nested within institution.
 
-The analysis is derived from this model:
+$$  Y_{ijkl} = (\beta_0 + r1_j) + (\beta_1 + r2_j)X_{ij} + \epsilon_{ijkl}$$
 
-$$y_ij = \mu + x_i +   $$
+$$Y_{ijkl} = \mu + \alpha_i + \beta_j  + \gamma_k + \delta_jX_{ij} + \zeta_kX_{ik} + \epsilon_{ijkl}$$
+$\mu$ = model intercept
+
+$\alpha_i$ = fixed effect of year (5 levels, treated as categorical)
+
+$\beta_j$ = random intercept of institution (36 levels)
+
+$\gamma_k$ = random intercept of individual nested within institution (46164 total levels) 
+
+$\delta_j$ = random slope of change over years for each institution
+
+$\zeta_k$ = random slope of change over years for each individual
+
+$\epsilon_{ijkl}$ = error term 
+
+
+**R LMM Syntax**
+
+Run the model: 
 
 ```{r}
 #| eval: false
 m1 <- lmer(log(salary) ~ factor(year) + (year|agency/id), 
            data = wa_salary, REML = FALSE)
-
-random_effects <- REextract(m1)
-
-save(m1, wa_salary, random_effects, file = here::here("data", "salary_modeldata.RData"))
 ```
 
-```{r, eval=FALSE}
-m1 <- lmer(log(salary) ~ factor(year) + (year|agency/id), 
-           data = wa_salary, REML = FALSE)
-```
+Due to the size of the data set, we cannot display the residual plot because it takes too long to render. 
 
 ```{r}
 #| eval: false
@@ -254,12 +319,21 @@ m1 <- lmer(log(salary) ~ factor(year) + (year|agency/id),
 plot(m1)
 ```
 
+Obtain the BLUPs: 
+```{r}
+#| eval: false
+random_effects <- REextract(m1)
+```
 
-Random intercepts and slopes were fit for agency and id nested within agency. 
+Save all object to file for later usage: 
+```{r}
+#| eval: false
+save(m1, wa_salary, random_effects, file = here::here("data", "salary_modeldata.RData"))
+```
 
 ### Inference
 
-#### Look at Variance Components
+##### 1. Variance Components
 
 ```{r}
 VarCorr(m1)
@@ -274,7 +348,7 @@ var_comps_salary <- tidy(m1, "ran_pars", scales = "vcov") |>
 var_comps_salary
 ```
 
-#### Extract BLUPs
+#### 2. BLUPs
 
 ```{r, echo=FALSE}
 # the model intercept
@@ -289,7 +363,7 @@ intercept = fixef(m1)[1]
 random_effects <- REextract(m1)
 ```
 
-#### Visualize Random Effects 
+#### 3. Visualize Random Effects 
 *(intercepts and slopes)*
 
 * Filter BLUPs to a single factor, "agency" (i.e. institute of higher education). 
@@ -354,7 +428,8 @@ ggplot(person_re, aes(x = BLUP, y = year)) +
   ylab("random slope for Employee salary increase") +
   theme_bw()
 ```
-There is a negative correlation between employee salary and employee salary change, which is also indicated when `VarCorr(m1)` was run. 
+
+This plot illustrates the negative correlation between employee salary and employee salary change indicated by the `VarCorr(m1)` output. 
 
 There are other functions in [**merTools**](https://CRAN.R-project.org/package=merTools){.external target="_blank"} to explore random effects and variances from an `lme4` analysis.
 
@@ -373,6 +448,12 @@ PI <- predictInterval(merMod = m1, newdata = uw,
   bind_cols(uw)
 ```
 
+```{r, echo=FALSE, include=FALSE}
+rm(list = ls())
+
+source(here::here("settings.r"))
+par(mar=c(5.1, 6, 4.1, 2.1))
+```
 
 ## Variance estimation under heteroscedasticity
 
@@ -385,7 +466,7 @@ In previous sections, we have assumed the error terms or residuals were "i.i.d."
 
 ### Case 1: unequal variance due to a factor
 
-This data set is from a set of canola variety trials conducted in a single year across  multiple locations. The trials included 38 varieties that were evaluated at 9 locations using a RCBD design. 
+This data set is from a set of canola variety trials conducted in a single year across  multiple locations. The trials included 38 varieties that were evaluated at 9 locations using a RCBD design. The goal is to estimate varietal performance at each location as precisely as possible.
 
 ```{r}
 var_ex1 <- read.csv(here::here("data", "MET_trial_variance.csv")) |> 
@@ -406,7 +487,7 @@ boxplot(yield ~ site, data = var_ex1)
 
 The study is not fully crossed; all sites did not include all varieties, although there is substantial overlap. As a result, only variety and the site-by-variety interaction are included in the statistical model. 
 
-While it may be possible to implement heterogenous error structures with **lme4**, it requires a good working knowledge of that R package.  is requires extensive comfort programming in **lme4**. However, the package **nlme** contains  relatively straightforward implementations that are illustrated below.
+While it may be possible to implement heterogenous error structures with **lme4**, it requires a good working knowledge of that R package.  is requires extensive comfort programming in **lme4**. However, the package **nlme** contains relatively straightforward implementations that are illustrated below.
 
 ```{r}
 m1_a <- lme(yield ~ site:variety + variety, 
