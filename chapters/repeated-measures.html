@@ -1082,12 +1082,12 @@ Confidence level used: 0.95 </code></pre>
  $ P_leaf: num  3154 2331 247 3016 2160 ...</code></pre>
 </div>
 </div>
-<p>We need to have two variables for time one being a factor other being a numeric.</p>
+<p>We need two variables for time, one formatted as a factor and the other numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>phos1 <span class="ot">&lt;-</span> phos <span class="sc">%&gt;%</span>   </span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="fu">as.factor</span>(time), </span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">time1 =</span> <span class="fu">as.numeric</span>(time),</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">time_num =</span> <span class="fu">as.numeric</span>(time),</span>
 <span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rep =</span> <span class="fu">as.character</span>(bloc),</span>
 <span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot =</span> <span class="fu">as.character</span>(plot)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1125,8 +1125,10 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(phos1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  plot   bloc   Ptrt   Inoc     Cv   time P_leaf  time1    rep 
-     0      0      0      0      0      0      0      0      0 </code></pre>
+<pre><code>    plot     bloc     Ptrt     Inoc       Cv     time   P_leaf time_num 
+       0        0        0        0        0        0        0        0 
+     rep 
+       0 </code></pre>
 </div>
 </div>
 <p>No missing values in data.</p>
@@ -1148,21 +1150,10 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 </figure>
 </div>
 </div></div></div>
-<div class="cell page-columns page-full">
 
-<div class="no-row-height column-margin column-container"><div class="cell-output-display">
-<div id="fig-split-split-plot_boxplot" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-split-split-plot_boxplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="repeated-measures_files/figure-html/fig-split-split-plot_boxplot-1.png" class="img-fluid figure-img" width="672">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-split-split-plot_boxplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13.4: Boxplot of P concentration by stage
-</figcaption>
-</figure>
-</div>
-</div></div></div>
-<div class="cell">
+<div class="no-row-height column-margin column-container"><div class="cell">
+
+</div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(phos1<span class="sc">$</span>P_leaf, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"P leaf"</span>)</span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(P_leaf <span class="sc">~</span> time, <span class="at">data =</span> phos1, <span class="at">main =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1183,11 +1174,11 @@ distribution of dependent variables
 <section id="model-fit-1" class="level3" data-number="13.3.2">
 <h3 data-number="13.3.2" class="anchored" data-anchor-id="model-fit-1"><span class="header-section-number">13.3.2</span> Model fit</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> time1<span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> time_num<span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>pfit1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv,</span>
 <span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot,</span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>                <span class="co">#corr = corr_str1,</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr =</span> corr_str1,</span>
 <span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> phos1, <span class="at">na.action=</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -1221,20 +1212,20 @@ distribution of dependent variables
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(pfit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                  numDF denDF   F-value p-value
-(Intercept)           1   120 1458.2383  &lt;.0001
-time                  2   120  518.3986  &lt;.0001
+(Intercept)           1   120 1458.2396  &lt;.0001
+time                  2   120  518.4432  &lt;.0001
 Ptrt                  1     3    3.3677  0.1638
 Inoc                  1     6    1.7697  0.2317
 Cv                    4    48    7.6028  0.0001
-time:Ptrt             2   120    0.6789  0.5091
-time:Inoc             2   120    1.9809  0.1424
+time:Ptrt             2   120    0.6790  0.5091
+time:Inoc             2   120    1.9811  0.1424
 Ptrt:Inoc             1     6    2.4919  0.1655
-time:Cv               8   120    2.4111  0.0189
+time:Cv               8   120    2.4113  0.0189
 Ptrt:Cv               4    48    0.5082  0.7299
 Inoc:Cv               4    48    2.1349  0.0909
-time:Ptrt:Inoc        2   120    0.8409  0.4339
+time:Ptrt:Inoc        2   120    0.8410  0.4338
 time:Ptrt:Cv          8   120    0.2223  0.9863
-time:Inoc:Cv          8   120    0.9461  0.4816
+time:Inoc:Cv          8   120    0.9462  0.4816
 Ptrt:Inoc:Cv          4    48    0.4761  0.7530
 time:Ptrt:Inoc:Cv     8   120    0.3886  0.9249</code></pre>
 </div>
@@ -1294,7 +1285,7 @@ Cv = Blanca Grande:
 Cv = Louise:
  time emmean   SE df lower.CL upper.CL
  PT1    3121 56.4  3  2941.69     3300
- PT2    2366 56.4  3  2186.88     2546
+ PT2    2366 56.4  3  2186.89     2546
  PT3     174 56.4  3    -5.11      354
 
 Cv = Otis:
