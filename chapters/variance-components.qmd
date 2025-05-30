@@ -37,7 +37,7 @@ library(ggplot2)
 
 This is a common scenario: an experiment is conducted and there are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packages can handle crossed random effects, but **lme4** can.  
 
-The data used in the next example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones^[A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line.] are evaluated across all 3 locations, but each year different clones are evaluated. Some clones are evaluated for multiple years, and a small number are evaluted every year. These potato clones were evaluated for the length-to-width ratio. We want to know how much location, year and clone contribute to this trait.  
+The data used in the next example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones^[A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line.] are evaluated across all 3 locations, but each year different clones are evaluated. Some clones are evaluated for multiple years, and a small number are evaluated every year. These potato clones were evaluated for the length-to-width ratio. We want to know how much location, year and clone contribute to this trait.  
 
 |       |                               |
 |-------|-------------------------------|
@@ -62,13 +62,13 @@ Total number of clones evaluated:
 length(unique(potato$clone))
 ```
 
-Total counts for how often invividual clones were evaluated:
+Total counts for how often individual clones were evaluated:
 ```{r}
 potato |> count(clone, name = "Frequency of Evaluation") |> 
   count(`Frequency of Evaluation`, name = "No. of Clones") 
 ```
 
-The distibution of the dependent variable, length-to-width ratio,  had a slight left skew, so the the inverse of this trait was modeled. 
+The distribution of the dependent variable, length-to-width ratio,  had a slight left skew, so the the inverse of this trait was modeled. 
 
 ```{r eval=FALSE}
 hist(1/potato$LxW, ylab = NULL, xlab = NULL, main = NA, breaks = 20)
@@ -105,12 +105,9 @@ $\epsilon_{ijk}$ = error term
 The error terms and all random effects are normally distributed with a mean of zero and a given variance for each term:
 
 $$ \epsilon \sim \mathcal{N}(0, \sigma^2) $$
-
 $$ \beta \sim \mathcal{N}(0, \sigma^2_b) $$
 $$ (\alpha\beta) \sim \mathcal{N}(0, \sigma^2_a) $$
-
 $$ \gamma \sim \mathcal{N}(0, \sigma^2_g) $$
-
 
 **lme4 Syntax**
 
@@ -142,22 +139,20 @@ var_comps <- tidy(potato_m1, "ran_pars", scales = "vcov") |>
 var_comps
 ```
 
-This is a naive method to estimate relative variance components; in particular, heritablity estimates should also take into account the number of locations and year. 
+This is a naive method to estimate relative variance components; in particular, heritability estimates should also take into account the number of locations and year. 
 
 ::: {.callout-note collapse=false}
 ## log likelihood ratio tests
 
 ANOVA as classically defined (F-tests contrasting the between group and within group variation) is not an option for evaluating random effects. There are several ways to test if random effects are impactful on the model overall. One of the most reliable and popular methods is the log likelihood ratio test. In brief, a reduced model is refit from a full specified model omitting a random variable. The log likelihood from the two models (the fully specified and reduced models) are compared, and a p-value is computed for that difference given the change in number of parameters estimated. The null hypothesis is that the models are equivalent and the alternative hypothesis is that the models are not equivalent. Hence, low p-values provide evidence that the omitted factor is impactful on the dependent variable of interest. 
-
 :::
 
-The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model.^[It is also possible to conduct likelihood tests manually by constructing reduced models and comparing it to the fully specificed (or more specified) model. In such cases, the fixed effects need to be identical between models, and they need to be fit using maximimun likelihood instead of REML.] 
+The function `ranova()` in **lmerTest** conducts log-likelihood ratio tests for all random effects in a model.^[It is also possible to conduct log-likelihood tests manually by constructing reduced models and comparing them to the fully specified (or more specified) model. In such cases, the fixed effects need to be identical between models, and the models need to be fit using maximum likelihood instead of REML.] 
 
 ```{r}
 ranova(potato_m1)
 ```
 
- 
 It is possible to make inferences on specific levels of random effects. This take a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called "BLUPs" (rhymes with "cups"). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs "shrink" the estimates towards zero, reducing their overall spread compared to fixed effects. [VSNi](https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/){.external target="_blank"} has a short summary on BLUPs and BLUEs. 
 
 Recall that random effects are distributed with a mean of zero and a variance $\sigma^2_x$ that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them (in this example, potato clones) is unchanged. 
@@ -175,7 +170,6 @@ clone_re <- filter(random_effects, groupFctr == "clone") |>
   mutate(blup_adj = BLUP + intercept)
 ```
 
-
 ```{r}
 #| fig-cap: "Histogram of Clone BLUPs"
 #| column: margin
@@ -189,8 +183,8 @@ Below are the BLUPs (in red) and standard errors for each clone, arranged from l
 ```{r}
 ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
   geom_hline(yintercept = intercept, color = "gray", linetype = 2) + 
-  geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE)) +
-    geom_point(size = 0.7, col = "violetred1") + 
+  geom_linerange(aes(ymax = blup_adj + SE, ymin = blup_adj - SE), color = "gray30", linewidth = 0.3) +
+    geom_point(size = 1.5, col = "violetred1", alpha = 0.6, shape = 18) + 
   theme_classic(base_size = 14) +
   labs(title = "length-to-width ratio", sub = "clone BLUPs and standard errors") + 
   ylab("BLUP + intercept") + 
@@ -198,7 +192,6 @@ ggplot(clone_re, aes(x = reorder(clone, blup_adj), y = blup_adj)) +
   theme(axis.text.x = element_blank(),
         axis.ticks.x = element_blank())
 ```
-
 
 ```{r}
 #| eval: false
@@ -213,7 +206,6 @@ PI <- predictInterval(merMod = potato_m1,
                         include.resid.var = FALSE) |> 
   bind_cols(potato)
 ```
-
 
 ```{r, echo=FALSE, include=FALSE}
 rm(list = ls())
@@ -240,7 +232,7 @@ All annual earnings less than $25,000 were excluded from the data set, and only 
 | year |     year of salary, set to [0, 1,...4] for [2019, 2020,.. 2023]    |
 
 
-This is a rather large data set (218,040 rows), and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a `.RData` file. We wikll load this object into an R session for further exploration. 
+This is a rather large data set (218,040 rows), and it requires quite a bit of computing power to analyze. Hence, the analysis was done locally, and the data set and model object were saved as a `.RData` file. We will load this object into an R session for further exploration. 
 
 ```{r message=FALSE, warning=FALSE}
 load(here::here("data/salary_modeldata.RData"))
@@ -271,7 +263,7 @@ hist(log(wa_salary$salary), xlab=NA, ylab = "log of salaries", cex.lab = cex_lab
 Employee salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum of \$3.1 million. The salaries were log transformed for a log-linear model. This is a special case of generalized linear mixed model (GLMM); log-linear model follow the assumption of normally-distributed residuals terms when the dependent variable is log-transformed. The salaries are observed to increase a small amount each year. 
 
 ```{r, echo=FALSE}
-#| fig-cap: "Boxpplot of Log Salaries by Year"
+#| fig-cap: "Boxplot of Log Salaries by Year"
 #| column: margin
 boxplot(log(salary) ~ year, data = wa_salary, main = NA, cex.lab = cex_lab, cex.axis = cex_axis, xlab = 'Year: "0" = 2019', col = base_plot_color, ylab = "log of salaries")
 ```
@@ -351,7 +343,7 @@ var_comps_salary <- tidy(m1, "ran_pars", scales = "vcov") |>
 var_comps_salary
 ```
 
-Unsuprisingly, individual employee is the most impactful factor on salary variance (under the conditions of this analysis).  
+Unsurprisingly, individual employee is the most impactful factor on salary variance (under the conditions of this analysis).  
 
 ##### 2. BLUPs
 
@@ -424,7 +416,7 @@ person_re <- filter(random_effects, groupFctr == "id:agency") |>
 
 ```{r}
 ggplot(person_re, aes(x = BLUP, y = year)) +
-  geom_point(alpha = 0.4, color = "royalblue") +
+  geom_point(alpha = 0.4, color = "#064D87") +
   geom_hline(yintercept = 0, col = "black", linetype = 2) +
   geom_vline(xintercept = 0, col = "black", linetype = 2) +
   labs(title = "Changes in Employee Salaries, 2019 - 2024", subtitle = "(Log of Salaries)") +
@@ -524,10 +516,8 @@ $\epsilon_{ijkl}$ = error term
 The error terms and all random effects are normally distributed with a mean of zero and a given variance for each term:
 
 $$ \epsilon \sim \mathcal{N}(0, \sigma^2) $$
-
 $$ \beta \sim \mathcal{N}(0, \sigma^2_b) $$
 $$ \gamma \sim \mathcal{N}(0, \sigma^2_S) $$
-
 ```{r}
 ex1_m1 <- lme(yield ~ site:variety + variety, 
                 random = ~ 1 |site/block, 
@@ -552,34 +542,12 @@ ex1_m2 <- update(ex1_m1, weights = varIdent(form = ~1|site))
 
 The function `varIdent()` is used to set the stratifying variable at which to estimate variance. Like many functions in R, there are additional arguments to consider for more complex scenarios (type `?varIdent` in an R console to check).
 
-:::: callout-note
-::: column-margin
-
-Note that these 2 syntactical formulations are equivalant: 
-
-```{r eval=FALSE}
-ex1_m2 <- update(ex1_m1, weights = varIdent(form = ~1|site))
-```
-
-and
-
-```{r eval=FALSE}
-ex1_m2 <- lme(yield ~ site:variety + variety, 
-                random = ~ 1 |site/block,
-                weights = varIdent(form = ~1|site), 
-                na.action = na.exclude, 
-                data = var_ex1)
-```
-:::
-::::
-
-
 The residual plot from this updated model is now much cleaner and conforms to expectations. 
 ```{r}
 plot(ex1_m2)
 ```
 
-When comparing the models with a log-likelihood ratio test, the model with hetergenous error structure has better fit statistics and is different from the unweighted model ($p<0.0001$). 
+When comparing the models with a log-likelihood ratio test, the model with heterogeneous error structure has better fit statistics and is different from the unweighted model ($p<0.0001$). 
 
 ```{r}
 anova(ex1_m1, ex1_m2)
@@ -587,7 +555,7 @@ anova(ex1_m1, ex1_m2)
 
 The result is a better-fitting model and with that, better inference for variety at the site level. 
 
-While it may be possible to implement heterogenous error structures with **lme4**, it requires a good working knowledge of that R package. 
+While it may be possible to implement heterogeneous error structures with **lme4**, it requires a good working knowledge of that R package. 
 
 
 ### Case 2: Variance is related to the fitted values
@@ -609,7 +577,7 @@ A histogram does indicate there is anything unusual about the dependent variable
 
 
 ```{r, echo=FALSE}
-#| fig-cap: "Distribution of Single Trial Canola Yield"
+#| fig-cap: "Distribution of Canola Yield from Single Trial"
 #| column: margin
 #| echo: false
 
@@ -639,7 +607,6 @@ This mean-variance relationship can be mitigated by modeling the variance direct
 
 
 $$ Var(\epsilon_{ij}) = \sigma^2|\nu_{ij}|^{2\delta}$$
-
 We can accomplish this using the **nlme** function `varPower()`. This function can take any model covariate, but when there is no argument provided, it defaults to using the fitted values. 
 
 ```{r}
