@@ -4,13 +4,13 @@
 source(here::here("settings.r"))
 ```
 
-In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called **"longitudinal data"**).
+In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called **"longitudinal data"**).
 
-Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.
+Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject, we must model the repeated measures effect when analyzing the main effects.
 
-In these models, the 'iid' assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
+In these models, the 'iid' assumption (independently and identically distributed) is often violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
-Fitting models with correlated observations requires new libraries including **mmrm** and **nlme**. The **lme4** package allows random effects only. In this chapter, we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.
+Fitting models with correlated observations requires new libraries, including **mmrm** and **nlme**. The **lme4** package allows random effects only. In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.
 
 There are several types of covariance structures:
 
@@ -28,11 +28,11 @@ The repeated measures syntax in **nlme** follow this convention:
 
 `corr = corAR1(value = 0, form = ~ t|g, fixed = FALSE)`. 
 
-The argument for 'value' is the starting value for iterations (zero, unless you specify something else), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t` or `~ t|g`, specifying a time covariate $t$ and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use `~t|g` form, the correlation structure is assumed to apply only to observations within the same grouping level. The covariate for this correlation structure must be a **integer value**. `corCompSymm()` and `corSymm()` follow the same argument syntax. 
+The argument for 'value' is the starting value for iterations (zero, unless you specify something else), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t` or `~ t|g`, specifying a time covariate $t$ and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use `~t|g` form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an **integer value**. Similarly, `corCompSymm()` and `corSymm()` follow the same argument syntax. 
 
-There are other covariance structures (e.g. `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Type `?cor` in an R console for more options and details on the syntax
+There are other covariance structures (e.g., `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Type `?cor` in an R console for more options and details on the syntax.
 
-For this chapter we will be analyzing using **nlme** and **mmrm** packages. So, let's start with loading the required libraries for this analysis. These packages have the easiest implementation of heterogenous error structures. While [it is possible](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html) to do this with **lme4** is requires extensive comfort programming in **lme4**.
+For this chapter, we will be analyzing data using the **nlme** and **mmrm** packages. So, let's start with loading the required libraries for this analysis. These packages have the easiest implementation of heterogeneous error structures. While [it is possible](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html) to do this with **lme4**, but it requires extensive comfort programming in **lme4**.
 
 ::: panel-tabset
 ### nlme
@@ -56,7 +56,7 @@ First, we will start with the first example with randomized complete block desig
 
 The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable 'y' is the leaf area index assessed in five consecutive weeks on each plot.
 
-We need to have time as numeric and factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).
+We need to have time as both a numeric and a factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -144,11 +144,11 @@ lm1 <- lme(y ~ variety + factweek + variety:factweek,
            na.action = na.exclude)
 ```
 
-The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject which is plot (factor variable) in this case.
+The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject, which is a plot (factor variable) in this case.
 
-By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximate are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit model with both correlation structures and compare models to find out the best fit model.
+By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximately are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit a model with both correlation structures and compare models to find out the best fit model.
 
-In this analysis, time variable is `week` and it must be numeric.
+In this analysis, the time variable is `week`, and it must be numeric.
 
 ```{r}
 cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
@@ -162,7 +162,7 @@ lm2 <- update(lm1, corr = cs1)
 lm3 <- update(lm1, corr= cs2)
 ```
 
-Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by `compare_performance()` function from the **performance** library.
+Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by the `compare_performance()` function from the **performance** library.
 
 ::: panel-tabset
 ### anova
@@ -215,14 +215,14 @@ mean_2
 ::: callout-tip
 ## Time variable
 
-Here is a quick step to make sure your fitting model correctly: make sure to have two time variables in your data one being numeric (e.g. 'day' as number) and other being factor/character(e.g. 'day_factor' as a factor/character). Where, numeric variable is used for fitting correlation matrix and factor/character variable used in model statement to evaluate the time variable effect on response variable.
+Here is a quick step to ensure you're fitting model correctly: make sure to have two time variables in your data one being numeric (e.g. 'day' as number) and the other being factor/character(e.g. 'day_factor' as a factor/character). Where a numeric variable is used for fitting correlation matrix, and a factor/character variable used in model statement to evaluate the time variable's effect on the response variable.
 :::
 
 ## Split Plot Repeated Measures
 
-Recall, we have evaluated split plot design [**Chapter 7**](split-plot-design.qmd). In this example we will use the same methodology used in Chapter 5 and update it with repeated measures component.
+Recall that we evaluated the split plot design in [**Chapter 7**](split-plot-design.qmd). In this example, we will use the same methodology as in Chapter 7 and update it with a repeated measures component.
 
-Next, let's load an alfalfa intercropping data set. This was from an irrigation and intercropping experiment was conducted in southern Idaho. Irrigation is the main plot, intercropping is the split plot, and the in-season alfalfa cutting ("cutting") is the unit for repeated measures. 
+Next, let's load an alfalfa intercropping data set. This data is from an irrigation and intercropping experiment which was conducted in southern Idaho. Irrigation is the main plot, intercropping is the split plot, and the in-season alfalfa cutting ("cutting") is the unit for repeated measures. 
 
 ```{r}
 alfalfa <- read.csv(here::here("data/alfalfa_intercropping.csv"))
@@ -256,7 +256,7 @@ str(alfalfa)
 We will now convert the fertilizer and rep to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
 
 ::: column-margin
-For `lme()`, independent variables in a character/factor form works fine. But, for `mmrm()` independent variables must be a factor. Thus, for consistency, we will be using independent variables in factor class.
+For `lme()`, independent variables in a character/factor form work fine. But, for `mmrm()`, independent variables must be a factor. Thus, for consistency, we will use independent variables in factor class.
 :::
 
 ```{r}
@@ -266,7 +266,7 @@ alfalfa <- alfalfa |>
 ```
 
 
-To fit the model, we first need to convert Variety, Fertilizer, and Sample_time to factors. In addition, we need to create a variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.
+To fit the model, we first need to convert Variety, Fertilizer, and Sample_time to factors. In addition, we need to create a variable for each subject which is a 'plot' in this case and contains a unique value for each 'plot'. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be either a factor or a numeric but the time (could be year, or sample_time) must be a factor.
 
 - Inspect the independent variables
 
@@ -300,7 +300,7 @@ hist(Yield$Yield, xlab = "yield", main = NA)
 
 This data can be analyzed either using `nlme` or `mmrm`.
 
-Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. In addition, instead of `summary()` function we will use `tidy()`  function from the **broom.mixed** package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
+Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used the `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. Instead of the `summary()` function we will use `tidy()`  function from the **broom.mixed** package to look at estimates of mixed and random effects. This will generate a tidy workflow particularly by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
 
 
 ```{r}
@@ -316,7 +316,7 @@ fit1 <- lme(yield ~ irrigation*intercrop*cutting,
 
 ### Check Model Assumptions
 
-We will use `check_model()` from **performance** package to evaluate the model fitness of model fitted using nlme (mod1). However, the `mmrm()` model class doesn't work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.
+We will use `check_model()` from the **performance** package to evaluate the model fitness of model fitted using nlme (mod1). However, the `mmrm()` model class doesn't work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.
 
 ```{r, fig.height=3}
 #| warning: false
@@ -325,7 +325,7 @@ check_model(fit1, check = c('linearity', 'qq'), detrend=FALSE, alpha = 0)
 ```
 
 
-These diagnostic plots look fine. The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.
+These diagnostic plots look fine. The linearity and homogeneity of variance plots show no trend. The Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.
 
 ### Inference
 
@@ -349,7 +349,7 @@ To explore more about contrasts and emmeans please refer to [**Chapter 13**](mea
 
 ## Split-split Plot Repeated Measures {#ssp-rm}
 
-Recall, we have evaluated the split-split experiment design in [**Chapter 8**](split-split-plot-design.qmd), where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures component to the split-split plot design.
+Recall, we have evaluated the split-split experiment design in [**Chapter 8**](split-split-plot-design.qmd), where we had one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example,a repeated measures component will be added to the split-split plot model.
 
 ```{r}
 phos <- read.csv(here::here("data", "split_split_repeated.csv"))
@@ -423,7 +423,7 @@ boxplot(P_leaf ~ time, data = phos1, main = NA)
 ::: callout-warning
 ## distribution of dependent variables
 
-Here note that we observed uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It's important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks *as expected*, a judgement that requires some knowledge of the experiment (this was Julia Piaskowski's PhD research). In this case, the time points, PT1 and PT2, reflect early wheat growth stages (tillering and jointing, respectively), and the final time point is senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model fitting process when deciding if a non-normal distribution is appropriate for the data.  
+Note that we observed an uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It's important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks *as expected*, a judgment that requires some knowledge of the experiment (this was Julia Piaskowski's PhD research). In this case, the time points, PT1 and PT2, correspond to early wheat growth stages (tillering and jointing, respectively), and the final time point represents senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model-fitting process when deciding if a non-normal distribution is appropriate for the data.  
 :::
 
 ### Model fit
@@ -452,7 +452,7 @@ This model fit a first glance is not ideal, but that LOESS line is trying to mod
 ```{r}
 check_heteroscedasticity(pfit1)
 ```
-These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a a difference in variance for each time time point. This addressed in the [chapter on variance components](variance-components.qmd). 
+These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a difference in variance for each time point. This issue is addressed in the [chapter on variance components](variance-components.qmd). 
 
 ```{r, echo=FALSE, eval=FALSE}
 save(pfit1, corr_str1, file = here::here("data/phos_fit1.RData"))

@@ -43,7 +43,6 @@ For example, We conducted a randomized field trial to study wheat yield response
 
 ## Data integrity checks 
 
-
 The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
 ### 1.  Check structure of the data 
@@ -60,9 +59,9 @@ We can use the base code `str()` in R to look at the class of each variable in t
 str(dataset)
 ```
 
-This code output the data class of each variable present in the data set. 
+This code outputs the data class of each variable present in the dataset. 
 
-The example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.
+The example code below shows the conversion of rep from numeric to factor class and the conversion of yield from character to numeric class.
 ```{r, eval=FALSE}
 dataset$block <- as.factor(dataset$block)
 dataset$yield <- as.numeric(dataset$yield)
@@ -73,19 +72,19 @@ dataset$yield <- as.numeric(dataset$yield)
 ::: callout-tip
 ## factor versus character class
 
-Often, factor and character object classes are used interchangeable. But we need to keep in mind the difference in these two classes. A character variable represents data stored in a text or "string" format. A factor variable is categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but most will also automatically convert character variables to factors. 
+Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or "string" format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, however, many will also automatically convert character variables to factors. 
 :::
 
 
 ### 2. Inspect the independent variables
 
-Running a cross tabulation across treatments and replications is generally enough to make sure the expected levels are present in the data.
+Running a cross-tabulation across treatments and replications is generally enough sufficient to make sure ensure the expected levels of these factors are present in the data.
 
 ```{r, eval=FALSE}
 table(dataset$trt, dataset$block)
 ```
 
-The output from this code will give us the number of observations in each replication for a given treatment. It's useful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g. "high" and "High"); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues. The main goal is to check what the data look like after import compared to your personal understanding of the data.   
+The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high" and "High"); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
 
 ### 3.  Check the extent of missing data
 
@@ -94,7 +93,7 @@ The output from this code will give us the number of observations in each replic
 colSums(is.na(dataset))
 ```
 
-This will give you a number of missing values in each variable. Missing data are a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and nothing wrong happened during import.
+This will give you a number of missing values in each variable. Missing data is a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.
 
 ::: callout-tip
 ## Missingness versus Zeros
@@ -145,14 +144,14 @@ model_lme <- lme(yield ~ trt ,
 ```
 :::
 
-The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit ^[Please refer to [**Chapter 3**](background.qmd)]. This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
+The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit ^[Please refer to [**Chapter 3**](background.qmd)]. This is the most common approach. It means there is one fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
 
 ::: callout-tip
 ## `na.action = na.exclude`
 
 You may have noticed the final argument for `na.action` in the model statement.
 
-The argument `na.action = na.exclude` provides instructions for how to handle missing data. `na.exclude` removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g. predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.
+The argument `na.action = na.exclude` provides instructions for how to handle missing data. The option `na.exclude` removes the missing data points before proceeding with the analysis. When any observation-level model outputs is generated (e.g. predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.
 
 We use the argument `na.action = na.exclude` as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, padding them in the appropriate places for missing data so they can be easily merged into the main data set if need be.
 

@@ -6,7 +6,7 @@ source(here::here("settings.r"))
 
 ## Background
 
-Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. This often results in a generalization of the factorial design called a split-plot design. In split-plot design, the experimental units are called *split-plots* , and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly.
+Split plot designs are needed when we cannot randomly assign multiple levels of treatments in a completely randomized experiment. In split-plot design, the experimental units are called *split-plots*, and are nested within *whole plots*. The main principle is that there are whole plots, to which the levels of one or more factors of split-plots are assigned randomly.
 
 ```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
@@ -236,7 +236,7 @@ tidy(oats_lme)
 
 #### Check Model Assumptions
 
-As shown in example 1, We need to verify the normality of residuals and homogeneous variance. Here we are using the `check_model()` function from the **performance** package.
+After fitting the model, we need to verify the normality of residuals and homogeneous variance. Here we are using the `check_model()` function from the **performance** package.
 
 ::: panel-tabset
 ### lme4
@@ -252,11 +252,11 @@ check_model(oats_lme,  check = c('qq', 'linearity'), detrend=FALSE, alpha=0)
 ```
 :::
 
-Residuals from the model follows normal distribution and no evidence of Homoscedasticity.
+Residuals from the model follows normal distribution and no evidence of homoscedasticity.
 
 #### Inference
 
-Let's have a look at the analysis of variance, for V, N and their interaction effect.
+After verifying the assumptions of the model, look at the analysis of variance, for V, N and their interaction effect.
 
 ::: panel-tabset
 ### lme4

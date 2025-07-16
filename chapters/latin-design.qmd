@@ -8,21 +8,21 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-In the Latin Square design, two blocking factors are are assigned to rows and columns, respectively of the square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all 't' treatments appears only once in each row and column and number of replications is equal to number of treatments.
+In Latin Square design, two blocking factors are are assigned to the rows and columns, respectively of the square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all '**t**' treatments appears only once in each row and column and number of replications is equal to number of treatments.
 
 Advantages of Latin square design are:
 
-1.  The design is particularly appropriate for comparing *t* treatment means in the presence of two sources of extraneous variation, each measured at *t* levels.
+1.  The design is particularly appropriate for comparing ***t*** treatment means in the presence of two sources of variation (row & column), each measured at ***t*** levels.
 
 2.  Easy to analyze.
 
 Disadvantages:
 
-1. A Latin square can be constructed for any value of *t*, however, it is best suited for comparing *t* treatments when 5≤ *t*≤ 10.
+1.  A Latin square can be constructed for any value of ***t***, however, it is best suited for comparing *t* treatments when 5≤ ***t***≤ 10.
 
-2. Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.
+2.  Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.
 
-3. There must be no interaction of rows and columns with treatment effects. 
+3.  There must be no interaction of rows and columns with treatment effects.
 
 The statistical model for the Latin square design:
 
@@ -38,26 +38,27 @@ Let's start the analysis first by loading the required libraries:
 
 ::: panel-tabset
 ### lme4
+
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(lmerTest); library(emmeans); library(performance)
 library(dplyr); library(broom.mixed)
 ```
 
 ### nlme
+
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(broom.mixed); library(emmeans); library(performance)
 library(dplyr)
 ```
 :::
 
-The data used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatmentswere tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).
+The data used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
 latin_square <- agridat::goulden.latin
 write.csv(latin_square, here::here("data", "goulden_latin.csv"), row.names = FALSE)
 ```
-
 
 ```{r}
 dat <- read.csv(here::here("data", "goulden_latin.csv"))
@@ -74,14 +75,15 @@ dat <- read.csv(here::here("data", "goulden_latin.csv"))
 
 ### Data integrity checks
 
-- Check structure of the data
+-   Check structure of the data
 
-First, let's verify the class of variables in the data set using `str()` function in base R
+First, let's verify the class of variables in the data set using the `str()` function in base R
 
 ```{r}
 str(dat)
 ```
-Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer to factors (characeter is also a valid choice).
+
+Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change 'row' and 'col' from integer to factors (character is also a valid choice).
 
 ```{r}
 dat1 <- dat |> 
@@ -89,7 +91,7 @@ dat1 <- dat |>
                col = as.factor(col))
 ```
 
-- Inspect the independent variables
+-   Inspect the independent variables
 
 Next, to verify if the data meets the assumption of the Latin square design, let's plot the field layout for this experiment.
 
@@ -102,9 +104,9 @@ desplot::desplot(data = dat1, flip = TRUE,
         main = "Alpha Lattice Design", show.key =F) 
 ```
 
-This looks great! Here we can see that there are equal number (5) of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn't appear more than once in each row and column.
+This looks great! Here we can see that there are an equal number (5) of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn't appear more than once in each row and column.
 
-- Check the extent of missing data
+-   Check the extent of missing data
 
 Next step is to check if there are any missing values in response variable.
 
@@ -114,7 +116,7 @@ colSums(is.na(dat))
 
 No missing values detected in this data set.
 
-- Inspect the dependent variable
+-   Inspect the dependent variable
 
 Before fitting the model, let's create a histogram of response variable to see if there are extreme values.
 
@@ -163,13 +165,15 @@ summary(m1_b)
 
 This step involves inspection of the model residuals by using `check_model()` function from the **performance** package.
 
-:::: panel-tabset
+::: panel-tabset
 #### lme4
 
 ```{r, fig.height=6}
 check_model(m1_a, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
+
 #### nlme
+
 ```{r, layout="[[1,1], [1]]"}
 plot(m1_b, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
@@ -177,12 +181,13 @@ plot(m1_b, resid(., scaled=TRUE) ~ fitted(.),
 qqnorm(residuals(m1_b))
 qqline(residuals(m1_b))
 ```
-These visuals support that assumptions of linear model have been met.
+
+These visuals support that the assumptions of the linear model have been met.
 
 ### Inference
 
-We can now proceed to the variance partioning. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for `lmer()` and `lme()` models, respectively.
-::::
+We can now proceed to the variance partitioning. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for `lmer()` and `lme()` models, respectively.
+:::
 
 ::: panel-tabset
 #### lme4
@@ -198,15 +203,17 @@ anova(m1_b, type = "sequential")
 ```
 :::
 
-Here we observed a statistically significant impact on fungicide treatment on crop yield. Let's have a look at the estimated marginal means of wheat yield with each treatment using the `emmeans()` function.
+Here we observed a statistically significant impact of fungicide treatment on crop yield. Let's have a look at the estimated marginal means of wheat yield with each treatment using the `emmeans()` function.
 
 ::: panel-tabset
 #### lme4
+
 ```{r, fig.height=3}
 emmeans(m1_a, ~ trt)
 ```
 
 #### nlme
+
 ```{r, fig.height=3}
 emmeans(m1_b, ~ trt)
 ```
@@ -217,5 +224,5 @@ We see that wheat yield was higher with 'C' fungicide treatment compared to othe
 ::: callout-note
 ## `CI with lme`
 
-Note that, confidence intervals were not estimated through `emmeans()` from `lme()` model due to complex crossed random effects in this model.
+The confidence intervals were not estimated through `emmeans()` from the `lme()` model due to complex crossed random effects in this model.
 :::

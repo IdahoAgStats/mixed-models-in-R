@@ -12,7 +12,7 @@ source(here::here("settings.r"))
 
 The concept of split-plot design can be extended to situations in which randomization restrictions may occur at any number of levels within the experiment.
 If there are two levels of randomization restriction, the layout is called a **split-split plot design**.
-The split-split plot design is an extension of the split-plot design to accommodate a third factor: one factor in the main plot, another in the split plot and a third factor in the split-split plot.
+The split-split plot design is an extension of the split-plot design to add a third level of treatment factor: one factor in the main plot, another in the split plot and a third factor in the split-split plot.
 The example shown below illustrates this experiment layout.
 
 ## Details for split-split plot designs
@@ -81,7 +81,7 @@ rice <- read.csv(here::here("data", "rice_ssp.csv"))
 ```
 
 |            |                                                                |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | block      | blocking unit                                                  |
 | nitrogen   | different nitrogen fertilizer rates as main plot with 5 levels |
 | management | management practices as split plot with 3 levels               |
@@ -132,7 +132,7 @@ It looks perfectly balanced, with exactly 3 observation per treatment group.
 colSums(is.na(rice))
 ```
 
-Great!
+Perfect!
 no missing values here.
 
 -   Inspect the dependent variable
@@ -153,8 +153,8 @@ hist(rice$yield, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_ax
 
 ### Model Building
 
-The model and analysis of variance of a split-split plot design is divided into three parts: the main plot, split plot and split-split plot analysis.
-We can use the nesting notation in the random part because nitrogen and management are nested in blocks.
+The model and analysis of variance of a split-split plot design is comprised of three levels: the main plot, split plot, and split-split plot level.
+We will use the nesting notation in the random part because nitrogen and management are nested in blocks.
 We can do blocks as fixed or random.
 
 ::: panel-tabset
