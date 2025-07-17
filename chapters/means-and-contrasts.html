@@ -55,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -77,7 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-67bf6a51e44a5e2fa7691d0f46b78900.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f63a312d724d0c3dbd8c611e3aa6b687.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -384,7 +404,7 @@ window.Quarto = {
 <section id="background" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="background"><span class="header-section-number">13.1</span> Background</h2>
 <p>To start off with, we need to define estimated marginal means. Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a “population-level” average.</p>
-<p>The <strong>emmeans</strong> package is one of the most commonly used package in R in determine marginal means. This package provides methods for obtaining marginal means (also known as <strong>least-squares means</strong>) for factor combinations in a variety of models. The emmeans package is one of several alternatives to facilitate post-hoc methods application and contrast analysis. It is a relatively recent replacement for the lsmeans package that some R users may be familiar with. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html" class="external" target="_blank"><strong>vignettes</strong></a> and works with a lot of different model objects.</p>
+<p>The <strong>emmeans</strong> package is one of the most commonly used package in R for determining marginal means. This package provides methods for obtaining marginal means (also known as <strong>least-squares means</strong>). The emmeans package is one of several alternatives that facilitate the application post-hoc methods and contrast analysis. It is a relatively recent replacement for the lsmeans package with which some R users may be familiar. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html" class="external" target="_blank"><strong>vignettes</strong></a> and works with a wide range of model objects.</p>
 <p>In this chapter, we will demonstrate the extended use of the <strong>emmeans</strong> package to calculate estimated marginal means and contrasts.</p>
 <p>To demonstrate the use of the <strong>emmeans</strong> package. We will pull the model from split plot lesson (<a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -480,7 +500,7 @@ V:N             6    45  0.30282  0.9322</code></pre>
 </section>
 <section id="estimated-marginal-means" class="level3" data-number="13.2.5">
 <h3 data-number="13.2.5" class="anchored" data-anchor-id="estimated-marginal-means"><span class="header-section-number">13.2.5</span> Estimated Marginal Means</h3>
-<p>Now that we have fitted a linear mixed model (model1) and it meets the model assumption. Let’s use the <code>emmeans()</code> function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects.</p>
+<p>Now that we have fitted a linear mixed model (model1) and it meets the model assumptions. Let’s use the <code>emmeans()</code> function to obtain estimated marginal means for main (variety and nitrogen) and interaction (variety x nitrogen) effects.</p>
 <section id="main-effects" class="level4" data-number="13.2.5.1">
 <h4 data-number="13.2.5.1" class="anchored" data-anchor-id="main-effects"><span class="header-section-number">13.2.5.1</span> Main effects</h4>
 <p>The main effects in model1 were V and N. we will start by looking at the estimated means of V and N main effects.</p>
@@ -589,8 +609,8 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here, note that we estimated marginal means in two ways: <code>V*N</code> estimate the marginal means for each combination and when we do pairwise compariosn on these, all combinations are compared to one another simultaneously.</p>
-<p><code>V|N</code> estimates the marginal means for each V at a given level of N. When we do pairwise comparison on this, V groups are compared among each other at a given level of N, not across all levels of N.</p>
+<p>Here, note that we estimated marginal means in two ways: <code>V*N</code> estimates the marginal means for each combination, and when we do pairwise comparison on these, all combinations are compared to one another simultaneously.</p>
+<p><code>V|N</code> estimates the marginal means for each V at a given level of N. When we do pairwise comparison on this, V groups are compared with each other at a given level of N, not across all levels of N.</p>
 </div>
 </div>
 </section>
@@ -598,7 +618,7 @@ Note
 </section>
 <section id="contrasts-using-emmeans" class="level2" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="contrasts-using-emmeans"><span class="header-section-number">13.3</span> Contrasts using emmeans</h2>
-<p>The <code>pairs()</code> function from emmeans package can be used to evaluate the pairwise comparison among treatment objects. The emmean object (m1, m2) will be passed through <code>pairs()</code> function which will provide a p-value adjustment equivalent to the Tukey test.</p>
+<p>The <code>pairs()</code> function from the emmeans package can be used to evaluate pairwise comparisons among treatment factors. The emmean object (m1, m2) will be passed through the <code>pairs()</code> function, which will provide a p-value adjustment equivalent to the Tukey test.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m1, <span class="at">adjust =</span> <span class="st">"tukey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -628,7 +648,7 @@ Degrees-of-freedom method: containment
 P value adjustment: tukey method for comparing a family of 4 estimates </code></pre>
 </div>
 </div>
-<p>Here if we look at the results from code chunk above, it’s easy to interpret results from <code>pairs()</code> function in case of variety comparison because there were only 3 groups. But it’s little confusing in case of Nitrogen treatments where we had 4 groups. We can further simplify it by using custom contrasts.</p>
+<p>Here, if we look at the results from code chunk above, it’s easy to interpret the results from <code>pairs()</code> function in case of variety comparison because there were only 3 groups. But it’s a little confusing in the case of Nitrogen treatments, where we had 4 groups. We can further simplify it by using custom contrasts.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -639,7 +659,7 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This function is conducting all pairwise tests for the variable specified. The default p-value adjustment in <code>pairs()</code> function is “tukey”; other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. If you are conducting this on a variable with many levels, this adjustment can be severe, resulting in very few statistically significant results. To avoid this, consider other tests such ‘compare to a control’ or custom contrasts.</p>
+<p>This function conducts all pairwise tests for the specified variable specified. The default p-value adjustment in the <code>pairs()</code> function is “tukey”; other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. If you are conducting this on a variable with many levels, this adjustment can be severe, resulting in very few statistically significant results. To avoid this, consider other tests such as ‘compare to a control’ or custom contrasts.</p>
 </div>
 </div>
 <section id="custom-contrasts" class="level3" data-number="13.3.1">
@@ -666,8 +686,8 @@ Confidence level used: 0.95 </code></pre>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>A3 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>A4 <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>These vectors (A1, A2, A3, A4) represent each Nitrogen treatment in an order as presented in m2 emmeans object. A1, A2, and A3, A4 vectors represents 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 cwt treatments, respectively.</p>
-<p>Next step is to create a custom contrasts for comparing ‘0.0cwt’ (A1) treatment to ‘0.2cwt’ (A2), ‘0.4cwt’ (A3), and ‘0.6cwt’ (A4) treatments. This can be evaluated as shown below:</p>
+<p>These vectors (A1, A2, A3, A4) represent each nitrogen treatment in the order as presented in the m2 emmeans object. A1, A2, A3, and A4 vectors represents 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 cwt nitrogen treatments, respectively.</p>
+<p>The next step is to create custom contrasts for comparing ‘0.0cwt’ (A1) treatment to ‘0.2cwt’ (A2), ‘0.4cwt’ (A3), and ‘0.6cwt’ (A4) treatments. These contrasts can be evaluated as shown below:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="at">method =</span> <span class="fu">list</span>(A1 <span class="sc">-</span> A2) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -694,7 +714,7 @@ Results are averaged over the levels of: V
 Degrees-of-freedom method: containment </code></pre>
 </div>
 </div>
-<p>Here the output shows the difference in mean yield between control and 3 N treatments. The results shows that yield was significantly higher N treatments compared to the control (0.0 cwt) irrespective of the oat variety.</p>
+<p>Here the output shows the difference in mean yield between the control and 3 N treatments. The results shows that yield was significantly higher with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="contrast() vs pairs()">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -708,8 +728,8 @@ contrast() vs pairs()
 <p>Using custom contrast() is strongly recommended instead of <code>pairs()</code> when you are comparing multiple treatment groups (&gt;5).</p>
 </div>
 </div>
-<p>In addition to these conventional custom contrast options, <strong>emmeans</strong> package allows to do some easy contrasts such as comparing all the treatments to control or estimating custom contrast to compare one treatment level to all other groups.</p>
-<p>We will start with running ‘m1’ emmeans object</p>
+<p>In addition to these conventional custom contrast options, we can evaluate a few contrasts using the built-in functions in the <strong>emmeans</strong> package. This includes, evaluating the treatments to control or estimating custom contrast to compare one treatment level to all other groups.</p>
+<p>We will start with running ‘m1’ emmeans object.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>m1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -723,7 +743,7 @@ Degrees-of-freedom method: containment
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
-<p>Based on m1 object, let’s assume we want to compare all varieties with Marvellous. The code shown below estimates custom contrast for treatments vs control and here we are referring Marvellous variety as a control.</p>
+<p>From the m1 object, let’s suppose we want to compare all varieties with Marvellous. The code shown below estimates custom contrast for treatments vs control and here we are referring Marvellous variety as a control.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrl"</span>, <span class="at">ref =</span> <span class="st">"Marvellous"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -736,8 +756,8 @@ Degrees-of-freedom method: containment
 P value adjustment: dunnettx method for 2 tests </code></pre>
 </div>
 </div>
-<p>Or we can refer control group by the appearance order of varieties in m1. In m1, order of Golden rain, Marvellous, and Victory are ordered as 1, 2, and 3 respenctively.</p>
-<p>Let’s suppose we want to compare Golden rain to other varieties, we can do this by either <code>trt.vs.ctrl1' code, or</code>trt.vs.ctrlk` and referring to group 1. Both code options will generate same results.</p>
+<p>Alternatively, we can refer control group by the appearance order of varieties in m1. In m1, order of Golden rain, Marvellous, and Victory are ordered as 1, 2, and 3 respenctively.</p>
+<p>Let’s suppose we want to compare Golden rain to other varieties. We can do this by either using ‘trt.vs.ctrl1’ code, or ‘trt.vs.ctrlk’ and referring to group 1. Both code options will generate the same results.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m1, <span class="st">"trt.vs.ctrl1"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -790,14 +810,14 @@ Degrees-of-freedom method: containment
 P value adjustment: tukey method for comparing a family of 3 estimates </code></pre>
 </div>
 </div>
-<p>Or we can also evaluate pairwise comparison</p>
+<p>Or we can also evaluate consecutive pairwise comparison as follows:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="st">"consec"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast        estimate   SE df t.ratio p.value
  0.2cwt - 0.0cwt    19.50 4.44 45   4.396  0.0002
  0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0036
- 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1143
+ 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1152
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment 
@@ -808,7 +828,8 @@ P value adjustment: mvt method for 3 tests </code></pre>
 </section>
 <section id="compact-letter-displays" class="level2" data-number="13.4">
 <h2 data-number="13.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">13.4</span> Compact letter displays</h2>
-<p>Compact letter displays (CLDs) are a popular way to display multiple comparisons when there are more than few group means to compare. However, they are problematic as they are more prone to misinterpretation. The R package <code>multcompView</code> (Graves et al., 2019) provides an implementation of CLDs creating a display where any two means associated with same symbol are not statistically different.</p>
+<p>Compact letter displays (CLDs) is a most widely used tool by researchers in various domains to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. For example, using CLD when comparing many treatment groups can result in the misinterpretation of the data. Thus, it’s a good practice to carefully examine study goals and your data before implementing CLDs.</p>
+<p>The R package <code>multcompView</code> (Graves et al., <span class="citation" data-cites="multcompView">(<a href="../references.html#ref-multcompView" role="doc-biblioref">2019</a>)</span>) can be used in R for creating a display where any two means associated with same symbol are not statistically different.</p>
 <p>The <code>cld()</code> function from the <strong>multcomp</strong> package is used to implement CLDs in the form of symbols or letters. The <code>emmeans</code> package provides a emmGrid objects for cld() method.</p>
 <p>Let’s start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
 <div class="cell">
@@ -876,15 +897,15 @@ NOTE: If two or more means share the same grouping symbol,
       But we also did not show them to be the same. </code></pre>
 </div>
 </div>
-<p>Interpretation of these letters is: Here we have a significant difference in grain yield with varieties victory, with N treatments of 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 wt. Grain yield for Golden rain variety was significantly lower with 0.0 cwt N treatment compared to the 0.2 cwt, 0.4 cwt, and 0.6 wt treatments.</p>
-<p>In the data set we used for demonstration here, we had equal number of observations in each group. However, this might not be a case every time as it is common to have missing values in the data set. In such cases, readers usually struggle to interpret significant differences among groups. For example, estimated means of two groups are substantially different but they are no statistically different. This normally happens when SE of one group is large due to its small sample size, so it’s hard for it to be statistically different from other groups. In such cases, we can use alternatives to CLDs as shown below.</p>
+<p>Interpretation of these letters is: we have a significant difference in grain yield with varieties victory, with N treatments of 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 wt. Grain yield for Golden rain variety was significantly lower with 0.0 cwt N treatment compared to the 0.2 cwt, 0.4 cwt, and 0.6 wt treatments.</p>
+<p>In the data set we used for demonstration here, we had equal number of observations in each group. However, this might not be a case every time as it is common to have missing values in the data set. In such cases, readers usually struggle to interpret significant differences among groups. For example, estimated means of two groups are substantially different but they are no statistically different. This happens typically when SE of one group is large due to its small sample size, so it’s hard for it to be statistically different from other groups. In such cases, we can use alternatives to CLDs as shown below.</p>
 </section>
 <section id="alternatives-to-cld" class="level2" data-number="13.5">
 <h2 data-number="13.5" class="anchored" data-anchor-id="alternatives-to-cld"><span class="header-section-number">13.5</span> Alternatives to CLD</h2>
 <ol type="1">
 <li>Equivalence test</li>
 </ol>
-<p>Let’s assume based on subject matter considerations, if mean yield of two groups differ by less than 30 can be considered equivalent. Let’s try equivalence test on clds of nitrogen treatment emmeans (m2).</p>
+<p>Let’s assume, based on subject matter considerations, if the mean yield of two groups differ by less than 30 it can be considered equivalent. Let’s try an equivalence test on the CLDs of nitrogen treatment emmeans (m2).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">delta =</span> <span class="dv">30</span>, <span class="at">adjust =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -907,7 +928,7 @@ Estimates sharing the same symbol test as equivalent </code></pre>
 <ol start="2" type="1">
 <li>Significance Sets</li>
 </ol>
-<p>Another alternative is to simply reverse all the boolean flags we used in constructing CLDs for m3 first time.</p>
+<p>Another alternative is to reverse all the boolean flags we used in constructing CLDs for m3 first time.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">signif =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -935,15 +956,15 @@ Cautionary Note about CLD
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>It’s important to note that we cannot conclude that treatment levels with the same letter are the same. We can only conclude that they are not different.</p>
-<p>There is a separate branch of statistics, <a href="https://en.wikipedia.org/wiki/Equivalence_test" class="external" target="_blank">equivalence testing</a> that is for ascertaining if things are sufficiently similar to conclude they are equivalent.</p>
+<p>It’s important to note that we cannot conclude that treatment levels with the same letter are equivalent. We can only conclude that they are not different.</p>
+<p>There is a separate branch of statistics, <a href="https://en.wikipedia.org/wiki/Equivalence_test" class="external" target="_blank">equivalence testing</a>, that is for ascertaining if things are sufficiently similar to conclude they are equivalent.</p>
 <p>See <a href="analysis-tips.html#sec-cld_warning" class="quarto-xref"><span>Section 2.0.4</span></a> for additional warnings about problems with using compact letter display.</p>
 </div>
 </div>
 </section>
 <section id="export-emmeans-to-excel-sheet" class="level2" data-number="13.6">
 <h2 data-number="13.6" class="anchored" data-anchor-id="export-emmeans-to-excel-sheet"><span class="header-section-number">13.6</span> Export emmeans to excel sheet</h2>
-<p>The outputs from <code>emmeans()</code> or <code>cld()</code> objects can exported by first converting outputs to a data frame and then using writexlsx() function from the ‘writexl’ package to export the outputs.</p>
+<p>The outputs from <code>emmeans()</code> or <code>cld()</code> objects can be exported by first converting them to a data frame and then using the writexlsx() function from the ‘writexl’ package to export the outputs.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>result_n <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">summary</span>(m1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -980,7 +1001,7 @@ Cautionary Note about CLD
 </div>
 </div>
 </div>
-<p>Eventually, you are likely to want customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on x-axis and estimated means of yield on y-axis. Different N treatments are presented using different colors.</p>
+<p>Eventually, you will likely want to create a customized plot of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cld3) <span class="sc">+</span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> V, <span class="at">y =</span> emmean, <span class="at">color =</span> N) <span class="sc">+</span></span>
@@ -1003,7 +1024,7 @@ Cautionary Note about CLD
 </div>
 </div>
 <p>Recall: groups that do not differ significantly from each other share the same letter.</p>
-<p>we can also use <code>emmip()</code> built in emmeans package to look at the trend in interaction of variety and nitrogen factors.</p>
+<p>We can also use the <code>emmip()</code> function from the emmeans package to examine the trend in the interaction between variety and nitrogen factors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmip</span>(model1, N <span class="sc">~</span> V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1046,6 +1067,11 @@ P values, “significance”, and recommendations
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-multcompView" class="csl-entry" role="listitem">
+Graves, Piepho Hans-Pieter, Spencer, and Sundar Dorai-Raj. 2019. <em>multcompView: Visualizations of Paired Comparisons</em>. <a href="https://CRAN.R-project.org/package=multcompView">https://CRAN.R-project.org/package=multcompView</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

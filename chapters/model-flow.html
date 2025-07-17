@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-67bf6a51e44a5e2fa7691d0f46b78900.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f63a312d724d0c3dbd8c611e3aa6b687.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -456,8 +456,8 @@ Warning
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(dataset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This code output the data class of each variable present in the data set.</p>
-<p>The example code below shows the conversion of rep from numeric to factor class and conversion of yield from character to numeric class.</p>
+<p>This code outputs the data class of each variable present in the dataset.</p>
+<p>The example code below shows the conversion of rep from numeric to factor class and the conversion of yield from character to numeric class.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>block)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>yield <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dataset<span class="sc">$</span>yield)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -472,24 +472,24 @@ factor versus character class
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Often, factor and character object classes are used interchangeable. But we need to keep in mind the difference in these two classes. A character variable represents data stored in a text or “string” format. A factor variable is categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but most will also automatically convert character variables to factors.</p>
+<p>Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or “string” format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, however, many will also automatically convert character variables to factors.</p>
 </div>
 </div>
 </section>
 <section id="inspect-the-independent-variables" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="inspect-the-independent-variables"><span class="header-section-number">4.2.2</span> 2. Inspect the independent variables</h3>
-<p>Running a cross tabulation across treatments and replications is generally enough to make sure the expected levels are present in the data.</p>
+<p>Running a cross-tabulation across treatments and replications is generally enough sufficient to make sure ensure the expected levels of these factors are present in the data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dataset<span class="sc">$</span>trt, dataset<span class="sc">$</span>block)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The output from this code will give us the number of observations in each replication for a given treatment. It’s useful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g.&nbsp;“high” and “High”); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues. The main goal is to check what the data look like after import compared to your personal understanding of the data.</p>
+<p>The output from this code will give us the number of observations in each replication for a given treatment. It’s helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., “high” and “High”); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.</p>
 </section>
 <section id="check-the-extent-of-missing-data" class="level3" data-number="4.2.3">
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="check-the-extent-of-missing-data"><span class="header-section-number">4.2.3</span> 3. Check the extent of missing data</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dataset))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This will give you a number of missing values in each variable. Missing data are a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and nothing wrong happened during import.</p>
+<p>This will give you a number of missing values in each variable. Missing data is a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -543,7 +543,7 @@ Missingness versus Zeros
 </div>
 </div>
 </div>
-<p>The parentheses are used to indicate a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. This is the most common approach. It means there is one overall effect fit for each block. Here, note that random effects are specified differently in the <code>lmer()</code> and <code>nlme()</code> models.</p>
+<p>The parentheses are used to indicate a random effect, and this particular notation <code>(1|block)</code> indicates that a ‘random intercept’ model is being fit <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. This is the most common approach. It means there is one fit for each block. Here, note that random effects are specified differently in the <code>lmer()</code> and <code>nlme()</code> models.</p>
 <div class="no-row-height column-margin column-container"><div id="fn3"><p><sup>3</sup>&nbsp;Please refer to <a href="../chapters/background.html"><strong>Chapter 3</strong></a></p></div></div><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -555,7 +555,7 @@ Missingness versus Zeros
 </div>
 <div class="callout-body-container callout-body">
 <p>You may have noticed the final argument for <code>na.action</code> in the model statement.</p>
-<p>The argument <code>na.action = na.exclude</code> provides instructions for how to handle missing data. <code>na.exclude</code> removes the missing data points before proceeding with the analysis. When any obervation-levels model outputs is generated (e.g.&nbsp;predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.</p>
+<p>The argument <code>na.action = na.exclude</code> provides instructions for how to handle missing data. The option <code>na.exclude</code> removes the missing data points before proceeding with the analysis. When any observation-level model outputs is generated (e.g.&nbsp;predictions, residuals), they are padded in the appropriate place to account for missing data. This is handy because it makes it easier to add those results to the original data set if so desired.</p>
 <p>We use the argument <code>na.action = na.exclude</code> as instruction for how to handle missing data: conduct the analysis, adjusting as needed for the missing data, and when prediction or residuals are output, padding them in the appropriate places for missing data so they can be easily merged into the main data set if need be.</p>
 <p>Even when there are no missing data and this step is not necessary, it is a good habit to be in.</p>
 </div>

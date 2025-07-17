@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-67bf6a51e44a5e2fa7691d0f46b78900.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f63a312d724d0c3dbd8c611e3aa6b687.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -387,10 +387,10 @@ window.Quarto = {
 </header>
 
 
-<p>In the previous chapters we have covered how to run linear mixed models for different experiment designs. All of the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called <strong>“longitudinal data”</strong>).</p>
-<p>Studies that involve repeated observations of the exact same experimental units (or subjects) requires a repeated measures component in analysis to properly model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over the different time periods from same subject, we have to model the repeated measures effect while analyzing the main effects.</p>
-<p>In these models, the ‘iid’ assumption (independently and identically distributed) is being violated often, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
-<p>Fitting models with correlated observations requires new libraries including <strong>mmrm</strong> and <strong>nlme</strong>. The <strong>lme4</strong> package allows random effects only. In this chapter, we will analyze the data with repeated measures from different experiment designs including randomized complete block design, split plot, and split-split plot design.</p>
+<p>In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called <strong>“longitudinal data”</strong>).</p>
+<p>Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject, we must model the repeated measures effect when analyzing the main effects.</p>
+<p>In these models, the ‘iid’ assumption (independently and identically distributed) is often violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
+<p>Fitting models with correlated observations requires new libraries, including <strong>mmrm</strong> and <strong>nlme</strong>. The <strong>lme4</strong> package allows random effects only. In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.</p>
 <p>There are several types of covariance structures:</p>
 <table class="caption-top table">
 <colgroup>
@@ -428,9 +428,9 @@ window.Quarto = {
 <p>To read more about selecting appropriate covariance structure based on your data, please refer to this <a href="https://www.ars.usda.gov/ARSUserFiles/80000000/StatisticsGroupWebinars/Appendix%20E%20-%20Selecting%20a%20Covariance%20Structure.pdf">link</a>.</p>
 </div></div><p>The repeated measures syntax in <strong>nlme</strong> follow this convention:</p>
 <p><code>corr = corAR1(value = 0, form = ~ t|g, fixed = FALSE)</code>.</p>
-<p>The argument for ‘value’ is the starting value for iterations (zero, unless you specify something else), and if <code>fixed = FALSE</code> (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for <code>form</code>, <code>~ t</code> or <code>~ t|g</code>, specifying a time covariate <span class="math inline">\(t\)</span> and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use <code>~t|g</code> form, the correlation structure is assumed to apply only to observations within the same grouping level. The covariate for this correlation structure must be a <strong>integer value</strong>. <code>corCompSymm()</code> and <code>corSymm()</code> follow the same argument syntax.</p>
-<p>There are other covariance structures (e.g.&nbsp;<code>corARMA()</code>, <code>corCAR1()</code>), but we have found that <code>corAR1()</code> and <code>corCompSymm()</code> work for most circumstances. Type <code>?cor</code> in an R console for more options and details on the syntax</p>
-<p>For this chapter we will be analyzing using <strong>nlme</strong> and <strong>mmrm</strong> packages. So, let’s start with loading the required libraries for this analysis. These packages have the easiest implementation of heterogenous error structures. While <a href="https://bbolker.github.io/mixedmodels-misc/notes/varmats.html">it is possible</a> to do this with <strong>lme4</strong> is requires extensive comfort programming in <strong>lme4</strong>.</p>
+<p>The argument for ‘value’ is the starting value for iterations (zero, unless you specify something else), and if <code>fixed = FALSE</code> (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for <code>form</code>, <code>~ t</code> or <code>~ t|g</code>, specifying a time covariate <span class="math inline">\(t\)</span> and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use <code>~t|g</code> form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an <strong>integer value</strong>. Similarly, <code>corCompSymm()</code> and <code>corSymm()</code> follow the same argument syntax.</p>
+<p>There are other covariance structures (e.g., <code>corARMA()</code>, <code>corCAR1()</code>), but we have found that <code>corAR1()</code> and <code>corCompSymm()</code> work for most circumstances. Type <code>?cor</code> in an R console for more options and details on the syntax.</p>
+<p>For this chapter, we will be analyzing data using the <strong>nlme</strong> and <strong>mmrm</strong> packages. So, let’s start with loading the required libraries for this analysis. These packages have the easiest implementation of heterogeneous error structures. While <a href="https://bbolker.github.io/mixedmodels-misc/notes/varmats.html">it is possible</a> to do this with <strong>lme4</strong>, but it requires extensive comfort programming in <strong>lme4</strong>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">mmrm</a></li></ul>
 <div class="tab-content">
@@ -454,7 +454,7 @@ window.Quarto = {
 <section id="rcbd-repeated-measures" class="level2 page-columns page-full" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="rcbd-repeated-measures"><span class="header-section-number">13.1</span> RCBD Repeated Measures</h2>
 <p>The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable ‘y’ is the leaf area index assessed in five consecutive weeks on each plot.</p>
-<p>We need to have time as numeric and factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).</p>
+<p>We need to have time as both a numeric and a factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sorghum <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"sorghum.csv"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(varblock),</span>
@@ -579,9 +579,9 @@ Figure&nbsp;13.1: Histogram of the dependent variable.
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The model fitted above doesn’t account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject which is plot (factor variable) in this case.</p>
-<p>By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximate are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit model with both correlation structures and compare models to find out the best fit model.</p>
-<p>In this analysis, time variable is <code>week</code> and it must be numeric.</p>
+<p>The model fitted above doesn’t account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject, which is a plot (factor variable) in this case.</p>
+<p>By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximately are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit a model with both correlation structures and compare models to find out the best fit model.</p>
+<p>In this analysis, the time variable is <code>week</code>, and it must be numeric.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cs1 <span class="ot">&lt;-</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>cs2 <span class="ot">&lt;-</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -591,7 +591,7 @@ Figure&nbsp;13.1: Histogram of the dependent variable.
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>lm2 <span class="ot">&lt;-</span> <span class="fu">update</span>(lm1, <span class="at">corr =</span> cs1)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lm3 <span class="ot">&lt;-</span> <span class="fu">update</span>(lm1, <span class="at">corr=</span> cs2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now let’s compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using <code>anova()</code> or by <code>compare_performance()</code> function from the <strong>performance</strong> library.</p>
+<p>Now let’s compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using <code>anova()</code> or by the <code>compare_performance()</code> function from the <strong>performance</strong> library.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">anova</a></li></ul>
 <div class="tab-content">
@@ -804,15 +804,15 @@ Time variable
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here is a quick step to make sure your fitting model correctly: make sure to have two time variables in your data one being numeric (e.g.&nbsp;‘day’ as number) and other being factor/character(e.g.&nbsp;‘day_factor’ as a factor/character). Where, numeric variable is used for fitting correlation matrix and factor/character variable used in model statement to evaluate the time variable effect on response variable.</p>
+<p>Here is a quick step to ensure you’re fitting model correctly: make sure to have two time variables in your data one being numeric (e.g.&nbsp;‘day’ as number) and the other being factor/character(e.g.&nbsp;‘day_factor’ as a factor/character). Where a numeric variable is used for fitting correlation matrix, and a factor/character variable used in model statement to evaluate the time variable’s effect on the response variable.</p>
 </div>
 </div>
 </section>
 </section>
 <section id="split-plot-repeated-measures" class="level2 page-columns page-full" data-number="13.2">
 <h2 data-number="13.2" class="anchored" data-anchor-id="split-plot-repeated-measures"><span class="header-section-number">13.2</span> Split Plot Repeated Measures</h2>
-<p>Recall, we have evaluated split plot design <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>. In this example we will use the same methodology used in Chapter 5 and update it with repeated measures component.</p>
-<p>Next, let’s load an alfalfa intercropping data set. This was from an irrigation and intercropping experiment was conducted in southern Idaho. Irrigation is the main plot, intercropping is the split plot, and the in-season alfalfa cutting (“cutting”) is the unit for repeated measures.</p>
+<p>Recall that we evaluated the split plot design in <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>. In this example, we will use the same methodology as in Chapter 7 and update it with a repeated measures component.</p>
+<p>Next, let’s load an alfalfa intercropping data set. This data is from an irrigation and intercropping experiment which was conducted in southern Idaho. Irrigation is the main plot, intercropping is the split plot, and the in-season alfalfa cutting (“cutting”) is the unit for repeated measures.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>alfalfa <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/alfalfa_intercropping.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -877,13 +877,13 @@ Time variable
 <p>We will now convert the fertilizer and rep to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>For <code>lme()</code>, independent variables in a character/factor form works fine. But, for <code>mmrm()</code> independent variables must be a factor. Thus, for consistency, we will be using independent variables in factor class.</p>
+<p>For <code>lme()</code>, independent variables in a character/factor form work fine. But, for <code>mmrm()</code>, independent variables must be a factor. Thus, for consistency, we will use independent variables in factor class.</p>
 </div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>alfalfa <span class="ot">&lt;-</span> alfalfa <span class="sc">|&gt;</span> </span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cut_num =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(cutting))) <span class="sc">|&gt;</span> </span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">"cutting"</span>, <span class="st">"irrigation"</span>, <span class="st">"plot"</span>, <span class="st">"block"</span>), as.factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To fit the model, we first need to convert Variety, Fertilizer, and Sample_time to factors. In addition, we need to create a variable for each subject which is plot in this case and contains a unique value for each plot. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be factor or numeric but the time (it could be year, or sample_time) has to be a factor.</p>
+<p>To fit the model, we first need to convert Variety, Fertilizer, and Sample_time to factors. In addition, we need to create a variable for each subject which is a ‘plot’ in this case and contains a unique value for each ‘plot’. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be either a factor or a numeric but the time (could be year, or sample_time) must be a factor.</p>
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
@@ -942,7 +942,7 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 <section id="model-fit" class="level3" data-number="13.2.2">
 <h3 data-number="13.2.2" class="anchored" data-anchor-id="model-fit"><span class="header-section-number">13.2.2</span> Model fit</h3>
 <p>This data can be analyzed either using <code>nlme</code> or <code>mmrm</code>.</p>
-<p>Let’s say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used <code>lme()</code> from <strong>nlme</strong> package to fit the model. In this example, along with <code>nlme()</code> we will also <code>mmrm()</code> function from the <strong>mmrm</strong> package. In addition, instead of <code>summary()</code> function we will use <code>tidy()</code> function from the <strong>broom.mixed</strong> package to look at estimates of mixed and random effects. This will generate a tidy workflow in particular by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.</p>
+<p>Let’s say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used the <code>lme()</code> from <strong>nlme</strong> package to fit the model. In this example, along with <code>nlme()</code> we will also <code>mmrm()</code> function from the <strong>mmrm</strong> package. Instead of the <code>summary()</code> function we will use <code>tidy()</code> function from the <strong>broom.mixed</strong> package to look at estimates of mixed and random effects. This will generate a tidy workflow particularly by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> cut_num<span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -954,7 +954,7 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 </section>
 <section id="check-model-assumptions-1" class="level3" data-number="13.2.3">
 <h3 data-number="13.2.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">13.2.3</span> Check Model Assumptions</h3>
-<p>We will use <code>check_model()</code> from <strong>performance</strong> package to evaluate the model fitness of model fitted using nlme (mod1). However, the <code>mmrm()</code> model class doesn’t work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.</p>
+<p>We will use <code>check_model()</code> from the <strong>performance</strong> package to evaluate the model fitness of model fitted using nlme (mod1). However, the <code>mmrm()</code> model class doesn’t work with performance package, so we will evaluate the model diagnostics by plotting the residuals using base R functions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(fit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -965,7 +965,7 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 </div>
 </div>
 </div>
-<p>These diagnostic plots look fine. The linearity and homogeneity of variance plots show no trend. The normal Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.</p>
+<p>These diagnostic plots look fine. The linearity and homogeneity of variance plots show no trend. The Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.</p>
 </section>
 <section id="inference-1" class="level3 page-columns page-full" data-number="13.2.4">
 <h3 data-number="13.2.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">13.2.4</span> Inference</h3>
@@ -1028,7 +1028,7 @@ Confidence level used: 0.95 </code></pre>
 </section>
 <section id="ssp-rm" class="level2 page-columns page-full" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="ssp-rm"><span class="header-section-number">13.3</span> Split-split Plot Repeated Measures</h2>
-<p>Recall, we have evaluated the split-split experiment design in <a href="split-split-plot-design.qmd"><strong>Chapter 8</strong></a>, where we had a one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example we will be adding a repeated measures component to the split-split plot design.</p>
+<p>Recall, we have evaluated the split-split experiment design in <a href="split-split-plot-design.qmd"><strong>Chapter 8</strong></a>, where we had one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example,a repeated measures component will be added to the split-split plot model.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>phos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"split_split_repeated.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1167,7 +1167,7 @@ distribution of dependent variables
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here note that we observed uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It’s important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks <em>as expected</em>, a judgement that requires some knowledge of the experiment (this was Julia Piaskowski’s PhD research). In this case, the time points, PT1 and PT2, reflect early wheat growth stages (tillering and jointing, respectively), and the final time point is senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model fitting process when deciding if a non-normal distribution is appropriate for the data.</p>
+<p>Note that we observed an uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It’s important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks <em>as expected</em>, a judgment that requires some knowledge of the experiment (this was Julia Piaskowski’s PhD research). In this case, the time points, PT1 and PT2, correspond to early wheat growth stages (tillering and jointing, respectively), and the final time point represents senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model-fitting process when deciding if a non-normal distribution is appropriate for the data.</p>
 </div>
 </div>
 </section>
@@ -1204,7 +1204,7 @@ distribution of dependent variables
 <pre><code>OK: Error variance appears to be homoscedastic (p &gt; .999).</code></pre>
 </div>
 </div>
-<p>These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a a difference in variance for each time time point. This addressed in the <a href="../chapters/variance-components.html">chapter on variance components</a>.</p>
+<p>These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a difference in variance for each time point. This issue is addressed in the <a href="../chapters/variance-components.html">chapter on variance components</a>.</p>
 </section>
 <section id="inference-2" class="level3" data-number="13.3.4">
 <h3 data-number="13.3.4" class="anchored" data-anchor-id="inference-2"><span class="header-section-number">13.3.4</span> Inference</h3>

@@ -20,42 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
 }
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
 }
-</style>
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -77,7 +62,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-67bf6a51e44a5e2fa7691d0f46b78900.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f63a312d724d0c3dbd8c611e3aa6b687.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -343,7 +328,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#random-slopes-models" id="toc-random-slopes-models" class="nav-link" data-scroll-target="#random-slopes-models"><span class="header-section-number">3.2.1</span> Random slopes models</a></li>
   </ul></li>
-  <li><a href="#formula-notation" id="toc-formula-notation" class="nav-link" data-scroll-target="#formula-notation"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</a></li>
+  <li><a href="#r-formula-syntax-for-random-and-fixed-effects" id="toc-r-formula-syntax-for-random-and-fixed-effects" class="nav-link" data-scroll-target="#r-formula-syntax-for-random-and-fixed-effects"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/background.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -374,7 +359,7 @@ window.Quarto = {
 <p>Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. These are also called “multilevel or”hierarchical” models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.</p>
 <p>This tutorial concerns (general) linear mixed models (sometimes abbreviated as “LMM”) where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of <em>generalized</em> linear mixed models (sometimes abbreviated “GLMM”), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.</p>
 <p><em>Fixed effects</em> represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g.&nbsp;levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in traditional regression techniques like ordinary least squares.</p>
-<p><em>Random effects</em> are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are especially useful when we have (1) many levels (e.g., many species or blocks), (2) relatively little data on each level (although we need multiple samples from most of the levels), and/or (3) uneven sampling across levels. The general thinking is that random effects represent a sample of a population you want to make inference on.</p>
+<p><em>Random effects</em> are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. The general thought is that random effects represent a sample of a population you want to make inference on.</p>
 <p>Please read this section and refer back to if when you forget what these terms mean.</p>
 <div id="tbl-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -384,8 +369,8 @@ Table&nbsp;3.1: Terms definitions
 <div aria-describedby="tbl-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 26%">
-<col style="width: 73%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -460,22 +445,17 @@ Table&nbsp;3.1: Terms definitions
 </div></div><p>Anecdotally, these models appear to be uncommon in agronomic trials.</p>
 </section>
 </section>
-<section id="formula-notation" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="formula-notation"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</h2>
-<p>Formula notation is often used in the R syntax for linear models. It follows this convention: <span class="math inline">\(Y ~ X\)</span>, where <span class="math inline">\(Y\)</span> is the dependent variable (the response) and <span class="math inline">\(X\)</span> is/are the independent variable(s) that is, the experimental treatments or interventions.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>my_formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(Y <span class="sc">~</span> treatment1 <span class="sc">+</span> treatment2)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(my_formula)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "formula"</code></pre>
-</div>
-</div>
-<p>The package ‘<strong>lme4</strong>’ has some additional conventions regarding the formula. Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of grouping factors are denoted <code>g</code>, <code>g1</code>, and <code>g2</code>, and covariates as <code>x</code>.</p>
+<section id="r-formula-syntax-for-random-and-fixed-effects" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="r-formula-syntax-for-random-and-fixed-effects"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</h2>
+<p>The formula notation used for the linear mixed models is as follows:</p>
+<p><code>model_formula &lt;- formula(Y ~ X + (1|R))</code></p>
+<p>In this formula, <span class="math inline">\(Y\)</span> is the response variable (or dependent variable); <span class="math inline">\(X\)</span> represents the independent variable(s) such as treatment (fixed effect), and <span class="math inline">\(R\)</span> denotes the random grouping effect (e.g.&nbsp;block).</p>
+<p>Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of random grouping factors are denoted <code>r</code>, <code>r1</code>, and <code>r2</code>, and covariates as <code>x</code>. The table presented below from Bates et al. <span class="citation" data-cites="lme4">(<a href="../references.html#ref-lme4" role="doc-biblioref">2015</a>)</span> provide several exmples for fitting random effect structures.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 31%">
-<col style="width: 44%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -486,36 +466,41 @@ Table&nbsp;3.1: Terms definitions
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>(1|g)</code></td>
-<td><code>1 + (1|g)</code></td>
+<td><code>(1|r)</code></td>
+<td><code>1 + (1|r)</code></td>
 <td>Random intercept with a fixed mean</td>
 </tr>
 <tr class="even">
-<td><code>(1|g1/g2)</code></td>
-<td><code>(1| 1) + (1|g1:g2)</code></td>
-<td>Intercept varying among g1 and g2 within g1</td>
+<td><code>(1|r1/r2)</code></td>
+<td><code>(1| 1) + (1|r1:r2)</code></td>
+<td>Intercept varying among r1 and r2 within r1</td>
 </tr>
 <tr class="odd">
-<td><code>(1|g1) + (1|g2)</code></td>
-<td><code>1 + (1|g1) + (1|g2)</code></td>
-<td>Intercept varying among g1 and g2</td>
+<td><code>(1|r1) + (1|r2)</code></td>
+<td><code>1 + (1|r1) + (1|r2)</code></td>
+<td>Intercept varying among r1 and r2</td>
 </tr>
 <tr class="even">
-<td><code>x + (x|g)</code></td>
-<td><code>1 + x + (1 + x|g)</code></td>
+<td><code>x + (x|r)</code></td>
+<td><code>1 + x + (1 + x|r)</code></td>
 <td>Correlated random intercept and slope</td>
 </tr>
 <tr class="odd">
-<td><code>x + (x||g)</code></td>
-<td><code>1 + x + (1|g) + (0 + x|g)</code></td>
+<td><code>x + (x||r)</code></td>
+<td><code>1 + x + (1|r) + (0 + x|r)</code></td>
 <td>Uncorrelated random intercept and slope</td>
 </tr>
 </tbody>
 </table>
-<p>The first example, <code>(1|g)</code> suffices for most mixed models and is the only structure used in this guide.</p>
-<p>The biggest advantage of mixed models is their incredible flexibility. They handle clustered individuals as well as repeated measures. They handle crossed as well as nested random factors. The biggest disadvantage of mixed models, at least for someone new to them, is their incredible flexibility. It’s easy to mis-specify a mixed model, and this is a place where a little knowledge can be dangerous.</p>
+<p>The first example, <code>(1|r)</code> suffices for most mixed models and is the only structure used in this guide.</p>
+<p>The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-lme4" class="csl-entry" role="listitem">
+Bates, Douglas, Martin Mächler, Ben Bolker, and Steve Walker. 2015. <span>“Fitting Linear Mixed-Effects Models Using <span class="nocase">lme4</span>.”</span> <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a>.
+</div>
+</div>
 </section>
 
 
