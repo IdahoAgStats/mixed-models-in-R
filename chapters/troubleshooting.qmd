@@ -7,7 +7,7 @@ editor:
     wrap: sentence
 ---
 
-In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs using examples we have already tested and know work. However, it is likely that you will eventually have issues in fitting mixed models in R. This section discusses common issues and errors that might come up when implementing mixed models.
+In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs using examples that we have already tested and know work. However, it is likely that you will eventually have issues in fitting mixed models in R. This section discusses common problems and errors that might come up when implementing mixed models.
 
 ## Common errors we encounter
 
@@ -16,15 +16,15 @@ In this tutorial, we have demonstrated how to use linear mixed models for differ
 
 ```boundary (singular) fit: see ?isSingular```
 
-This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.
+This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are minimal and cannot be distinguished from zero.
 
-This error occurs because one of the variance component is approximately zero. If a model is "singular", this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer's precision will allow. 
+This error occurs because one of the variance components is approximately zero. If a model is "singular", this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer's precision allow. 
 
 There is no single solution for this problem. Here are the possible solutions that you can try:
 
 First, look at the summary of the fitted model using `summary()` function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.
 
-Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` in **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
+Another option is to include the block as a fixed effect and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` from the **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
 
 2. **fixed-effect model matrix is rank deficient**
 
@@ -33,7 +33,7 @@ Error in MEestimate(lmeSt, grps) :
   Singularity in backsolve at level 0, block 1
 ```
 
-This error from **nlme** is indicating a rank deficient model that cannot be estimated as it is currently specified.
+This error from **nlme** indicates a rank-deficient model that cannot be estimated as it is currently specified.
 
 ``` 
 fixed-effect model matrix is rank deficient so dropping 1 column / coefficient
@@ -42,8 +42,8 @@ boundary (singular) fit: see help('isSingular')
 
 If you are getting a rank deficiency warning in `lmer()` (from the **lme4** package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.
 
-Here are methods to diagnose and fix it:
-- check rank of model matrix using `model.matrix()` function. If the rank is less than the number of columns, the model matrix is deficient.
+Here are the methods to diagnose and fix it:
+- check the rank of model matrix using `model.matrix()` function. If the rank is less than the number of columns, the model matrix is deficient.
 
 
 3.  **Model failed to converge**. 
@@ -55,9 +55,9 @@ There are several different error messages for non-convergence, depending on wha
 
 ```Hessian that is not positive definite```
 
-There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When the difference becomes in estimates beacome substantially small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.
+There are several causes for the lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to those from the previous iteration. When the difference between estimates becomes substantially small, modelling packages declare that the convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.
 
-Running this code in an R console will bring up a useful help file with details on how to address convergence issues.
+Running this code in an R console will display a useful help file with details on how to address convergence issues.
 
 ```{r, eval=FALSE}
 ?convergence
@@ -86,11 +86,9 @@ model2 <- update(model1, control = lmerControl(optCtrl = list(maxfun = 100000)))
 
 ### Other Tools
 
-Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well. 
+Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and ensure it looks like what you expect, and that your expectations of the variables align with their reperesentation in R. 
 
-
-
-Having an understanding of the moving parts of **lme4** and how they each contribute to model fit can help. A help ful **lme4** control structures for model fitting can be accessed via `
+Having an understanding of the moving parts of **lme4** and how they each contribute to model fit can help. A helpful **lme4** control structures for model fitting can be accessed via `
 ?lmerControl`. 
 
 Posit (née RStudio) has published a [rather useful guide](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html){.external target="_blank"} for advanced troubleshooting of convergence issues in **lme4**. Phillip Alday wrote a [detailed tutorial](https://rpubs.com/palday/lme4-singular-convergence){.external target="_blank"} on **lme4** convergence warnings. 

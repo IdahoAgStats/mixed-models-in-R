@@ -4,7 +4,7 @@ title: Marginal Means & Contrasts
 
 ## Background
 
-To start off with, we need to define estimated marginal means. Estimated marginal means are defined as marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
+To start off with, we need to define estimated marginal means. Estimated marginal means are defined as the marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
 
 The **emmeans** package is one of the most commonly used package in R for determining marginal means. This package provides methods for obtaining marginal means (also known as **least-squares means**). The emmeans package is one of several alternatives that facilitate the application post-hoc methods and contrast analysis. It is a relatively recent replacement for the lsmeans package with which some R users may be familiar. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html){.external target="_blank"} and works with a wide range of model objects. 
 
@@ -70,7 +70,7 @@ Now that we have fitted a linear mixed model (model1) and it meets the model ass
 
 #### Main effects
 
-The main effects in model1 were V and N. we will start by looking at the estimated means of V and N main effects.
+The main effects in model1 were V and N. We will start by looking at the estimated means of the V and N main effects.
 ```{r, warning=FALSE}
 m1 <- emmeans(model1, ~V, level = 0.95)
 m1
@@ -98,7 +98,7 @@ The marginal means (m3 and m4) gives the results for V x N interaction effect bu
 
 :::{.callout-note}
 Here, note that we estimated marginal means in two ways: 
-`V*N` estimates the marginal means for each combination, and when we do pairwise comparison on these, all combinations are compared to one another simultaneously. 
+`V*N` estimates the marginal means for each combination, and when we do pairwise comparisons on these, all combinations are compared to one another simultaneously. 
 
 `V|N` estimates the marginal means for each V at a given level of N. When we do pairwise comparison on this, V groups are compared with each other at a given level of N, not across all levels of N. 
 :::
@@ -114,7 +114,7 @@ pairs(m1, adjust = "tukey")
 ```{r}
 pairs(m2)
 ```
-Here, if we look at the results from code chunk above, it's easy to interpret the results from `pairs()` function in case of variety comparison because there were only 3 groups. But it's a little confusing in the case of Nitrogen treatments, where we had 4 groups. We can further simplify it by using custom contrasts.
+Here, if we look at the output from code chunk above, it's relatively easy to interpret the results from `pairs()` function in case of variety comparison because there were only 3 groups. But it's a little confusing in the case of Nitrogen treatments, where we had 4 groups. We can further simplify it by using custom contrasts.
 
 ::: callout-note
 ## `pairs()`
@@ -136,7 +136,7 @@ A2 = c(0, 1, 0, 0)
 A3 = c(0, 0, 1, 0)
 A4 = c(0, 0, 0, 1)
 ```
-These vectors (A1, A2, A3, A4) represent each nitrogen treatment in the order as presented in the m2 emmeans object. A1, A2, A3, and A4 vectors represents 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 cwt nitrogen treatments, respectively. 
+These vectors (A1, A2, A3, A4) represent each nitrogen treatment in the order as presented in the m2 emmeans object. A1, A2, A3, and A4 vectors represent 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 cwt nitrogen treatments, respectively. 
 
 The next step is to create custom contrasts for comparing '0.0cwt' (A1) treatment to  '0.2cwt' (A2), '0.4cwt' (A3), and '0.6cwt' (A4) treatments. 
 These contrasts can be evaluated as shown below:
@@ -147,14 +147,14 @@ contrast(m2, method = list(A1 - A3) )
 contrast(m2, method = list(A1 - A4) )
 
 ```
-Here the output shows the difference in mean yield between the control and 3 N treatments. The results shows that yield was significantly higher with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.
+The output shows the difference in mean yield between the control and 3 N treatments. The results shows that yield was significantly higher with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.
 
 ::: {.callout-tip title="contrast() vs pairs()"}
-Using custom contrast() is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
+Using custom 'contrast()' is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
 :::
 
 
-In addition to these conventional custom contrast options, we can evaluate a few contrasts using the built-in functions in the **emmeans** package. This includes, evaluating the treatments to control or estimating custom contrast to compare one treatment level to all other groups.
+In addition to these custom contrast options, we can also use the built-in functions in the **emmeans** package to compare treatments as per our analysis objective. For example, comparing treatments to control or to compare one treatment level to all other groups.
 
 We will start with running 'm1' emmeans object.
 ```{r}
@@ -190,13 +190,13 @@ contrast(m2, "consec")
 ```
 
 ## Compact letter displays
-Compact letter displays (CLDs) is a most widely used tool by researchers in various domains to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. For example, using CLD when comparing many treatment groups can result in the misinterpretation of the data. Thus, it's a good practice to carefully examine study goals and your data before implementing CLDs. 
+Compact letter display (CLDs) is the most widely used tool by researchers in various domains to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. For example, using CLD when comparing multiple treatment groups can lead to the misinterpretation of the data. Thus, it's a good practice to carefully examine study goals and your data before implementing CLDs. 
 
 The R package `multcompView` (Graves et al., [-@multcompView]) can be used in R for creating a display where any two means associated with same symbol are not statistically different.
 
-The `cld()` function from the **multcomp** package is used to implement CLDs in the form of symbols or letters. The `emmeans` package provides a emmGrid objects for cld() method. 
+The `cld()` function from the **multcomp** package is used to implement CLDs in the form of symbols or letters. 
 
-Let's start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this. In the output below, groups sharing a letter in the $.group$ are not statistically different from each other.
+Let's start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this analysis. In the output below, groups sharing a letter in the $.group$ are not statistically different from each other.
 
 ```{r}
 cld(m1, alpha=0.05, Letters=letters)
@@ -213,13 +213,13 @@ cld3
 ```
 Interpretation of these letters is: we have a significant difference in grain yield with varieties victory, with N treatments of 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 wt. Grain yield for Golden rain variety was significantly lower with 0.0 cwt N treatment compared to the 0.2 cwt, 0.4 cwt, and 0.6 wt treatments.
 
-In the data set we used for demonstration here, we had equal number of observations in each group. However, this might not be a case every time as it is common to have missing values in the data set. In such cases, readers usually struggle to interpret significant differences among groups. For example, estimated means of two groups are substantially different but they are no statistically different. This happens typically when SE of one group is large due to its small sample size, so it's hard for it to be statistically different from other groups. In such cases, we can use alternatives to CLDs as shown below.
+In the data set we used for demonstration here, we had equal number of observations in each group. However, this might not be a case every time as it is common to have missing values in the data set. In such cases, readers usually struggle to interpret significant differences among groups. For example, the estimated means of two groups are substantially different but they are not statistically different. This happens typically when SE of one group is large due to its small sample size, so it's hard for it to be statistically different from other groups. In such cases, we can use alternatives to CLDs as shown below.
 
 ## Alternatives to CLD
 
 1. Equivalence test 
 
-Let's assume, based on subject matter considerations, if the mean yield of two groups differ by less than 30 it can be considered equivalent. Let's try an equivalence test on the CLDs of nitrogen treatment emmeans (m2).
+Let's assume, based on subject matter considerations, if the mean yield of two groups differ by less than 30 it can be considered equivalent. Let's conduct an equivalence test on the CLDs of nitrogen treatment emmeans (m2).
 ```{r}
 cld(m2, delta = 30, adjust = "none")
 ```
@@ -295,7 +295,7 @@ If you want to read more about emmeans, please refer to vignettes on this [CRAN 
 :::
 
 ## Conclusion
-Be cautious with the terms “significant” and “non-significant”, and don’t ever interpret a “non-significant” result as saying that there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P values for appropriately chosen families of comparisons or contrasts.
+Be cautious with the terms “significant” and “non-significant”, and don’t interpret a “non-significant” result as there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P-values for appropriately chosen families of comparisons or contrasts.
 
 ::: {.callout-note}
 ## P values, “significance”, and recommendations
