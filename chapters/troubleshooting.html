@@ -338,36 +338,36 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
 </header>
 
 
-<p>In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs using examples we have already tested and know work. However, it is likely that you will eventually have issues in fitting mixed models in R. This section discusses common issues and errors that might come up when implementing mixed models.</p>
+<p>In this tutorial, we have demonstrated how to use linear mixed models for different experiment designs using examples that we have already tested and know work. However, it is likely that you will eventually have issues in fitting mixed models in R. This section discusses common problems and errors that might come up when implementing mixed models.</p>
 <section id="common-errors-we-encounter" class="level2" data-number="15.1">
 <h2 data-number="15.1" class="anchored" data-anchor-id="common-errors-we-encounter"><span class="header-section-number">15.1</span> Common errors we encounter</h2>
 <ol type="1">
 <li><strong>Singular fit error</strong></li>
 </ol>
 <p><code>boundary (singular) fit: see ?isSingular</code></p>
-<p>This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are very small and cannot be distinguished from zero.</p>
-<p>This error occurs because one of the variance component is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision will allow.</p>
+<p>This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are minimal and cannot be distinguished from zero.</p>
+<p>This error occurs because one of the variance components is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision allow.</p>
 <p>There is no single solution for this problem. Here are the possible solutions that you can try:</p>
 <p>First, look at the summary of the fitted model using <code>summary()</code> function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.</p>
-<p>Or other option is to include the block as a fixed effects and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> in <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
+<p>Another option is to include the block as a fixed effect and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> from the <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
 <ol start="2" type="1">
 <li><strong>fixed-effect model matrix is rank deficient</strong></li>
 </ol>
 <pre><code>Error in MEestimate(lmeSt, grps) :
   Singularity in backsolve at level 0, block 1</code></pre>
-<p>This error from <strong>nlme</strong> is indicating a rank deficient model that cannot be estimated as it is currently specified.</p>
+<p>This error from <strong>nlme</strong> indicates a rank-deficient model that cannot be estimated as it is currently specified.</p>
 <pre><code>fixed-effect model matrix is rank deficient so dropping 1 column / coefficient
 boundary (singular) fit: see help('isSingular')</code></pre>
 <p>If you are getting a rank deficiency warning in <code>lmer()</code> (from the <strong>lme4</strong> package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.</p>
-<p>Here are methods to diagnose and fix it: - check rank of model matrix using <code>model.matrix()</code> function. If the rank is less than the number of columns, the model matrix is deficient.</p>
+<p>Here are the methods to diagnose and fix it: - check the rank of model matrix using <code>model.matrix()</code> function. If the rank is less than the number of columns, the model matrix is deficient.</p>
 <ol start="3" type="1">
 <li><strong>Model failed to converge</strong>.</li>
 </ol>
 <p>There are several different error messages for non-convergence, depending on what happened:</p>
 <p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
 <p><code>Hessian that is not positive definite</code></p>
-<p>There are several causes for lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to the estimates from the previous iteration. When the difference becomes in estimates beacome substantially small, modelling packages declare that convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.</p>
-<p>Running this code in an R console will bring up a useful help file with details on how to address convergence issues.</p>
+<p>There are several causes for the lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to those from the previous iteration. When the difference between estimates becomes substantially small, modelling packages declare that the convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.</p>
+<p>Running this code in an R console will display a useful help file with details on how to address convergence issues.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -390,8 +390,8 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 </ul>
 <section id="other-tools" class="level3" data-number="15.1.1">
 <h3 data-number="15.1.1" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">15.1.1</span> Other Tools</h3>
-<p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and make sure it looks like what you expect, and that your expectations of the variables are how R seem them as well.</p>
-<p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A help ful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
+<p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and ensure it looks like what you expect, and that your expectations of the variables align with their reperesentation in R.</p>
+<p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A helpful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
 <p>Posit (née RStudio) has published a <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html" class="external" target="_blank">rather useful guide</a> for advanced troubleshooting of convergence issues in <strong>lme4</strong>. Phillip Alday wrote a <a href="https://rpubs.com/palday/lme4-singular-convergence" class="external" target="_blank">detailed tutorial</a> on <strong>lme4</strong> convergence warnings.</p>
 
 
