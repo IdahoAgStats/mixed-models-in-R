@@ -342,8 +342,8 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#define-the-research-questions" id="toc-define-the-research-questions" class="nav-link active" data-scroll-target="#define-the-research-questions"><span class="header-section-number">4.1</span> Define the Research Question(s)</a></li>
-  <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</a>
+  <li><a href="#step-1-define-the-research-questions" id="toc-step-1-define-the-research-questions" class="nav-link active" data-scroll-target="#step-1-define-the-research-questions"><span class="header-section-number">4.1</span> Step 1: Define the Research Question(s)</a></li>
+  <li><a href="#step-2-conduct-data-integrity-checks" id="toc-step-2-conduct-data-integrity-checks" class="nav-link" data-scroll-target="#step-2-conduct-data-integrity-checks"><span class="header-section-number">4.2</span> Step 2: Conduct data integrity checks</a>
   <ul class="collapse">
   <li><a href="#check-structure-of-the-data" id="toc-check-structure-of-the-data" class="nav-link" data-scroll-target="#check-structure-of-the-data"><span class="header-section-number">4.2.1</span> 1. Check structure of the data</a></li>
   <li><a href="#inspect-the-independent-variables" id="toc-inspect-the-independent-variables" class="nav-link" data-scroll-target="#inspect-the-independent-variables"><span class="header-section-number">4.2.2</span> 2. Inspect the independent variables</a></li>
@@ -351,13 +351,16 @@ window.Quarto = {
   <li><a href="#inspect-the-dependent-variable-and-all-over-continuous-variables" id="toc-inspect-the-dependent-variable-and-all-over-continuous-variables" class="nav-link" data-scroll-target="#inspect-the-dependent-variable-and-all-over-continuous-variables"><span class="header-section-number">4.2.4</span> 4. Inspect the dependent variable and all over continuous variables</a></li>
   <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps"><span class="header-section-number">4.2.5</span> Next Steps</a></li>
   </ul></li>
-  <li><a href="#model-fitting---formula-syntax-and-expectations" id="toc-model-fitting---formula-syntax-and-expectations" class="nav-link" data-scroll-target="#model-fitting---formula-syntax-and-expectations"><span class="header-section-number">4.3</span> Model fitting - Formula syntax and expectations</a></li>
-  <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">4.4</span> Check model assumptions</a>
+  <li><a href="#step-3-fit-the-model" id="toc-step-3-fit-the-model" class="nav-link" data-scroll-target="#step-3-fit-the-model"><span class="header-section-number">4.3</span> Step 3: Fit the Model</a>
+  <ul class="collapse">
+  <li><a href="#notes-on-formula-syntax-and-expectations" id="toc-notes-on-formula-syntax-and-expectations" class="nav-link" data-scroll-target="#notes-on-formula-syntax-and-expectations"><span class="header-section-number">4.3.1</span> Notes on formula syntax and expectations</a></li>
+  </ul></li>
+  <li><a href="#step-4-check-model-assumptions" id="toc-step-4-check-model-assumptions" class="nav-link" data-scroll-target="#step-4-check-model-assumptions"><span class="header-section-number">4.4</span> Step 4: Check model assumptions</a>
   <ul class="collapse">
   <li><a href="#original-method" id="toc-original-method" class="nav-link" data-scroll-target="#original-method"><span class="header-section-number">4.4.1</span> Original method</a></li>
   <li><a href="#new-iid-checks" id="toc-new-iid-checks" class="nav-link" data-scroll-target="#new-iid-checks"><span class="header-section-number">4.4.2</span> New Method</a></li>
   </ul></li>
-  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">4.5</span> Inference</a></li>
+  <li><a href="#step-5-conduct-inference" id="toc-step-5-conduct-inference" class="nav-link" data-scroll-target="#step-5-conduct-inference"><span class="header-section-number">4.5</span> Step 5: Conduct inference</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/model-flow.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -394,7 +397,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The steps explained below were applied to all the chapters.</p>
+<p>The steps explained below were applied to all example analyses.</p>
 </div>
 </div>
 <p>Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:</p>
@@ -415,8 +418,8 @@ Note
 </div>
 </div>
 </div>
-<section id="define-the-research-questions" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="define-the-research-questions"><span class="header-section-number">4.1</span> Define the Research Question(s)</h2>
+<section id="step-1-define-the-research-questions" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="step-1-define-the-research-questions"><span class="header-section-number">4.1</span> Step 1: Define the Research Question(s)</h2>
 <p>It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. This was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a prioject and when a graduate student eventually implements the experiment. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:</p>
 <blockquote class="blockquote">
 <p>We want to know how much barley yield change as the result of this new fertilizer source compared to another source.</p>
@@ -433,8 +436,8 @@ Note
 <p>The first two examples are asking for specific inference on the estimated effects of a particular intervention. The third example is a hypothesis test, and the fourth example is also inferential, but focused on variance instead of point estimates.</p>
 <p>For example, We conducted a randomized field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments. The next step is to identify the dependent variable (yield), and the fixed effects (treatment) and random effects (replications) in the experiment design.</p>
 </section>
-<section id="data-integrity-checks" class="level2 page-columns page-full" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">4.2</span> Data integrity checks</h2>
+<section id="step-2-conduct-data-integrity-checks" class="level2 page-columns page-full" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="step-2-conduct-data-integrity-checks"><span class="header-section-number">4.2</span> Step 2: Conduct data integrity checks</h2>
 <p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
 <section id="check-structure-of-the-data" class="level3 page-columns page-full" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="check-structure-of-the-data"><span class="header-section-number">4.2.1</span> 1. Check structure of the data</h3>
@@ -519,8 +522,10 @@ Missingness versus Zeros
 <p>If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.</p>
 </section>
 </section>
-<section id="model-fitting---formula-syntax-and-expectations" class="level2 page-columns page-full" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="model-fitting---formula-syntax-and-expectations"><span class="header-section-number">4.3</span> Model fitting - Formula syntax and expectations</h2>
+<section id="step-3-fit-the-model" class="level2 page-columns page-full" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="step-3-fit-the-model"><span class="header-section-number">4.3</span> Step 3: Fit the Model</h2>
+<section id="notes-on-formula-syntax-and-expectations" class="level3 page-columns page-full" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="notes-on-formula-syntax-and-expectations"><span class="header-section-number">4.3.1</span> Notes on formula syntax and expectations</h3>
 <p>In this guide, we use <strong>lme4</strong> and <strong>nlme</strong> packages to fit linear mixed models. These are similar packages that follow a similar framework and syntax. The general framework for <code>lmer()</code> and <code>lme()</code> models is to specify the response variable, fixed factors, and random factors and follow the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html" class="external" target="_blank">R generic function</a> for <code>formula()</code>. For this demonstration, let’s assume the dependent variable is “yield”, “trt” is a fixed effect and “block” is a random effect.</p>
 <p>The code below shows the R syntax for a mixed model with one fixed and one random effect:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -561,8 +566,9 @@ Missingness versus Zeros
 </div>
 </div>
 </section>
-<section id="check-model-assumptions" class="level2 page-columns page-full" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">4.4</span> Check model assumptions</h2>
+</section>
+<section id="step-4-check-model-assumptions" class="level2 page-columns page-full" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="step-4-check-model-assumptions"><span class="header-section-number">4.4</span> Step 4: Check model assumptions</h2>
 <p>Linear mixed models rely on linearity, independence, normality, homoscedasticity of residuals. Violating these assumptions can lead to biased estimates, inefficient inference, and convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -653,8 +659,8 @@ Note
 </div>
 </section>
 </section>
-<section id="inference" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="inference"><span class="header-section-number">4.5</span> Inference</h2>
+<section id="step-5-conduct-inference" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="step-5-conduct-inference"><span class="header-section-number">4.5</span> Step 5: Conduct inference</h2>
 <p>After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using <code>anova()</code> function or we can estimate marginal means using <code>emmeans()</code> function from the <strong>emmeans</strong> package. We can also run a post-hoc comparison to evaluate the pairwise comparison or contrasts using estimated means.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">

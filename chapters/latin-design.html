@@ -372,22 +372,21 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="background"><span class="header-section-number">11.1</span> Background</h2>
-<p>In Latin Square design, two blocking factors are are assigned to the rows and columns, respectively of the square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all ‘<strong>t</strong>’ treatments appears only once in each row and column and number of replications is equal to number of treatments.</p>
+<p>Latin square design is a spatial adjustment techniquement that assumes a row-by-column layout for the experimental units. Two blocking factors are are assigned, one to the rows and one for the columns of a square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all ‘<strong>t</strong>’ treatments appears only once in each row and column and number of replications is equal to number of treatments.</p>
 <p>Advantages of Latin square design are:</p>
 <ol type="1">
-<li><p>The design is particularly appropriate for comparing <strong><em>t</em></strong> treatment means in the presence of two sources of variation (row &amp; column), each measured at <strong><em>t</em></strong> levels.</p></li>
-<li><p>Easy to analyze.</p></li>
+<li>The design is particularly appropriate for comparing <strong><em>t</em></strong> treatment means in the presence of two sources of variation (row &amp; column), each measured at <strong><em>t</em></strong> levels.</li>
 </ol>
 <p>Disadvantages:</p>
 <ol type="1">
-<li><p>A Latin square can be constructed for any value of <strong><em>t</em></strong>, however, it is best suited for comparing <em>t</em> treatments when 5≤ <strong><em>t</em></strong>≤ 10.</p></li>
+<li><p>A Latin square can be constructed for any value of <strong><em>t</em></strong>, however, it is best suited for comparing <em>t</em> treatments when <span class="math inline">\(5≤ t ≤ 10\)</span>.</p></li>
 <li><p>Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.</p></li>
 <li><p>There must be no interaction of rows and columns with treatment effects.</p></li>
 </ol>
 <p>The statistical model for the Latin square design:</p>
 <p><span class="math inline">\(Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}\)</span></p>
 <p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i\)</span> represents treatment effect, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column-specific effects.</p>
-<p>Assumptions of this design includes normality and independent distribution of error (<span class="math inline">\(\epsilon_{ijk}\)</span>) terms. And there is no interaction between two blocking (rows &amp; columns) factors and treatments.</p>
+<p>Like the other designs, the residuals, <span class="math inline">\(\epsilon_{ijk}\)</span>, are assumed to independently and identically distributed, following a normal distriution. The model also assumes no interactions between the blocking factors (rows and columns) with the treatments.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="11.2">
 <h2 data-number="11.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">11.2</span> Example Analysis</h2>
@@ -469,11 +468,11 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>This looks great! Here we can see that there are an equal number (5) of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn’t appear more than once in each row and column.</p>
+<p>This looks great! Here we can see that there are an equal number of treatments, rows, and columns (5). Treatments were randomized in such a way that one treatment doesn’t appear more than once in each row and column.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
-<p>Next step is to check if there are any missing values in response variable.</p>
+<p>The next step is to check if there are any missing values in response variable.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -481,7 +480,7 @@ window.Quarto = {
     0     0     0     0 </code></pre>
 </div>
 </div>
-<p>No missing values detected in this data set.</p>
+<p>No missing values are detected in this data set.</p>
 <ul>
 <li>Inspect the dependent variable</li>
 </ul>
@@ -502,7 +501,7 @@ window.Quarto = {
 </section>
 <section id="model-fitting" class="level3" data-number="11.2.2">
 <h3 data-number="11.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">11.2.2</span> Model fitting</h3>
-<p>Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with “trt” as a fixed effect and “row” and “col” as a random effects.</p>
+<p>Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as a random effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -606,7 +605,7 @@ Number of Groups: 1 </code></pre>
 </section>
 <section id="check-model-assumptions" class="level3" data-number="11.2.3">
 <h3 data-number="11.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">11.2.3</span> Check Model Assumptions</h3>
-<p>This step involves inspection of the model residuals by using <code>check_model()</code> function from the <strong>performance</strong> package.</p>
+<p>Evaluate model residuals by using <code>check_model()</code> function from the <strong>performance</strong> package.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">nlme</a></li></ul>
 <div class="tab-content">
@@ -637,10 +636,10 @@ Number of Groups: 1 </code></pre>
 </div>
 </div>
 </div>
-<p>These visuals support that the assumptions of the linear model have been met.</p>
+<p>These visuals indicate that the assumptions of the linear model have been met.</p>
 <section id="inference" class="level3" data-number="11.2.4">
 <h3 data-number="11.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">11.2.4</span> Inference</h3>
-<p>We can now proceed to the variance partitioning. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequential"</code> for <code>lmer()</code> and <code>lme()</code> models, respectively.</p>
+<p>We can now proceed to ANOVA. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequential"</code> for <code>lmer()</code> and <code>lme()</code> models, respectively.</p>
 </section>
 </div>
 </div>
@@ -713,7 +712,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>We see that wheat yield was higher with ‘C’ fungicide treatment compared to other fungicides applied in this study, indicating that ‘C’ fungicide was more efficient in controlling the stem rust in wheat.</p>
+<p>We see that wheat yield was higher with ‘C’ fungicide treatment compared to other fungicides applied in this study, indicating that ‘C’ fungicide was more efficient in controlling stem rust in wheat.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -724,7 +723,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The confidence intervals were not estimated through <code>emmeans()</code> from the <code>lme()</code> model due to complex crossed random effects in this model.</p>
+<p>The confidence intervals were not estimated through <code>emmeans()</code> from the <code>lme()</code> model due to limitations in how the model has to be specified in <strong><em>nlme</em></strong> and how emmeans estimates confidence intervals from a linear modelling object.</p>
 </div>
 </div>
 

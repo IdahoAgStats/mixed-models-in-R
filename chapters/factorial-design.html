@@ -373,7 +373,7 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="background"><span class="header-section-number">6.1</span> Background</h2>
-<p>Factorial design involves studying the impact of multiple factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. The statistical model for factorial design is: <span class="math display">\[y_{ijk} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \delta_k +  \epsilon_{ijk}\]</span> Where:</p>
+<p>Factorial design estimtes the impact of multiple crossed factors simultaneously. Each factor can have multiple levels, and combinations of these levels form the experimental conditions. This design allows us to understand the main effects of individual factors and their interactions on the response variable. We can have both complete factorial experiments where all combinations of levels are represented at least once or incomplete factorial experiments where not all combinations are present in the observations. The statistical model for a complete factorial design is: <span class="math display">\[y_{ijk} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \delta_k +  \epsilon_{ijk}\]</span> Where:</p>
 <p><span class="math inline">\(\mu\)</span> = experiment mean</p>
 <p><span class="math inline">\(\tau\)</span> = effect of factor A</p>
 <p><span class="math inline">\(\beta\)</span> = effect of factor B</p>
@@ -506,7 +506,7 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 </section>
 <section id="model-fitting" class="level3 page-columns page-full" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">6.2.2</span> Model fitting</h3>
-<p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon indicator ‘:’.</p>
+<p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon, ‘:’.</p>
 <p>The model syntax is:</p>
 <p><code>b_star ~  trt + location + trt:location</code></p>
 <p>which can be abbreviated as:</p>
@@ -639,7 +639,7 @@ location:trt     1    30   2.0510  0.1624</code></pre>
 </div>
 </div>
 </div>
-<p>Here we did not observe any difference in group variance of interaction effects. Among all treatment factors, only sampling location had a significant effect on the yellowness in the meat samples.</p>
+<p>Here we do not observe any difference in group variance of interaction effects. Among all treatment factors, only location had a significant effect on the yellowness in the meat samples.</p>
 <p>Let’s find estimates for some of the main effects and intercation effects of fixed factors on yellowness in the meat samples.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">nlme</a></li></ul>
@@ -672,13 +672,17 @@ Results are averaged over the levels of: trt
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> location<span class="sc">:</span>trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model1_lmer, <span class="at">specs =</span> <span class="sc">~</span> trt <span class="sc">|</span> location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> location    trt         emmean    SE   df lower.CL upper.CL
- deep        alt           19.5 0.868 24.1     17.7     21.3
- superficial alt           16.6 0.868 24.1     14.8     18.4
- deep        traditional   18.3 0.868 24.1     16.5     20.1
- superficial traditional   17.2 0.868 24.1     15.4     19.0
+<pre><code>location = deep:
+ trt         emmean    SE   df lower.CL upper.CL
+ alt           19.5 0.868 24.1     17.7     21.3
+ traditional   18.3 0.868 24.1     16.5     20.1
+
+location = superficial:
+ trt         emmean    SE   df lower.CL upper.CL
+ alt           16.6 0.868 24.1     14.8     18.4
+ traditional   17.2 0.868 24.1     15.4     19.0
 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
@@ -713,13 +717,17 @@ Results are averaged over the levels of: location
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> location<span class="sc">:</span>trt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model2_lme, <span class="at">specs =</span> <span class="sc">~</span> trt <span class="sc">|</span> location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> location    trt         emmean    SE df lower.CL upper.CL
- deep        alt           19.5 0.868 10     17.5     21.4
- superficial alt           16.6 0.868 10     14.7     18.5
- deep        traditional   18.3 0.868 10     16.4     20.2
- superficial traditional   17.2 0.868 10     15.3     19.2
+<pre><code>location = deep:
+ trt         emmean    SE df lower.CL upper.CL
+ alt           19.5 0.868 10     17.5     21.4
+ traditional   18.3 0.868 10     16.4     20.2
+
+location = superficial:
+ trt         emmean    SE df lower.CL upper.CL
+ alt           16.6 0.868 10     14.7     18.5
+ traditional   17.2 0.868 10     15.3     19.2
 
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
@@ -728,7 +736,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>The code above is calculating the estimated marginal means for main effects of “location” and “trt” and their interaction (location:trt) effect on yellowness in meat sample. Make sure to pay attention to the warning message that means are averaged over the levels. It’s an important detail to take into account when conducting inference and making conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
+<p>The code above is calculating the estimated marginal means for main effects of “trt” within each “location” under the model that includes main effects and interactions. Please note the warning message that means are averaged over the levels. It is an important detail to take into account when conducting inference and making conclusions when calculating means for a reduced model (that ignores interactions). As mentioned in many a statistics course, calculating main effects when there is an interaction present can result in misleading conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.</p>
 
 
 </section>
