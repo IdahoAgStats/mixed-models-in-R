@@ -20,27 +20,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -358,9 +338,8 @@ window.Quarto = {
 <h2 data-number="3.1" class="anchored" data-anchor-id="mixed-model-terms"><span class="header-section-number">3.1</span> Mixed model terms</h2>
 <p>Mixed-effects models are called “mixed” because they are modelling both fixed and random effects and esimating the effects jointly. These are also called “multilevel or”hierarchical” models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.</p>
 <p>This tutorial concerns general linear mixed models (sometimes abbreviated as “LMM”) where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of <em>generalized</em> linear mixed models (sometimes abbreviated “GLMM”), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.</p>
-<p><em>Fixed effects</em> are–in theory-</p>
-<p>represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g.&nbsp;levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in traditional regression techniques like ordinary least squares.</p>
-<p><em>Random effects</em> are discrete units sampled from some population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. The general thought is that random effects represent a sample of a population you want to make inference on.</p>
+<p><em>Fixed effects</em> are–in frequentist statistical theory–average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g.&nbsp;levels of nitrogen fertilizer). These can be categorical or continuous variable (in practice, most are categorical).</p>
+<p><em>Random effects</em> are discrete units sampled from a specified population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects also resolve isues with non-independence of within-group data points.</p>
 <p>Please read this section and refer back to if when you forget what these terms mean.</p>
 <div id="tbl-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -450,7 +429,7 @@ Table&nbsp;3.1: Terms definitions
 <p>The formula notation used for the linear mixed models is as follows:</p>
 <p><code>model_formula &lt;- formula(Y ~ X + (1|R))</code></p>
 <p>In this formula, <span class="math inline">\(Y\)</span> is the response variable (or dependent variable); <span class="math inline">\(X\)</span> represents the independent variable(s) such as treatment (fixed effect), and <span class="math inline">\(R\)</span> denotes the random grouping effect (e.g.&nbsp;block).</p>
-<p>Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of random grouping factors are denoted <code>r</code>, <code>r1</code>, and <code>r2</code>, and covariates as <code>x</code>. The table presented below from Bates et al. <span class="citation" data-cites="lme4">(<a href="../references.html#ref-lme4" role="doc-biblioref">2015</a>)</span> provide several exmples for fitting random effect structures.</p>
+<p>Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below (<span class="citation" data-cites="bates">(<a href="../references.html#ref-bates" role="doc-biblioref"><strong>bates?</strong></a>)</span>) provides several examples of different structures for fitting random effects. The names of random grouping factors are denoted <code>r</code>, <code>r1</code>, and <code>r2</code>, and covariates as <code>x</code>.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -493,14 +472,9 @@ Table&nbsp;3.1: Terms definitions
 </tbody>
 </table>
 <p>The first example, <code>(1|r)</code> suffices for most mixed models and is the only structure used in this guide.</p>
-<p>The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user.</p>
+<p>The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user, so proceed with caution.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-lme4" class="csl-entry" role="listitem">
-Bates, Douglas, Martin Mächler, Ben Bolker, and Steve Walker. 2015. <span>“Fitting Linear Mixed-Effects Models Using <span class="nocase">lme4</span>.”</span> <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01">https://doi.org/10.18637/jss.v067.i01</a>.
-</div>
-</div>
 </section>
 
 
