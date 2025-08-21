@@ -4,14 +4,13 @@ title: Marginal Means & Contrasts
 
 ## Background
 
-To start off with, we need to define estimated marginal means. Estimated marginal means are defined as the marginal means of a variable across all levels of other variables in a model, essentially giving a "population-level" average.
+To start off with, we need to define estimated marginal means. Estimated marginal means are defined as the marginal means of a variable across all levels of other variables in a model, giving a population-level average.
 
 The **emmeans** package is one of the most commonly used package in R for determining marginal means. This package provides methods for obtaining marginal means (also known as **least-squares means**). The emmeans package is one of several alternatives that facilitate the application post-hoc methods and contrast analysis. It is a relatively recent replacement for the lsmeans package with which some R users may be familiar. It is intended for use with a wide variety of ANOVA models, including repeated measures and nested designs (mixed models). This is a flexible package that comes with a set of detailed [**vignettes**](https://cran.r-project.org/web/packages/emmeans/vignettes/AQuickStart.html){.external target="_blank"} and works with a wide range of model objects. 
 
 In this chapter, we will demonstrate the extended use of the **emmeans** package to calculate estimated marginal means and contrasts.
 
-To demonstrate the use of the **emmeans** package. We will pull the model from split plot lesson ([**Chapter 7**](split-plot-design.qmd)), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains 6 blocks, 3 main plots (Variety) and 4 subplots (Nitrogen). The primary outcome variable was oat yield.
-To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 7**](split-plot-design.qmd).
+To demonstrate the use of the **emmeans** package. We will pull the model from split plot lesson ([**Chapter 7**](split-plot-design.qmd)), where we evaluated the effect of Nitrogen and Variety on Oat yield. This data contains six blocks, three main plots (Variety) and four subplots (Nitrogen). The dependent variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 7**](split-plot-design.qmd).
 
 
 ::: callout-note
@@ -147,26 +146,28 @@ contrast(m2, method = list(A1 - A3) )
 contrast(m2, method = list(A1 - A4) )
 
 ```
-The output shows the difference in mean yield between the control and 3 N treatments. The results shows that yield was significantly higher with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.
+The output shows the difference in mean yield between the control and the three N treatments. The results shows that yield was significantly higher with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.
 
 ::: {.callout-tip title="contrast() vs pairs()"}
-Using custom 'contrast()' is strongly recommended instead of `pairs()` when you are comparing multiple treatment groups (>5).
+Using custom 'contrast()' is strongly recommended instead of `pairs()` when you are comparing many treatment groups (e.g. 5 or more).
 :::
 
 
 In addition to these custom contrast options, we can also use the built-in functions in the **emmeans** package to compare treatments as per our analysis objective. For example, comparing treatments to control or to compare one treatment level to all other groups.
 
-We will start with running 'm1' emmeans object.
+We will start with examaining m1, an emmeans object.
 ```{r}
 m1
 ```
-From the m1 object, let's suppose we want to compare all varieties with Marvellous. The code shown below estimates custom contrast for treatments vs control and here we are referring Marvellous variety as a control.
+
+Let's suppose we want to compare 'Marvellous' with the other varieties in the analysis. We can conduct "treatment v control" contrasts, setting the variety 'Marvellous' as the control with the `ref` argument.
+
 ```{r}
 contrast(m1, "trt.vs.ctrl", ref = "Marvellous")
 ```
-Alternatively, we can refer control group by the appearance order of varieties in m1. In m1, order of Golden rain, Marvellous, and Victory are ordered as 1, 2, and 3 respenctively. 
+Alternatively, we can reference the control group by its appearance in the variety order. In m1, 'Golden rain', 'Marvellous', and 'Victory' are ordered as 1, 2, and 3 respectively.^[This follow an alphabetic ordering that can be altered with the `factor()` function.] 
 
-Let's suppose we want to compare Golden rain to other varieties. We can do this by either using 'trt.vs.ctrl1'  code, or 'trt.vs.ctrlk' and referring to group 1. Both code options will generate the same results.
+If we want to contrast 'Golden rain' with other varieties, we can do this by either using `trt.vs.ctrl1`  code, or `trt.vs.ctrlk` and referring to group 1. Both code options will generate the same results.
 
 ```{r}
 contrast(m1, "trt.vs.ctrl1")
@@ -174,11 +175,11 @@ contrast(m1, "trt.vs.ctrlk", ref = 1)
 ```
 We can further customize the contrasts by excluding specific treatment groups from the comparison.
 
-we can demonstrate this by running m2 object first. 
+we can demonstrate this by printing the m2 object first to check the treatment order: 
 ```{r}
 m2
 ```
-We can conduct a pairwise comparison by excluding 0.2 cwt. 
+Next, we can conduct a pairwise comparison by excluding 0.2 cwt. 
 
 ```{r}
 pairs(m2, exclude = 2)
@@ -190,41 +191,40 @@ contrast(m2, "consec")
 ```
 
 ## Compact letter displays
-Compact letter display (CLDs) is the most widely used tool by researchers in various domains to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. For example, using CLD when comparing multiple treatment groups can lead to the misinterpretation of the data. Thus, it's a good practice to carefully examine study goals and your data before implementing CLDs. 
 
-The R package `multcompView` (Graves et al., [-@multcompView]) can be used in R for creating a display where any two means associated with same symbol are not statistically different.
+Compact letter display (CLD) is a widely used tool by researchers to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the [Analysis Tips Chapter](/chapters/analysis-tips.qmd#sec-cld_warning). In particular, using CLD to contrast a large number of levels (e.g. 10 or more) often leads to misinterpretation of the results where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the goals of a study before implementing CLDs. 
 
-The `cld()` function from the **multcomp** package is used to implement CLDs in the form of symbols or letters. 
+The R package ***multcompView*** [-@multcompView] can be used to generate a display where any two means associated with same symbol are not statistically different using the function `cld()`.
 
-Let's start evaluating CLDs for main effects. We will use emmean objects m1 (for variety) and m2 (for nitrogen) for this analysis. In the output below, groups sharing a letter in the $.group$ are not statistically different from each other.
+Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m4 examining variety within each nitrogen group. In the output below, groups sharing a letter in the $.group$ are not statistically different from each other. 
 
 ```{r}
-cld(m1, alpha=0.05, Letters=letters)
+cld(m1, alpha = 0.05, Letters = letters)
 ```
 
 ```{r}
-cld(m2, alpha=0.05, Letters=letters)
+cld(m2, alpha = 0.05, Letters = letters)
 ```
 Let's have a look at the CLDs for the interaction effect:
 
 ```{r}
-cld3 <- cld(m3, alpha=0.05, Letters=letters)
-cld3
+(cld4 <- cld(m4, alpha = 0.05, Letters = letters))
 ```
-Interpretation of these letters is: we have a significant difference in grain yield with varieties victory, with N treatments of 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 wt. Grain yield for Golden rain variety was significantly lower with 0.0 cwt N treatment compared to the 0.2 cwt, 0.4 cwt, and 0.6 wt treatments.
 
-In the data set we used for demonstration here, we had equal number of observations in each group. However, this might not be a case every time as it is common to have missing values in the data set. In such cases, readers usually struggle to interpret significant differences among groups. For example, the estimated means of two groups are substantially different but they are not statistically different. This happens typically when SE of one group is large due to its small sample size, so it's hard for it to be statistically different from other groups. In such cases, we can use alternatives to CLDs as shown below.
 
-## Alternatives to CLD
+## Alternative Approaches
 
-1. Equivalence test 
+1. Equivalence testing
 
-Let's assume, based on subject matter considerations, if the mean yield of two groups differ by less than 30 it can be considered equivalent. Let's conduct an equivalence test on the CLDs of nitrogen treatment emmeans (m2).
+If your experimental goals include evaluating if two or more treatments are the same, or at the very least equivalent, you can use equivalence testing. This requires that researchers first establish a maximum pairwise difference between items that is not considered meaningful for the data set. That is, what is a numerical difference that is not substantial, and if two items differed by that amount or less, the researcher would not consider that to be a difference that truly mattered. This is a value judgement informed by domain expertise. 
+
+For the next example, let's assume that if the mean difference of two groups differ by less than 30, they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2), specifying the difference in the `delta` argument of the function. 
+
 ```{r}
 cld(m2, delta = 30, adjust = "none")
 ```
 
-Here, two treatment groups 0.0 cwt and 0.2 cwt,  0.4 cwt and  0.6 cwt can be considered equivalent.
+Here, two treatment groups 0.0 cwt and 0.2 cwt, 0.4 cwt and 0.6 cwt can be considered equivalent.
 
 2. Significance Sets 
 
@@ -234,30 +234,25 @@ Another alternative is to reverse all the boolean flags we used in constructing 
 cld(m2, signif = TRUE)
 ```
 
-::: {.callout-caution}
-## Cautionary Note about CLD
-
 It's important to note that we cannot conclude that treatment levels with the same letter are equivalent. We can only conclude that they are not different. 
 
 There is a separate branch of statistics, [equivalence testing](https://en.wikipedia.org/wiki/Equivalence_test){.external target="_blank"}, that is for ascertaining if things are sufficiently similar to conclude they are equivalent. 
 
-See @sec-cld_warning for additional warnings about problems with using compact letter display. 
-:::
+See @sec-cld_warning for additional warnings about problems with using compact l
 
-## Export emmeans to excel sheet
-The outputs from `emmeans()` or `cld()` objects can be exported by first converting them to a data frame and then using the writexlsx() function from the 'writexl' package to export the outputs.
+## Export emmeans to an external file
 
-```{r}
-result_n <- as.data.frame(summary(m1))
-```
+The outputs from `emmeans()` or `cld()` objects can be exported by first converting them to a data frame and using any of the usual export functions (e.g. `write.csv()`)
 
 ```{r, eval=FALSE}
-writexl::write_xlsx(result_n)
+result_n <- as.data.frame(m1)
+
+write.csv(result_n, "results.csv", row.names = FALSE)
 ```
 
 ## Graphical display of emmeans 
 
-The easiest option is to use default plotting functions that accompany the **emmeans** package. 
+On easy option is to use default plotting functions that accompany the **emmeans** package. 
 
 ```{r}
 plot(m1)
@@ -265,10 +260,10 @@ plot(m4)
 pwpp(m1) # Harpreet: do we need to keep it?
 ```
 
-Eventually, you will likely want to create a customized plot of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
+Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld4 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
 
 ```{r, warning = FALSE}
-ggplot(cld3) +
+ggplot(cld4) +
   aes(x = V, y = emmean, color = N) +
   geom_point(position = position_dodge(width = 0.9)) +
   geom_errorbar(mapping = aes(ymin = lower.CL, ymax = upper.CL), 
