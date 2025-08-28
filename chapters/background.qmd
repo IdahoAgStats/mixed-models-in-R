@@ -4,13 +4,13 @@ title: Mixed Model Background
 
 ## Mixed model terms
 
-Mixed-effects models are called “mixed” because they simultaneously model fixed and random effects. These are also called "multilevel or "hierarchical" models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.
+Mixed-effects models are called “mixed” because they are modelling both fixed and random effects and esimating the effects jointly. These are also called "multilevel or "hierarchical" models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.
 
-This tutorial concerns (general) linear mixed models (sometimes abbreviated as "LMM") where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of *generalized* linear mixed models (sometimes abbreviated "GLMM"), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.
+This tutorial concerns general linear mixed models (sometimes abbreviated as "LMM") where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of *generalized* linear mixed models (sometimes abbreviated "GLMM"), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.
 
-*Fixed effects* represent population-level average effects that should persist across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters drawn the entire population and/or associated with particular levels of a treatment (e.g. levels of nitrogen fertilizer). Fixed effects are similar to the parameters found in traditional regression techniques like ordinary least squares.
+*Fixed effects* are--in frequentist statistical theory--average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g. levels of nitrogen fertilizer). These can be categorical or continuous variable (in practice, most are categorical). 
 
-*Random effects* are discrete units sampled from some population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population with a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. The general thought is that random effects represent a sample of a population you want to make inference on.
+*Random effects* are discrete units sampled from a specified population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects also resolve isues with non-independence of within-group data points. 
 
 Please read this section and refer back to if when you forget what these terms mean.
 
@@ -82,7 +82,7 @@ The formula notation used for the linear mixed models is as follows:
 
 In this formula, $Y$ is the response variable (or dependent variable); $X$ represents the independent variable(s) such as treatment (fixed effect), and $R$ denotes the random grouping effect (e.g. block).
 
-Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes). The table below provides several examples of random effects in mixed models. The names of random grouping factors are denoted `r`, `r1`, and `r2`, and covariates as `x`. The table presented below from Bates et al. [-@lme4] provide several examples for fitting random effect structures.
+
 
 | Formula | Alternative | Meaning |
 |------------------------|------------------------|------------------------|
@@ -94,4 +94,4 @@ Random effects are put in parentheses and a `1|` is used to denote random interc
 
 The first example, `(1|r)` suffices for most mixed models and is the only structure used in this guide.
 
-The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user.
+The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user, so proceed with caution. 

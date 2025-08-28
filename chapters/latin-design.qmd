@@ -8,17 +8,15 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-In Latin Square design, two blocking factors are are assigned to the rows and columns, respectively of the square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all '**t**' treatments appears only once in each row and column and number of replications is equal to number of treatments.
+Latin square design is a spatial adjustment techniquement that assumes a row-by-column layout for the experimental units. Two blocking factors are are assigned, one to the rows and one for the columns of a square.  This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all '**t**' treatments appears only once in each row and column and number of replications is equal to number of treatments.
 
 Advantages of Latin square design are:
 
 1.  The design is particularly appropriate for comparing ***t*** treatment means in the presence of two sources of variation (row & column), each measured at ***t*** levels.
 
-2.  Easy to analyze.
-
 Disadvantages:
 
-1.  A Latin square can be constructed for any value of ***t***, however, it is best suited for comparing *t* treatments when 5≤ ***t***≤ 10.
+1.  A Latin square can be constructed for any value of ***t***, however, it is best suited for comparing *t* treatments when $5≤ t ≤ 10$.
 
 2.  Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.
 
@@ -30,7 +28,7 @@ $Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}$
 
 where, $\mu$ is the experiment mean, $\alpha_i$ represents treatment effect, $\beta$ and $\gamma$ are the row- and column-specific effects.
 
-Assumptions of this design includes normality and independent distribution of error ($\epsilon_{ijk}$) terms. And there is no interaction between two blocking (rows & columns) factors and treatments.
+Like the other designs, the residuals, $\epsilon_{ijk}$, are assumed to independently and identically distributed, following a normal distriution. The model also assumes no interactions between the blocking factors (rows and columns) with the treatments.
 
 ## Example Analysis
 
@@ -104,17 +102,17 @@ desplot::desplot(data = dat1, flip = TRUE,
         main = "Alpha Lattice Design", show.key =F) 
 ```
 
-This looks great! Here we can see that there are an equal number (5) of treatments, rows, and columns. Treatments were randomized in such a way that one treatment doesn't appear more than once in each row and column.
+This looks great! Here we can see that there are an equal number of treatments, rows, and columns (5). Treatments were randomized in such a way that one treatment doesn't appear more than once in each row and column.
 
 -   Check the extent of missing data
 
-Next step is to check if there are any missing values in response variable.
+The next step is to check if there are any missing values in response variable.
 
 ```{r}
 colSums(is.na(dat))
 ```
 
-No missing values detected in this data set.
+No missing values are detected in this data set.
 
 -   Inspect the dependent variable
 
@@ -134,7 +132,7 @@ hist(dat1$yield, main = NA, xlab = "yield")
 
 ### Model fitting
 
-Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with "trt" as a fixed effect and "row" and "col" as a random effects.
+Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as a random effects.
 
 ::: panel-tabset
 ### lme4
@@ -163,7 +161,7 @@ summary(m1_b)
 
 ### Check Model Assumptions
 
-This step involves inspection of the model residuals by using `check_model()` function from the **performance** package.
+Evaluate model residuals by using `check_model()` function from the **performance** package.
 
 ::: panel-tabset
 #### lme4
@@ -182,11 +180,11 @@ qqnorm(residuals(m1_b))
 qqline(residuals(m1_b))
 ```
 
-These visuals support that the assumptions of the linear model have been met.
+These visuals indicate that the assumptions of the linear model have been met.
 
 ### Inference
 
-We can now proceed to the variance partitioning. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for `lmer()` and `lme()` models, respectively.
+We can now proceed to ANOVA. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for `lmer()` and `lme()` models, respectively.
 :::
 
 ::: panel-tabset
@@ -219,10 +217,10 @@ emmeans(m1_b, ~ trt)
 ```
 :::
 
-We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study, indicating that 'C' fungicide was more efficient in controlling the stem rust in wheat.
+We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study, indicating that 'C' fungicide was more efficient in controlling stem rust in wheat.
 
 ::: callout-note
 ## `CI with lme`
 
-The confidence intervals were not estimated through `emmeans()` from the `lme()` model due to complex crossed random effects in this model.
+The confidence intervals were not estimated through `emmeans()` from the `lme()` model due to limitations in how the model has to be specified in ***nlme*** and how emmeans estimates confidence intervals from a linear modelling object. 
 :::

@@ -7,7 +7,7 @@ mermaid:
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
 ::: callout-note
-The steps explained below were applied to all the chapters. 
+The steps explained below were applied to all example analyses. 
 :::
 
 Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
@@ -25,7 +25,7 @@ graph TD
 ```
 
 
-## Define the Research Question(s)
+## Step 1: Define the Research Question(s)
 
 It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. This   was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a prioject and when a graduate student eventually implements the experiment. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:
 
@@ -41,7 +41,7 @@ The first two examples are asking for specific inference on the estimated effect
 
 For example, We conducted a randomized field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments. The next step is to identify the dependent variable (yield), and the fixed effects (treatment) and random effects (replications) in the experiment design. 
 
-## Data integrity checks 
+## Step 2: Conduct data integrity checks 
 
 The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
@@ -121,9 +121,11 @@ The purpose of these checks is to help us find any data errors that ought to be 
 If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
 
 
-## Model fitting - Formula syntax and expectations
+## Step 3: Fit the Model  
 
-In this guide, we use **lme4** and **nlme** packages to fit linear mixed models. These are similar packages that follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is "yield", "trt" is a fixed effect and "block" is a random effect.
+### Notes on formula syntax and expectations
+
+In this guide, we use **lme4** and **nlme** packages to fit linear mixed models. These are similar packages that follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is yield, trt" is a fixed effect and block is a random effect.
 
 The code below shows the R syntax for a mixed model with one fixed and one random effect:
 
@@ -159,7 +161,7 @@ Even when there are no missing data and this step is not necessary, it is a good
 :::
 
 
-## Check model assumptions
+## Step 4: Check model assumptions
 
 Linear mixed models rely on linearity, independence, normality, homoscedasticity of residuals. Violating these assumptions can lead to biased estimates, inefficient inference, and convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.
 
@@ -190,7 +192,6 @@ plot(model_lme, resid(., scaled=TRUE) ~ fitted(.),
 :::
 
 In this output, we expect to see a plot with random and uniform distribution of points. If we notice any specific pattern in the distribution of points, we need to look into the model structure and response variable distribution closely. 
-
 
 To check the normality of the residuals, we need to extract the residuals first using the `resid()` function and then generating a qq-plot:
 
@@ -232,12 +233,12 @@ check_model(model_lme, check = c('normality', 'linearity'))
 ```
 :::
 
-## Inference
+## Step 5: Conduct inference
 
 After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using `anova()` function or we can estimate marginal means using `emmeans()` function from the **emmeans** package. We can also run a post-hoc comparison to evaluate the pairwise comparison or contrasts using estimated means.
 
 
 ::: callout-warning
-## Model inference
-Please remember that conclusions should not be drawn from the model that doesn't meet linear mixed model assumptions. 
+## Model assumptions & statistical inference  
+Please remember that conclusions should not be drawn from models that don't meet linear mixed model assumptions. 
 :::
