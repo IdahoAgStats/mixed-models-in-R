@@ -4,7 +4,7 @@ title: Marginal Means & Contrasts
 
 ## Background
 
-Estimated marginal means are the means of a variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The ***emmeans*** package is one of the most commonly used package in R for determining marginal means (also known as **least-squares means**). In this chapter, we will demonstrate the extended use of the ***emmeans*** package to calculate estimated marginal means and confidence intervals and conduct post-hoc comparisons.
+Estimated marginal means are the means of a response variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The ***emmeans*** package is one of the most commonly used package in R for determining marginal means (also known as **least-squares means**). In this chapter, we will demonstrate the use of the ***emmeans*** package to calculate estimated marginal means and confidence intervals and conduct post-hoc comparisons.
 
 To demonstrate the use of the ***emmeans*** package. We will use the model from split plot lesson ([**Chapter 7**](split-plot-design.qmd)), where we evaluated the effect of nitrogen and variety on oat yield. This data contains six blocks, three main plots (Variety) and four subplots (Nitrogen). The dependent variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 7**](split-plot-design.qmd).
 
@@ -26,14 +26,14 @@ library(multcomp); library(ggplot2)
 
 ### Import data
 
-Let's import oats data from the MASS package.
+Next step is to import the oats data from the MASS package.
 
 ```{r}
 data1 <- MASS::oats
 ```
 
 ::: column-margin
-To read more about data and model fitting explanation please refer to [**Chapter 7**](split-plot-design.qmd).
+To read more about data and model explanation please refer to [**Chapter 7**](split-plot-design.qmd).
 :::
 
 ### Model fitting
@@ -79,7 +79,7 @@ Make sure to read and interpret marginal means carefully. Here, when we calculat
 
 #### Interaction effects
 
-Now let's evaluate the marginal means for the interaction effect of V and N. These can be calculated either using `V*N` or `V|N`. 
+Now let's evaluate the marginal means for the interaction effect of V and N. These can be calculated either using `V*N` or `V|N` format. 
 ```{r}
 m3 <- emmeans(model1, ~V|N)
 m3
@@ -92,6 +92,7 @@ m4
 
 :::{.callout-note}
 Here, note that we estimated marginal means in two ways: 
+
 `V*N` estimates the marginal means for each combination of levels across these variables, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended). 
 
 `V|N` estimates the marginal means for each V at a given level of N. When conducting pairwise comparisons on these, all levels of the variable V are compared with each other within each level of N, not across all levels of N (a sensible approach). 
@@ -217,7 +218,7 @@ If your experimental goals include evaluating if two or more treatments are the 
 For the next example, we will assume that if the mean difference of two groups differ by less than 30 (specified in `delta` argument), they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2). 
 
 ```{r}
-cld(m2, delta = 30, adjust = "none")
+cld(m2, delta = 30, adjust = "none", Letters = letters)
 ```
 
 Here, two treatment groups 0.0 cwt and 0.2 cwt, 0.4 cwt and 0.6 cwt can be considered equivalent.
