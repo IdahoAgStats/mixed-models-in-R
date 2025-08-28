@@ -606,7 +606,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here, note that we estimated marginal means in two ways: <code>V*N</code> estimates the marginal means for each combination of levels across these varaibles, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended).</p>
+<p>Here, note that we estimated marginal means in two ways: <code>V*N</code> estimates the marginal means for each combination of levels across these variables, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended).</p>
 <p><code>V|N</code> estimates the marginal means for each V at a given level of N. When conducting pairwise comparisons on these, all levels of the variable V are compared with each other within each level of N, not across all levels of N (a sensible approach).</p>
 </div>
 </div>
@@ -661,8 +661,9 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 </div>
 <section id="custom-contrasts" class="level3 page-columns page-full" data-number="13.3.1">
 <h3 data-number="13.3.1" class="anchored" data-anchor-id="custom-contrasts"><span class="header-section-number">13.3.1</span> Custom contrasts</h3>
-<p>While <strong><em>emmeans</em></strong> provides many options</p>
-<p>First, run emmean object ‘m2’ for nitrogen treatments.</p>
+<p>Custom contrast in statistics refer to specific comparisons between groups as defined by researcher before analyzing the data. This allows us to test the particular research hypothesis, for example to compare treatment A vs B or treatment A vs C. These are linear combination of treatment means where we assign specific weights to each grouping depending on our hypothesis. The condition for custom contrasts is that the weights must sum to zero.</p>
+<p>Here, we will demonstrate the steps to build custom contrasts for comparing nitrogen treatment A1 to A2, A3, and A4, separately.</p>
+<p>First, run emmeans object ‘m2’ for nitrogen treatments.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>m2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -713,8 +714,8 @@ Degrees-of-freedom method: containment </code></pre>
 </div>
 </div>
 <p>The output shows the difference in mean yield between the control and the three N treatments. The results show that yield increased with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.</p>
-<p>In addition to these custom contrast options, we can also use the built-in functions in the <strong>emmeans</strong> package to compare treatments as per our analysis objective. For example, comparing treatments to control or to compare one treatment level to all other groups.</p>
-<p>We will start with examaining m1, an emmeans object.</p>
+<p>In addition to these custom contrast options, we can also use the built-in functions in the <strong>emmeans</strong> package to compare treatments as per our analysis objectives. For example, comparing treatments to control or to compare one treatment level to all other groups.</p>
+<p>We will start with examining m1, an emmeans object.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>m1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -813,9 +814,9 @@ P value adjustment: mvt method for 3 tests </code></pre>
 </section>
 <section id="compact-letter-displays" class="level2" data-number="13.4">
 <h2 data-number="13.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">13.4</span> Compact letter displays</h2>
-<p>Compact letter display (CLD) is a widely used tool by researchers to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the <a href="../chapters/analysis-tips.html#sec-cld_warning">Analysis Tips Chapter</a>. In particular, using CLD to contrast a large number of levels (e.g.&nbsp;10 or more) often leads to misinterpretation of the results where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the goals of a study before implementing CLDs.</p>
+<p>Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the <a href="../chapters/analysis-tips.html#sec-cld_warning">Analysis Tips Chapter</a>. In particular, using CLD to contrast a large number of levels (e.g.&nbsp;10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing CLDs.</p>
 <p>The R package <strong><em>multcompView</em></strong> <span class="citation" data-cites="multcompView">(<a href="../references.html#ref-multcompView" role="doc-biblioref">2019</a>)</span> can be used to generate a display where any two means associated with same symbol are not statistically different using the function <code>cld()</code>.</p>
-<p>Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m4 examining variety within each nitrogen group. In the output below, groups sharing a letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
+<p>Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m1, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">Letters =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -863,8 +864,8 @@ NOTE: If two or more means share the same grouping symbol,
 <ol type="1">
 <li>Equivalence testing</li>
 </ol>
-<p>If your experimental goals include evaluating if two or more treatments are the same, or at the very least equivalent, you can use equivalence testing. This requires that researchers first establish a maximum pairwise difference between items that is not considered meaningful for the data set. That is, what is a numerical difference that is not substantial, and if two items differed by that amount or less, the researcher would not consider that to be a difference that truly mattered. This is a value judgement informed by domain expertise.</p>
-<p>For the next example, let’s assume that if the mean difference of two groups differ by less than 30, they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2), specifying the difference in the <code>delta</code> argument of the function.</p>
+<p>If your experimental goals include evaluating if two or more treatments are the same or equivalent, you can use equivalence testing. This requires that we first establish a specific threshold value, which is the maximum difference between groups that is not considered meaningful in the given the data set. That is, what is a numerical difference that is not substantial, and if two groups differed by that amount or less, the researcher would not consider that to be a difference that matters. This is a value of judgement informed by domain expertise.</p>
+<p>For the next example, we will assume that if the mean difference of two groups differ by less than 30 (specified in <code>delta</code> argument), they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">delta =</span> <span class="dv">30</span>, <span class="at">adjust =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -887,6 +888,7 @@ Estimates sharing the same symbol test as equivalent </code></pre>
 <ol start="2" type="1">
 <li>Significance sets</li>
 </ol>
+<p>Another option to CLDs is the significance sets with command <code>signif = TRUE</code> in <code>cld()</code> function. In this, means that have same letters are statistically different. This can be a useful method while working with large number of groups.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">signif =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -939,7 +941,7 @@ Estimates sharing the same symbol are significantly different </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#pwpp(m1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld4 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.</p>
+<p>Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a data frame for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cld3) <span class="sc">+</span></span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> V, <span class="at">y =</span> emmean, <span class="at">color =</span> N) <span class="sc">+</span></span>
