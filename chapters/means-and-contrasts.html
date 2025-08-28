@@ -403,7 +403,7 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="background"><span class="header-section-number">13.1</span> Background</h2>
-<p>Estimated marginal means are the means of a variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The <strong><em>emmeans</em></strong> package is one of the most commonly used package in R for determining marginal means (also known as <strong>least-squares means</strong>). In this chapter, we will demonstrate the extended use of the <strong><em>emmeans</em></strong> package to calculate estimated marginal means and confidence intervals and conduct post-hoc comparisons.</p>
+<p>Estimated marginal means are the means of a response variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The <strong><em>emmeans</em></strong> package is one of the most commonly used package in R for determining marginal means (also known as <strong>least-squares means</strong>). In this chapter, we will demonstrate the use of the <strong><em>emmeans</em></strong> package to calculate estimated marginal means and confidence intervals and conduct post-hoc comparisons.</p>
 <p>To demonstrate the use of the <strong><em>emmeans</em></strong> package. We will use the model from split plot lesson (<a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>), where we evaluated the effect of nitrogen and variety on oat yield. This data contains six blocks, three main plots (Variety) and four subplots (Nitrogen). The dependent variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -429,13 +429,13 @@ Marginal means using lmer and nlme
 </div>
 <section id="import-data" class="level3 page-columns page-full" data-number="13.2.1">
 <h3 data-number="13.2.1" class="anchored" data-anchor-id="import-data"><span class="header-section-number">13.2.1</span> Import data</h3>
-<p>Let’s import oats data from the MASS package.</p>
+<p>Next step is to import the oats data from the MASS package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> MASS<span class="sc">::</span>oats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<p>To read more about data and model fitting explanation please refer to <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>.</p>
+<p>To read more about data and model explanation please refer to <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>.</p>
 </div></div></section>
 <section id="model-fitting" class="level3" data-number="13.2.2">
 <h3 data-number="13.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">13.2.2</span> Model fitting</h3>
@@ -541,7 +541,7 @@ Confidence level used: 0.95 </code></pre>
 </section>
 <section id="interaction-effects" class="level4" data-number="13.2.5.2">
 <h4 data-number="13.2.5.2" class="anchored" data-anchor-id="interaction-effects"><span class="header-section-number">13.2.5.2</span> Interaction effects</h4>
-<p>Now let’s evaluate the marginal means for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code>.</p>
+<p>Now let’s evaluate the marginal means for the interaction effect of V and N. These can be calculated either using <code>V*N</code> or <code>V|N</code> format.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model1, <span class="sc">~</span>V<span class="sc">|</span>N)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>m3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -606,7 +606,8 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Here, note that we estimated marginal means in two ways: <code>V*N</code> estimates the marginal means for each combination of levels across these variables, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended).</p>
+<p>Here, note that we estimated marginal means in two ways:</p>
+<p><code>V*N</code> estimates the marginal means for each combination of levels across these variables, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended).</p>
 <p><code>V|N</code> estimates the marginal means for each V at a given level of N. When conducting pairwise comparisons on these, all levels of the variable V are compared with each other within each level of N, not across all levels of N (a sensible approach).</p>
 </div>
 </div>
@@ -802,8 +803,8 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast        estimate   SE df t.ratio p.value
  0.2cwt - 0.0cwt    19.50 4.44 45   4.396  0.0002
- 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0034
- 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1152
+ 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0035
+ 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1151
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment 
@@ -867,13 +868,13 @@ NOTE: If two or more means share the same grouping symbol,
 <p>If your experimental goals include evaluating if two or more treatments are the same or equivalent, you can use equivalence testing. This requires that we first establish a specific threshold value, which is the maximum difference between groups that is not considered meaningful in the given the data set. That is, what is a numerical difference that is not substantial, and if two groups differed by that amount or less, the researcher would not consider that to be a difference that matters. This is a value of judgement informed by domain expertise.</p>
 <p>For the next example, we will assume that if the mean difference of two groups differ by less than 30 (specified in <code>delta</code> argument), they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">delta =</span> <span class="dv">30</span>, <span class="at">adjust =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m2, <span class="at">delta =</span> <span class="dv">30</span>, <span class="at">adjust =</span> <span class="st">"none"</span>, <span class="at">Letters =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> N      emmean   SE df lower.CL upper.CL .equiv.set
- 0.0cwt   79.4 7.17  5     60.9     97.8  1        
- 0.2cwt   98.9 7.17  5     80.4    117.3  12       
- 0.4cwt  114.2 7.17  5     95.8    132.7   23      
- 0.6cwt  123.4 7.17  5    104.9    141.8    3      
+ 0.0cwt   79.4 7.17  5     60.9     97.8  a        
+ 0.2cwt   98.9 7.17  5     80.4    117.3  ab       
+ 0.4cwt  114.2 7.17  5     95.8    132.7   bc      
+ 0.6cwt  123.4 7.17  5    104.9    141.8    c      
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment 
