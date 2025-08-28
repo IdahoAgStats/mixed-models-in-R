@@ -92,7 +92,7 @@ m4
 
 :::{.callout-note}
 Here, note that we estimated marginal means in two ways: 
-`V*N` estimates the marginal means for each combination of levels across these varaibles, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended). 
+`V*N` estimates the marginal means for each combination of levels across these variables, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended). 
 
 `V|N` estimates the marginal means for each V at a given level of N. When conducting pairwise comparisons on these, all levels of the variable V are compared with each other within each level of N, not across all levels of N (a sensible approach). 
 :::
@@ -119,9 +119,11 @@ This function conducts all pairwise tests for the specified variable specified. 
 
 ### Custom contrasts 
 
-While ***emmeans*** provides many options
+Custom contrast in statistics refer to specific comparisons between groups as defined by researcher before analyzing the data. This allows us to test the particular research hypothesis, for example to compare treatment A vs B or treatment A vs C. These are linear combination of treatment means where we assign specific weights to each grouping depending on our hypothesis. The condition for custom contrasts is that the weights must sum to zero. 
 
-First, run emmean object 'm2' for nitrogen treatments.
+Here, we will demonstrate the steps to build custom contrasts for comparing nitrogen treatment A1 to A2, A3, and A4, separately.
+
+First, run emmeans object 'm2' for nitrogen treatments.
 
 ```{r}
 m2
@@ -147,9 +149,9 @@ contrast(m2, method = list(A1 - A4) )
 
 The output shows the difference in mean yield between the control and the three N treatments. The results show that yield increased with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.
 
-In addition to these custom contrast options, we can also use the built-in functions in the **emmeans** package to compare treatments as per our analysis objective. For example, comparing treatments to control or to compare one treatment level to all other groups.
+In addition to these custom contrast options, we can also use the built-in functions in the **emmeans** package to compare treatments as per our analysis objectives. For example, comparing treatments to control or to compare one treatment level to all other groups.
 
-We will start with examaining m1, an emmeans object.
+We will start with examining m1, an emmeans object.
 ```{r}
 m1
 ```
@@ -186,11 +188,11 @@ contrast(m2, "consec")
 
 ## Compact letter displays
 
-Compact letter display (CLD) is a widely used tool by researchers to display multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the [Analysis Tips Chapter](/chapters/analysis-tips.qmd#sec-cld_warning). In particular, using CLD to contrast a large number of levels (e.g. 10 or more) often leads to misinterpretation of the results where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the goals of a study before implementing CLDs. 
+Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the [Analysis Tips Chapter](/chapters/analysis-tips.qmd#sec-cld_warning). In particular, using CLD to contrast a large number of levels (e.g. 10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing CLDs. 
 
 The R package ***multcompView*** [-@multcompView] can be used to generate a display where any two means associated with same symbol are not statistically different using the function `cld()`.
 
-Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m4 examining variety within each nitrogen group. In the output below, groups sharing a letter in the $.group$ are not statistically different from each other. 
+Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the $.group$ are not statistically different from each other. 
 
 ```{r}
 cld(m1, alpha = 0.05, Letters = letters)
@@ -210,9 +212,9 @@ cld3 <- cld(m3, alpha = 0.05, Letters = letters)
 
 1. Equivalence testing
 
-If your experimental goals include evaluating if two or more treatments are the same, or at the very least equivalent, you can use equivalence testing. This requires that researchers first establish a maximum pairwise difference between items that is not considered meaningful for the data set. That is, what is a numerical difference that is not substantial, and if two items differed by that amount or less, the researcher would not consider that to be a difference that truly mattered. This is a value judgement informed by domain expertise. 
+If your experimental goals include evaluating if two or more treatments are the same or equivalent, you can use equivalence testing. This requires that we first establish a specific threshold value, which is the maximum difference between groups that is not considered meaningful in the given the data set. That is, what is a numerical difference that is not substantial, and if two groups differed by that amount or less, the researcher would not consider that to be a difference that matters. This is a value of judgement informed by domain expertise. 
 
-For the next example, let's assume that if the mean difference of two groups differ by less than 30, they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2), specifying the difference in the `delta` argument of the function. 
+For the next example, we will assume that if the mean difference of two groups differ by less than 30 (specified in `delta` argument), they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2). 
 
 ```{r}
 cld(m2, delta = 30, adjust = "none")
@@ -222,10 +224,11 @@ Here, two treatment groups 0.0 cwt and 0.2 cwt, 0.4 cwt and 0.6 cwt can be consi
 
 2. Significance sets 
 
-
+Another option to CLDs is the significance sets with command `signif = TRUE` in `cld()` function. In this, means that have same letters are statistically different. This can be a useful method while working with large number of groups.
 
 ```{r}
 cld(m2, signif = TRUE)
+
 ```
 
 It's important to note that we cannot conclude that treatment levels with the same letter are equivalent. We can only conclude that they are not different. 
@@ -254,7 +257,7 @@ plot(m3)
 #pwpp(m1)
 ```
 
-Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld4 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
+Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a data frame for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
 
 ```{r, warning = FALSE}
 ggplot(cld3) +
