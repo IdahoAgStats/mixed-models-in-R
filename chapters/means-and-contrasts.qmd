@@ -4,7 +4,7 @@ title: Marginal Means & Contrasts
 
 ## Background
 
-Estimated marginal means are the means of a variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The ***emmeans*** package is one of the most commonly used package in R for determining marginal means (also known as **least-squares means**). In this chapter, we will demonstrate the extended use of the ***emmeans*** package to calculate estimated marginal means and confidence intervals and conduct posthoc comparisons.
+Estimated marginal means are the means of a variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The ***emmeans*** package is one of the most commonly used package in R for determining marginal means (also known as **least-squares means**). In this chapter, we will demonstrate the extended use of the ***emmeans*** package to calculate estimated marginal means and confidence intervals and conduct post-hoc comparisons.
 
 To demonstrate the use of the ***emmeans*** package. We will use the model from split plot lesson ([**Chapter 7**](split-plot-design.qmd)), where we evaluated the effect of nitrogen and variety on oat yield. This data contains six blocks, three main plots (Variety) and four subplots (Nitrogen). The dependent variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 7**](split-plot-design.qmd).
 
@@ -202,7 +202,7 @@ cld(m2, alpha = 0.05, Letters = letters)
 Let's have a look at the CLDs for the interaction effect:
 
 ```{r}
-(cld3 <- cld(m3, alpha = 0.05, Letters = letters))
+cld3 <- cld(m3, alpha = 0.05, Letters = letters)
 ```
 
 
@@ -251,13 +251,13 @@ On easy option is to use default plotting functions that accompany the **emmeans
 ```{r}
 plot(m1)
 plot(m3)
-pwpp(m1)
+#pwpp(m1)
 ```
 
 Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a dataframe for usage by plotting libraries. The outputs from the cld4 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
 
 ```{r, warning = FALSE}
-ggplot(cld4) +
+ggplot(cld3) +
   aes(x = V, y = emmean, color = N) +
   geom_point(position = position_dodge(width = 0.9)) +
   geom_errorbar(mapping = aes(ymin = lower.CL, ymax = upper.CL), 
