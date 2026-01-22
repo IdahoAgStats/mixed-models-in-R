@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.27">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -35,14 +35,15 @@ ul.task-list li input[type="checkbox"] {
 <link href="../img/logo_transparent.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-4c95b6687d52ab2c44994f7e97976bd2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-9e6f4514a36e9adafe3bca02ce9a45a6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,7 +102,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -120,7 +121,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 <meta name="twitter:title" content="3&nbsp; Mixed Model Background – Field Guide to the R Mixed Model Wilderness">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="../img/random_intercept_fixed_slope.jpeg">
+<meta name="twitter:image" content="background_files/figure-html/fig-1-1.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -161,7 +162,8 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header sidebar-header-stacked">
       <a href="../index.html" class="sidebar-logo-link">
-      <img src="../img/hexLogo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="../img/hexLogo.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../img/hexLogo.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main">
     <a href="https://github.com/IdahoAgStats/mixed-models-in-R" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
@@ -339,7 +341,7 @@ window.Quarto = {
 <p>Mixed-effects models are called “mixed” because they are modelling both fixed and random effects and esimating the effects jointly. These are also called “multilevel or”hierarchical” models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.</p>
 <p>This tutorial concerns general linear mixed models (sometimes abbreviated as “LMM”) where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of <em>generalized</em> linear mixed models (sometimes abbreviated “GLMM”), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.</p>
 <p><em>Fixed effects</em> are–in frequentist statistical theory–average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g.&nbsp;levels of nitrogen fertilizer). These can be categorical or continuous variable (in practice, most are categorical).</p>
-<p><em>Random effects</em> are discrete units sampled from a specified population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects also resolve isues with non-independence of within-group data points.</p>
+<p><em>Random effects</em> are discrete units sampled from a specified population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points.</p>
 <p>Please read this section and refer back to if when you forget what these terms mean.</p>
 <div id="tbl-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -369,7 +371,7 @@ Table&nbsp;3.1: Terms definitions
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Experimental unit</td>
-<td style="text-align: left;">The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level.</td>
+<td style="text-align: left;">The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. Model predictions typically occur at this level.</td>
 </tr>
 </tbody>
 </table>
@@ -386,43 +388,65 @@ Table&nbsp;3.1: Terms definitions
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For the rest of this tutorial we will be using the term “residual” and not “error term” to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></p></div></div><p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions).</p>
 <p>There is also an expected conditional distribution for <span class="math inline">\(Y_i\)</span>, but we will not be discussing this again.</p>
 <p><span class="math display">\[ Y_i|x_i \sim𝑁(\mathbf{X \beta}, \sigma^2/r_i) \]</span></p>
-<p>In least squares estimation, the slope and intercept are chosen in a way so that the residual sum of squares is minimized. If we consider this model in a mixed model framework, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> would be fixed effects (also known as the population-averaged values).</p>
+<p>In least squares estimation, the slope and intercept are determined analytically in order to minimize the residual sum of squares. If we used a mixed model, the intercept and slope, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, respectively, would constitute the fixed effects, also referred to as “population-averaged values”.</p>
 <p>Extending this example to a mixed model, we can consider adding another term, <span class="math inline">\(r_{j}\)</span> that reflects levels sampled from a population that represent a random subset of a larger population:</p>
-<p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{j}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). The random effect can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\beta_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (sometimes referred to as “iid”):</p>
+<p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{j}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, <span class="math inline">\(\beta_0\)</span>. can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\betda_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (this is sometimes abbreviate “iid”):</p>
 <p><span class="math display">\[r_i \sim N(0, \sigma_b)\]</span> While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered “random intercepts” where they all share a common <span class="math inline">\(B_0\)</span> and <span class="math inline">\(B_1\)</span>.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../img/random_intercept_fixed_slope.jpeg" class="img-fluid figure-img"></p>
-<figcaption>Illustration of a mixed model with random intercepts and same slopes</figcaption>
+<div class="cell" data-cap-location="margin">
+<div class="cell-output-display">
+<div id="fig-1" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="margin">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="background_files/figure-html/fig-1-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Random intercepts and identical slopes example
+</figcaption>
 </figure>
 </div>
+</div>
+</div>
+<p>.</p>
 </div></div><section id="random-slopes-models" class="level3 page-columns page-full" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="random-slopes-models"><span class="header-section-number">3.2.1</span> Random slopes models</h3>
 <p>Other alternatives to the random intercept model include modelling random slopes where the slope between X and Y changes according to the random effect:</p>
 <p><span class="math display">\[  Y_{ij} = \beta_0 + (\beta_1 + r_j)X_{ij} + \epsilon_{ij}\]</span></p>
 <p>In this model, the <span class="math inline">\(\beta\)</span> is the overage effect of X on Y, and <span class="math inline">\(r_i\)</span> is a random effect for block <span class="math inline">\(j\)</span>, and all observations share a common intercept, <span class="math inline">\(\beta_0\)</span>.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../img/random_slope_fixed_intercept.jpeg" class="img-fluid figure-img"></p>
-<figcaption>Illustration of a mixed model with a fixed intercept and random slopes.</figcaption>
+<div class="cell page-columns page-full" data-cap-location="margin">
+<div class="cell-output-display page-columns page-full">
+<div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="background_files/figure-html/fig-2-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Fixed intercept and random slopes example.
+</figcaption>
 </figure>
 </div>
-</div></div><p>The other alternative is including both a random slope and a random intercept:</p>
+</div>
+</div>
+<p>The other alternative is including both a random slope and a random intercept in the model statement:</p>
 <p><span class="math display">\[  Y_{ij} = (\beta_0 + r1_j) + (\beta_1 + r1_j))X_{ij} + \epsilon_{ij}\]</span></p>
-<p>In this model, <span class="math inline">\(r1_j\)</span> and <span class="math inline">\(r1_j\)</span> are random effects for subject <span class="math inline">\(i\)</span> applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../img/random_intercept_slope.jpeg" class="img-fluid figure-img"></p>
-<figcaption>Illustration of a mixed Model with random intercept and slope</figcaption>
+<p>In this model, <span class="math inline">\(r1_j\)</span> and <span class="math inline">\(r1_j\)</span> are random effects for subject <span class="math inline">\(i\)</span> applied to the intercept and slope, respectively. These differences in slope and intercept will (likely) impact the final prediction.</p>
+<div class="cell page-columns page-full" data-cap-location="margin">
+<div class="cell-output-display page-columns page-full">
+<div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="background_files/figure-html/fig-3-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: Random intercepts and slopes example.
+</figcaption>
 </figure>
 </div>
-</div></div></section>
+</div>
+</div>
+<p><a href="https://uoepsy.github.io/lmm/02_lmm.html">This site</a> has some nice illustrations explaining random effects.</p>
+</section>
 </section>
 <section id="r-formula-syntax-for-random-and-fixed-effects" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="r-formula-syntax-for-random-and-fixed-effects"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</h2>
@@ -530,13 +554,14 @@ Table&nbsp;3.1: Terms definitions
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
