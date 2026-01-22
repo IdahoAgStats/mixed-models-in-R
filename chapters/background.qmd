@@ -2,6 +2,13 @@
 title: Mixed Model Background
 ---
 
+```{r, include=FALSE, echo=FALSE}
+source(here::here("settings.r"))
+
+par(mar=c(5.1, 6, 4.1, 2.1))
+```
+
+
 ## Mixed model terms
 
 Mixed-effects models are called “mixed” because they are modelling both fixed and random effects and esimating the effects jointly. These are also called "multilevel or "hierarchical" models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.
@@ -10,7 +17,7 @@ This tutorial concerns general linear mixed models (sometimes abbreviated as "LM
 
 *Fixed effects* are--in frequentist statistical theory--average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g. levels of nitrogen fertilizer). These can be categorical or continuous variable (in practice, most are categorical). 
 
-*Random effects* are discrete units sampled from a specified population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects also resolve isues with non-independence of within-group data points. 
+*Random effects* are discrete units sampled from a specified population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points. 
 
 Please read this section and refer back to if when you forget what these terms mean.
 
@@ -18,7 +25,7 @@ Please read this section and refer back to if when you forget what these terms m
 |:-----------------------------------|:-----------------------------------|
 | Random effect | An independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated |
 | Fixed effect | An independent variable with specific, predefined levels to estimate |
-| Experimental unit | The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. When the analysis is all said and done, the predictions occur at this level. |
+| Experimental unit | The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. Model predictions typically occur at this level. |
 
 : Terms definitions {#tbl-terms}
 
@@ -40,16 +47,37 @@ There is also an expected conditional distribution for $Y_i$, but we will not be
 
 $$ Y_i|x_i \sim𝑁(\mathbf{X \beta}, \sigma^2/r_i) $$
 
-In least squares estimation, the slope and intercept are chosen in a way so that the residual sum of squares is minimized. If we consider this model in a mixed model framework, $\beta_0$ and $\beta_1$ would be fixed effects (also known as the population-averaged values).
+In least squares estimation, the slope and intercept are determined analytically in order to minimize the  residual sum of squares. If we used a mixed model, the intercept and slope, $\beta_0$ and $\beta_1$, respectively, would constitute the fixed effects, also referred to as "population-averaged values".
 
 Extending this example to a mixed model, we can consider adding another term, $r_{j}$ that reflects levels sampled from a population that represent a random subset of a larger population:
 
-$$  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} $$ In an agronomic field trial, $r_{j}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). The random effect can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\beta_0$). Like the residuals term, $r_i$ is independently and identically distributed (sometimes referred to as "iid"):
+$$  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} $$ In an agronomic field trial, $r_{j}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, $\beta_0$.  can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\betda_0$). Like the residuals term, $r_i$ is independently and identically distributed (this is sometimes abbreviate "iid"):
 
 $$r_i \sim N(0, \sigma_b)$$ While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered "random intercepts" where they all share a common $B_0$ and $B_1$.
 
 ::: column-margin
-![Illustration of a mixed model with random intercepts and same slopes](../img/random_intercept_fixed_slope.jpeg)
+
+```{r}
+#| echo: false
+#| label: fig-1
+#| fig-cap: "Random intercepts and identical slopes example"
+#| cap-location: margin
+
+
+library(ggplot2)
+df1 <- data.frame(b0 = 1:5, b1 = 0.5, subject = letters[1:5])
+
+ggplot(df1) +
+  geom_abline(aes(intercept = b0, slope = b1, color = subject), linewidth = 1.2) +
+  coord_cartesian(xlim = c(0, 5), ylim = c(0, 9)) +
+  xlab("x") + ylab("y") +
+  #scale_color_brewer(palette = "BrBG") +
+  scale_color_manual(values = c("#fab4ac", "#d8b365", "#c7eae5", "#5ab4ac", "#01665e")) + #,"#8c510a"
+  theme(panel.border = element_rect(colour = "gray20", fill = NA, linewidth = 0.8))
+```
+
+. 
+
 :::
 
 ### Random slopes models
@@ -60,19 +88,54 @@ $$  Y_{ij} = \beta_0 + (\beta_1 + r_j)X_{ij} + \epsilon_{ij}$$
 
 In this model, the $\beta$ is the overage effect of X on Y, and $r_i$ is a random effect for block $j$, and all observations share a common intercept, $\beta_0$.
 
-::: column-margin
-![Illustration of a mixed model with a fixed intercept and random slopes.](../img/random_slope_fixed_intercept.jpeg)
-:::
 
-The other alternative is including both a random slope and a random intercept:
+```{r}
+#| echo: false
+#| label: fig-2
+#| fig-cap: "Fixed intercept and random slopes example."
+#| cap-location: margin
+
+set.seed(208)
+
+df2 <- data.frame(b0 = 2, b1 = 2 + rnorm(5), subject = letters[1:5])
+
+ggplot(df2) +
+  geom_abline(aes(intercept = b0, slope = b1, color = subject), linewidth = 1.2) +
+  coord_cartesian(xlim = c(0, 5), ylim = c(0, 18)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  xlab("x") + ylab("y") +
+  scale_color_manual(values = c("#fab4ac", "#d8b365", "#c7eae5", "#5ab4ac", "#01665e")) + #,"#8c510a"
+  theme(panel.border = element_rect(colour = "gray20", fill = NA, linewidth = 0.8))
+```
+
+
+
+The other alternative is including both a random slope and a random intercept in the model statement:
 
 $$  Y_{ij} = (\beta_0 + r1_j) + (\beta_1 + r1_j))X_{ij} + \epsilon_{ij}$$
 
-In this model, $r1_j$ and $r1_j$ are random effects for subject $i$ applied to the intercept and slope, respectively. Predictions would vary depending on each subject’s slope and intercept terms:
+In this model, $r1_j$ and $r1_j$ are random effects for subject $i$ applied to the intercept and slope, respectively. These differences in slope and intercept will (likely) impact the final prediction.  
 
-::: column-margin
-![Illustration of a mixed Model with random intercept and slope](../img/random_intercept_slope.jpeg)
-:::
+
+```{r}
+#| echo: false
+#| label: fig-3
+#| fig-cap: "Random intercepts and slopes example."
+#| cap-location: margin
+
+set.seed(509)
+
+df3 <- data.frame(b0 = 2 + rnorm(5, 0, 1), b1 = 2 + rnorm(5, 0, 1), subject = letters[1:5])
+
+ggplot(df3) +
+  geom_abline(aes(intercept = b0, slope = b1, color = subject), linewidth = 1.2) +
+  coord_cartesian(xlim = c(0, 5), ylim = c(0, 18)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  xlab("x") + ylab("y") +
+  scale_color_manual(values = c("#fab4ac", "#d8b365", "#c7eae5", "#5ab4ac", "#01665e")) + #,"#8c510a"
+  theme(panel.border = element_rect(colour = "gray20", fill = NA, linewidth = 0.8))
+```
+[This site](https://uoepsy.github.io/lmm/02_lmm.html) has some nice illustrations explaining random effects. 
 
 ## R Formula Syntax for Random and Fixed Effects
 
