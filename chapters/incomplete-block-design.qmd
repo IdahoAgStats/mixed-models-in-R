@@ -12,12 +12,12 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 The block design described in [**Chapter 4**](rcbd.qmd) was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g. limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.  
 
-In such cases, incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An [excellent description of incomplete block design](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} is provided by Lukas Meier in [*ANOVA and Mixed Models*](https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier){.external target="_blank"}.
+In such cases, incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches [@yates_1936] for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An excellent description of incomplete block designs is provided by Lukas Meier in *ANOVA and Mixed Models* [-@meier] and his [lecture notes](https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html){.external target="_blank"} as well as in [lecture notes](https://pbgworks.org/sites/pbgworks.org/files/user/4/Lattice_seminar.pdf){.external target="_blank"} by Jennifer Kling.
 
+Incomplete block designs are grouped into two groups: (1) balanced designs; and (2) partially balanced (also commonly called alpha-lattice) designs [@oehlert]. Balanced IBD designs have been previously called "lattice designs" [@Nair_1952], but we are not using that term to avoid confusion with alpha-lattice designs. In a balanced design, treatment pairs occur together in equal numbers for all possible pairwise treatment combinations. This enables a user to conduct all pairwise comparisons, but it not always feasible to implement, particularly when there is a large number of treatment, such as in a crop variety trial. The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on), and number of replicates must be equal to number of blocks + 1. 
 
-Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called "lattice designs" [@Nair_1952], but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used. 
+In a partially balanced design, treatment pairs occur unequally across the experiments and some pairs do not occur at all. These designs are sometimes labelled "disconnected" when all treatment pairs do not occur together because those pairwise combinations can be contrasted in a statistical analysis. In alpha-lattice design, the sub-blocks are grouped into complete replicates. The replication is considered the "superblock" consisting of multiple sub-blocks and each treatment occurs at least once. These designs are also termed as "resolvable incomplete block designs" [@patterson_1976]. This design has been more commonly used instead of balanced IBD because of it's practicability and versatility when there is a large number of treatments. In this design, we have *t* treatment groups, each occurring *r* times, with *bk* experimental units groups into *b* blocks of size *k*<*v* in such a manner that units within a block are same and units in different blocks are substantially different.
 
-In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as "resolvable incomplete block designs" or "partially balanced incomplete block designs"  [@patterson_1976]. This design has been more commonly used instead of balanced IBD because of it's practicability, flexibility, and versatility. In this design, we have *t* treatment groups, each occuring *r* times, with *bk* experimentals units groups iinto *b* blocks of size *k*<*v* in such a manner that units within a block are same and units in different blocks are substantially different.
 
 
 ### Statistical Model
@@ -37,19 +37,14 @@ $$ \epsilon \sim N(0, \sigma)$$
 
 $$ \beta \sim N(0, \sigma_b)$$ 
 
-There are few key points that we need to keep in mind while designing incomplete block experiments:
 
--   A drawback of this design is that block effect and treatment effects are confounded.
--   To remove the block effects, it is better compare treatments within a block.
--   No treatment should appear twice in any block as it contributes nothing to within block comparisons.
+There are few key points that we need to keep in mind when incomplete block experiments:
 
-The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g. 25, 36, and so on), and number of replicates must be equal to number of blocks + 1. 
+- Block can be treated as fixed ("intra-block analysis") or random ("inter-block analysis"). When it is treated as random, the block effect also contains treatment effects. 
+- A drawback of this design is that the estimates have less precision compared to RCBD
+- The very nature of incomplete block design results in 'missing' data from the standpoint of statistical software, thus ensuring that type I and type III sums of squares are different even there is no data missing for any experimental unit in the original design.
+- Contrasting treatments within blocks can remove block effects, so it helps to ensure a design contains the pairwise treatment combinations of interest to the researcher.
 
-::: callout-note
-## Note on Sums of Squares
-
-Because the blocks are incomplete, the type I and type III sums of squares will be different even when there is no missing data from a trial. That is because the missing treatments in each block represent missing observations (even though they are not missing ‘at random’).
-:::
 
 ## Examples Analyses
 
@@ -136,7 +131,7 @@ agg_df
 ```
 
 
-There are 31 varieties (levels of gen) and it is perfectly balanced, with exactly one observation per treatment per block.
+There are 31 varieties and it is perfectly balanced, with exactly one observation per treatment per superblock.
 
 - Check the extent of missing data
 
@@ -167,7 +162,7 @@ This data set is ready for analysis!
 
 #### Model Building
 
-We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect). ^[ Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.]
+We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect/intra-block analysis). 
 
 ::: panel-tabset
 ### lme4
