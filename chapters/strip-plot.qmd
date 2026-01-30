@@ -8,11 +8,46 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-Also referred by 'strip-plot design' or 'strip-split-plot design'. This design had an extensive application in the agricultural sciences. In the simplest case, we have two factors A and B. Factor A is applied to whole plots same as in the standard split-plot design. Then factor B is applied to **strips** (which are just another set of whole plots) that are orthogonal to the original whole plots used for factor A.
+Also referred by "split block design", this design can be very useful for agricultural field experiments when there are two treatments that need to be applied at a larger scale than the experimental units. It is a row-column design where treatments are applied in *strips* within each block. Below is an example layout of this design.
+
+```{r}
+#| echo: false
+
+set.seed(208)
+
+var1_lev = c("A1", "A2")
+var2_lev = c("B1", "B2", "B3")
+
+split_bl <- data.frame(var1 = c(rep(sample(var1_lev, 2), each = 3),
+                               rep(sample(var1_lev, 2), each = 3),
+                               rep(sample(var1_lev, 2), each = 3)),
+                       var2 = c(rep(sample(var2_lev, 3), times = 2),
+                                rep(sample(var2_lev, 3), times = 2),
+                                rep(sample(var2_lev, 3), times = 2)),
+                       var3 = as.character(rep(c("Block 1", "Block 2", "Block 3"), 
+                                               each = 6)),
+                       row = rep(1:3, times = 6),
+                       column = rep(1:2, each = 3))
+split_bl$trt_comb <- paste(split_bl$var1, split_bl$var2, sep = ",")
+
+ggplot(split_bl, aes(y = row, x = column)) +
+  geom_tile(fill = "aliceblue", color = "gray30") +
+  facet_grid(. ~ var3) + 
+  geom_text(aes(label = trt_comb)) +
+  ggtitle("Strip Plot Design") +
+  xlab("Factor A") + ylab("Factor B") +
+  theme_classic(base_size = 14) +
+  theme(axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) 
+```
+
 
 The statistical model for this design is:
 
-$$y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}$$ Where:
+$$y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}$$ 
+
+Where:
 
 $\mu$= overall experimental mean, $(\tau\alpha)_{ij}$, $(\tau\beta)_{ik}$, and $\epsilon_{ijk}$ are the errors used to test factor A, B, and their interaction AB, respectively. $\alpha$ and $\beta$ are the main effects applied A and B, and $\alpha_j\beta_k$ represents the interaction between main factors.
 
@@ -20,7 +55,7 @@ $$ \epsilon_{ijk} \sim N(0, \sigma^2)$$\
 
 ## Example Analysis
 
-We will start the analysis first by loading the required libraries for this analysis for `lmer()` and `lme()` models, respectively.
+We will start the analysis first by loading the required libraries for this analysis for `lmer()` and `lme()` models.
 
 ::: panel-tabset
 ### lme4
@@ -230,3 +265,5 @@ Note that, confidence intervals were not estimated through `emmeans()` from `lme
 
 For strip plot experiment design, fitting nested and crossed random effects is more complicated through **nlme**. Therefore, it's more convenient to use **lme4** in this case as both models yielded same results in the example shown above.
 :::
+
+Sometimes, elements of split plot and split block are combined, resulting in strip-plit plot design. 
