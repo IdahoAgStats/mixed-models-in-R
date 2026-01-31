@@ -4,36 +4,39 @@
 source(here::here("settings.r"))
 ```
 
-In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called **"longitudinal data"**).
+In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called "longitudinal data").
 
-Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject, we must model the repeated measures effect when analyzing the main effects.
+Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject or experimental unit, we must model the repeated measures covariance structure when analyzing the treatment effects.
 
 In these models, the 'iid' assumption (independently and identically distributed) is often violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
-Fitting models with correlated observations requires new libraries, including **mmrm** and **nlme**. The **lme4** package allows random effects only. In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.
+For this these models, we will use ***nlme***. This packages have the easiest implementation of heterogeneous error structures.Another package, [***mmrm***](https://CRAN.R-project.org/package=mmrm){.external target="_blank"}, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that.  While [it is possible](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html){.external target="_blank"} to do this with **lme4**, but it requires extensive comfort programming in **lme4**.
+
+In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.
 
 There are several types of covariance structures:
 
-| Structure name | nlme function | mmrm function | Assumption |
+| Structure name | nlme function  | Assumption |
 |------------------------|------------------------|------------------------|
-| Autoregressive (AR1) | `corAR1()` | `ar1`  | observations which are more proximate are more correlated than measures that are more distant |
-| Compound symmetry | `corCompSymm()` |   | Correlation is equal for all time gaps between observations |
-| Unstructured | `CorSymm()` |    | Correlations are different for the various time gaps |
+| Autoregressive (AR1) | `corAR1()` |  observations which are more proximate are more correlated than measures that are more distant |
+| Compound symmetry | `corCompSymm()` | Correlation is equal for all time gaps between observations |
+| Unstructured | `CorSymm()` |  Correlations are different for the various time gaps |
 
 ::: column-margin
-To read more about selecting appropriate covariance structure based on your data, please refer to this [link](https://www.ars.usda.gov/ARSUserFiles/80000000/StatisticsGroupWebinars/Appendix%20E%20-%20Selecting%20a%20Covariance%20Structure.pdf).
+To read more about selecting appropriate covariance structure based on your data, please refer to this [SAS guide](https://support.sas.com/resources/papers/proceedings/proceedings/sugi30/198-30.pdf){.external target="_blank"}.
 :::
 
 The repeated measures syntax in **nlme** follow this convention: 
 
-`corr = corAR1(value = 0, form = ~ t|g, fixed = FALSE)`. 
+`corAR1(value = 0, form = ~ t|g, fixed = FALSE)`. 
 
-The argument for 'value' is the starting value for iterations (zero, unless you specify something else), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t` or `~ t|g`, specifying a time covariate $t$ and, optionally a grouping factor g (if a group factor is not specified, the observation order will be used). When we use `~t|g` form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an **integer value**. Similarly, `corCompSymm()` and `corSymm()` follow the same argument syntax. 
+The argument for `value` is the starting value for iterations (zero is the default), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t|g`, where $t$ is the temporal variable and $g$ is the grouping factor (the subject or experimental unit) to estimate covariance across. Technically,  $g$ is optional and if not specified, the order of the data set will be assumed $t$. However, for most replicated experiments, you will need to specify $g$.  When we use `~t|g` form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an **integer value**. Similarly, `corCompSymm()` and `corSymm()` follow the same argument syntax. 
 
-There are other covariance structures (e.g., `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Type `?cor` in an R console for more options and details on the syntax.
+There are other covariance structures enabled by ***nlme*** (e.g., `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Read the [nlme manual](https://cran.r-project.org/web/packages/nlme/refman/nlme.html){.external target="_blank"} if you want to learn more about covariance structures in that package. 
 
-For this chapter, we will be analyzing data using the **nlme** and **mmrm** packages. So, let's start with loading the required libraries for this analysis. These packages have the easiest implementation of heterogeneous error structures. While [it is possible](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html) to do this with **lme4**, but it requires extensive comfort programming in **lme4**.
 
+
+let's start with loading the required libraries for this analysis.
 ::: panel-tabset
 ### nlme
 ```{r, message=FALSE, warning=FALSE}
@@ -43,7 +46,7 @@ library(dplyr); library(broom.mixed); library(ggplot2)
 
 ### mmrm
 ```{r, message=FALSE, warning=FALSE}
-library(mmrm); library(performance); library(emmeans)
+library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
 ```
 :::
@@ -54,9 +57,9 @@ First, we will start with the first example with randomized complete block desig
 
 ## RCBD Repeated Measures
 
-The example shown below contains data from a sorghum trial laid out as a randomized complete block design (5 blocks) with variety (4 varieties) treatment effect. The response variable 'y' is the leaf area index assessed in five consecutive weeks on each plot.
+The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, 'variety'. The dependent variable, y (leaf are index) was measured weekly for 5 weeks. 
 
-We need to have time as both a numeric and a factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, week needs to be numeric (week).
+We need to have time as both a numeric and a factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, the variable "factweek" needs to be converted to a numeric format ("week").
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -94,7 +97,7 @@ Let's do preliminary data check including evaluating data structure, distributio
 str(sorghum)
 ```
 
-In this data, we have block, factplot, factweek as factor variables and y & week as numeric.
+In this data set, 'block', 'factplot', 'factweek' are factors, while 'y' and 'week' are coded as numeric.
 
 - Inspect the independent variables
 
@@ -118,7 +121,8 @@ ggplot(data = sorghum, aes(y = y, x = factweek, fill = variety)) +
   geom_boxplot() +  
     theme_bw()
 ```
-Looks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
+It loooks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
+
 One last step before we fit model is to look at the distribution of response variable.
 
 ```{r, eval=FALSE}
@@ -300,7 +304,7 @@ hist(Yield$Yield, xlab = "yield", main = NA)
 
 This data can be analyzed either using `nlme` or `mmrm`.
 
-Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used the `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. Instead of the `summary()` function we will use `tidy()`  function from the **broom.mixed** package to look at estimates of mixed and random effects. This will generate a tidy workflow particularly by providing standardized verbs that provide information on estimates, standard errors, confidence intervals, etc.
+Let's say we want to fit a model using AR1 structure as shown in the RCBD repeated measures example. Previously, we used the `lme()` from **nlme** package to fit the model. In this example, along with `nlme()` we will also `mmrm()` function from the **mmrm** package. Instead of the `summary()` function we will use `tidy()`function from the ***broom.mixed*** package to look at estimates of mixed and random effects. 
 
 
 ```{r}
@@ -349,7 +353,7 @@ To explore more about contrasts and emmeans please refer to [**Chapter 13**](mea
 
 ## Split-split Plot Repeated Measures {#ssp-rm}
 
-Recall, we have evaluated the split-split experiment design in [**Chapter 8**](split-split-plot-design.qmd), where we had one factor in main-plot, other in subplot and the third factor in sub-subplot. In this example,a repeated measures component will be added to the split-split plot model.
+Recall, we have evaluated this split-split plot experiment design in the [**split-split design chapter**](split-split-plot-design.qmd). In this example,a repeated measures component will be added to the split-split plot model.
 
 ```{r}
 phos <- read.csv(here::here("data", "split_split_repeated.csv"))
