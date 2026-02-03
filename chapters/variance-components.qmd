@@ -112,8 +112,7 @@ $$ \gamma \sim \mathcal{N}(0, \sigma^2_g) $$
 **lme4 Syntax**
 
 ```{r}
-potato_m1 <- lmer((1/LxW) ~ state + (1|year) + 
-                    (1|state:year) + (1|clone),
+potato_m1 <- lmer((1/LxW) ~ state + (1|year) + (1|state:year) + (1|clone),
                   data = potato)
 ```
 
@@ -265,6 +264,7 @@ Employee salary is very skewed, where the 70% of salaries are less than $100,000
 ```{r, echo=FALSE}
 #| fig-cap: "Box plot of Log Salaries by Year"
 #| column: margin
+#| echo: false
 boxplot(log(salary) ~ year, data = wa_salary, main = NA, cex.lab = cex_lab, cex.axis = cex_axis, xlab = 'Year: "0" = 2019', col = base_plot_color, ylab = "log of salaries")
 ```
 
@@ -429,7 +429,7 @@ This plot illustrates the negative correlation between employee salary and emplo
 
 There are other functions in [**merTools**](https://CRAN.R-project.org/package=merTools){.external target="_blank"} to explore random effects and variances from an `lme4` analysis.
 
-```{r, eval=FALSE, include=FALSE}
+```{r}
 #| eval: false
 #| include: false
 #| echo: false
@@ -483,7 +483,7 @@ hist(var_ex1$yield, main = NA, ylab = NA, xlab = "seed yield")
 boxplot(yield ~ site, data = var_ex1)
 ```
 
-```{r, echo=FALSE}
+```{r}
 #| fig-cap: "Distribution of Canola Yield from MET"
 #| column: margin
 #| echo: false
@@ -491,7 +491,8 @@ boxplot(yield ~ site, data = var_ex1)
 hist(var_ex1$yield, main=NA, col = base_plot_color, ylab=NULL, xlab = "seed yield", cex.lab = cex_lab, cex.axis = cex_axis)
 ```
 
-```{r, echo=FALSE}
+```{r}
+#| echo: false
 boxplot(yield ~ site, data = var_ex1, col = base_plot_color)
 ```
 
