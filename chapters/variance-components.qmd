@@ -44,12 +44,20 @@ The data used in the next example is a collection of potato field trials conduct
 | year   | year of trial, 16 levels    |
 | state   | location of trial, 3 levels   |
 | clone   | potato genotype |
-| LxW | length-to-width ratio     |
+| iLxW | inverse length-to-width ratio     |
 
 
 ```{r}
 potato <- read.csv(here::here("data", "potato_tuber_size.csv"))
 ```
+
+```{r}
+#| include: false
+#| echo: false
+potato$iLxW <- 1/potato$LxW
+```
+
+
 
 Number of observations for each location and year and their marginal sums:
 
@@ -70,8 +78,9 @@ potato |> count(clone, name = "Frequency of Evaluation") |>
 
 The distribution of the dependent variable, length-to-width ratio,  had a slight left skew, so the the inverse of this trait was modeled. 
 
-```{r eval=FALSE}
-hist(1/potato$LxW, ylab = NULL, xlab = NULL, main = NA, breaks = 20)
+```{r}
+#| eval: false
+hist(potato$iLxW, ylab = NULL, xlab = NULL, main = NA, breaks = 20)
 ```
 
 ```{r}
@@ -79,7 +88,7 @@ hist(1/potato$LxW, ylab = NULL, xlab = NULL, main = NA, breaks = 20)
 #| column: margin
 #| echo: false
 #| 
-hist(1/potato$LxW, ylab=NULL, xlab = "1/LxW", cex.lab = cex_lab, cex.axis = cex_axis, main = NA, col = base_plot_color, breaks = 20)
+hist(potato$iLxW, ylab=NULL, xlab = "1/LxW", cex.lab = cex_lab, cex.axis = cex_axis, main = NA, col = base_plot_color, breaks = 20)
 ```
 
 #### Model fitting
@@ -112,7 +121,7 @@ $$ \gamma \sim \mathcal{N}(0, \sigma^2_g) $$
 **lme4 Syntax**
 
 ```{r}
-potato_m1 <- lmer((1/LxW) ~ state + (1|year) + (1|state:year) + (1|clone),
+potato_m1 <- lmer(iLxW ~ state + (1|year) + (1|state:year) + (1|clone),
                   data = potato)
 ```
 
@@ -261,7 +270,7 @@ hist(log(wa_salary$salary), xlab=NA, ylab = "log of salaries", cex.lab = cex_lab
 
 Employee salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum of \$3.1 million. The salaries were log transformed for a log-linear model. This is a special case of generalized linear mixed model (GLMM); log-linear model follow the assumption of normally-distributed residuals terms when the dependent variable is log-transformed. The salaries are observed to increase a small amount each year. 
 
-```{r, echo=FALSE}
+```{r}
 #| fig-cap: "Box plot of Log Salaries by Year"
 #| column: margin
 #| echo: false
@@ -576,7 +585,7 @@ var_ex2 <- read.csv(here::here("data", "single_trial_variance.csv")) |>
 A histogram does indicate there is anything unusual about the dependent variable (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.
 
 
-```{r, echo=FALSE}
+```{r}
 #| fig-cap: "Distribution of Canola Yield from Single Trial"
 #| column: margin
 #| echo: false
