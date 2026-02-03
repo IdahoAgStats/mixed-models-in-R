@@ -66,7 +66,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../chapters/incomplete-block-design.html" rel="next">
-<link href="../chapters/split-split-plot.html" rel="prev">
+<link href="../chapters/split-split-plot-design.html" rel="prev">
 <link href="../img/logo_transparent.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -156,7 +156,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 <meta name="twitter:title" content="9&nbsp; Strip Plot Design – Field Guide to the R Mixed Model Wilderness">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="strip-plot_files/figure-html/unnamed-chunk-6-1.png">
+<meta name="twitter:image" content="strip-plot_files/figure-html/unnamed-chunk-2-1.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -270,7 +270,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/split-split-plot-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
@@ -375,16 +375,26 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="background"><span class="header-section-number">9.1</span> Background</h2>
-<p>Also referred by ‘strip-plot design’ or ‘strip-split-plot design’. This design had an extensive application in the agricultural sciences. In the simplest case, we have two factors A and B. Factor A is applied to whole plots same as in the standard split-plot design. Then factor B is applied to <strong>strips</strong> (which are just another set of whole plots) that are orthogonal to the original whole plots used for factor A.</p>
+<p>Also referred by “split block design”, this design can be very useful for agricultural field experiments when there are two treatments that need to be applied at a larger scale than the experimental units. It is a row-column design where treatments are applied in <em>strips</em> within each block. Below is an example layout of this design.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>The statistical model for this design is:</p>
-<p><span class="math display">\[y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}\]</span> Where:</p>
+<p><span class="math display">\[y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}\]</span></p>
+<p>Where:</p>
 <p><span class="math inline">\(\mu\)</span>= overall experimental mean, <span class="math inline">\((\tau\alpha)_{ij}\)</span>, <span class="math inline">\((\tau\beta)_{ik}\)</span>, and <span class="math inline">\(\epsilon_{ijk}\)</span> are the errors used to test factor A, B, and their interaction AB, respectively. <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are the main effects applied A and B, and <span class="math inline">\(\alpha_j\beta_k\)</span> represents the interaction between main factors.</p>
 <p><span class="math display">\[ \epsilon_{ijk} \sim N(0, \sigma^2)\]</span><br>
 </p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="9.2">
 <h2 data-number="9.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">9.2</span> Example Analysis</h2>
-<p>We will start the analysis first by loading the required libraries for this analysis for <code>lmer()</code> and <code>lme()</code> models, respectively.</p>
+<p>We will start the analysis first by loading the required libraries for this analysis for <code>lmer()</code> and <code>lme()</code> models.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -441,7 +451,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="strip-plot_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="strip-plot_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -838,6 +848,7 @@ Confidence level used: 0.95 </code></pre>
 <p>For strip plot experiment design, fitting nested and crossed random effects is more complicated through <strong>nlme</strong>. Therefore, it’s more convenient to use <strong>lme4</strong> in this case as both models yielded same results in the example shown above.</p>
 </div>
 </div>
+<p>Sometimes, elements of split plot and split block are combined, resulting in strip-plit plot design.</p>
 
 
 </section>
@@ -1246,7 +1257,7 @@ Confidence level used: 0.95 </code></pre>
   </script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../chapters/split-split-plot.html" class="pagination-link" aria-label="Split-Split Plot Design">
+      <a href="../chapters/split-split-plot-design.html" class="pagination-link" aria-label="Split-Split Plot Design">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span>
       </a>          
   </div>

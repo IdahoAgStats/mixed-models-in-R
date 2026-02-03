@@ -241,7 +241,7 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/split-split-plot-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
@@ -346,9 +346,9 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
 <ol type="1">
 <li><strong>Singular fit error</strong></li>
 </ol>
-<p><code>boundary (singular) fit: see ?isSingular</code></p>
+<pre><code>boundary (singular) fit: see ?isSingular</code></pre>
 <p>This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are minimal and cannot be distinguished from zero.</p>
-<p>This error occurs because one of the variance components is approximately zero. If a model is “singular”, this means that some dimensions of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision allow.</p>
+<p>This error occurs because one of the variance components is approximately zero. If a model is “singular”, this means that an aspect of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer’s precision allows.</p>
 <p>There is no single solution for this problem. Here are the possible solutions that you can try:</p>
 <p>First, look at the summary of the fitted model using <code>summary()</code> function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.</p>
 <p>Another option is to include the block as a fixed effect and re-analyze the experiment. If there are no other random effects in the model, you can use the function <code>gls()</code> from the <strong>nlme</strong> that uses generalized least squares for model fit and allows for correlated and unequal variances.</p>
@@ -366,35 +366,38 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 <li><strong>Model failed to converge</strong>.</li>
 </ol>
 <p>There are several different error messages for non-convergence, depending on what happened:</p>
-<p><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></p>
-<p><code>Hessian that is not positive definite</code></p>
+<pre><code>convergence error code = 1 message = iteration limit reached without convergence (10)</code></pre>
+<pre><code>Hessian that is not positive definite</code></pre>
 <p>There are several causes for the lack of convergence. Model fitting is an iterative process where in each iteration, the latest estimates are compared to those from the previous iteration. When the difference between estimates becomes substantially small, modelling packages declare that the convergence criteria were met. There are several reasons why a model may not converge: (1) it needed more iterations, (2) the model does not fit the data well, (3) the software did not have a decent starting point for this model and data; among other plausible explanations.</p>
 <p>Running this code in an R console will display a useful help file with details on how to address convergence issues.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>?convergence</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Possible solutions to fix this error are: - Try a different optimizer</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">update</span>(model, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">update</span>(model, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The default optimizer used in <code>lmer()</code> is “Nelder_Mead”, “bobyqa” optimizer is recommended for stability.</p>
+<p>The default optimizer used in <code>lmer()</code> is “Nelder_Mead”; “bobyqa” optimizer is recommended for stability.</p>
 <ul>
 <li>Increase iterations for convergence.</li>
 </ul>
 <p>We can update our existing model by increasing max iterations to 100,000.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">update</span>(model1, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optCtrl =</span> <span class="fu">list</span>(<span class="at">maxfun =</span> <span class="dv">100000</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> x <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block), <span class="at">data =</span> dataset)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">update</span>(model1, <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optCtrl =</span> <span class="fu">list</span>(<span class="at">maxfun =</span> <span class="dv">100000</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
-<li>Last, we can simplify the model by removing random effects that do not appear to be detectable.</li>
+<li>Last, we can simplify the model by removing random effects that do not appear to be detectable in a given model and data set.</li>
 </ul>
 <section id="other-tools" class="level3" data-number="15.1.1">
 <h3 data-number="15.1.1" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">15.1.1</span> Other Tools</h3>
-<p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and ensure it looks like what you expect, and that your expectations of the variables align with their reperesentation in R.</p>
-<p>Having an understanding of the moving parts of <strong>lme4</strong> and how they each contribute to model fit can help. A helpful <strong>lme4</strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
-<p>Posit (née RStudio) has published a <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html" class="external" target="_blank">rather useful guide</a> for advanced troubleshooting of convergence issues in <strong>lme4</strong>. Phillip Alday wrote a <a href="https://rpubs.com/palday/lme4-singular-convergence" class="external" target="_blank">detailed tutorial</a> on <strong>lme4</strong> convergence warnings.</p>
+<p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and ensure it looks like what you expect, and that your expectations of the variables align with their representation in R.</p>
+<p>Having an understanding of the moving parts of <strong><em>lme4</em></strong> and how they each contribute to model fit can help. A helpful <strong><em>lme4</em></strong> control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
+<ul>
+<li><p>Posit (née RStudio) has published a <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html" class="external" target="_blank">rather useful guide</a> for advanced troubleshooting of convergence issues in <strong><em>lme4</em></strong>.</p></li>
+<li><p>Phillip Alday wrote a <a href="https://rpubs.com/palday/lme4-singular-convergence" class="external" target="_blank">detailed tutorial</a> on <strong><em>lme4</em></strong> convergence warnings.</p></li>
+</ul>
 
 
 </section>

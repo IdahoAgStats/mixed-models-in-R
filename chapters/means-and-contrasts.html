@@ -290,7 +290,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/split-split-plot-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
@@ -377,7 +377,6 @@ window.Quarto = {
   <li><a href="#alternative-approaches" id="toc-alternative-approaches" class="nav-link" data-scroll-target="#alternative-approaches"><span class="header-section-number">13.5</span> Alternative Approaches</a></li>
   <li><a href="#export-emmeans-to-an-external-file" id="toc-export-emmeans-to-an-external-file" class="nav-link" data-scroll-target="#export-emmeans-to-an-external-file"><span class="header-section-number">13.6</span> Export emmeans to an external file</a></li>
   <li><a href="#graphical-display-of-emmeans" id="toc-graphical-display-of-emmeans" class="nav-link" data-scroll-target="#graphical-display-of-emmeans"><span class="header-section-number">13.7</span> Graphical display of emmeans</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">13.8</span> Conclusion</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/means-and-contrasts.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -455,9 +454,9 @@ of nesting</code></pre>
 <pre><code># A tibble: 12 × 7
    effect term                estimate std.error    df statistic  p.value
    &lt;chr&gt;  &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)           80          9.11    45    8.78   2.56e-11
+ 1 fixed  (Intercept)           80.0        9.11    45    8.78   2.56e-11
  2 fixed  VMarvellous            6.67       9.72    10    0.686  5.08e- 1
- 3 fixed  VVictory              -8.5        9.72    10   -0.875  4.02e- 1
+ 3 fixed  VVictory              -8.50       9.72    10   -0.875  4.02e- 1
  4 fixed  N0.2cwt               18.5        7.68    45    2.41   2.02e- 2
  5 fixed  N0.4cwt               34.7        7.68    45    4.51   4.58e- 5
  6 fixed  N0.6cwt               44.8        7.68    45    5.84   5.48e- 7
@@ -490,7 +489,7 @@ of nesting</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
-(Intercept)     1    45 77.16732  &lt;.0001
+(Intercept)     1    45 77.16735  &lt;.0001
 V               2    10  1.22454  0.3344
 N               3    45 13.02273  &lt;.0001
 V:N             6    45  0.30282  0.9322</code></pre>
@@ -637,10 +636,10 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast        estimate   SE df t.ratio p.value
  0.0cwt - 0.2cwt   -19.50 4.44 45  -4.396  0.0004
- 0.0cwt - 0.4cwt   -34.83 4.44 45  -7.853  &lt;.0001
- 0.0cwt - 0.6cwt   -44.00 4.44 45  -9.919  &lt;.0001
+ 0.0cwt - 0.4cwt   -34.83 4.44 45  -7.853 &lt;0.0001
+ 0.0cwt - 0.6cwt   -44.00 4.44 45  -9.919 &lt;0.0001
  0.2cwt - 0.4cwt   -15.33 4.44 45  -3.457  0.0064
- 0.2cwt - 0.6cwt   -24.50 4.44 45  -5.523  &lt;.0001
+ 0.2cwt - 0.6cwt   -24.50 4.44 45  -5.523 &lt;0.0001
  0.4cwt - 0.6cwt    -9.17 4.44 45  -2.067  0.1797
 
 Results are averaged over the levels of: V 
@@ -694,7 +693,7 @@ Confidence level used: 0.95 </code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="at">method =</span> <span class="fu">list</span>(A1 <span class="sc">-</span> A2) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast       estimate   SE df t.ratio p.value
- c(1, -1, 0, 0)    -19.5 4.44 45  -4.396  0.0001
+ c(1, -1, 0, 0)    -19.5 4.44 45  -4.396 &lt;0.0001
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment </code></pre>
@@ -702,7 +701,7 @@ Degrees-of-freedom method: containment </code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="at">method =</span> <span class="fu">list</span>(A1 <span class="sc">-</span> A3) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast       estimate   SE df t.ratio p.value
- c(1, 0, -1, 0)    -34.8 4.44 45  -7.853  &lt;.0001
+ c(1, 0, -1, 0)    -34.8 4.44 45  -7.853 &lt;0.0001
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment </code></pre>
@@ -710,7 +709,7 @@ Degrees-of-freedom method: containment </code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="at">method =</span> <span class="fu">list</span>(A1 <span class="sc">-</span> A4) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast       estimate   SE df t.ratio p.value
- c(1, 0, 0, -1)      -44 4.44 45  -9.919  &lt;.0001
+ c(1, 0, 0, -1)      -44 4.44 45  -9.919 &lt;0.0001
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment </code></pre>
@@ -790,8 +789,8 @@ Confidence level used: 0.95 </code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m2, <span class="at">exclude =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast        estimate   SE df t.ratio p.value
- 0.0cwt - 0.4cwt   -34.83 4.44 45  -7.853  &lt;.0001
- 0.0cwt - 0.6cwt   -44.00 4.44 45  -9.919  &lt;.0001
+ 0.0cwt - 0.4cwt   -34.83 4.44 45  -7.853 &lt;0.0001
+ 0.0cwt - 0.6cwt   -44.00 4.44 45  -9.919 &lt;0.0001
  0.4cwt - 0.6cwt    -9.17 4.44 45  -2.067  0.1084
 
 Results are averaged over the levels of: V 
@@ -804,9 +803,9 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrast</span>(m2, <span class="st">"consec"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast        estimate   SE df t.ratio p.value
- 0.2cwt - 0.0cwt    19.50 4.44 45   4.396  0.0002
- 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0033
- 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1152
+ 0.2cwt - 0.0cwt    19.50 4.44 45   4.396  0.0003
+ 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0034
+ 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1153
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment 
@@ -817,7 +816,7 @@ P value adjustment: mvt method for 3 tests </code></pre>
 </section>
 <section id="compact-letter-displays" class="level2" data-number="13.4">
 <h2 data-number="13.4" class="anchored" data-anchor-id="compact-letter-displays"><span class="header-section-number">13.4</span> Compact letter displays</h2>
-<p>Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the <a href="../chapters/analysis-tips.html#sec-cld_warning">Analysis Tips Chapter</a>. In particular, using CLD to contrast a large number of levels (e.g.&nbsp;10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing CLDs.</p>
+<p>Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the <a href="../chapters/analysis-tips.html#sec-cld_warning">Analysis Tips Chapter</a>. In particular, using CLD to contrast a large number of levels (e.g.&nbsp;10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing compact letter display.</p>
 <p>The R package <strong><em>multcompView</em></strong> <span class="citation" data-cites="multcompView">(<a href="../references.html#ref-multcompView" role="doc-biblioref">2019</a>)</span> can be used to generate a display where any two means associated with same symbol are not statistically different using the function <code>cld()</code>.</p>
 <p>Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
 <div class="cell">
@@ -988,13 +987,9 @@ Estimates sharing the same symbol are significantly different </code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The package <strong><em>emmeans</em></strong> provides extensive functionality for estimating means, confidence intervals, making contrasts and more. To learn more about this functionality, see the <a href="https://rvlenth.github.io/emmeans/" class="external" target="_blank">vignettes</a> for this package.</p>
+<p>The package <strong><em>emmeans</em></strong> provides extensive functionality for estimating means, confidence intervals, making contrasts and more. We discussed a few major features, but this is far from an exhaustive survey of that packagre. To learn more about this functionality, see the <a href="https://rvlenth.github.io/emmeans/" class="external" target="_blank">vignettes</a> for this package.</p>
 </div>
 </div>
-</section>
-<section id="conclusion" class="level2" data-number="13.8">
-<h2 data-number="13.8" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">13.8</span> Conclusion</h2>
-<p>Be cautious with the terms “significant” and “non-significant”, and don’t interpret a “non-significant” result as there is no effect. Follow good statistical practices such as getting the model right first, and using adjusted P-values for appropriately chosen families of comparisons or contrasts.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1005,7 +1000,8 @@ Estimates sharing the same symbol are significantly different </code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>P values are often misinterpreted, and the term “statistical significance” can be misleading. Please refer to this <a href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e167" class="external" target="_blank">link</a> to read more about basic principles outlined by the American Statistical Association when considering p-values.</p>
+<p>P values are often misunderstood. In particular, the term “statistical significance” has been frequently misused and misinterpreted in myriad ways. Most saliently, a “non-significant” statistical result does not mean there is no treatment effect.</p>
+<p>Please refer to this <a href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108#d1e167" class="external" target="_blank">article</a> to read more about basic principles outlined by the American Statistical Association when considering p-values.</p>
 </div>
 </div>
 

@@ -270,7 +270,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/split-split-plot-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
@@ -346,6 +346,7 @@ window.Quarto = {
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">11.2.1</span> Data integrity checks</a></li>
   <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">11.2.2</span> Model fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">11.2.3</span> Check Model Assumptions</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">11.2.4</span> Inference</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/latin-design.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -374,17 +375,7 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="background"><span class="header-section-number">11.1</span> Background</h2>
-<p>Latin square design is a spatial adjustment techniquement that assumes a row-by-column layout for the experimental units. Two blocking factors are are assigned, one to the rows and one for the columns of a square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that all ‘<strong>t</strong>’ treatments appears only once in each row and column and number of replications is equal to number of treatments.</p>
-<p>Advantages of Latin square design are:</p>
-<ol type="1">
-<li>The design is particularly appropriate for comparing <strong><em>t</em></strong> treatment means in the presence of two sources of variation (row &amp; column), each measured at <strong><em>t</em></strong> levels.</li>
-</ol>
-<p>Disadvantages:</p>
-<ol type="1">
-<li><p>A Latin square can be constructed for any value of <strong><em>t</em></strong>, however, it is best suited for comparing <em>t</em> treatments when <span class="math inline">\(5≤ t ≤ 10\)</span>.</p></li>
-<li><p>Additional sources of variability reduces efficiency and tend to inflate the error term which makes it more difficult to detect differences among the treatments.</p></li>
-<li><p>There must be no interaction of rows and columns with treatment effects.</p></li>
-</ol>
+<p>Latin square design is a spatial adjustment technique that assumes a row-by-column layout for the experimental units. Two blocking factors are are assigned, one to the rows and one for the columns of a square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that each treatment appears only once in each row and column, and the number of replications is equal to number of treatments.</p>
 <p>The statistical model for the Latin square design:</p>
 <p><span class="math inline">\(Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}\)</span></p>
 <p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i\)</span> represents treatment effect, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column-specific effects.</p>
@@ -410,7 +401,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used in this example is from the <strong>agridat</strong> package (data set “goulden.latin”). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).</p>
+<p>The data set used in this example is from the <strong>agridat</strong> package (data set “goulden.latin”). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"goulden_latin.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -451,7 +442,7 @@ window.Quarto = {
  $ col  : int  1 1 1 1 1 2 2 2 2 2 ...</code></pre>
 </div>
 </div>
-<p>Here yield and trt are classified as numeric and factor variables, respectively, as needed. But we need to change ‘row’ and ‘col’ from integer to factors (character is also a valid choice).</p>
+<p>Here yield and trt are classified as numeric and factor variables, respectively, as appropriate for their variable types. We also need to change ‘row’ and ‘col’ from integer to factor or character.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">row =</span> <span class="fu">as.factor</span>(row),</span>
@@ -470,7 +461,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>This looks great! Here we can see that there are an equal number of treatments, rows, and columns (5). Treatments were randomized in such a way that one treatment doesn’t appear more than once in each row and column.</p>
+<p>This looks great! Here we can see that there are an equal number of treatments, rows, and columns (5). Treatments were randomized so that one treatment does not appear more than once in each row and column.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
@@ -577,7 +568,7 @@ StdDev: 0.7529153
  Block 2: col
  Formula: ~0 + col | one
                  col Residual
-StdDev: 2.708438e-05 1.737645
+StdDev: 2.708416e-05 1.737645
 
 Fixed effects:  yield ~ trt 
                 Value Std.Error DF   t-value p-value
@@ -617,7 +608,7 @@ Number of Groups: 1 </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -631,21 +622,21 @@ Number of Groups: 1 </code></pre>
 <div class="cell quarto-layout-panel" data-layout="[[1,1], [1]]">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="latin-design_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="672"></p>
+<p><img src="latin-design_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <p>These visuals indicate that the assumptions of the linear model have been met.</p>
+</section>
 <section id="inference" class="level3" data-number="11.2.4">
 <h3 data-number="11.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">11.2.4</span> Inference</h3>
 <p>We can now proceed to ANOVA. In this case, we will use <code>anova()</code> with <code>type = 1</code> or <code>type = "sequential"</code> for <code>lmer()</code> and <code>lme()</code> models, respectively.</p>
-</section>
-</div>
-</div>
-</div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">

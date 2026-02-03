@@ -290,7 +290,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/split-split-plot-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
@@ -397,9 +397,9 @@ window.Quarto = {
 <section id="background" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="background"><span class="header-section-number">10.1</span> Background</h2>
 <p>The block design described in <a href="../chapters/rcbd.html"><strong>Chapter 4</strong></a> was complete, meaning that each block contained each treatment level at least once. In practice, it may not be possible or advisable to include all treatments in each block, either due to limitations in treatment availability (e.g.&nbsp;limited seed stocks) or the block size becomes too large to serve its original goals of controlling for spatial variation.</p>
-<p>In such cases, incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches <span class="citation" data-cites="yates_1936">(<a href="../references.html#ref-yates_1936" role="doc-biblioref">Yates 1936</a>)</span> for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An <a href="https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html" class="external" target="_blank">excellent description of incomplete block design</a> is provided by Lukas Meier in <a href="https://www.taylorfrancis.com/books/mono/10.1201/9781003146216/anova-mixed-models-lukas-meier" class="external" target="_blank"><em>ANOVA and Mixed Models</em></a>.</p>
-<p>Incomplete block designs are grouped into two groups: (1) balanced lattice designs; and (2) partially balanced (also commonly called alpha-lattice) designs. Balanced IBD designs have been previously called “lattice designs” <span class="citation" data-cites="Nair_1952">(<a href="../references.html#ref-Nair_1952" role="doc-biblioref">Nair 1952</a>)</span>, but we are not using that term to avoid confusion with alpha-lattice designs, a term that is commonly used.</p>
-<p>In alpha-lattice design, the blocks are grouped into complete replicates. These designs are also termed as “resolvable incomplete block designs” or “partially balanced incomplete block designs” <span class="citation" data-cites="patterson_1976">(<a href="../references.html#ref-patterson_1976" role="doc-biblioref">Patterson and Williams 1976</a>)</span>. This design has been more commonly used instead of balanced IBD because of it’s practicability, flexibility, and versatility. In this design, we have <em>t</em> treatment groups, each occuring <em>r</em> times, with <em>bk</em> experimentals units groups iinto <em>b</em> blocks of size <em>k</em>&lt;<em>v</em> in such a manner that units within a block are same and units in different blocks are substantially different.</p>
+<p>In such cases, incomplete block designs (IBD) can be used. Incomplete block designs break the experiment into many smaller incomplete blocks that are nested within standard RCBD-style blocks and assigns a subset of the treatment levels to each incomplete block. There are several different approaches <span class="citation" data-cites="yates_1936">(<a href="../references.html#ref-yates_1936" role="doc-biblioref">Yates 1936</a>)</span> for how to assign treatment levels to incomplete blocks and these designs impact the final statistical analysis (and if all treatments included in the experimental design are estimable). An excellent description of incomplete block designs is provided by Lukas Meier in <em>ANOVA and Mixed Models</em> <span class="citation" data-cites="meier">(<a href="../references.html#ref-meier" role="doc-biblioref"><strong>meier?</strong></a>)</span> and his <a href="https://people.math.ethz.ch/~meier/teaching/anova/incomplete-block-designs.html" class="external" target="_blank">lecture notes</a> as well as in <a href="https://pbgworks.org/sites/pbgworks.org/files/user/4/Lattice_seminar.pdf" class="external" target="_blank">lecture notes</a> by Jennifer Kling.</p>
+<p>Incomplete block designs are grouped into two groups: (1) balanced designs; and (2) partially balanced (also commonly called alpha-lattice) designs <span class="citation" data-cites="oehlert">(<a href="../references.html#ref-oehlert" role="doc-biblioref">Oehlert 2000</a>)</span>. Balanced IBD designs have been previously called “lattice designs” <span class="citation" data-cites="Nair_1952">(<a href="../references.html#ref-Nair_1952" role="doc-biblioref">Nair 1952</a>)</span>, but we are not using that term to avoid confusion with alpha-lattice designs. In a balanced design, treatment pairs occur together in equal numbers for all possible pairwise treatment combinations. This enables a user to conduct all pairwise comparisons, but it not always feasible to implement, particularly when there is a large number of treatment, such as in a crop variety trial. The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g.&nbsp;25, 36, and so on), and number of replicates must be equal to number of blocks + 1.</p>
+<p>In a partially balanced design, treatment pairs occur unequally across the experiments and some pairs do not occur at all. These designs are sometimes labelled “disconnected” when all treatment pairs do not occur together because those pairwise combinations can be contrasted in a statistical analysis. In alpha-lattice design, the sub-blocks are grouped into complete replicates. The replication is considered the “superblock” consisting of multiple sub-blocks and each treatment occurs at least once. These designs are also termed as “resolvable incomplete block designs” <span class="citation" data-cites="patterson_1976">(<a href="../references.html#ref-patterson_1976" role="doc-biblioref">Patterson and Williams 1976</a>)</span>. This design has been more commonly used instead of balanced IBD because of it’s practicability and versatility when there is a large number of treatments. In this design, we have <em>t</em> treatment groups, each occurring <em>r</em> times, with <em>bk</em> experimental units groups into <em>b</em> blocks of size <em>k</em>&lt;<em>v</em> in such a manner that units within a block are same and units in different blocks are substantially different.</p>
 <section id="statistical-model" class="level3" data-number="10.1.1">
 <h3 data-number="10.1.1" class="anchored" data-anchor-id="statistical-model"><span class="header-section-number">10.1.1</span> Statistical Model</h3>
 <p>The statistical model for a balanced incomplete block design is:</p>
@@ -411,33 +411,20 @@ window.Quarto = {
 <span class="math inline">\(\epsilon\)</span> = error terms</p>
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[ \beta \sim N(0, \sigma_b)\]</span></p>
-<p>There are few key points that we need to keep in mind while designing incomplete block experiments:</p>
+<p>There are few key points that we need to keep in mind when incomplete block experiments:</p>
 <ul>
-<li>A drawback of this design is that block effect and treatment effects are confounded.</li>
-<li>To remove the block effects, it is better compare treatments within a block.</li>
-<li>No treatment should appear twice in any block as it contributes nothing to within block comparisons.</li>
+<li>Block can be treated as fixed (“intra-block analysis”) or random (“inter-block analysis”). When it is treated as random, the block effect also contains treatment effects.</li>
+<li>A drawback of this design is that the estimates have less precision compared to RCBD</li>
+<li>The very nature of incomplete block design results in ‘missing’ data from the standpoint of statistical software, thus ensuring that type I and type III sums of squares are different even there is no data missing for any experimental unit in the original design.</li>
+<li>Contrasting treatments within blocks can remove block effects, so it helps to ensure a design contains the pairwise treatment combinations of interest to the researcher.</li>
 </ul>
-<p>The balanced incomplete block designs are guided by strict principles and guidelines including: the number of treatments must be a perfect square (e.g.&nbsp;25, 36, and so on), and number of replicates must be equal to number of blocks + 1.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Note on Sums of Squares
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Because the blocks are incomplete, the type I and type III sums of squares will be different even when there is no missing data from a trial. That is because the missing treatments in each block represent missing observations (even though they are not missing ‘at random’).</p>
-</div>
-</div>
 </section>
 </section>
 <section id="examples-analyses" class="level2 page-columns page-full" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="examples-analyses"><span class="header-section-number">10.2</span> Examples Analyses</h2>
 <section id="balanced-incomplete-block-design" class="level3 page-columns page-full" data-number="10.2.1">
 <h3 data-number="10.2.1" class="anchored" data-anchor-id="balanced-incomplete-block-design"><span class="header-section-number">10.2.1</span> Balanced Incomplete Block Design</h3>
-<p>We will demonstrate an example data set designed in a balanced incomplete block design. First, load the libraries required for analysis.</p>
+<p>We will demonstrate how to analyze an example balanced incomplete block design. First, load the libraries required for analysis.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -575,7 +562,7 @@ window.Quarto = {
 31     B31 6</code></pre>
 </div>
 </div>
-<p>There are 31 varieties (levels of gen) and it is perfectly balanced, with exactly one observation per treatment per block.</p>
+<p>There are 31 varieties and it is perfectly balanced, with exactly one observation per treatment per superblock.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
@@ -611,10 +598,10 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 </div>
 <p>Response variable values fall within expected range, with few extreme values on right tail. This data set is ready for analysis!</p>
 </section>
-<section id="model-building" class="level4 page-columns page-full" data-number="10.2.1.2">
+<section id="model-building" class="level4" data-number="10.2.1.2">
 <h4 data-number="10.2.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">10.2.1.2</span> Model Building</h4>
-<p>We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect). <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp; Please note that incomplete block effect can be analyzed as a fixed (intra-block analysis) or a random (inter-block analysis) effect. When we consider block as a random effect, the mean values of a block also contain information about the treatment effects.</p></div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
+<p>We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect/intra-block analysis).</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
@@ -681,7 +668,7 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -693,7 +680,7 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -886,7 +873,7 @@ Confidence level used: 0.95 </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="768"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
 </div>
@@ -1059,7 +1046,7 @@ levels of nesting</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1071,7 +1058,7 @@ levels of nesting</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="incomplete-block-design_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1196,6 +1183,9 @@ John, JA, and ER Williams. 1995. <em>Cyclic and <span>Computer</span> <span>Gene
 <div id="ref-Nair_1952" class="csl-entry" role="listitem">
 Nair, K. R. 1952. <span>“Analysis of Partially Balanced Incomplete Block Designs Illustrated on the Simple Square and Rectangular Lattices.”</span> <em>Biometrics</em> 8 (2): 122–55. <a href="https://doi.org/10.2307/3001929">https://doi.org/10.2307/3001929</a>.
 </div>
+<div id="ref-oehlert" class="csl-entry" role="listitem">
+Oehlert, Gary W. 2000. <em>Mixed-Effects Models in s and s-PLUS</em>. New York: W.H. Freeman. <a href="http://users.stat.umn.edu/~gary/book/fcdae.pdf">http://users.stat.umn.edu/~gary/book/fcdae.pdf</a>.
+</div>
 <div id="ref-patterson_1976" class="csl-entry" role="listitem">
 Patterson, H. D., and E. R. Williams. 1976. <span>“A <span>New</span> <span>Class</span> of <span>Resolvable</span> <span>Incomplete</span> <span>Block</span> <span>Designs</span>.”</span> <em>Biometrika</em> 63 (1): 83–92. <a href="https://doi.org/10.2307/2335087">https://doi.org/10.2307/2335087</a>.
 </div>
@@ -1206,7 +1196,6 @@ Yates, F. 1936. <span>“A New Method of Arranging Variety Trials Involving a La
 </section>
 </section>
 </section>
-
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

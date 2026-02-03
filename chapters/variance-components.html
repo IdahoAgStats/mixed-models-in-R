@@ -176,7 +176,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 <meta name="twitter:title" content="14&nbsp; Variance &amp; Variance Components – Field Guide to the R Mixed Model Wilderness">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="variance-components_files/figure-html/unnamed-chunk-8-1.png">
+<meta name="twitter:image" content="variance-components_files/figure-html/unnamed-chunk-9-1.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -290,7 +290,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/split-split-plot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/split-split-plot-design.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Split-Split Plot Design</span></span></a>
   </div>
 </li>
@@ -422,8 +422,8 @@ window.Quarto = {
 <td>potato genotype</td>
 </tr>
 <tr class="even">
-<td>LxW</td>
-<td>length-to-width ratio</td>
+<td>iLxW</td>
+<td>inverse length-to-width ratio</td>
 </tr>
 </tbody>
 </table>
@@ -489,14 +489,14 @@ window.Quarto = {
 </div>
 <p>The distribution of the dependent variable, length-to-width ratio, had a slight left skew, so the the inverse of this trait was modeled.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="dv">1</span><span class="sc">/</span>potato<span class="sc">$</span>LxW, <span class="at">ylab =</span> <span class="cn">NULL</span>, <span class="at">xlab =</span> <span class="cn">NULL</span>, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">breaks =</span> <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(potato<span class="sc">$</span>iLxW, <span class="at">ylab =</span> <span class="cn">NULL</span>, <span class="at">xlab =</span> <span class="cn">NULL</span>, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">breaks =</span> <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Distribution of Potato Clone Length-to-Width Ratio</figcaption>
 </figure>
 </div>
@@ -516,9 +516,8 @@ window.Quarto = {
 <p><span class="math display">\[ \epsilon \sim \mathcal{N}(0, \sigma^2) \]</span> <span class="math display">\[ \beta \sim \mathcal{N}(0, \sigma^2_b) \]</span> <span class="math display">\[ (\alpha\beta) \sim \mathcal{N}(0, \sigma^2_a) \]</span> <span class="math display">\[ \gamma \sim \mathcal{N}(0, \sigma^2_g) \]</span></p>
 <p><strong>lme4 Syntax</strong></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>potato_m1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>((<span class="dv">1</span><span class="sc">/</span>LxW) <span class="sc">~</span> state <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>year) <span class="sc">+</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                    (<span class="dv">1</span><span class="sc">|</span>state<span class="sc">:</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>clone),</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> potato)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>potato_m1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(iLxW <span class="sc">~</span> state <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>state<span class="sc">:</span>year) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>clone),</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> potato)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Evaluation of model assumptions:</p>
 <div class="cell">
@@ -528,7 +527,7 @@ window.Quarto = {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -578,7 +577,7 @@ window.Quarto = {
 <pre><code>ANOVA-like table for random-effects: Single term deletions
 
 Model:
-(1/LxW) ~ state + (1 | year) + (1 | state:year) + (1 | clone)
+iLxW ~ state + (1 | year) + (1 | state:year) + (1 | clone)
                  npar logLik     AIC     LRT Df Pr(&gt;Chisq)    
 &lt;none&gt;              7 2041.9 -4069.7                          
 (1 | year)          6 2039.3 -4066.7    5.07  1    0.02436 *  
@@ -607,7 +606,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Histogram of Clone BLUPs</figcaption>
 </figure>
 </div>
@@ -627,7 +626,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -731,7 +730,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Histogram of Log of Washington Higher Ed Salaries</figcaption>
 </figure>
 </div>
@@ -742,7 +741,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Box plot of Log Salaries by Year</figcaption>
 </figure>
 </div>
@@ -858,7 +857,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -884,7 +883,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -910,7 +909,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -965,7 +964,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Distribution of Canola Yield from MET</figcaption>
 </figure>
 </div>
@@ -974,7 +973,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1002,7 +1001,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1019,7 +1018,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1066,7 +1065,7 @@ ex1_m2     2 353 14489.23 16225.88 -6891.615 1 vs 2 341.0259  &lt;.0001</code></
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Distribution of Canola Yield from Single Trial</figcaption>
 </figure>
 </div>
@@ -1087,7 +1086,7 @@ ex1_m2     2 353 14489.23 16225.88 -6891.615 1 vs 2 341.0259  &lt;.0001</code></
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-52-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1103,7 +1102,7 @@ ex1_m2     2 353 14489.23 16225.88 -6891.615 1 vs 2 341.0259  &lt;.0001</code></
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Residual vs.&nbsp;fitted plot with unequal variance</figcaption>
 </figure>
 </div>
@@ -1160,7 +1159,7 @@ ex2_m2     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></p
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-59-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-60-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Evidence of Heteroscedasticity</figcaption>
 </figure>
 </div>
@@ -1181,7 +1180,7 @@ ex2_m2     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></p
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="variance-components_files/figure-html/unnamed-chunk-61-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="variance-components_files/figure-html/unnamed-chunk-62-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Fitted vs.&nbsp;Pearson Residual Plots</figcaption>
 </figure>
 </div>
@@ -1238,7 +1237,7 @@ pfit2     2 68 2508.314 2725.435 -1186.157 1 vs 2 7.672945  0.0216</code></pre>
 </div>
 </div>
 <p>However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with <code>varIdent()</code>) or much much smaller (e.g.&nbsp;with <code>varPower()</code>). Interpret the coefficient of variation from mixed models with caution.</p>
-<p>Related is Fisher’s least significant difference, i.e.&nbsp;LSD. While most mixed modelling packages do not calculate this (e.g.&nbsp;<strong>nlme</strong>, <strong>lme4/lmerTest</strong> or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly disadvised in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels.</p>
+<p>Related is Fisher’s least significant difference, i.e.&nbsp;LSD. While most mixed modelling packages do not calculate this (e.g.&nbsp;<strong><em>nlme</em></strong>, <strong><em>lme4/lmerTest</em></strong> or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly disadvised in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels.</p>
 </div>
 </div>
 </div>
