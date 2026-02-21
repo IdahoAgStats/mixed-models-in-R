@@ -15,17 +15,18 @@ Mixed-effects models are called “mixed” because they are modelling both fixe
 
 This tutorial concerns general linear mixed models (sometimes abbreviated "LMM") where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of *generalized* linear mixed models (sometimes abbreviated "GLMM"), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.
 
-*Fixed effects* are--in frequentist statistical theory--average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g. levels of nitrogen fertilizer). These can be categorical or continuous variable (in this guide, all fixed effects are categorical). 
+**Fixed effects** are--in frequentist statistical theory--average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g. levels of nitrogen fertilizer). These can be categorical or continuous variable (in this guide, all fixed effects are categorical). 
 
-*Random effects* are discrete units sampled from a specified population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points. 
+**Random effects** are discrete units sampled from a specified population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points. 
 
-Please read this section and refer back to if when you forget what these terms mean.
+#### Common terms used in this guide
+*Please read this section and refer back to if when you forget what these terms mean.*
 
 | Term | Definition |
 |:-----------------------------------|:-----------------------------------|
 | Random effect | An independent variable where the levels being estimated compose a random sample from a population whose variance will be estimated |
 | Fixed effect | An independent variable with specific, predefined levels to estimate |
-| Experimental unit | The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. Model predictions typically occur at this level. |
+| Experimental unit | The smallest physical unit being used for analysis that represents a single replicate and treatment combination. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. Model predictions typically occur at this level, while model estimates are treatment-wide averages. |
 
 : Terms definitions {#tbl-terms}
 
@@ -35,9 +36,9 @@ Recall simple linear regression with intercept ($\beta_0$) and slope ($\beta_1$)
 
 $$  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i $$
 
-$Y_i$ is the dependent variable, and $x_i$ is the independent variable. The value for $\beta_0$ is the overall average for $Y_i$ and $\beta_1$ is the change in $Y$ as $X$ changes. The slope for $\beta_1$ could represent the effects of increasing quantities of nitrogen fertilizer on crop growth.
+$Y_i$ is the dependent variable, and $x_i$ is the independent variable. The value for $\beta_0$ is the overall average for $Y_i$ and $\beta_1$ is the change in $Y$ as $X$ changes. The slope for $\beta_1$ could represent the effects of increasing quantities of nitrogen fertilizer on crop growth, for example.
 
-The errors,[^1] $\epsilon_i$, or residual are independently and identically distributed (sometimes called "iid") following a normal distribution for general linear mixed models.
+The errors,[^1] $\epsilon_i$, or residual are independently and identically distributed (abbreviated "iid") following a normal distribution for general linear mixed models.
 
 [^1]: For the rest of this tutorial we will be using the term "residual" and not "error term" to reflect current practices. The residual is calculated as $Y - XB$, the gap between the observed value for $Y_i$ and the predicted value, $\hat{Y_i}$
 
@@ -53,7 +54,7 @@ Extending this example to a mixed model, we can consider adding another term, $r
 
 $$  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} $$ In an agronomic field trial, $r_{j}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, $\beta_0$.  can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\betda_0$). Like the residuals term, $r_i$ is independently and identically distributed (this is sometimes abbreviate "iid"):
 
-$$r_i \sim N(0, \sigma_b)$$ While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered "random intercepts" where they all share a common $B_0$ and $B_1$.
+$$r_i \sim N(0, \sigma_b)$$ While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered "random intercepts" where they all share a common slope from the fixed effects, but differ in their intercepts.
 
 ::: column-margin
 
@@ -86,7 +87,7 @@ Other alternatives to the random intercept model include modelling random slopes
 
 $$  Y_{ij} = \beta_0 + (\beta_1 + r_j)X_{ij} + \epsilon_{ij}$$
 
-In this model, the $\beta$ is the overage effect of X on Y, and $r_i$ is a random effect for block $j$, and all observations share a common intercept, $\beta_0$.
+In this model, the $\beta$ is the overage effect of X on Y, and $r_i$ is a random effect for block $j$, and all observations share a common intercept, $\beta_0$ .
 
 
 ```{r}
@@ -139,11 +140,14 @@ ggplot(df3) +
 
 ## R Formula Syntax for Random and Fixed Effects
 
-The formula notation used for the linear mixed models is as follows:
+### lme4
+
+The formula notation used by 'lme4' for the linear mixed models is as follows:
 
 `model_formula <- formula(Y ~ X + (1|R))`
 
-In this formula, $Y$ is the response variable (or dependent variable); $X$ represents the independent variable(s) such as treatment (fixed effect), and $R$ denotes the random grouping effect (e.g. block).
+
+In this formula, $Y$ is the response variable (or dependent variable); $X$ represents the independent variable(s) such as treatment (fixed effect), and $R$ denotes the random grouping effect (e.g. block, subject).
 
 Random effects are put in parentheses and a `1|` is used to denote random intercepts (rather than random slopes). The table below (@bates) provides several examples of different structures for fitting random effects. The names of random grouping factors are denoted `r`, `r1`, and `r2`, and covariates as `x`. 
 
@@ -157,4 +161,16 @@ Random effects are put in parentheses and a `1|` is used to denote random interc
 
 The first example, `(1|r)` suffices for most mixed models and is the only structure used in this guide.
 
-The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user, so proceed with caution. 
+### nlme
+
+The package 'nlme' used similar notation, but the fixed and random effects are separate arguments:
+
+```
+model = lme(fixed = Y ~ X,
+            random = ~ 1|R)
+```
+
+
+
+
+
