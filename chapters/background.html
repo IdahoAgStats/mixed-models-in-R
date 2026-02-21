@@ -310,7 +310,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#random-slopes-models" id="toc-random-slopes-models" class="nav-link" data-scroll-target="#random-slopes-models"><span class="header-section-number">3.2.1</span> Random slopes models</a></li>
   </ul></li>
-  <li><a href="#r-formula-syntax-for-random-and-fixed-effects" id="toc-r-formula-syntax-for-random-and-fixed-effects" class="nav-link" data-scroll-target="#r-formula-syntax-for-random-and-fixed-effects"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</a></li>
+  <li><a href="#r-formula-syntax-for-random-and-fixed-effects" id="toc-r-formula-syntax-for-random-and-fixed-effects" class="nav-link" data-scroll-target="#r-formula-syntax-for-random-and-fixed-effects"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</a>
+  <ul class="collapse">
+  <li><a href="#lme4" id="toc-lme4" class="nav-link" data-scroll-target="#lme4"><span class="header-section-number">3.3.1</span> lme4</a></li>
+  <li><a href="#nlme" id="toc-nlme" class="nav-link" data-scroll-target="#nlme"><span class="header-section-number">3.3.2</span> nlme</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/background.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -340,9 +344,11 @@ window.Quarto = {
 <h2 data-number="3.1" class="anchored" data-anchor-id="mixed-model-terms"><span class="header-section-number">3.1</span> Mixed model terms</h2>
 <p>Mixed-effects models are called “mixed” because they are modelling both fixed and random effects and estimating these effects jointly. These are also called “multilevel” or “hierarchical” models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.</p>
 <p>This tutorial concerns general linear mixed models (sometimes abbreviated “LMM”) where the dependent variable, when conditioned on the independent variable(s), follows a normal distribution. These are a special case of <em>generalized</em> linear mixed models (sometimes abbreviated “GLMM”), which allow the dependent variable to follow non-normal distributions. We will only be discussing the former in this tutorial.</p>
-<p><em>Fixed effects</em> are–in frequentist statistical theory–average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g.&nbsp;levels of nitrogen fertilizer). These can be categorical or continuous variable (in this guide, all fixed effects are categorical).</p>
-<p><em>Random effects</em> are discrete units sampled from a specified population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points.</p>
-<p>Please read this section and refer back to if when you forget what these terms mean.</p>
+<p><strong>Fixed effects</strong> are–in frequentist statistical theory–average effects that describe a specific population and persist through time and across experiments. We often view our treatments or experimental interventions as fixed effects. Fixed effects are parameters describing particular levels of a treatment only (e.g.&nbsp;levels of nitrogen fertilizer). These can be categorical or continuous variable (in this guide, all fixed effects are categorical).</p>
+<p><strong>Random effects</strong> are discrete units sampled from a specified population (e.g.&nbsp;plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points.</p>
+<section id="common-terms-used-in-this-guide" class="level4" data-number="3.1.0.1">
+<h4 data-number="3.1.0.1" class="anchored" data-anchor-id="common-terms-used-in-this-guide"><span class="header-section-number">3.1.0.1</span> Common terms used in this guide</h4>
+<p><em>Please read this section and refer back to if when you forget what these terms mean.</em></p>
 <div id="tbl-terms" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-terms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -371,7 +377,7 @@ Table&nbsp;3.1: Terms definitions
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Experimental unit</td>
-<td style="text-align: left;">The smallest unit being used for analysis. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. Model predictions typically occur at this level.</td>
+<td style="text-align: left;">The smallest physical unit being used for analysis that represents a single replicate and treatment combination. This could be an animal, a field plot, a person, a meat or muscle sample. The unit may be assessed multiple times or through multiple point in time. Model predictions typically occur at this level, while model estimates are treatment-wide averages.</td>
 </tr>
 </tbody>
 </table>
@@ -379,19 +385,20 @@ Table&nbsp;3.1: Terms definitions
 </figure>
 </div>
 </section>
+</section>
 <section id="models" class="level2 page-columns page-full" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="models"><span class="header-section-number">3.2</span> Models</h2>
 <p>Recall simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>):</p>
 <p><span class="math display">\[  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i \]</span></p>
-<p><span class="math inline">\(Y_i\)</span> is the dependent variable, and <span class="math inline">\(x_i\)</span> is the independent variable. The value for <span class="math inline">\(\beta_0\)</span> is the overall average for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\beta_1\)</span> is the change in <span class="math inline">\(Y\)</span> as <span class="math inline">\(X\)</span> changes. The slope for <span class="math inline">\(\beta_1\)</span> could represent the effects of increasing quantities of nitrogen fertilizer on crop growth.</p>
-<p>The errors,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (sometimes called “iid”) following a normal distribution for general linear mixed models.</p>
+<p><span class="math inline">\(Y_i\)</span> is the dependent variable, and <span class="math inline">\(x_i\)</span> is the independent variable. The value for <span class="math inline">\(\beta_0\)</span> is the overall average for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\beta_1\)</span> is the change in <span class="math inline">\(Y\)</span> as <span class="math inline">\(X\)</span> changes. The slope for <span class="math inline">\(\beta_1\)</span> could represent the effects of increasing quantities of nitrogen fertilizer on crop growth, for example.</p>
+<p>The errors,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (abbreviated “iid”) following a normal distribution for general linear mixed models.</p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For the rest of this tutorial we will be using the term “residual” and not “error term” to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></p></div></div><p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions).</p>
 <p>There is also an expected conditional distribution for <span class="math inline">\(Y_i\)</span>, but we will not be discussing this again.</p>
 <p><span class="math display">\[ Y_i|x_i \sim𝑁(\mathbf{X \beta}, \sigma^2/r_i) \]</span></p>
 <p>In least squares estimation, the slope and intercept are determined analytically in order to minimize the residual sum of squares. If we used a mixed model, the intercept and slope, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, respectively, would constitute the fixed effects, also referred to as “population-averaged values”.</p>
 <p>Extending this example to a mixed model, we can consider adding another term, <span class="math inline">\(r_{j}\)</span> that reflects levels sampled from a population that represent a random subset of a larger population:</p>
 <p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{j}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, <span class="math inline">\(\beta_0\)</span>. can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\betda_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (this is sometimes abbreviate “iid”):</p>
-<p><span class="math display">\[r_i \sim N(0, \sigma_b)\]</span> While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered “random intercepts” where they all share a common <span class="math inline">\(B_0\)</span> and <span class="math inline">\(B_1\)</span>.</p>
+<p><span class="math display">\[r_i \sim N(0, \sigma_b)\]</span> While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered “random intercepts” where they all share a common slope from the fixed effects, but differ in their intercepts.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="cell" data-cap-location="margin">
@@ -413,7 +420,7 @@ Figure&nbsp;3.1: Random intercepts and identical slopes example
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="random-slopes-models"><span class="header-section-number">3.2.1</span> Random slopes models</h3>
 <p>Other alternatives to the random intercept model include modelling random slopes where the slope between X and Y changes according to the random effect:</p>
 <p><span class="math display">\[  Y_{ij} = \beta_0 + (\beta_1 + r_j)X_{ij} + \epsilon_{ij}\]</span></p>
-<p>In this model, the <span class="math inline">\(\beta\)</span> is the overage effect of X on Y, and <span class="math inline">\(r_i\)</span> is a random effect for block <span class="math inline">\(j\)</span>, and all observations share a common intercept, <span class="math inline">\(\beta_0\)</span>.</p>
+<p>In this model, the <span class="math inline">\(\beta\)</span> is the overage effect of X on Y, and <span class="math inline">\(r_i\)</span> is a random effect for block <span class="math inline">\(j\)</span>, and all observations share a common intercept, <span class="math inline">\(\beta_0\)</span> .</p>
 <div class="cell page-columns page-full" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
 <div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin">
@@ -450,9 +457,11 @@ Figure&nbsp;3.3: Random intercepts and slopes example.
 </section>
 <section id="r-formula-syntax-for-random-and-fixed-effects" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="r-formula-syntax-for-random-and-fixed-effects"><span class="header-section-number">3.3</span> R Formula Syntax for Random and Fixed Effects</h2>
-<p>The formula notation used for the linear mixed models is as follows:</p>
+<section id="lme4" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="lme4"><span class="header-section-number">3.3.1</span> lme4</h3>
+<p>The formula notation used by ‘lme4’ for the linear mixed models is as follows:</p>
 <p><code>model_formula &lt;- formula(Y ~ X + (1|R))</code></p>
-<p>In this formula, <span class="math inline">\(Y\)</span> is the response variable (or dependent variable); <span class="math inline">\(X\)</span> represents the independent variable(s) such as treatment (fixed effect), and <span class="math inline">\(R\)</span> denotes the random grouping effect (e.g.&nbsp;block).</p>
+<p>In this formula, <span class="math inline">\(Y\)</span> is the response variable (or dependent variable); <span class="math inline">\(X\)</span> represents the independent variable(s) such as treatment (fixed effect), and <span class="math inline">\(R\)</span> denotes the random grouping effect (e.g.&nbsp;block, subject).</p>
 <p>Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below (<span class="citation" data-cites="bates">(<a href="../references.html#ref-bates" role="doc-biblioref"><strong>bates?</strong></a>)</span>) provides several examples of different structures for fitting random effects. The names of random grouping factors are denoted <code>r</code>, <code>r1</code>, and <code>r2</code>, and covariates as <code>x</code>.</p>
 <table class="caption-top table">
 <colgroup>
@@ -496,9 +505,15 @@ Figure&nbsp;3.3: Random intercepts and slopes example.
 </tbody>
 </table>
 <p>The first example, <code>(1|r)</code> suffices for most mixed models and is the only structure used in this guide.</p>
-<p>The main advantage of the LMMs is their flexibility to handle clustered data as well as data with repeated measures. This model can also handle both nested and crossed random effects. However, at the same time, these models can be easily mis-specified when you are a new LMM user, so proceed with caution.</p>
+</section>
+<section id="nlme" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="nlme"><span class="header-section-number">3.3.2</span> nlme</h3>
+<p>The package ‘nlme’ used similar notation, but the fixed and random effects are separate arguments:</p>
+<pre><code>model = lme(fixed = Y ~ X,
+            random = ~ 1|R)</code></pre>
 
 
+</section>
 </section>
 
 
