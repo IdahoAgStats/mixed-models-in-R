@@ -340,8 +340,7 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#mmrm" id="toc-mmrm" class="nav-link active" data-scroll-target="#mmrm"><span class="header-section-number">12.0.1</span> mmrm</a></li>
-  <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">13</span> Example Analysis</a>
+  <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link active" data-scroll-target="#example-analysis"><span class="header-section-number">13</span> Example Analysis</a>
   <ul class="collapse">
   <li><a href="#rcbd-repeated-measures" id="toc-rcbd-repeated-measures" class="nav-link" data-scroll-target="#rcbd-repeated-measures"><span class="header-section-number">13.1</span> RCBD Repeated Measures</a>
   <ul class="collapse">
@@ -434,19 +433,24 @@ window.Quarto = {
 <p><code>corAR1(value = 0, form = ~ t|g, fixed = FALSE)</code>.</p>
 <p>The argument for <code>value</code> is the starting value for iterations (zero is the default), and if <code>fixed = FALSE</code> (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for <code>form</code>, <code>~ t|g</code>, where <span class="math inline">\(t\)</span> is the temporal variable and <span class="math inline">\(g\)</span> is the grouping factor (the subject or experimental unit) to estimate covariance across. Technically, <span class="math inline">\(g\)</span> is optional and if not specified, the order of the data set will be assumed <span class="math inline">\(t\)</span>. However, for most replicated experiments, you will need to specify <span class="math inline">\(g\)</span>. When we use <code>~t|g</code> form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an <strong>integer value</strong>. Similarly, <code>corCompSymm()</code> and <code>corSymm()</code> follow the same argument syntax.</p>
 <p>There are other covariance structures enabled by <strong><em>nlme</em></strong> (e.g., <code>corARMA()</code>, <code>corCAR1()</code>), but we have found that <code>corAR1()</code> and <code>corCompSymm()</code> work for most circumstances. Read the <a href="https://cran.r-project.org/web/packages/nlme/refman/nlme.html" class="external" target="_blank">nlme manual</a> if you want to learn more about covariance structures in that package.</p>
-<p>let’s start with loading the required libraries for this analysis. ::: panel-tabset ### nlme</p>
+<p>let’s start with loading the required libraries for this analysis.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">mmrm</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="mmrm" class="level3" data-number="12.0.1">
-<h3 data-number="12.0.1" class="anchored" data-anchor-id="mmrm"><span class="header-section-number">12.0.1</span> mmrm</h3>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>:::</p>
-</section>
+</div>
+</div>
+</div>
 <section id="example-analysis" class="level1 page-columns page-full" data-number="13">
 <h1 data-number="13"><span class="header-section-number">13</span> Example Analysis</h1>
 <p>First, we will start with the first example with randomized complete block design with repeated measures.</p>
@@ -593,9 +597,9 @@ Figure&nbsp;13.1: Histogram of the dependent variable.
 </div>
 <p>Now let’s compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using <code>anova()</code> or by the <code>compare_performance()</code> function from the <strong>performance</strong> library.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">anova</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">anova</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm1, lm2, lm3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -1728,7 +1732,7 @@ Confidence level used: 0.95 </code></pre>
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2025</p>
+<p>© {year}</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://www.uidaho.edu"><img src="https://github.com/IdahoAgStats/r-for-ag-scientists/raw/main/images/UI_Main_horizontal_4c.png" class="img-fluid" style="width:50.0%" alt="Uidaho Logo"></a></p>
