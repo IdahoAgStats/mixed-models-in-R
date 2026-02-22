@@ -25,88 +25,94 @@ graph TD
 ```
 
 
-## Step 1: Define the Research Question(s)
+### Step 1: Define the Research Question(s)
 
-It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. This   was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a prioject and when a graduate student eventually implements the experiment. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:
+It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. Ideally, tgis was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a project and when the project is finally implemented. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:
 
-> We want to know how much barley yield change as the result of this new fertilizer source compared to another source. 
+> How much does barley yield change as the result of this new fertilizer source compared to another source? 
 
-> We want to estimate the change in milk yield with each unit change in cow parity. 
+> What is the estimated change in milk yield with each unit increase in cow parity? 
 
-> We want to know if the drug has a stronger effect on reducing cholesterol rates where a difference of 5 units or more is considered a meaningful result. 
+> Does an experimental drug has a stronger effect on reducing cholesterol rates where a difference of 5 units or more is considered a meaningful result? 
 
-> We want to know the relative contributions of location, year and cultivar influencing barley yield across southern Idaho. 
+> What are the relative contributions of location, year and cultivar influencing barley yield across southern Idaho?
+
 
 The first two examples are asking for specific inference on the estimated effects of a particular intervention. The third example is a hypothesis test, and the fourth example is also inferential, but focused on variance instead of point estimates. 
 
-For example, We conducted a randomized field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments. The next step is to identify the dependent variable (yield), and the fixed effects (treatment) and random effects (replications) in the experiment design. 
+## Example experiment
 
-## Step 2: Conduct data integrity checks 
+For the following steps, imagine that someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen ferilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis. 
+
+### Step 2: Conduct data integrity checks 
 
 The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
-### 1.  Check structure of the data 
+#### Check the structure of the data 
 
-In this step, we need to make sure that class of variables in data is as expected e.g. replication or block and Year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical^[no one views 2025 as 2,205.] needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases^[Since this tutorial is exclusively focused on general linear models and is not addressing *generalized* scenarios at all.], although categorical outcomes are certainly plausible. 
+In this step, we need to make sure that class of variables in data is as expected. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical[^model-1] needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2], although categorical outcomes are certainly plausible for many studies.
+
+[^model-1]: No one views the year 2026 as 2,026.
+
+[^model-2]: Since this tutorial is exclusively focused on general linear models and is not addressing *generalized* scenarios at all.
 
 ::: callout-warning
-Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interprets continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors in it.
+Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interprets continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors or unexpected input in it.
 :::
 
 
-We can use the base code `str()` in R to look at the class of each variable in the data set. 
+We can use the command `str()` in R to look at the class of each variable in the data set. 
 ```{r, eval=FALSE}
 str(dataset)
 ```
 
-This code outputs the data class of each variable present in the dataset. 
+This will print the data class of each variable present in the data set and a few example values for each variable. 
 
 The example code below shows the conversion of rep from numeric to factor class and the conversion of yield from character to numeric class.
 ```{r, eval=FALSE}
 dataset$block <- as.factor(dataset$block)
+dataset$rep <- as.character(dataset$rep)
 dataset$yield <- as.numeric(dataset$yield)
 ```
 
 
-
 ::: callout-tip
-## factor versus character class
+## Factor versus character class
 
-Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or "string" format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, however, many will also automatically convert character variables to factors. 
+Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or "string" format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many will also automatically convert character variables to factors. 
 :::
 
 
-### 2. Inspect the independent variables
+#### Inspect the independent variables
 
-Running a cross-tabulation across treatments and replications is generally enough sufficient to make sure ensure the expected levels of these factors are present in the data.
+Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data.
 
 ```{r, eval=FALSE}
 table(dataset$trt, dataset$block)
 ```
 
-The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high" and "High"); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
+The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high", "High" or "High "); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
 
-### 3.  Check the extent of missing data
+#### Check the extent of missing data
 
 
 ```{r, eval=FALSE}
 colSums(is.na(dataset))
 ```
 
-This will give you a number of missing values in each variable. Missing data is a normal part of experiments and in most cases not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.
+This will give you the number of missing values in each variable. Missing data is a normal part of experiments and in most cases, is not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.
 
 ::: callout-tip
-## Missingness versus Zeros
+## Missingness versus zeros
 
-We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to yield at all due to a field conditions, it is reasonable to assign a zero to that plot and variable. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. 
+We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closes appropriate value), or exclude that (set the data for that plot as missing). 
 :::
 
 
-### 4.  Inspect the dependent variable and all over continuous variables
+####  Inspect the dependent variable and all other continuous variables
 
-Check the dependent variable and all continuous variables (i.e. covariates) to ensure their distributions are following expectations. A histogram is often quite sufficient to accomplish this. This is designed to be a quick check, so there is no need to spend time prettifying the plot.
+Check the dependent variable and all continuous variables (i.e. covariates) to ensure their distributions are following expectations. A histogram is often sufficient to accomplish this. The goal of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme observations (high or low). This is designed to be a quick check, so there is no need to spend time prettifying these plots.
 
-The goal of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme observations (high or low). 
 
 ```{r, eval=FALSE}
 hist(data$yield)
@@ -114,18 +120,18 @@ hist(data$yield)
 
 Data are not expected to be normally distributed at this point, so don't bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots regularly, you will gain a feel for what your data should look like at this stage.
 
-### Next Steps
+#### Next Steps
 
 The purpose of these checks is to help us find any data errors that ought to be fixed prior to model fitting. They are designed to be done quickly and should be conducted for **every analysis** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis. 
 
 If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
 
 
-## Step 3: Fit the Model  
+### Step 3: Fit the Model  
 
-### Notes on formula syntax and expectations
+#### Notes on formula syntax and expectations
 
-In this guide, we use **lme4** and **nlme** packages to fit linear mixed models. These are similar packages that follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is yield, trt is a fixed effect and block is a random effect.
+In this guide, we use **lme4** and **nlme** packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is 'yield', 'tr't is a fixed effect and 'block' is a random effect.
 
 The code below shows the R syntax for a mixed model with one fixed and one random effect:
 
@@ -161,9 +167,9 @@ Even when there are no missing data and this step is not necessary, it is a good
 :::
 
 
-## Step 4: Check model assumptions
+### Step 4: Check model assumptions
 
-Linear mixed models rely on linearity, independence, normality, homoscedasticity of residuals. Violating these assumptions can lead to biased estimates, incorrect inference, and convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.
+Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.
 
 ::: callout-note
 #### 'iid' assumption for residuals
@@ -173,9 +179,9 @@ In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, in
 
 In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:
 
-### Original method
+#### Original method
 
-We can use base `plot()` function in R for **lme4** and **nlme** objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
+We can use base `plot()` function in R for 'lme4' and 'nlme' modelling objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
 
 ::: panel-tabset
 ### lme4
@@ -207,9 +213,9 @@ qqnorm(resid(model_lme), main = NULL); qqline(resid(model_lme))
 ```
 :::
 
-The interpretation of the qq-plots generated from this code chunk is: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide.
+Interpretiong qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide.
 
-### New Method {#new-iid-checks}
+#### New Method {#new-iid-checks}
 
 Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/){.external target="_blank"} package package, which provides a comprehensive suite of diagnostic plots.
 
@@ -233,12 +239,12 @@ check_model(model_lme, check = c('normality', 'linearity'))
 ```
 :::
 
-## Step 5: Conduct inference
+### Step 5: Conduct inference
 
-After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using `anova()` function or we can estimate marginal means using `emmeans()` function from the **emmeans** package. We can also run a post-hoc comparison to evaluate the pairwise comparison or contrasts using estimated means.
+After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using `anova()` function and/or we can estimate marginal means using `emmeans()` function from the 'emmeans' package. We can also run post hoc comparisons to evaluate the pairwise comparison or contrasts using estimated means. 
 
 
 ::: callout-warning
 ## Model assumptions & statistical inference  
-Please remember that conclusions should not be drawn from models that don't meet linear mixed model assumptions. 
+Please remember that conclusions should not be drawn from models that do not meet linear mixed model assumptions. 
 :::
