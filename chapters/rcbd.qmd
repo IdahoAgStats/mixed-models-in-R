@@ -148,11 +148,11 @@ model_rcbd_lme <- lme(yield_bu_a ~ variety,
 
 ### Check Model Assumptions
 
-:::: column-margin
-::: callout-note
-R syntax for checking model assumptions is the same for lme4 and nlme.
+
+::: {.callout-note .aside}
+R syntax for checking model assumptions is the same for lme4 and nlme package functions.
 :::
-::::
+
 
 Remember those iid assumptions? Let's make sure we actually met them.
 
@@ -166,9 +166,11 @@ We will start inspecting the model assumptions by for checking the homoscedastic
 #| column: margin
 #| 
 par(mar=c(5.1, 5, 2.1, 2.1))
-plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.), 
-     xlab = "fitted values", ylab = "studentized residuals",
-     cex.lab = 1.8, cex.axis = 1.5)
+lattice::trellis.par.set("fontsize", list(text=22, points=10)) 
+
+plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.),
+     abline = 0, xlab = "fitted values", ylab = "studentized residuals")
+
 ```
 
 ```{r, eval=FALSE}
@@ -186,7 +188,7 @@ As explained in [**Chapter 4**](model-flow.qmd) we will first extract residuals 
 #| column: margin
 
 par(mar=c(5.1, 5, 2.1, 2.1))
-qqnorm(resid(model_rcbd_lmer), main = NULL, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd_lmer))
+qqnorm(resid(model_rcbd_lmer), main = NULL, cex = 1.4, cex.lab = 1.8, cex.axis = 1.5); qqline(resid(model_rcbd_lmer))
 ```
 
 ```{r, eval=FALSE}
@@ -205,11 +207,11 @@ check_model(model_rcbd_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALS
 
 ### Inference
 
-:::: callout-note
-::: column-margin
+
+::: {.callout-note .aside}
 R syntax for estimating model marginal means is the same for lme4 and nlme.
 :::
-::::
+
 
 Estimates for each treatment level can be obtained with the **emmeans** package.
 
