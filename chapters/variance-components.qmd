@@ -474,7 +474,7 @@ This data set consists of a set of canola variety trials conducted within a sing
 
 ```{r}
 var_ex1 <- read.csv(here::here("data", "MET_trial_variance.csv")) |> 
-  mutate(block = as.character(block)) #|> tidyr::drop_na()
+  mutate(block = as.character(block))
 ```
 
 
@@ -534,13 +534,13 @@ ex1_m1 <- lme(yield ~ site:variety + variety,
                 data = var_ex1)
 ```
 
-The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption.^[Since the focus of this section is on evaluating the homescedasticity assumption, the **nlme** residual plotting function is used for its simplicity of display.]
+The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption.^[Since the focus of this section is on evaluating the homoscedasticity assumption, the **nlme** residual plotting function is used for its simplicity of display.]
 
 ```{r}
 plot(ex1_m1)
 ```
 
-We can add a term to model the variance by site.
+We can add a term, $\delta$ to model the variance by site.
 
 $$Var(\epsilon_{ij}) = \sigma^2 \delta^2_{s_{ij}} $$
 The package **nlme** contains a relatively straightforward implementation for heteroscedasticity. Details on the implementation can be found in Pinheiro and Bates [-@nlme_book].
@@ -590,7 +590,7 @@ A histogram does indicate there is anything unusual about the dependent variable
 #| column: margin
 #| echo: false
 
-hist(var_ex2$yield, main=NULL, col = base_plot_color, ylab=NULL, xlab = "seed yield", cex.lab = cex_lab, cex.axis = cex_axis,)
+hist(var_ex2$yield, main=NULL, col = base_plot_color, ylab=NULL, xlab = "seed yield", cex.lab = cex_lab, cex.axis = cex_axis)
 ```
 
 ```{r, eval=FALSE}
@@ -726,6 +726,6 @@ round(ex1_cv, 1)
 
 However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much much smaller (e.g. with `varPower()`). Interpret the coefficient of variation from mixed models with caution. 
 
-Related is Fisher's least significant difference, i.e. LSD. While most mixed modelling packages do not calculate this (e.g. ***nlme***, ***lme4/lmerTest*** or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly disadvised in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels. 
+Related is Fisher's least significant difference, i.e. LSD. While most mixed modelling packages do not calculate this (e.g. ***nlme***, ***lme4/lmerTest*** or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels. 
 
 :::
