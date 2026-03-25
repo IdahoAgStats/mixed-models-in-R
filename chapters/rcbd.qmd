@@ -207,18 +207,29 @@ check_model(model_rcbd_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALS
 
 ### Inference
 
+Estimates for each treatment level can be obtained with the **emmeans** package.
 
 ::: {.callout-note .aside}
 R syntax for estimating model marginal means is the same for lme4 and nlme.
 :::
 
+::: panel-tabset
 
-Estimates for each treatment level can be obtained with the **emmeans** package.
+### lme4
 
 ```{r}
-rcbd_emm <- emmeans(model_rcbd_lmer, ~ variety)
-as.data.frame(rcbd_emm) %>% arrange(desc(emmean))
+rcbd_emm1 <- emmeans(model_rcbd_lmer, ~ variety)
+as.data.frame(rcbd_emm1) %>% arrange(desc(emmean))
 ```
+
+### nlme
+
+```{r, message=FALSE, warning=FALSE}
+rcbd_emm2 <- emmeans(model_rcbd_lme, ~ variety)
+as.data.frame(rcbd_emm2) %>% arrange(desc(emmean))
+```
+:::
+
 
 This table indicates the estimated marginal means ("emmeans", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.
 
@@ -232,7 +243,7 @@ If you want to run ANOVA, it can be done quite easily. By default, sequential (t
 ### lme4
 
 ```{r}
-anova(model_rcbd_lmer, type = "1")
+anova(model_rcbd_lmer)
 ```
 
 ### nlme
