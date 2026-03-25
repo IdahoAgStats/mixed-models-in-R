@@ -71,10 +71,11 @@ library(broom.mixed)
 ```{r, message=FALSE, warning=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(desplot); library(broom.mixed)
+library(pbkrtest)
 ```
 :::
 
-For this example, we will use Rice strip-plot experiment data from the **agridat** package. This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.
+For this example, we will use a rice strip-plot experiment data from the **agridat** package, "gomez.stripplot". This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -97,13 +98,12 @@ rice <- read.csv(here::here("data", "rice_stripplot.csv"))
 
 : Table of variables in the data set {tbl-strip_plot}
 
-For the sake of analysis, 'row' and 'col' variables are used to represent 'nitrogen' and 'Gen' factors. The plot below shows the application of treatments in horizontal and vertical direction in a strip plot design.
+The plot below shows the application of treatments in horizontal and vertical directions within a block in a strip plot design.
 
 ```{r, echo=FALSE}
 desplot(rice, gen ~ col*row,
-        # aspect unknown
-        out1=rep, out2=nitro, num=nitro, cex=1,
-        main="Strip Plot Design")
+        out1 = rep, num = nitro, cex=1,
+        main = "Strip Plot Design")
 ```
 
 ### Data integrity checks
@@ -146,9 +146,6 @@ We don't have any missing values in this data set.
 
 Let's check the distribution of dependent variable by plotting a histogram.
 
-```{r, eval=FALSE}
-hist(rice$yield, main = NA, xlab = "yield")
-```
 
 ```{r, echo=FALSE}
 #| label: fig-strip_plot_hist
@@ -179,22 +176,32 @@ tidy(model_lmer)
 ```{r}
 model_lme <-lme(yield ~  nitro*gen,
                 random = list(one = pdBlocked(list(
-        pdIdent(~ 0 + rep), 
-         pdIdent(~ 0 + rep:gen), 
-        pdIdent(~ 0 + rep:nitro)))),
-        data = rice %>% mutate(one = factor(1)))
+                  pdIdent(~ 0 + rep),
+                  pdIdent(~ 0 + rep:gen),
+                  pdIdent(~ 0 + rep:nitro)))),
+                data = rice)
 
-summary(model_lme)
+model_lme
 ```
+
 :::
 
 :::: column-margin
 ::: callout-note
 ## Crossed random effects
 
-This type of variance-covariance structure in `nlme::lme()` is represented by a `pdBlocked` object with `pdIdent` elements.
+This type of variance-covariance structure in `nlme::lme()` is represented by a `pdBlocked` object with `pdIdent` elements. The `pdBlocked` class is for blocked diagonal matrices and `pdIdent` creates identity matrices for each of the factors listed. 
 :::
 ::::
+
+```{r}
+#| eval: false
+#| include: false
+model_lme$modelStruct$reStruct$one 
+# very repetitive diagonal matrix, only 3 unique values representing rep, rep:gen and rep:nitro
+# values represent var(random var)/var(residual)
+```
+
 
 ### Check Model Assumptions
 
@@ -210,11 +217,10 @@ check_model(model_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, al
 #### nlme
 
 ```{r, layout="[[1,1], [1]]"}
-plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
+plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), abline = 0,
      xlab = "fitted values", ylab = "studentized residuals")
 
-qqnorm(residuals(model_lme))
-qqline(residuals(model_lme))
+qqnorm(residuals(model_lme)); qqline(residuals(model_lme))
 ```
 :::
 
@@ -228,14 +234,29 @@ We can evaluate the model for the analysis of variance, for main and interaction
 ### lme4
 
 ```{r}
-car::Anova(model_lmer, type = "III")
+# what is the correct anova to use for this model? # only the wald chi-square tests are consistent
+#car::Anova(model_lmer, type = "3")
+anova(model_lmer, ddf = "Kenward-Roger") 
 ```
 
 ### nlme
 
+The `anova()` function for **nlme** does not handle the degree of freedom correctly for F-tests in the strip plot design, so we have to manually set it. This only works for balanced data. Wald chi-square tests can be conducted using `car::Anova()` and produce identical results for `lme4::lmer()` and `nlme::lme()`. 
+
 ```{r}
-anova(model_lme, type = "marginal")
+rep_n = length(unique(rice$rep)) - 1
+gen_n = length(unique(rice$gen)) - 1
+nitro_n = length(unique(rice$nitro)) - 1
+denominator_df = c(nitro_n*rep_n, gen_n*rep_n, nitro_n*gen_n*rep_n)
+
+lme_aov <- anova(model_lme) |> as.data.frame() |> 
+  slice(-1) |> mutate(denDF = denominator_df) |> 
+  mutate(`p-value` = pf(`F-value`, numDF, denDF, lower.tail = FALSE))
+
+lme_aov
 ```
+
+
 :::
 
 Analysis of variance showed a significant interaction impact of gen and nitro on rice grain yield.
@@ -246,19 +267,25 @@ Next, We can estimate marginal means for nitro and gen interaction effects using
 ### lme4
 
 ```{r}
-emm1 <- emmeans(model_lmer, ~ nitro*gen) 
+emm1 <- emmeans(model_lmer, ~ nitro*gen)
 emm1
+
+emmeans(model_lmer, ~ nitro*gen, dffun = "containment")
 ```
 
 ### nlme
 
 ```{r}
-emm1 <- emmeans(model_lme, ~ nitro*gen)
-emm1
+Nminus = length(unique(rice$rep)) * length(unique(rice$gen)) - 1
+deg_free <- pbkrtest::get_Lb_ddf(model_lmer, c(1, rep(0, Nminus)))
+
+
+emm2 <- emmeans(model_lme, ~ nitro*gen, df = deg_free) # how to calculate df? 
+emm2
 ```
 :::
 
-Note that, confidence intervals were not estimated through `emmeans()` from `lme()` model. This was due to complex nested and crossed random effects in the strip-plot design. If the random-effects structure is too complex, emmeans might struggle to recover correct error terms.
+Without specifying the degrees of freedom, `emmeans()` is not able to estimate the confidence limits from this `lme()` model. In this case, the degrees of freedom are re-estimated from the `merMod` object. 
 
 ::: callout-note
 ## `lme vs lmer`
@@ -266,4 +293,5 @@ Note that, confidence intervals were not estimated through `emmeans()` from `lme
 For strip plot experiment design, fitting nested and crossed random effects is more complicated through **nlme**. Therefore, it's more convenient to use **lme4** in this case as both models yielded same results in the example shown above.
 :::
 
-Sometimes, elements of split plot and split block are combined, resulting in strip-plit plot design. 
+Sometimes, elements of split plot and split block are combined, resulting in strip-split plot design. Kevin Wright describes [how to analyze this design](https://kwstat.github.io/agridat/reference/cox.stripsplit.html) in the 'agridat' package. 
+
