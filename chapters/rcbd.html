@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-150463215fd909443dce0398d308f5f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-29d0b47085c8d49ae65c7e5aae7c4aaf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -649,6 +649,7 @@ Figure&nbsp;5.3: QQ-plot of residuals
 </section>
 <section id="inference" class="level3 page-columns page-full" data-number="5.2.4">
 <h3 data-number="5.2.4" class="anchored" data-anchor-id="inference"><span class="header-section-number">5.2.4</span> Inference</h3>
+<p>Estimates for each treatment level can be obtained with the <strong>emmeans</strong> package.</p>
 <div class="aside callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -662,10 +663,13 @@ Note
 <p>R syntax for estimating model marginal means is the same for lme4 and nlme.</p>
 </div>
 </div>
-<p>Estimates for each treatment level can be obtained with the <strong>emmeans</strong> package.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">nlme</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rcbd_emm <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_rcbd_lmer, <span class="sc">~</span> variety)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(rcbd_emm) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(emmean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rcbd_emm1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_rcbd_lmer, <span class="sc">~</span> variety)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(rcbd_emm1) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(emmean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> variety                  emmean       SE    df  lower.CL upper.CL
  Rosalyn                155.2703 7.212203 77.85 140.91149 169.6292
@@ -715,17 +719,74 @@ Degrees-of-freedom method: kenward-roger
 Confidence level used: 0.95 </code></pre>
 </div>
 </div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rcbd_emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_rcbd_lme, <span class="sc">~</span> variety)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(rcbd_emm2) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(emmean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> variety                  emmean       SE df  lower.CL upper.CL
+ Rosalyn                155.2703 7.212203  3 132.31787 178.2228
+ IDO1005                153.5919 7.212203  3 130.63949 176.5444
+ OR2080641              152.6942 7.212203  3 129.74174 175.6466
+ Bobtail                151.6403 7.212203  3 128.68787 174.5928
+ UI Sparrow             151.6013 7.212203  3 128.64884 174.5537
+ Kaseberg               150.9768 7.212203  3 128.02432 173.9292
+ IDN-01-10704A          148.9861 7.212203  3 126.03368 171.9386
+ 06-03303B              148.8300 7.212203  3 125.87755 171.7825
+ WB1529                 148.2445 7.212203  3 125.29207 171.1970
+ DAS003                 145.2000 7.212203  3 122.24755 168.1524
+ IDN-02-29001A          144.5755 7.212203  3 121.62303 167.5279
+ Bruneau                143.9900 7.212203  3 121.03755 166.9425
+ SY 107                 143.6387 7.212203  3 120.68626 166.5912
+ WB 528                 142.9752 7.212203  3 120.02271 165.9276
+ OR2080637              141.7652 7.212203  3 118.81271 164.7176
+ Jasper                 141.2968 7.212203  3 118.34432 164.2492
+ UI Magic CLP           139.5403 7.212203  3 116.58787 162.4928
+ Madsen                 139.2671 7.212203  3 116.31465 162.2195
+ LCS Biancor            139.1110 7.212203  3 116.15852 162.0634
+ SY  Ovation            138.6426 7.212203  3 115.69013 161.5950
+ OR2090473              137.8229 7.212203  3 114.87045 160.7754
+ Madsen / Eltan (50/50) 136.9642 7.212203  3 114.01174 159.9166
+ UI-WSU Huffman         135.4810 7.212203  3 112.52852 158.4334
+ Mary                   134.8564 7.212203  3 111.90400 157.8089
+ Norwest Tandem         134.3490 7.212203  3 111.39658 157.3015
+ Brundage               134.0758 7.212203  3 111.12336 157.0283
+ IDO1004                132.5145 7.212203  3 109.56207 155.4670
+ DAS004                 132.2413 7.212203  3 109.28884 155.1937
+ Norwest Duet           132.0852 7.212203  3 109.13271 155.0376
+ Eltan                  131.4606 7.212203  3 108.50820 154.4131
+ LCS Artdeco            130.8361 7.212203  3 107.88368 153.7886
+ UI Palouse             130.4848 7.212203  3 107.53239 153.4373
+ LOR-978                130.4458 7.212203  3 107.49336 153.3983
+ LCS Drive              128.7674 7.212203  3 105.81497 151.7199
+ Stephens               127.1671 7.212203  3 104.21465 150.1196
+ OR2100940              126.1523 7.212203  3 103.19981 149.1047
+ UI Castle CLP          125.5277 7.212203  3 102.57529 148.4802
+ WB1376 CLP             123.6932 7.212203  3 100.74078 146.6457
+ LOR-833                122.7565 7.212203  3  99.80400 145.7089
+ LOR-913                118.7752 7.212203  3  95.82271 141.7276
+ WB 456                 118.4629 7.212203  3  95.51045 141.4153
+ SY Assure              111.0468 7.212203  3  88.09432 133.9992
+
+Degrees-of-freedom method: containment 
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 <p>This table indicates the estimated marginal means (“emmeans”, sometimes called “least squares means”), the standard error (“SE”) of those means, the degrees of freedom and the upper and lower bounds of the 95% confidence interval. As an additional step, the emmeans were sorted from largest to smallest.</p>
 <p>At this point, the analysis goals have been met; we know the estimated means for each treatment and their rankings.</p>
 <p>If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by <strong>nlme</strong>, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in <strong>nlme</strong>. The lmer-extender package ‘lmerTest’ implements type 3 tests and the Kenward-Rogers method of degrees of freedom approximation by default.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 (“partial”) drops model terms one at a time. This can effect the results of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points. In this example, there is only one fixed effect (and the experiment is perfectly balanced), so the sums of squares choice is immaterial.</p></div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">nlme</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_rcbd_lmer, <span class="at">type =</span> <span class="st">"1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_rcbd_lmer)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type I Analysis of Variance Table with Satterthwaite's method
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
         Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
 variety  18354  447.65    41   123  2.4528 8.017e-05 ***
 ---
@@ -733,9 +794,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_rcbd_lme)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_rcbd_lme)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF   F-value p-value
 (Intercept)     1   123 2514.1283  &lt;.0001
