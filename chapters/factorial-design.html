@@ -346,7 +346,7 @@ window.Quarto = {
   <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">6.2</span> Example Analysis</a>
   <ul class="collapse">
   <li><a href="#data-integrity-checks" id="toc-data-integrity-checks" class="nav-link" data-scroll-target="#data-integrity-checks"><span class="header-section-number">6.2.1</span> Data Integrity Checks</a></li>
-  <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">6.2.2</span> Model fitting</a></li>
+  <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">6.2.2</span> Model Fitting</a></li>
   <li><a href="#check-model-assumptions" id="toc-check-model-assumptions" class="nav-link" data-scroll-target="#check-model-assumptions"><span class="header-section-number">6.2.3</span> Check Model Assumptions</a></li>
   <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference"><span class="header-section-number">6.2.4</span> Inference</a></li>
   </ul></li>
@@ -509,7 +509,7 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 <p>No extreme values are observed in the dependent variable, and the distribution looks as expected.</p>
 </section>
 <section id="model-fitting" class="level3 page-columns page-full" data-number="6.2.2">
-<h3 data-number="6.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">6.2.2</span> Model fitting</h3>
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">6.2.2</span> Model Fitting</h3>
 <p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon, ‘:’.</p>
 <p>The model syntax is:</p>
 <p><code>b_star ~  trt + location + trt:location</code></p>
@@ -617,9 +617,9 @@ Note
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_lmer, <span class="at">type =</span> <span class="st">"3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_lmer, <span class="at">type =</span> <span class="st">"3"</span>, <span class="at">ddf =</span> <span class="st">"Kenward-Roger"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+<pre><code>Type III Analysis of Variance Table with Kenward-Roger's method
              Sum Sq Mean Sq NumDF DenDF F value   Pr(&gt;F)   
 location     42.611  42.611     1    30  9.7104 0.004016 **
 trt           0.846   0.846     1    30  0.1927 0.663810   

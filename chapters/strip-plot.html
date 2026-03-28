@@ -682,13 +682,13 @@ Number of Groups: 1 </code></pre>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer, <span class="at">ddf =</span> <span class="st">"Kenward-Roger"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_lmer) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Type III Analysis of Variance Table with Kenward-Roger's method
-            Sum Sq  Mean Sq NumDF DenDF F value    Pr(&gt;F)    
-nitro     28047925 14023963     2     4 34.0682 0.0030748 ** 
-gen       15751150  3150230     5    10  7.6528 0.0033723 ** 
-nitro:gen 23877979  2387798    10    20  5.8006 0.0004271 ***
+<pre><code>Type III Analysis of Variance Table with Satterthwaite's method
+            Sum Sq  Mean Sq NumDF   DenDF F value    Pr(&gt;F)    
+nitro     28047925 14023963     2  3.9999 34.0682 0.0030751 ** 
+gen       15751150  3150230     5  9.9999  7.6528 0.0033724 ** 
+nitro:gen 23877979  2387798    10 20.0001  5.8006 0.0004271 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -750,40 +750,15 @@ nitro:gen    10    20  5.800612 0.0004270726</code></pre>
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(model_lmer, <span class="sc">~</span> nitro<span class="sc">*</span>gen, <span class="at">dffun =</span> <span class="st">"containment"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> nitro gen emmean  SE   df lower.CL upper.CL
- 0     G1    3572 572 17.8     2368     4775
- 60    G1    5132 572 17.8     3929     6335
- 120   G1    7548 572 17.8     6345     8751
- 0     G2    4934 572 17.8     3731     6138
- 60    G2    6714 572 17.8     5510     7917
- 120   G2    7211 572 17.8     6008     8415
- 0     G3    4250 572 17.8     3046     5453
- 60    G3    6122 572 17.8     4919     7326
- 120   G3    7868 572 17.8     6665     9072
- 0     G4    4059 572 17.8     2856     5262
- 60    G4    5554 572 17.8     4350     6757
- 120   G4    7094 572 17.8     5891     8298
- 0     G5    4102 572 17.8     2898     5305
- 60    G5    5633 572 17.8     4430     6837
- 120   G5    6012 572 17.8     4809     7215
- 0     G6    3207 572 17.8     2004     4411
- 60    G6    3714 572 17.8     2511     4918
- 120   G6    2492 572 17.8     1289     3695
-
-Degrees-of-freedom method: kenward-roger 
-Confidence level used: 0.95 </code></pre>
-</div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>Nminus <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(rice<span class="sc">$</span>rep)) <span class="sc">*</span> <span class="fu">length</span>(<span class="fu">unique</span>(rice<span class="sc">$</span>gen)) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>deg_free <span class="ot">&lt;-</span> pbkrtest<span class="sc">::</span><span class="fu">get_Lb_ddf</span>(model_lmer, <span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">rep</span>(<span class="dv">0</span>, Nminus)))</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen, <span class="at">df =</span> deg_free) </span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>emm2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Nminus <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(rice<span class="sc">$</span>rep)) <span class="sc">*</span> <span class="fu">length</span>(<span class="fu">unique</span>(rice<span class="sc">$</span>gen)) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>deg_free <span class="ot">&lt;-</span> pbkrtest<span class="sc">::</span><span class="fu">get_Lb_ddf</span>(model_lmer, <span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">rep</span>(<span class="dv">0</span>, Nminus)))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>emm2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(model_lme, <span class="sc">~</span> nitro<span class="sc">*</span>gen, <span class="at">df =</span> deg_free) </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>emm2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> nitro gen emmean  SE   df lower.CL upper.CL
  0     G1    3572 572 17.8     2368     4775
