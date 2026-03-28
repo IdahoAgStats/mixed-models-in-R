@@ -1,4 +1,6 @@
-# Split Plot Design
+---
+title: "Split Plot Design"
+---
 
 ```{r, include=FALSE, echo=FALSE}
 source(here::here("settings.r"))
@@ -7,7 +9,6 @@ source(here::here("settings.r"))
 ## Background
 
 Split plot designs are needed when we cannot randomly assign one treatment's levels to the experimental units individually. Instead, one treatment is applied using randomization to a group of experimental units called "whole plots" or "main plots".The experimental units are also called "split-plots" or "sub plots" and are nested within *whole plots* using randomization. The whole plots can be furthered nested into blocks, which they are in this guide in order to constitute a mixed model. This arrangement of split plots within whole plots affects the level of replication for the treatments, the degrees of freedom and the error terms used for evaluating the effects of each treatment through ANOVA. 
-
 
 ```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
@@ -117,9 +118,9 @@ $$ \epsilon \sim N(0, \sigma)$$
 
 $$\ \delta  \sim N(0, \sigma_{sp})$$
 
-## Analysis Examples
+## Analysis Example
 
-Let's start analyzing by loading required libraries.
+Let's start analysis by first loading required libraries.
 
 ::: panel-tabset
 ### lme4
@@ -138,9 +139,9 @@ library(dplyr); library(ggplot2); library(broom.mixed)
 ```
 :::
 
-### Example Model for RCBD Split Plot Designs
+### Example Data Set for Split Plot Design
 
-The oats data used in this example is from the **MASS** package. The design is RCBD split plot with 6 blocks, 3 levels for the main plots and 4 levels for the split plot. The primary outcome variable is yield.
+The oats data used in this example is from the **MASS** package. The design is a split plot with 6 blocks, 3 levels for the main plots and 4 levels for the split plot. The outcome variable is yield.
 
 |              |                          |
 |--------------|--------------------------|
@@ -162,7 +163,7 @@ data("oats", package = "MASS")
 head(oats,5)
 ```
 
-#### Data integrity checks
+#### Data Integrity Checks
 
 -   Check structure of the data
 
@@ -218,7 +219,7 @@ $\mu$ = overall experimental mean, $\rho$ = block effect (random), $\alpha$ = ma
 ### lme4
 
 ```{r}
-oats_lmer <- lmer(Y ~  V + N + V:N + (1|B/V),
+oats_lmer <- lmer(Y ~ V*N + (1|B/V),
                   data = oats, 
                   na.action = na.exclude)
 tidy(oats_lmer)
@@ -227,7 +228,7 @@ tidy(oats_lmer)
 ### nlme
 
 ```{r}
-oats_lme <- lme(Y ~  V + N + V:N,
+oats_lme <- lme(Y ~  V*N,
                 random = ~1|B/V,
                 data = oats,
                 na.action = na.exclude)
@@ -263,8 +264,7 @@ After verifying the assumptions of the model, look at the analysis of variance, 
 ### lme4
 
 ```{r}
-anova(oats_lmer, type = "III") 
-car::Anova(oats_lmer, type = "3", test.statistics = "F")
+anova(oats_lmer, type = 3, ddf = "Kenward-Roger") 
 ```
 
 ### nlme
@@ -287,8 +287,8 @@ emm1
 ### nlme
 
 ```{r}
-emm1 <- emmeans(oats_lme, ~ V|N) 
-emm1
+emm2 <- emmeans(oats_lme, ~ V|N) 
+emm2
 ```
 :::
 
