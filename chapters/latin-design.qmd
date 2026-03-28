@@ -59,7 +59,7 @@ dat <- read.csv(here::here("data", "goulden_latin.csv"))
 
 : Table of variables in the data set {tbl-latin}
 
-### Data integrity checks
+### Data Integrity Checks
 
 -   Check structure of the data
 
@@ -81,16 +81,20 @@ dat1 <- dat |>
 
 Next, to verify if the data meets the assumption of the Latin square design, let's plot the field layout for this experiment.
 
-```{r, echo=FALSE, warning=FALSE}
+```{r}
+#| echo: false
+#| warning: false
+#| fig-cap: "Latin Square Design"
+
 desplot::desplot(data = dat1, flip = TRUE,
         form = trt ~ col + row,         
         text = trt, cex = 0.7, shorten = "no", 
-        out1 = trt,                          
-       # out2 = block,  
-        main = "Alpha Lattice Design", show.key =F) 
+        out1 = trt,           
+        main = NULL,
+        show.key =F) 
 ```
 
-This looks great! Here we can see that there are an equal number of treatments, rows, and columns (5). Treatments were randomized so that one treatment does not appear more than once in each row and column.
+This looks as expected. Here we can see that there are an equal number of treatments, rows, and columns (5). Treatments were randomized so that one treatment does not appear more than once in each row and column.
 
 -   Check the extent of missing data
 
@@ -118,7 +122,7 @@ hist(dat1$yield, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex_ax
 hist(dat1$yield, main = NA, xlab = "yield")
 ```
 
-### Model fitting
+### Model Fitting
 
 Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as a random effects.
 
@@ -126,26 +130,41 @@ Here we will fit a model to evaluate the impact of fungicide treatments on wheat
 ### lme4
 
 ```{r}
-m1_a <- lmer(yield ~ trt + (1|row) + (1|col),
+m_latin_lmer <- lmer(yield ~ trt + (1|col) + (1|row),
            data = dat1,
            na.action = na.exclude)
-summary(m1_a) 
+summary(m_latin_lmer) 
 ```
 
 ### nlme
 
 ```{r}
+# this is not going well: 
+# dat$one <- factor(1)
+# m_latin_lme <-lme(yield ~ trt,
+#            random = list(one = pdBlocked(list(
+#              pdIdent(~ 0 + row), 
+#              pdIdent(~ 0 + col)))),
+#            data = dat)
+# summary(m_latin_lme)
 
-m1_b <-lme(yield ~ trt,
-                random = list(one = pdBlocked(list(
-        pdIdent(~ 0 + row), 
-         pdIdent(~ 0 + col)))),
-        data = dat %>% mutate(one = factor(1)))
+m_latin_lme1 <-lme(yield ~ trt + row,
+           random = ~ 1|col,
+           data = dat)
+summary(m_latin_lme)
 
-summary(m1_b)
-
+m_latin_lme2 <-lme(yield ~ trt + col,
+           random = ~ 1|row,
+           data = dat)
+summary(m_latin_lme2)
 ```
 :::
+
+::: {.column-margin}
+##### Latin Square Design in nlme
+There is no good way (that we know of) to analyze a latin square design with **nlme** specifiying both row and column as random effects. One easy workaround is to only include one spatial components as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row), while also meeting standard linear modeling assumptions.  
+:::
+
 
 ### Check Model Assumptions
 
@@ -155,39 +174,42 @@ Evaluate model residuals by using `check_model()` function from the **performanc
 #### lme4
 
 ```{r, fig.height=6}
-check_model(m1_a, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
+check_model(m_latin_lmer, check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha = 0)
 ```
 
 #### nlme
 
 ```{r, layout="[[1,1], [1]]"}
-plot(m1_b, resid(., scaled=TRUE) ~ fitted(.), 
+plot(m_latin_lme1, resid(., scaled=TRUE) ~ fitted(.), abline = 0,
      xlab = "fitted values", ylab = "studentized residuals")
 
-qqnorm(residuals(m1_b))
-qqline(residuals(m1_b))
+plot(m_latin_lme2, resid(., scaled=TRUE) ~ fitted(.), abline = 0,
+     xlab = "fitted values", ylab = "studentized residuals")
+
+qqnorm(residuals(m_latin_lme1)); qqline(residuals(m_latin_lme1))
+qqnorm(residuals(m_latin_lme2)); qqline(residuals(m_latin_lme2))
 ```
 
 :::
 
-These visuals indicate that the assumptions of the linear model have been met.
+These visuals indicate that the assumptions of the linear model have been met. 
 
 ### Inference
 
-We can now proceed to ANOVA. In this case, we will use `anova()` with `type = 1` or `type = "sequential"` for `lmer()` and `lme()` models, respectively.
+We can now proceed with ANOVA. With only one independent variable in the model, it is immaterial what "sums of squares" type is used. 
 
 
 ::: panel-tabset
 #### lme4
 
 ```{r}
-anova(m1_a, type = "1")
+anova(m_latin_lmer)
 ```
 
 #### nlme
 
 ```{r}
-anova(m1_b, type = "sequential")
+anova(m_latin_lme2)
 ```
 :::
 
@@ -196,21 +218,16 @@ Here we observed a statistically significant impact of fungicide treatment on cr
 ::: panel-tabset
 #### lme4
 
-```{r, fig.height=3}
-emmeans(m1_a, ~ trt)
+```{r}
+emmeans(m_latin_lmer, ~ trt)
 ```
 
 #### nlme
 
-```{r, fig.height=3}
-emmeans(m1_b, ~ trt)
+```{r}
+emmeans(m_latin_lme2, ~ trt) 
 ```
 :::
 
-We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study, indicating that 'C' fungicide was more efficient in controlling stem rust in wheat.
+We see that wheat yield was higher with 'C' fungicide treatment compared to other fungicides applied in this study, indicating that 'C' fungicide was more effective in controlling stem rust in wheat.
 
-::: callout-note
-## `CI with lme`
-
-The confidence intervals were not estimated through `emmeans()` from the `lme()` model due to limitations in how the model has to be specified in ***nlme*** and how emmeans estimates confidence intervals from a linear modelling object. 
-:::
