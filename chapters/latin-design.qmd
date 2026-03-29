@@ -151,7 +151,7 @@ summary(m_latin_lmer)
 m_latin_lme1 <-lme(yield ~ trt + row,
            random = ~ 1|col,
            data = dat)
-summary(m_latin_lme)
+summary(m_latin_lme1)
 
 m_latin_lme2 <-lme(yield ~ trt + col,
            random = ~ 1|row,
@@ -162,7 +162,7 @@ summary(m_latin_lme2)
 
 ::: {.column-margin}
 ##### Latin Square Design in nlme
-There is no good way (that we know of) to analyze a latin square design with **nlme** specifiying both row and column as random effects. One easy workaround is to only include one spatial components as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row), while also meeting standard linear modeling assumptions.  
+There is no good way (that we know of) to analyze a latin square design with **nlme** specifiying both row and column as random effects. One easy workaround is to only include one spatial components as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row, 'm_latin_lme2'), while also meeting standard linear modeling assumptions.  
 :::
 
 
@@ -187,7 +187,7 @@ plot(m_latin_lme2, resid(., scaled=TRUE) ~ fitted(.), abline = 0,
      xlab = "fitted values", ylab = "studentized residuals")
 
 qqnorm(residuals(m_latin_lme1)); qqline(residuals(m_latin_lme1))
-qqnorm(residuals(m_latin_lme2)); qqline(residuals(m_latin_lme2))
+qqnorm(residuals(m_latin_lmer)); qqline(residuals(m_latin_lmer))
 ```
 
 :::
