@@ -4,13 +4,17 @@
 source(here::here("settings.r"))
 ```
 
+*Check if lmerTest works with lme4 v2.0*
+
+## Background
+
 In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called "longitudinal data").
 
 Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject or experimental unit, we must model the repeated measures covariance structure when analyzing the treatment effects.
 
 In these models, the 'iid' assumption (independently and identically distributed) is often violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
-For this these models, we will use ***nlme*** and ***lme4***. These packages provide well documented implementations of heterogeneous error structures. Another package, [***mmrm***](https://CRAN.R-project.org/package=mmrm){.external target="_blank"}, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that due to limitations in implemented models.  Until recently, implementing hetergenous error terms was [quite challenging in lme4](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html){.external target="_blank"}. Starting with version 4.0 of lme4, funtionality for implementing some [covariance structures](https://cran.r-project.org/web/packages/lme4/vignettes/covariance_structures.html) is available. 
+For this these models, we will use ***nlme*** and ***lme4***. These packages provide well documented implementations of heterogeneous error structures. Another package, [***mmrm***](https://CRAN.R-project.org/package=mmrm){.external target="_blank"}, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that due to limitations in implemented models.  Until recently, implementing hetergenous error terms was [quite challenging in lme4](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html){.external target="_blank"}. Starting with version 4.0 of lme4, functionality for implementing some [covariance structures](https://cran.r-project.org/web/packages/lme4/vignettes/covariance_structures.html) is available. 
 
 ::: callout-information
 
@@ -41,7 +45,7 @@ The argument for `value` is the starting value for iterations (zero is the defau
 
 There are other covariance structures enabled by ***nlme*** (e.g., `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Read the [nlme manual](https://cran.r-project.org/web/packages/nlme/refman/nlme.html){.external target="_blank"} if you want to learn more about covariance structures in that package. 
 
-
+# Examples 
 
 let's start with loading the required libraries for this analysis.
 
@@ -59,11 +63,10 @@ library(dplyr); library(broom.mixed); library(ggplot2)
 ```
 :::
 
-# Example Analysis
-
-First, we will start with the first example with randomized complete block design with repeated measures. 
 
 ## RCBD Repeated Measures
+
+First, we will start with the first example with randomized complete block design with repeated measures. 
 
 The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, 'variety'. The dependent variable, y (leaf are index) was measured weekly for 5 weeks. 
 
@@ -153,7 +156,7 @@ Let's fit the model first using `lme()` from the **nlme** package.
 ### nlme
 
 ```{r}
-lm1 <- lme(y ~ variety + factweek + variety:factweek,
+sorg_1a <- lme(y ~ variety + factweek + variety:factweek,
            random = ~1|block/factplot,
            data = sorghum,
            na.action = na.exclude)
@@ -162,7 +165,9 @@ lm1 <- lme(y ~ variety + factweek + variety:factweek,
 ### lme4
 
 ```{r}
-
+sorg_2a <- lmer(y ~ variety + factweek + variety:factweek + (1|block/factplot),
+           data = sorghum,
+           na.action = na.exclude)
 ```
 :::
 
@@ -172,36 +177,29 @@ By adding this correlation structure, we are accounting for variation caused by 
 
 In this analysis, the time variable is `week`, and it must be numeric.
 
-::: panel-tabset
-### nlme
-
-```{r}
-cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
-cs2 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
-```
-### lme4
-
-```{r}
-
-```
-:::
-
 In the code chunks above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model lm1, with these two matrices. 
 
 ::: panel-tabset
 ### nlme
-
 ```{r}
-lm2 <- update(lm1, corr = cs1)
-lm3 <- update(lm1, corr= cs2)
+cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
+cs1 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
+
+sorg_1b <- update(sorg_1a, corr = cs1)
+sorg_1c <- update(sorg_1a, corr= cs2)
 ```
 
 ### lme4
 
 ```{r}
-
+sorg_2b <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|block/factplot),
+           data = sorghum, na.action = na.exclude)
+sorg_2c <- lmer(y ~ variety + factweek + variety:factweek + cs(1 + week|block/factplot),
+           data = sorghum, na.action = na.exclude)
 ```
 :::
+
+
 
 
 Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by the `compare_performance()` function from the **performance** library.
@@ -210,20 +208,21 @@ Now let's compare how model fitness differs among models with no correlation str
 ### nlme
 
 ```{r}
-anova(lm1, lm2, lm3)
+anova(sorg_1a, sorg_1b, sorg_1c)
 ```
 
 Let's compare the models performance to select a model that fits better.
 
 ```{r}
-result <- compare_performance(lm1, lm2, lm3)
-print_md(result)
+#| eval: false
+#| include: false
+compare_performance(sorg_1a, sorg_1b, sorg_1c)
 ```
 
 ### lme4
 
 ```{r}
-
+anova(sorg_2a, sorg_2b, sorg_2c)
 ```
 
 :::
@@ -238,13 +237,13 @@ Let's run a `tidy()` on lm2 model to look at the estimates for random and fixed 
 ### nlme
 
 ```{r}
-tidy(lm2)
+tidy(sorg_1b)
 ```
 
 ### lme4
 
 ```{r}
-
+tidy(sorg_2c)
 ```
 :::
 
@@ -258,14 +257,17 @@ tidy(lm2)
 ```{r, fig.height=3}
 #| message: false
 #| warning: false
-check_model(lm2,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
+check_model(sorg_1b,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
 ```
 
 ### lme4
 
-```{r}
-
+```{r, fig.height=3}
+#| message: false
+#| warning: false
+check_model(sorg_2c,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
 ```
+
 :::
 
 
@@ -275,13 +277,13 @@ check_model(lm2,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
 ### nlme
 
 ```{r}
-anova(lm2, type = "marginal")
+anova(sorg_1b, type = "marginal")
 ```
 
 ### lme4
 
 ```{r}
-
+anova(sorg_2c)
 ```
 :::
 
@@ -294,17 +296,26 @@ We can estimate the marginal means for variety and week effect and their interac
 ### nlme
 
 ```{r}
-mean_1 <- emmeans(lm2, ~ variety)
-mean_1
+(mean_1 <- emmeans(sorg_1b, ~ variety))
 
-mean_2 <- emmeans(lm2, ~ variety*factweek)
-mean_2
+(mean_2 <- emmeans(sorg_1b, ~ variety*factweek))
 ```
 
-::: callout-tip
-## Time variable
+### lme4
+```{r}
+(mean_1 <- emmeans(sorg_2c, ~ variety))
 
-Here is a quick step to ensure you're fitting model correctly: make sure to have two time variables in your data one being numeric (e.g. 'day' as number) and the other being factor/character(e.g. 'day_factor' as a factor/character). Where a numeric variable is used for fitting correlation matrix, and a factor/character variable used in model statement to evaluate the time variable's effect on the response variable.
+(mean_2 <- emmeans(sorg_2c, ~ variety*factweek))
+```
+
+:::
+
+
+
+::: callout-tip
+## Representing time variables
+
+It's common to have two versions of temporary variables in a data set: one coded as numeric and the other being coded as a factor or categorical variable. When modelling, the numeric variable is used for fitting correlation matrix, and a factor/character variable may be used in model statement to evaluate the temporal variable's effect on the response if you choose to treat it a categorical variable. It is also a valid choice to view a temporal variables as numeric assuming it represents a real time interval. Days and weeks are real time intervals, while "early", "middle" and "late" are categorical representations of time. 
 :::
 
 ## Split Plot Repeated Measures
@@ -394,7 +405,7 @@ For this data set, we will use `lme()` from ***nlme*** package and `lmer()` from
 
 corr_str1 = corAR1(form = ~ cut_num|block/irrigation/intercrop/plot, value = 0.2, fixed = FALSE)
 
-fit1 <- lme(yield ~ irrigation*intercrop*cutting,
+alf_1 <- lme(yield ~ irrigation*intercrop*cutting,
                 random = ~ 1|block/irrigation/intercrop/plot,
                 corr= corr_str1,
                 data = alfalfa, na.action= na.exclude)
@@ -403,7 +414,9 @@ fit1 <- lme(yield ~ irrigation*intercrop*cutting,
 ### lme4
 
 ```{r}
-
+alf_2 <- lme(yield ~ irrigation*intercrop*cutting + 
+               ar1(0 + 1|block/irrigation/intercrop/plot),
+                data = alfalfa, na.action= na.exclude)
 ```
 :::
 
@@ -418,14 +431,17 @@ We will use `check_model()` from the **performance** package to evaluate the mod
 ```{r, fig.height=3}
 #| warning: false
 #| message: false
-check_model(fit1, check = c('linearity', 'qq'), detrend=FALSE, alpha = 0)
+check_model(alf_1, check = c('linearity', 'qq'), detrend=FALSE, alpha = 0)
 ```
 
 ### lme4
 
-```{r}
-
+```{r, fig.height=3}
+#| warning: false
+#| message: false
+check_model(alf_2, check = c('linearity', 'qq'), detrend=FALSE, alpha = 0)
 ```
+
 :::
 
 These diagnostic plots look fine. The linearity and homogeneity of variance plots show no trend. The Q-Q plots for the overall residuals and for the random effects fall on a straight line so we can be satisfied with that.
@@ -438,13 +454,15 @@ These diagnostic plots look fine. The linearity and homogeneity of variance plot
 ```{r}
 #| warning: false
 #| message: false
-anova(fit1, type = "marginal")
+anova(alf_1, type = "marginal")
 ```
 
 ### lme4
 
 ```{r}
-
+#| warning: false
+#| message: false
+anova(alf_2)
 ```
 :::
 
@@ -452,14 +470,15 @@ anova(fit1, type = "marginal")
 Next, we can estimate marginal means and confidence intervals at different levels of the independent variables using `emmeans()`.
 
 ```{r}
-emmeans(fit1,~ cutting)
-emmeans(fit1,~ intercrop)
+emmeans(alf_1,~ cutting)
+emmeans(alf_1,~ intercrop)
 ```
 
 ### lme4
 
 ```{r}
-
+emmeans(alf_2,~ cutting)
+emmeans(alf_2,~ intercrop)
 ```
 :::
 
@@ -566,7 +585,8 @@ pfit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
 ### lme4
 
 ```{r}
-
+pfit2 <- lmer(P_leaf ~ time*Ptrt*Inoc*Cv + cd(1|rep/Ptrt/Inoc/plot),
+                data = phos1, na.action= na.exclude)
 ```
 :::
 
@@ -583,9 +603,12 @@ check_model(pfit1, check = c('linearity', 'qq'), detrend=FALSE, alpha =0)
 
 ### lme4
 
-```{r}
-
+```{r, fig.height=3}
+#| warning: false
+#| message: false
+check_model(pfit2, check = c('linearity', 'qq'), detrend=FALSE, alpha =0)
 ```
+
 :::
 
 This model fit a first glance is not ideal, but that LOESS line is trying to model a space where there are no data (between 500 and 1500 ppm P leaf concentration), so that can introduce artifacts. **Performance** does have an option for testing for heteroscedascity:
@@ -596,16 +619,20 @@ This model fit a first glance is not ideal, but that LOESS line is trying to mod
 ```{r}
 check_heteroscedasticity(pfit1)
 ```
+
 These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a difference in variance for each time point. This issue is addressed in the [chapter on variance components](variance-components.qmd). 
 
-```{r, echo=FALSE, eval=FALSE}
+```{r}
+#| include: false
+#| echo: false
+#| eval: false
 save(pfit1, corr_str1, file = here::here("data/phos_fit1.RData"))
 ```
 
 ### lme4
 
 ```{r}
-
+check_heteroscedasticity(pfit2)
 ```
 :::
 
@@ -624,7 +651,9 @@ anova(pfit1, type = "marginal")
 ### lme4
 
 ```{r}
-
+#| warning: false
+#| message: false
+anova(pfit2)
 ```
 :::
 
@@ -639,7 +668,8 @@ emmeans(pfit1, ~ time|Cv)
 ### lme4
 
 ```{r}
-
+emmeans(pfit2, ~ Inoc|Cv)
+emmeans(pfit2, ~ time|Cv)
 ```
 :::
 
