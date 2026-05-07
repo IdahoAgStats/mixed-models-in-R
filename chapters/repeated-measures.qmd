@@ -408,15 +408,15 @@ corr_str1 = corAR1(form = ~ cut_num|block/irrigation/intercrop/plot, value = 0.2
 alf_1 <- lme(yield ~ irrigation*intercrop*cutting,
                 random = ~ 1|block/irrigation/intercrop/plot,
                 corr= corr_str1,
-                data = alfalfa, na.action= na.exclude)
+                data = alfalfa, na.action = na.exclude)
 ```
 
 ### lme4
 
 ```{r}
-alf_2 <- lme(yield ~ irrigation*intercrop*cutting + 
+alf_2 <- lmer(yield ~ irrigation*intercrop*cutting + 
                ar1(0 + 1|block/irrigation/intercrop/plot),
-                data = alfalfa, na.action= na.exclude)
+                data = alfalfa, na.action = na.exclude)
 ```
 :::
 
@@ -585,7 +585,7 @@ pfit1 <- lme(P_leaf ~ time*Ptrt*Inoc*Cv,
 ### lme4
 
 ```{r}
-pfit2 <- lmer(P_leaf ~ time*Ptrt*Inoc*Cv + cd(1|rep/Ptrt/Inoc/plot),
+pfit2 <- lmer(P_leaf ~ time*Ptrt*Inoc*Cv + cs(1|rep/Ptrt/Inoc/plot),
                 data = phos1, na.action= na.exclude)
 ```
 :::
