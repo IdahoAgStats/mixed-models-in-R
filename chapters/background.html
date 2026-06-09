@@ -390,16 +390,16 @@ Table&nbsp;3.1: Terms definitions
 </section>
 <section id="models" class="level2 page-columns page-full" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="models"><span class="header-section-number">3.2</span> Models</h2>
-<p>Recall simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>):</p>
+<p>Recall the equation for simple linear regression with intercept (<span class="math inline">\(\beta_0\)</span>) and slope (<span class="math inline">\(\beta_1\)</span>):</p>
 <p><span class="math display">\[  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i \]</span></p>
 <p><span class="math inline">\(Y_i\)</span> is the dependent variable, and <span class="math inline">\(x_i\)</span> is the independent variable. The value for <span class="math inline">\(\beta_0\)</span> is the overall average for <span class="math inline">\(Y_i\)</span> and <span class="math inline">\(\beta_1\)</span> is the change in <span class="math inline">\(Y\)</span> as <span class="math inline">\(X\)</span> changes. The slope for <span class="math inline">\(\beta_1\)</span> could represent the effects of increasing quantities of nitrogen fertilizer on crop growth, for example.</p>
 <p>The errors,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math inline">\(\epsilon_i\)</span>, or residual are independently and identically distributed (abbreviated “iid”) following a normal distribution for general linear mixed models.</p>
-<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For the rest of this tutorial we will be using the term “residual” and not “error term” to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></p></div></div><p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions).</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;For the rest of this tutorial we will use the term “residual” and not “error term” to reflect current practices. The residual is calculated as <span class="math inline">\(Y - XB\)</span>, the gap between the observed value for <span class="math inline">\(Y_i\)</span> and the predicted value, <span class="math inline">\(\hat{Y_i}\)</span></p></div></div><p><span class="math display">\[e_i \sim N(0, \sigma I_n)\]</span> These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions).</p>
 <p>There is also an expected conditional distribution for <span class="math inline">\(Y_i\)</span>, but we will not be discussing this again.</p>
 <p><span class="math display">\[ Y_i|x_i \sim𝑁(\mathbf{X \beta}, \sigma^2/r_i) \]</span></p>
 <p>In least squares estimation, the slope and intercept are determined analytically in order to minimize the residual sum of squares. If we used a mixed model, the intercept and slope, <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>, respectively, would constitute the fixed effects, also referred to as “population-averaged values”.</p>
 <p>Extending this example to a mixed model, we can consider adding another term, <span class="math inline">\(r_{j}\)</span> that reflects levels sampled from a population that represent a random subset of a larger population:</p>
-<p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{j}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, <span class="math inline">\(\beta_0\)</span>. can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\betda_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (this is sometimes abbreviate “iid”):</p>
+<p><span class="math display">\[  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} \]</span> In an agronomic field trial, <span class="math inline">\(r_{j}\)</span> could be a random effect for block (i.e.&nbsp;the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, <span class="math inline">\(\beta_0\)</span> can be thought of as each block’s deviation from the fixed intercept parameter (that is, <span class="math inline">\(\beta_0\)</span>). Like the residuals term, <span class="math inline">\(r_i\)</span> is independently and identically distributed (this is sometimes abbreviate “iid”):</p>
 <p><span class="math display">\[r_i \sim N(0, \sigma_b)\]</span> While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered “random intercepts” where they all share a common slope from the fixed effects, but differ in their intercepts.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -440,14 +440,14 @@ Figure&nbsp;3.2: Fixed intercept and random slopes example.
 <p>The other alternative is including both a random slope and a random intercept in the model statement:</p>
 <p><span class="math display">\[  Y_{ij} = (\beta_0 + r1_j) + (\beta_1 + r1_j))X_{ij} + \epsilon_{ij}\]</span></p>
 <p>In this model, <span class="math inline">\(r1_j\)</span> and <span class="math inline">\(r1_j\)</span> are random effects for subject <span class="math inline">\(i\)</span> applied to the intercept and slope, respectively. These differences in slope and intercept will (likely) impact the final prediction.</p>
-<div class="cell page-columns page-full" data-cap-location="margin">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="background_files/figure-html/fig-3-1.png" class="img-fluid figure-img" width="672">
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3.3: Random intercepts and slopes example.
 </figcaption>
 </figure>
@@ -462,7 +462,7 @@ Figure&nbsp;3.3: Random intercepts and slopes example.
 <section id="lme4" class="level3" data-number="3.3.1">
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="lme4"><span class="header-section-number">3.3.1</span> lme4</h3>
 <p>The formula notation used by ‘lme4’ for the linear mixed models is as follows:</p>
-<p><code>model_formula &lt;- formula(Y ~ X + (1|R))</code></p>
+<pre><code>lmer(formula = Y ~ X + (1|R))</code></pre>
 <p>In this formula, <span class="math inline">\(Y\)</span> is the response variable (or dependent variable); <span class="math inline">\(X\)</span> represents the independent variable(s) such as treatment (fixed effect), and <span class="math inline">\(R\)</span> denotes the random grouping effect (e.g.&nbsp;block, subject).</p>
 <p>Random effects are put in parentheses and a <code>1|</code> is used to denote random intercepts (rather than random slopes). The table below (<span class="citation" data-cites="bates">(<a href="../references.html#ref-bates" role="doc-biblioref"><strong>bates?</strong></a>)</span>) provides several examples of different structures for fitting random effects. The names of random grouping factors are denoted <code>r</code>, <code>r1</code>, and <code>r2</code>, and covariates as <code>x</code>.</p>
 <table class="caption-top table">
@@ -511,8 +511,9 @@ Figure&nbsp;3.3: Random intercepts and slopes example.
 <section id="nlme" class="level3" data-number="3.3.2">
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="nlme"><span class="header-section-number">3.3.2</span> nlme</h3>
 <p>The package ‘nlme’ used similar notation, but the fixed and random effects are separate arguments:</p>
-<pre><code>model = lme(fixed = Y ~ X,
-            random = ~ 1|R)</code></pre>
+<pre><code>lme(fixed = Y ~ X,
+    random = ~ 1|R)</code></pre>
+<p>In this example, <span class="math inline">\(Y\)</span>, <span class="math inline">\(X\)</span>, and <span class="math inline">\(R\)</span> are the dependent variable, fixed effect and random effect as described previously.</p>
 
 
 </section>
