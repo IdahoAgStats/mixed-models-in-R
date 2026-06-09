@@ -8,7 +8,6 @@ source(here::here("settings.r"))
 par(mar=c(5.1, 6, 4.1, 2.1))
 ```
 
-
 ## Mixed model terms
 
 Mixed-effects models are called “mixed” because they are modelling both fixed and random effects and estimating these effects jointly. These are also called "multilevel" or "hierarchical" models in reference to groups or clusters with a hierarchical structure where we expect the groups to have correlations between their groups members.
@@ -20,6 +19,7 @@ This tutorial concerns general linear mixed models (sometimes abbreviated "LMM")
 **Random effects** are discrete units sampled from a specified population (e.g. plots, participants), and thus they are categorical. Random effects are associated with experimental units drawn at random from a population that can be described by a probability distribution. Random effects are useful in the cases when we have (1) multiple levels of experiment factors (e.g., many species or blocks), (2) smaller number of observations for a given level, or (3) uneven sampling across levels. Random effects represent a subsample of other possible observations drawn from a population. Depending on the experimental aims, we may be concerned with describing the probability distribution of said population (e.g.the variance) or estimating the observed levels in the random effect (BLUPs), or controlling for a nuisance factor whose absence inflates the overall error term. Random effects can also resolve issues with non-independence of within-group data points. 
 
 #### Common terms used in this guide
+
 *Please read this section and refer back to if when you forget what these terms mean.*
 
 | Term | Definition |
@@ -32,7 +32,7 @@ This tutorial concerns general linear mixed models (sometimes abbreviated "LMM")
 
 ## Models
 
-Recall simple linear regression with intercept ($\beta_0$) and slope ($\beta_1$):
+Recall the equation for simple linear regression with intercept ($\beta_0$) and slope ($\beta_1$):
 
 $$  Y_{i} = \beta_0 + \beta_1 x_i + \epsilon_i $$
 
@@ -40,7 +40,7 @@ $Y_i$ is the dependent variable, and $x_i$ is the independent variable. The valu
 
 The errors,[^1] $\epsilon_i$, or residual are independently and identically distributed (abbreviated "iid") following a normal distribution for general linear mixed models.
 
-[^1]: For the rest of this tutorial we will be using the term "residual" and not "error term" to reflect current practices. The residual is calculated as $Y - XB$, the gap between the observed value for $Y_i$ and the predicted value, $\hat{Y_i}$
+[^1]: For the rest of this tutorial we will use the term "residual" and not "error term" to reflect current practices. The residual is calculated as $Y - XB$, the gap between the observed value for $Y_i$ and the predicted value, $\hat{Y_i}$
 
 $$e_i \sim N(0, \sigma I_n)$$ These are important model assumptions that we will revisit frequently in this tutorial (and later on we will explore relaxing these assumptions).
 
@@ -48,11 +48,11 @@ There is also an expected conditional distribution for $Y_i$, but we will not be
 
 $$ Y_i|x_i \sim𝑁(\mathbf{X \beta}, \sigma^2/r_i) $$
 
-In least squares estimation, the slope and intercept are determined analytically in order to minimize the  residual sum of squares. If we used a mixed model, the intercept and slope, $\beta_0$ and $\beta_1$, respectively, would constitute the fixed effects, also referred to as "population-averaged values".
+In least squares estimation, the slope and intercept are determined analytically in order to minimize the residual sum of squares. If we used a mixed model, the intercept and slope, $\beta_0$ and $\beta_1$, respectively, would constitute the fixed effects, also referred to as "population-averaged values".
 
 Extending this example to a mixed model, we can consider adding another term, $r_{j}$ that reflects levels sampled from a population that represent a random subset of a larger population:
 
-$$  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} $$ In an agronomic field trial, $r_{j}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, $\beta_0$.  can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\betda_0$). Like the residuals term, $r_i$ is independently and identically distributed (this is sometimes abbreviate "iid"):
+$$  Y_{ij} = \beta_0 + \beta_1 x_i + r_j + \epsilon_{ij} $$ In an agronomic field trial, $r_{j}$ could be a random effect for block (i.e. the spatial positioning of a group of treatments). Random effects are the extent of deviation due to each random unit, in this case blocks, from the model intercept, $\beta_0$ can be thought of as each block’s deviation from the fixed intercept parameter (that is, $\beta_0$). Like the residuals term, $r_i$ is independently and identically distributed (this is sometimes abbreviate "iid"):
 
 $$r_i \sim N(0, \sigma_b)$$ While random effects do not have to be normally distributed, that is the most common and most easily estimated. These are considered "random intercepts" where they all share a common slope from the fixed effects, but differ in their intercepts.
 
@@ -122,7 +122,6 @@ In this model, $r1_j$ and $r1_j$ are random effects for subject $i$ applied to t
 #| echo: false
 #| label: fig-3
 #| fig-cap: "Random intercepts and slopes example."
-#| cap-location: margin
 
 set.seed(509)
 
@@ -144,8 +143,9 @@ ggplot(df3) +
 
 The formula notation used by 'lme4' for the linear mixed models is as follows:
 
-`model_formula <- formula(Y ~ X + (1|R))`
-
+```
+lmer(formula = Y ~ X + (1|R))
+```
 
 In this formula, $Y$ is the response variable (or dependent variable); $X$ represents the independent variable(s) such as treatment (fixed effect), and $R$ denotes the random grouping effect (e.g. block, subject).
 
@@ -166,11 +166,11 @@ The first example, `(1|r)` suffices for most mixed models and is the only struct
 The package 'nlme' used similar notation, but the fixed and random effects are separate arguments:
 
 ```
-model = lme(fixed = Y ~ X,
-            random = ~ 1|R)
+lme(fixed = Y ~ X,
+    random = ~ 1|R)
 ```
 
-
+In this example, $Y$, $X$, and $R$ are the dependent variable, fixed effect and random effect as described previously. 
 
 
 
