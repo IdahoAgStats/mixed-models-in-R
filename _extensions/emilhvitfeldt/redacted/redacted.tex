@@ -1,0 +1,16 @@
+\usepackage{fontspec}
+\newfontfamily\redactedfont[Path=fonts/]{Redacted-Regular.ttf}
+\newfontfamily\redactedscriptfont[
+  Path=fonts/,
+  UprightFont=RedactedScript-Regular.ttf,
+  BoldFont=RedactedScript-Bold.ttf,
+  FontFace={l}{n}{RedactedScript-Light.ttf}
+]{RedactedScript-Regular.ttf}
+
+\newcommand{\redacted}[1]{{\redactedfont #1}}
+\newcommand{\redactedscript}[1]{{\redactedscriptfont #1}}
+\newcommand{\redactedscriptbold}[1]{{\redactedscriptfont\bfseries #1}}
+\newcommand{\redactedscriptlight}[1]{{\redactedscriptfont\fontseries{l}\selectfont #1}}
+
+\newenvironment{redactedblock}{\redactedfont}{}
+\newenvironment{redactedscriptblock}{\redactedscriptfont}{}
