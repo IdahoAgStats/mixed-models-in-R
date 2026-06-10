@@ -4,7 +4,9 @@
 source(here::here("settings.r"))
 ```
 
-*Check if lmerTest works with lme4 v2.0*
+::: {.callout-warning}
+THIS CHAPTER IS A WORK IN PROGRESS PARTICULARILY WITH RESPECT TO LME4 v2.0 COVARIANCE STRUCTURES. IT'S UNCLEAR IF THESE WORK WITH 'lmerTest'. ADDITIONALLY, THERE ARE SOME WEIRD ESTIMATION ISSUES: OVERALLY HIGH VALUES FOR 'PHI' WHEN USING AR1, SOME WILD SWINGS IN THE LOG LIKELIHOOD AND NON-PD VARIANCE COMPONENTS THAT STYMIE 'emmeans'. 
+:::
 
 ## Background
 
@@ -14,14 +16,19 @@ Studies that involve repeated data collection from the same experimental units (
 
 In these models, the 'iid' assumption (independently and identically distributed) is often violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.
 
-For this these models, we will use ***nlme*** and ***lme4***. These packages provide well documented implementations of heterogeneous error structures. Another package, [***mmrm***](https://CRAN.R-project.org/package=mmrm){.external target="_blank"}, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that due to limitations in implemented models.  Until recently, implementing hetergenous error terms was [quite challenging in lme4](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html){.external target="_blank"}. Starting with version 4.0 of lme4, functionality for implementing some [covariance structures](https://cran.r-project.org/web/packages/lme4/vignettes/covariance_structures.html) is available. 
+For this these models, we will use 'nlme' and 'lme4'. These packages provide well documented implementations of heterogeneous error structures. Another package, [mmrm](https://CRAN.R-project.org/package=mmrm){.external target="_blank"}, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that due to limitations in implemented models.  Until recently, implementing hetergenous error terms was [quite challenging in lme4](https://bbolker.github.io/mixedmodels-misc/notes/varmats.html){.external target="_blank"}. Starting with version 2.0 of lme4, functionality for implementing some [covariance structures](https://cran.r-project.org/web/packages/lme4/vignettes/covariance_structures.html) is available. You may need to download the latest development version of 'lme4' to access the latest functionality:
+
+```{r}
+#| eval: false
+remotes::install_github("lme4/lme4", dependencies = TRUE)
+```
+
 
 ::: callout-information
 
-The package [***glmmTMB***](https://CRAN.R-project.org/package=glmmTMB){.external target="_blank"} (generalized linear mixed model using the template model builder) will also implement [many covariance structures](https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html){.external target="_blank"} and despite its name, can work fine with general linear models (Gaussian) and does not require a mixed component. The implemented structures include compound symmetry, AR1, toeplitz, unstructured and several spatial covariance structures. Truly, this package is incredible. 
+The package [glmmTMB](https://CRAN.R-project.org/package=glmmTMB){.external target="_blank"} (generalized linear mixed model using the template model builder) will also implement [many covariance structures](https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html){.external target="_blank"} and despite its name, can work fine with general linear models (Gaussian) and does not require a mixed component. The implemented structures include compound symmetry, AR1, toeplitz, unstructured and several spatial covariance structures. Truly, this package is incredible. 
 
 :::
-
 
 In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.
 
@@ -43,7 +50,7 @@ The repeated measures syntax in **nlme** follow this convention:
 
 The argument for `value` is the starting value for iterations (zero is the default), and if `fixed = FALSE` (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for `form`, `~ t|g`, where $t$ is the temporal variable and $g$ is the grouping factor (the subject or experimental unit) to estimate covariance across. Technically,  $g$ is optional and if not specified, the order of the data set will be assumed $t$. However, for most replicated experiments, you will need to specify $g$.  When we use `~t|g` form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an **integer value**. Similarly, `corCompSymm()` and `corSymm()` follow the same argument syntax. 
 
-There are other covariance structures enabled by ***nlme*** (e.g., `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Read the [nlme manual](https://cran.r-project.org/web/packages/nlme/refman/nlme.html){.external target="_blank"} if you want to learn more about covariance structures in that package. 
+There are other covariance structures enabled by 'nlme' (e.g., `corARMA()`, `corCAR1()`), but we have found that `corAR1()` and `corCompSymm()` work for most circumstances. Read the [nlme manual](https://cran.r-project.org/web/packages/nlme/refman/nlme.html){.external target="_blank"} if you want to learn more about covariance structures available in that package. 
 
 # Examples 
 
@@ -68,31 +75,31 @@ library(dplyr); library(broom.mixed); library(ggplot2)
 
 First, we will start with the first example with randomized complete block design with repeated measures. 
 
-The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, 'variety'. The dependent variable, y (leaf are index) was measured weekly for 5 weeks. 
+The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, 'variety'. The dependent variable, 'y' (leaf are index) was measured weekly for 5 weeks. This data set was originally described by Milliken and Johnson [-@milk2009].
 
-We need to have time as both a numeric and a factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, the variable "factweek" needs to be converted to a numeric format ("week").
+We need to have time as both a numeric and a factor variable for the modeling packages. The variable 'week' is formatted as a factor ("factweek") for estimating the effect of each week. For the repeated measures structure, the numeric variable 'week' is used. Since variety and block imported as numeric, they are converted to character variables.  
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
-repeated_meas <- agriTutorial::sorghum %>%   
-  mutate(week = as.numeric(factweek),
-         block = as.character(varblock)) 
+repeated_meas <- agriTutorial::sorghum |>  
+  select(block = "varblock", week = "factweek", plot = "factplot", variety, y) 
 
 write.csv(repeated_meas, here::here("data", "sorghum.csv"), row.names = FALSE)
 ```
 
 ```{r}
 sorghum <- read.csv(here::here("data", "sorghum.csv")) |> 
-  mutate(block = as.character(varblock),
-         factweek = as.character(factweek),
+  mutate(block = as.character(block),
+         factweek = as.character(week),
+         plot = as.character(plot),
          variety = as.character(variety))
 ```
 
 |           |                                     |
 |-----------|-------------------------------------|
 | block     | blocking unit                       |
-| Replicate | replication unit                    |
-| Week      | Time points when data was collected |
+| week / factweek     | Time points when data was collected |
+| plot    | plot (experimental unit)    |
 | variety   | treatment factor, 4 levels          |
 | y         | leaf area index                        |
 
@@ -108,7 +115,7 @@ Let's do preliminary data check including evaluating data structure, distributio
 str(sorghum)
 ```
 
-In this data set, 'block', 'factplot', 'factweek' are factors, while 'y' and 'week' are coded as numeric.
+In this data set, 'block', 'plot', and 'factweek' are characters, while 'y' and 'week' are coded as numeric.
 
 - Inspect the independent variables
 
@@ -150,14 +157,14 @@ hist(sorghum$y, main = NA, xlab = "leaf area index", cex.lab = cex_lab, cex.axis
 
 ### Model Building
 
-Let's fit the model first using `lme()` from the **nlme** package.
+Let's fit the model first using `lme()` from the **nlme** package. A full specified model is fit and 'plot' is nested within 'block'. 
 
 ::: panel-tabset
 ### nlme
 
 ```{r}
 sorg_1a <- lme(y ~ variety + factweek + variety:factweek,
-           random = ~1|block/factplot,
+           random = ~1|block/plot,
            data = sorghum,
            na.action = na.exclude)
 ```
@@ -165,25 +172,25 @@ sorg_1a <- lme(y ~ variety + factweek + variety:factweek,
 ### lme4
 
 ```{r}
-sorg_2a <- lmer(y ~ variety + factweek + variety:factweek + (1|block/factplot),
+sorg_2a <- lmer(y ~ variety + factweek + variety:factweek + (1|block/plot),
            data = sorghum,
            na.action = na.exclude)
 ```
 :::
 
-The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject, which is a plot (factor variable) in this case.
+The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, correlation among responses can be modelled for a given subject, which is a plot (factor variable) in this case.
 
-By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximately are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit a model with both correlation structures and compare models to find out the best fit model.
+By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximately are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit a model with both correlation structures and compare models to find out the best fitting model.
 
 In this analysis, the time variable is `week`, and it must be numeric.
 
-In the code chunks above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model lm1, with these two matrices. 
+In the code chunks above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model object separately with each correlation matrix. 
 
 ::: panel-tabset
 ### nlme
 ```{r}
-cs1 <- corAR1(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
-cs2 <- corCompSymm(form = ~ week|block/factplot,  value = 0.2, fixed = FALSE)
+cs1 <- corAR1(form = ~ week|block/plot,  value = 0.2, fixed = FALSE)
+cs2 <- corCompSymm(form = ~ week|block/plot,  value = 0.2, fixed = FALSE)
 
 sorg_1b <- update(sorg_1a, corr = cs1)
 sorg_1c <- update(sorg_1a, corr= cs2)
@@ -192,15 +199,30 @@ sorg_1c <- update(sorg_1a, corr= cs2)
 ### lme4
 
 ```{r}
-sorg_2b <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|block/factplot),
+sorg_2b <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|block/plot),
            data = sorghum, na.action = na.exclude)
-sorg_2c <- lmer(y ~ variety + factweek + variety:factweek + cs(1 + week|block/factplot),
+sorg_2c <- lmer(y ~ variety + factweek + variety:factweek + cs(1 + week|block/plot),
            data = sorghum, na.action = na.exclude)
 ```
 :::
 
 
+The model using an AR1 structure, 'sorg_2b', drew the warning `boundary (singular) fit: see help('isSingular')` because the variance estimate for 'block' is nearing zero due to the plot and the AR1 covariance structure effectively modelling spatial variation. We can refit the model without 'block'.
 
+```{r}
+sorg_2d <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|plot),
+           data = sorghum, na.action = na.exclude)
+
+
+```
+
+
+PHI IS 1.00???
+```{r}
+sorg_2b
+
+sorg_2d
+```
 
 Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by the `compare_performance()` function from the **performance** library.
 
@@ -221,8 +243,10 @@ compare_performance(sorg_1a, sorg_1b, sorg_1c)
 
 ### lme4
 
+THESE RESULTS ARE WEIRD
+
 ```{r}
-anova(sorg_2a, sorg_2b, sorg_2c)
+anova(sorg_2a, sorg_2b, sorg_2c, sorg_2d)
 ```
 
 :::
@@ -230,21 +254,24 @@ anova(sorg_2a, sorg_2b, sorg_2c)
 
 We prefer to chose model with lower AIC and BIC values. In this scenario, we will move forward with lm2 model containing AR1 structure.
 
-Let's run a `tidy()` on lm2 model to look at the estimates for random and fixed effects.
+Let's look at the model estimates for random and fixed effects.
 
 ::: panel-tabset
 
 ### nlme
 
+
 ```{r}
-tidy(sorg_1b)
+#tidy(sorg_1b)
+sorg_1b
 ```
 
 ### lme4
 
 ```{r}
-tidy(sorg_2c)
+sorg_2c
 ```
+
 :::
 
 
@@ -257,7 +284,7 @@ tidy(sorg_2c)
 ```{r, fig.height=3}
 #| message: false
 #| warning: false
-check_model(sorg_1b,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
+check_model(sorg_1b,  check = c('linearity','qq', 'reqq'), detrend = FALSE, alpha = 0)
 ```
 
 ### lme4
@@ -265,7 +292,7 @@ check_model(sorg_1b,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=
 ```{r, fig.height=3}
 #| message: false
 #| warning: false
-check_model(sorg_2c,  check = c('linearity','qq', 'reqq'), detrend=FALSE, alpha=0)
+check_model(sorg_2c,  check = c('linearity','qq', 'reqq'), detrend = FALSE, alpha = 0)
 ```
 
 :::
@@ -282,8 +309,11 @@ anova(sorg_1b, type = "marginal")
 
 ### lme4
 
+'lmerTest' is not loaded because it causes issues with estimation for these particular examples (and perhaps other examples using lme4's covariance structures). 
+
 ```{r}
 anova(sorg_2c)
+anova(sorg_2d) # wow
 ```
 :::
 
@@ -304,6 +334,8 @@ We can estimate the marginal means for variety and week effect and their interac
 ### lme4
 ```{r}
 (mean_1 <- emmeans(sorg_2c, ~ variety))
+emmeans(sorg_2b, ~ variety) # SE/CI's not estimable (negative variance obtained)
+emmeans(sorg_2d, ~ variety) # dramatic shift in DF and hence CIs
 
 (mean_2 <- emmeans(sorg_2c, ~ variety*factweek))
 ```
@@ -394,7 +426,7 @@ hist(Yield$Yield, xlab = "yield", main = NA)
 ```
 ### Model fit
 
-For this data set, we will use `lme()` from ***nlme*** package and `lmer()` from ***lme4*** to fit a linear mixed model with a repeated measures covariance structure. Instead of the `summary()` function, we will use `tidy()` function from the ***broom.mixed*** package to look at estimates of mixed and random effects. 
+For this data set, we will use `lme()` from 'nlme' package and `lmer()` from 'lme4' to fit a linear mixed model with a repeated measures covariance structure. Instead of the `summary()` function, we will use `tidy()` function from the 'broom.mixed' package to look at estimates of mixed and random effects. 
 
 
 ::: panel-tabset
@@ -515,7 +547,7 @@ str(phos)
 We need two variables for time, one formatted as a factor and the other numeric.
 
 ```{r, warning=FALSE, message=FALSE}
-phos1 <- phos %>%   
+phos1 <- phos |>   
   mutate(
     time = as.factor(time), 
     time_num = as.numeric(time),
