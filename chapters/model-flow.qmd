@@ -105,7 +105,7 @@ This will give you the number of missing values in each variable. Missing data i
 ::: callout-tip
 ## Missingness versus zeros
 
-We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closes appropriate value), or exclude that (set the data for that plot as missing). 
+We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a field plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (set the data for that plot as missing). 
 :::
 
 
@@ -213,11 +213,11 @@ qqnorm(resid(model_lme), main = NULL); qqline(resid(model_lme))
 ```
 :::
 
-Interpretiong qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide.
+Interpretiong qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!
 
 #### New Method {#new-iid-checks}
 
-Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/){.external target="_blank"} package package, which provides a comprehensive suite of diagnostic plots.
+Nowadays, we can take advantage of the [performance](https://easystats.github.io/performance/){.external target="_blank"} package, which provides a comprehensive suite of diagnostic plots.
 
 The diagnostic plots we created above can be created using one function `check_model()` from the 'performance' package. 
 

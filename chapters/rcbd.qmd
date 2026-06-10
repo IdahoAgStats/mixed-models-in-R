@@ -199,7 +199,7 @@ This is reasonably good. Things do tend to fall apart at the tails a little, but
 
 #### New Method {#new-iid-checks}
 
-Here, we will use the `check_model()` function from the **performance** package to look at the normality and linearity of the residuals.
+Here, we will use the `check_model()` function from the 'performance' package to look at the normality and linearity of the residuals.
 
 ```{r, fig.height=6, fig.width=8}
 check_model(model_rcbd_lmer,  check = c('qq', 'linearity', 'reqq'), detrend = FALSE, alpha = 0)
@@ -207,7 +207,7 @@ check_model(model_rcbd_lmer,  check = c('qq', 'linearity', 'reqq'), detrend = FA
 
 ### Inference
 
-Estimates for each treatment level can be obtained with the **emmeans** package.
+Estimates for each treatment level can be obtained with the 'emmeans' package.
 
 ::: {.callout-note .aside}
 R syntax for estimating model marginal means is the same for lme4 and nlme.
@@ -240,11 +240,11 @@ as.data.frame(rcbd_emm2) |> arrange(desc(emmean)) |> head(n = 10)
 ```
 :::
 
-These tables provide the estimated marginal means ("emmeans", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom ("df") and the lower and upper bounds of the 95% confidence interval ("lower.CL" and "upper.Cl", respectively). As an additional step, the estimated marginal means were sorted from largest to smallest. Note the difference in degrees of freedom for each model. 'lmerTest' is implmenting the Kenward-Roger method [NEED REF], while 'nlme' only implements "containment" for degrees of freedom calculations. The Kenward-Roger method is preferred for small sample inference such as this example. Since it has a considerably larger estimate for the degrees of freedom, the resultant confidence intervals are much smaller compared to those using containment for df estimation. However, this has little noticeable effect on downstream statistical contrasts; both the differences in means and t-tests are nearly identical for the two models. 
+These tables provide the estimated marginal means ("emmeans", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom ("df") and the lower and upper bounds of the 95% confidence interval ("lower.CL" and "upper.Cl", respectively). As an additional step, the estimated marginal means were sorted from largest to smallest. Note the difference in degrees of freedom for each model. 'lmerTest' is implmenting the Kenward-Roger's method [@lmertest], while 'nlme' implements the containment method for degrees of freedom calculations. The Kenward-Roger's method is preferred for small sample inference such as this example. Since it has a considerably larger estimate for the degrees of freedom, the resultant confidence intervals are much smaller compared to those using containment for df estimation. However, this has little noticeable effect on downstream statistical contrasts; both the differences in means and t-tests are nearly identical for the two models. 
 
 At this point, the analysis goals have been met; we know the estimated means for each treatment and their rankings.
 
-If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by **nlme**, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in **nlme**. The lmer-extender package 'lmerTest' implements [SAS-like type 3 tests](https://go.documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/statug/statug_introglmest_sect009.htm){.external target="_blank"} and the Kenward-Roger's method for degrees of freedom approximation by default.[^rcbd-1]
+If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by 'nlme', but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in 'nlme'. The lmer-extender package 'lmerTest' implements [SAS-like type 3 tests](https://go.documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/statug/statug_introglmest_sect009.htm){.external target="_blank"} and the Kenward-Roger's method for degrees of freedom approximation by default.[^rcbd-1]
 
 [^rcbd-1]: The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 ("partial") drops model terms one at a time. This can effect the results of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points. In this example, there is only one fixed effect (and the experiment is perfectly balanced), so the sums of squares choice is immaterial. 
 
