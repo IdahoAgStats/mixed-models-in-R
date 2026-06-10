@@ -415,7 +415,7 @@ window.Quarto = {
 <p>There are few key points that we need to keep in mind when incomplete block experiments:</p>
 <ul>
 <li>Block can be treated as fixed (“intra-block analysis”) or random (“inter-block analysis”). When it is treated as random, the block effect also contains treatment effects.</li>
-<li>A drawback of this design is that the estimates have less precision compared to RCBD</li>
+<li>A drawback of this design is that the estimates have less precision compared to RCBD.</li>
 <li>The very nature of incomplete block design results in ‘missing’ data from the standpoint of statistical software, thus ensuring that type I and type III sums of squares are different even there is no data missing for any experimental unit in the original design.</li>
 <li>Contrasting treatments within blocks can remove block effects, so it helps to ensure a design contains the pairwise treatment combinations of interest to the researcher.</li>
 </ul>
@@ -443,7 +443,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used for this example analysis is from the <strong>agridat</strong> package (data set “weiss.incblock”). This example is comprised of soybean balanced incomplete block experiment.</p>
+<p>The data used for this example analysis is from the ‘agridat’ package (data set “weiss.incblock”). This example is comprised of soybean balanced incomplete block experiment.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>weiss <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"weiss_ICB.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -504,70 +504,29 @@ window.Quarto = {
 </ul>
 <p>Next, let’s check the independent variables. We can look at this by running a cross tabulations among block and gen factors.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> weiss <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(weiss<span class="sc">$</span>gen)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 31 × 2
-   gen   total_count
-   &lt;chr&gt;       &lt;int&gt;
- 1 G01             6
- 2 G02             6
- 3 G03             6
- 4 G04             6
- 5 G05             6
- 6 G06             6
- 7 G07             6
- 8 G08             6
- 9 G09             6
-10 G10             6
-# ℹ 21 more rows</code></pre>
+<pre><code>
+G01 G02 G03 G04 G05 G06 G07 G08 G09 G10 G11 G12 G13 G14 G15 G16 G17 G18 G19 G20 
+  6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6 
+G21 G22 G23 G24 G25 G26 G27 G28 G29 G30 G31 
+  6   6   6   6   6   6   6   6   6   6   6 </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>agg_df <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(weiss<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(weiss<span class="sc">$</span>block), <span class="at">FUN=</span>length)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>agg_df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(weiss<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Group.1 x
-1      B01 6
-2      B02 6
-3      B03 6
-4      B04 6
-5      B05 6
-6      B06 6
-7      B07 6
-8      B08 6
-9      B09 6
-10     B10 6
-11     B11 6
-12     B12 6
-13     B13 6
-14     B14 6
-15     B15 6
-16     B16 6
-17     B17 6
-18     B18 6
-19     B19 6
-20     B20 6
-21     B21 6
-22     B22 6
-23     B23 6
-24     B24 6
-25     B25 6
-26     B26 6
-27     B27 6
-28     B28 6
-29     B29 6
-30     B30 6
-31     B31 6</code></pre>
+<pre><code>
+B01 B02 B03 B04 B05 B06 B07 B08 B09 B10 B11 B12 B13 B14 B15 B16 B17 B18 B19 B20 
+  6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6   6 
+B21 B22 B23 B24 B25 B26 B27 B28 B29 B30 B31 
+  6   6   6   6   6   6   6   6   6   6   6 </code></pre>
 </div>
 </div>
-<p>There are 31 varieties and it is perfectly balanced, with exactly one observation per treatment per superblock.</p>
+<p>There are 31 varieties that are perfectly balanced, with exactly one observation per treatment per superblock.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
-<p>We can calculate the sum of missing values in variables in this data set to evaluate the extent of missing values in different variables:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(weiss))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -579,7 +538,7 @@ window.Quarto = {
 <ul>
 <li>Inspect the dependent variable</li>
 </ul>
-<p>Last, let’s plot a histogram of the dependent variable. This is a quick check before analysis to see if there is any strong deviation in values.</p>
+<p>Last, let’s plot a histogram of the dependent variable. This is a quick check before analysis to see if there are any major or unexpected deviations in values.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -597,11 +556,11 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(weiss<span class="sc">$</span>yield, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Response variable values fall within expected range, with few extreme values on right tail. This data set is ready for analysis!</p>
+<p>Response variable values fall within expected range, with a few larger values on the right tail.</p>
 </section>
 <section id="model-building" class="level4" data-number="10.2.1.2">
 <h4 data-number="10.2.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">10.2.1.2</span> Model Building</h4>
-<p>We will be evaluating the response of yield as affected by gen (fixed effect) and block (random effect/intra-block analysis).</p>
+<p>We will be evaluating the response of yield as affected by ‘gen’ (fixed effect) and ‘block’ (random effect).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -610,22 +569,31 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model_icbd <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> weiss, </span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>model_icbd</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 33 × 8
-   effect group term        estimate std.error statistic    df  p.value
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  &lt;NA&gt;  (Intercept)  24.6        0.922   26.7     153. 2.30e-59
- 2 fixed  &lt;NA&gt;  genG02        2.40       1.17     2.06    129. 4.17e- 2
- 3 fixed  &lt;NA&gt;  genG03        8.04       1.17     6.88    129. 2.31e-10
- 4 fixed  &lt;NA&gt;  genG04        2.37       1.17     2.03    129. 4.42e- 2
- 5 fixed  &lt;NA&gt;  genG05        1.60       1.17     1.37    129. 1.73e- 1
- 6 fixed  &lt;NA&gt;  genG06        7.39       1.17     6.32    129. 3.82e- 9
- 7 fixed  &lt;NA&gt;  genG07       -0.419      1.17    -0.359   129. 7.20e- 1
- 8 fixed  &lt;NA&gt;  genG08        3.04       1.17     2.60    129. 1.04e- 2
- 9 fixed  &lt;NA&gt;  genG09        4.84       1.17     4.14    129. 6.22e- 5
-10 fixed  &lt;NA&gt;  genG10       -0.0429     1.17    -0.0367  129. 9.71e- 1
-# ℹ 23 more rows</code></pre>
+<pre><code>Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: yield ~ gen + (1 | block)
+   Data: weiss
+REML criterion at convergence: 757.8465
+Random effects:
+ Groups   Name        Std.Dev.
+ block    (Intercept) 2.295   
+ Residual             1.893   
+Number of obs: 186, groups:  block, 31
+Fixed Effects:
+(Intercept)       genG02       genG03       genG04       genG05       genG06  
+    24.5730       2.4031       8.0412       2.3742       1.6003       7.3903  
+     genG07       genG08       genG09       genG10       genG11       genG12  
+    -0.4194       3.0384       4.8380      -0.0429       2.4839       4.6862  
+     genG13       genG14       genG15       genG16       genG17       genG18  
+     5.3687      -0.3271       1.5156       1.3545      -4.8745       1.1513  
+     genG19       genG20       genG21       genG22       genG23       genG24  
+     4.4677       8.5819       6.5146       0.5986       5.2441       9.0677  
+     genG25       genG26       genG27       genG28       genG29       genG30  
+     2.4203       2.5629      -0.7651       1.8992       0.1897      11.6045  
+     genG31  
+     2.5347  </code></pre>
 </div>
 </div>
 </div>
@@ -635,22 +603,33 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> weiss, </span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_icbd1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>model_icbd1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 33 × 8
-   effect group term        estimate std.error    df statistic  p.value
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  &lt;NA&gt;  (Intercept)  24.6        0.922   125   26.7    2.10e-53
- 2 fixed  &lt;NA&gt;  genG02        2.40       1.17    125    2.06   4.18e- 2
- 3 fixed  &lt;NA&gt;  genG03        8.04       1.17    125    6.88   2.54e-10
- 4 fixed  &lt;NA&gt;  genG04        2.37       1.17    125    2.03   4.43e- 2
- 5 fixed  &lt;NA&gt;  genG05        1.60       1.17    125    1.37   1.73e- 1
- 6 fixed  &lt;NA&gt;  genG06        7.39       1.17    125    6.32   4.11e- 9
- 7 fixed  &lt;NA&gt;  genG07       -0.419      1.17    125   -0.359  7.20e- 1
- 8 fixed  &lt;NA&gt;  genG08        3.04       1.17    125    2.60   1.04e- 2
- 9 fixed  &lt;NA&gt;  genG09        4.84       1.17    125    4.14   6.33e- 5
-10 fixed  &lt;NA&gt;  genG10       -0.0429     1.17    125   -0.0367 9.71e- 1
-# ℹ 23 more rows</code></pre>
+<pre><code>Linear mixed-effects model fit by REML
+  Data: weiss 
+  Log-restricted-likelihood: -378.9233
+  Fixed: yield ~ gen 
+(Intercept)      genG02      genG03      genG04      genG05      genG06 
+24.57303855  2.40313510  8.04117318  2.37422767  1.60025683  7.39029978 
+     genG07      genG08      genG09      genG10      genG11      genG12 
+-0.41940045  3.03844237  4.83798217 -0.04290217  2.48386430  4.68622645 
+     genG13      genG14      genG15      genG16      genG17      genG18 
+ 5.36871014 -0.32706907  1.51557627  1.35453230 -4.87448450  1.15125988 
+     genG19      genG20      genG21      genG22      genG23      genG24 
+ 4.46766255  8.58186834  6.51456431  0.59856593  5.24414300  9.06769050 
+     genG25      genG26      genG27      genG28      genG29      genG30 
+ 2.42031071  2.56285437 -0.76507920  1.89916346  0.18974802 11.60449544 
+     genG31 
+ 2.53465383 
+
+Random effects:
+ Formula: ~1 | block
+        (Intercept) Residual
+StdDev:    2.295105 1.893486
+
+Number of Observations: 186
+Number of Groups: 31 </code></pre>
 </div>
 </div>
 </div>
@@ -665,7 +644,7 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -677,7 +656,7 @@ Figure&nbsp;10.1: Histogram of the dependent variable.
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(model_icbd1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -841,7 +820,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>Let’s import a data with partial balanced icomplete design. This data was obtained from the <strong>agridat</strong> package.</p>
+<p>Let’s import a data with partial balanced icomplete design. This data set, ‘john.alpha’, describes a spring oats study and was obtained from the ‘agridat’ package.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p_icb <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"partial_incblock.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -898,47 +877,31 @@ Confidence level used: 0.95 </code></pre>
  $ col  : int  1 1 1 1 1 1 1 1 1 1 ...</code></pre>
 </div>
 </div>
-<p>Here, rep, block and gen are character and yield as a integer. We can continue with this.</p>
+<p>Here, ‘rep’, ‘block’, and ‘gen’ are character variables and ’yield’is formatted as numeric, all correct formats for downstream analysis.</p>
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
-<p>Next step is to evaluate the independent variables. First, check the number of treatments per replication (each treatment should be replicated 3 times).</p>
+<p>The next step is to checkl the independent variables. First, check the number of treatments per replication (each treatment should be replicated 3 times).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>agg_tbl <span class="ot">&lt;-</span> p_icb <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(gen) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count=</span><span class="fu">n</span>(),</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>agg_tbl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(p_icb<span class="sc">$</span>gen)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 24 × 2
-   gen   total_count
-   &lt;chr&gt;       &lt;int&gt;
- 1 G01             3
- 2 G02             3
- 3 G03             3
- 4 G04             3
- 5 G05             3
- 6 G06             3
- 7 G07             3
- 8 G08             3
- 9 G09             3
-10 G10             3
-# ℹ 14 more rows</code></pre>
+<pre><code>
+G01 G02 G03 G04 G05 G06 G07 G08 G09 G10 G11 G12 G13 G14 G15 G16 G17 G18 G19 G20 
+  3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3   3 
+G21 G22 G23 G24 
+  3   3   3   3 </code></pre>
 </div>
 </div>
 <p>This looks balanced, as expected. Also, let’s have a look at the number of times each treatment appear per block.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(agg_blk <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(p_icb<span class="sc">$</span>gen, <span class="at">by=</span><span class="fu">list</span>(p_icb<span class="sc">$</span>block), <span class="at">FUN=</span>length))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(p_icb<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Group.1  x
-1      B1 12
-2      B2 12
-3      B3 12
-4      B4 12
-5      B5 12
-6      B6 12</code></pre>
+<pre><code>
+B1 B2 B3 B4 B5 B6 
+12 12 12 12 12 12 </code></pre>
 </div>
 </div>
-<p>12 treatments randomly appear in incomplete block. Each incomplete block has same number of treatments.</p>
+<p>12 treatments randomly occur in each incomplete block, and each incomplete block has same number of treatments.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
@@ -949,7 +912,7 @@ Confidence level used: 0.95 </code></pre>
     0     0     0     0     0     0     0 </code></pre>
 </div>
 </div>
-<p>No missing values in data!</p>
+<p>There are no missing values in the data set.</p>
 <ul>
 <li>Inspect the dependent variable</li>
 </ul>
@@ -975,7 +938,7 @@ Figure&nbsp;10.2: Histogram of the dependent variable.
 </section>
 <section id="model-building-1" class="level4" data-number="10.2.2.2">
 <h4 data-number="10.2.2.2" class="anchored" data-anchor-id="model-building-1"><span class="header-section-number">10.2.2.2</span> Model Building</h4>
-<p>We are evaluating the response of yield to Gen (fixed effect) and rep and block as a random effect.</p>
+<p>We are evaluating the response of ‘yield’ to ‘Gen’ (a fixed effect) and ‘rep’ and ‘block’ as random effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -984,22 +947,28 @@ Figure&nbsp;10.2: Histogram of the dependent variable.
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mod_alpha <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> gen <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>block),</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> p_icb, </span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_alpha)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>mod_alpha</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 27 × 8
-   effect group term        estimate std.error statistic    df     p.value
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
- 1 fixed  &lt;NA&gt;  (Intercept)   5.11       0.276    18.5    6.19 0.00000118 
- 2 fixed  &lt;NA&gt;  genG02       -0.629      0.269    -2.34  38.2  0.0248     
- 3 fixed  &lt;NA&gt;  genG03       -1.61       0.268    -6.00  37.7  0.000000590
- 4 fixed  &lt;NA&gt;  genG04       -0.618      0.268    -2.30  37.7  0.0269     
- 5 fixed  &lt;NA&gt;  genG05       -0.0705     0.258    -0.274 34.8  0.786      
- 6 fixed  &lt;NA&gt;  genG06       -0.571      0.268    -2.13  37.7  0.0398     
- 7 fixed  &lt;NA&gt;  genG07       -0.997      0.258    -3.87  34.8  0.000457   
- 8 fixed  &lt;NA&gt;  genG08       -0.580      0.268    -2.16  37.7  0.0370     
- 9 fixed  &lt;NA&gt;  genG09       -1.61       0.258    -6.21  35.3  0.000000390
-10 fixed  &lt;NA&gt;  genG10       -0.735      0.259    -2.83  35.9  0.00754    
-# ℹ 17 more rows</code></pre>
+<pre><code>Linear mixed model fit by REML ['lmerModLmerTest']
+Formula: yield ~ gen + (1 | rep/block)
+   Data: p_icb
+REML criterion at convergence: 67.5586
+Random effects:
+ Groups    Name        Std.Dev.
+ block:rep (Intercept) 0.2489  
+ rep       (Intercept) 0.3376  
+ Residual              0.2919  
+Number of obs: 72, groups:  block:rep, 18; rep, 3
+Fixed Effects:
+(Intercept)       genG02       genG03       genG04       genG05       genG06  
+    5.10770     -0.62917     -1.60850     -0.61761     -0.07049     -0.57104  
+     genG07       genG08       genG09       genG10       genG11       genG12  
+   -0.99656     -0.58007     -1.60552     -0.73450     -0.82444     -0.35242  
+     genG13       genG14       genG15       genG16       genG17       genG18  
+   -0.34979     -0.33204     -0.13859     -0.37757     -0.50509     -0.74601  
+     genG19       genG20       genG21       genG22       genG23       genG24  
+   -0.26737     -1.06772     -0.31269     -0.58015     -0.85525     -0.95383  </code></pre>
 </div>
 </div>
 </div>
@@ -1009,26 +978,35 @@ Figure&nbsp;10.2: Histogram of the dependent variable.
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>block,</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> p_icb, </span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod_alpha1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in tidy.lme(mod_alpha1): ran_pars not yet implemented for nonlinear or
-multilevel models</code></pre>
-</div>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>mod_alpha1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 24 × 7
-   effect term        estimate std.error    df statistic  p.value
-   &lt;chr&gt;  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)   5.11       0.276    31    18.5   2.63e-18
- 2 fixed  genG02       -0.629      0.269    31    -2.34  2.61e- 2
- 3 fixed  genG03       -1.61       0.268    31    -6.00  1.23e- 6
- 4 fixed  genG04       -0.618      0.268    31    -2.30  2.81e- 2
- 5 fixed  genG05       -0.0705     0.258    31    -0.274 7.86e- 1
- 6 fixed  genG06       -0.571      0.268    31    -2.13  4.12e- 2
- 7 fixed  genG07       -0.997      0.258    31    -3.87  5.23e- 4
- 8 fixed  genG08       -0.580      0.268    31    -2.16  3.84e- 2
- 9 fixed  genG09       -1.61       0.258    31    -6.21  6.71e- 7
-10 fixed  genG10       -0.735      0.259    31    -2.83  8.05e- 3
-# ℹ 14 more rows</code></pre>
+<pre><code>Linear mixed-effects model fit by REML
+  Data: p_icb 
+  Log-restricted-likelihood: -33.7793
+  Fixed: yield ~ gen 
+(Intercept)      genG02      genG03      genG04      genG05      genG06 
+  5.1076995  -0.6291674  -1.6084999  -0.6176050  -0.0704892  -0.5710374 
+     genG07      genG08      genG09      genG10      genG11      genG12 
+ -0.9965634  -0.5800658  -1.6055185  -0.7345000  -0.8244354  -0.3524231 
+     genG13      genG14      genG15      genG16      genG17      genG18 
+ -0.3497863  -0.3320375  -0.1385881  -0.3775685  -0.5050871  -0.7460071 
+     genG19      genG20      genG21      genG22      genG23      genG24 
+ -0.2673717  -1.0677145  -0.3126921  -0.5801548  -0.8552508  -0.9538255 
+
+Random effects:
+ Formula: ~1 | rep
+        (Intercept)
+StdDev:   0.3375614
+
+ Formula: ~1 | block %in% rep
+        (Intercept)  Residual
+StdDev:   0.2488852 0.2919334
+
+Number of Observations: 72
+Number of Groups: 
+           rep block %in% rep 
+             3             18 </code></pre>
 </div>
 </div>
 </div>
@@ -1037,13 +1015,13 @@ multilevel models</code></pre>
 </section>
 <section id="check-model-assumptions-1" class="level4" data-number="10.2.2.3">
 <h4 data-number="10.2.2.3" class="anchored" data-anchor-id="check-model-assumptions-1"><span class="header-section-number">10.2.2.3</span> Check Model Assumptions</h4>
-<p>Let’s verify the assumption of linear mixed models including normal distribution and constant variance of residuals.</p>
+<p>Let’s verify the assumption of linear mixed models (normal distribution and constant variance of residuals).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>, <span class="st">'reqq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1055,7 +1033,7 @@ multilevel models</code></pre>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(mod_alpha1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'qq'</span>, <span class="st">'linearity'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1067,7 +1045,7 @@ multilevel models</code></pre>
 </div>
 </div>
 </div>
-<p>Here a little skewness is present normality of residuals, but that’s not a major deviation in the model assumptions.</p>
+<p>While there is some skewness present in the qq-plot, this is a minor deviation in the model assumption of normality and unlikely to impact the final results.</p>
 </section>
 <section id="inference-1" class="level4" data-number="10.2.2.4">
 <h4 data-number="10.2.2.4" class="anchored" data-anchor-id="inference-1"><span class="header-section-number">10.2.2.4</span> Inference</h4>
@@ -1077,7 +1055,7 @@ multilevel models</code></pre>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha, <span class="at">type =</span> <span class="st">"1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha, <span class="at">type =</span> <span class="st">"1"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Type I Analysis of Variance Table with Satterthwaite's method
     Sum Sq Mean Sq NumDF  DenDF F value    Pr(&gt;F)    
@@ -1089,7 +1067,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mod_alpha1, <span class="at">type =</span> <span class="st">"sequential"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
 (Intercept)     1    31 470.9507  &lt;.0001
@@ -1105,7 +1083,7 @@ gen            23    31   5.4478  &lt;.0001</code></pre>
 <div class="tab-content">
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha, <span class="sc">~</span> gen)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha, <span class="sc">~</span> gen)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE   df lower.CL upper.CL
  G01   5.11 0.279 6.20     4.43     5.78
@@ -1140,7 +1118,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha1, <span class="sc">~</span> gen)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(mod_alpha1, <span class="sc">~</span> gen)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> gen emmean    SE df lower.CL upper.CL
  G01   5.11 0.276  2     3.92     6.30
@@ -1175,6 +1153,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
+<p>The estimates are identical across ‘nlme’ and ‘lme4’, but the standard errors differ slightly. The degrees of freedom differ greatly due to the different approaches used for esimating those, impacting the confidence intervals.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
@@ -1182,7 +1161,7 @@ Confidence level used: 0.95 </code></pre>
 John, JA, and ER Williams. 1995. <em>Cyclic and <span>Computer</span> <span>Generated</span> <span>Designs</span></em>. 2nd ed. Chapman; Hall/CRC Press. <a href="https://doi.org/10.1201/b15075">https://doi.org/10.1201/b15075</a>.
 </div>
 <div id="ref-meier2022" class="csl-entry" role="listitem">
-Meier, Lukas. 2022. <em>ANOVA and Mixed Models</em>. Chapman; Hall/CRC. https://doi.org/<a href="https://doi.org/10.1201/9781003146216 ">https://doi.org/10.1201/9781003146216 </a>.
+Meier, Lukas. 2022. <em>ANOVA and Mixed Models</em>. Chapman; Hall/CRC. https://doi.org/<a href="https://doi.org/10.1201/9781003146216">https://doi.org/10.1201/9781003146216</a>.
 </div>
 <div id="ref-Nair_1952" class="csl-entry" role="listitem">
 Nair, K. R. 1952. <span>“Analysis of Partially Balanced Incomplete Block Designs Illustrated on the Simple Square and Rectangular Lattices.”</span> <em>Biometrics</em> 8 (2): 122–55. <a href="https://doi.org/10.2307/3001929">https://doi.org/10.2307/3001929</a>.

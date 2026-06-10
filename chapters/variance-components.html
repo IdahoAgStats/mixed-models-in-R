@@ -406,7 +406,7 @@ window.Quarto = {
 <h2 data-number="14.1" class="anchored" data-anchor-id="variance-component-estimation-for-2-or-more-random-effects"><span class="header-section-number">14.1</span> Variance component estimation for 2 or more random effects</h2>
 <section id="multiple-crossed-variance-components" class="level3 page-columns page-full" data-number="14.1.1">
 <h3 data-number="14.1.1" class="anchored" data-anchor-id="multiple-crossed-variance-components"><span class="header-section-number">14.1.1</span> Multiple crossed variance components</h3>
-<p>This is a common scenario: an experiment is conducted and there are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packages can handle crossed random effects, but <strong>lme4</strong> can.</p>
+<p>This is a common scenario: an experiment is conducted and there are multiple grouping levels, none of which are nested within each other, but the observations have multiple group memberships. A common example is a multi-environmental trial where multiple crop genotypes are evaluated at multiple locations and years. We can consider genotypes, locations and years as random effects depending on our experimental aims. Very few R packages can handle crossed random effects, but ‘lme4’ can.</p>
 <p>The data used in the next example is a collection of potato field trials conducted across 3 locations and 17 years. Each year, the same potato clones<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> are evaluated across all 3 locations, but each year different clones are evaluated. Some clones are evaluated for multiple years, and a small number are evaluated every year. These potato clones were evaluated for the length-to-width ratio. We want to know how much location, year and clone contribute to this trait.</p>
 <div class="no-row-height column-margin column-container"><div id="fn2"><p><sup>2</sup>&nbsp;A clone is a genetically distinct potato genotype that is vegetatively propagated. It may be a released variety or an experimental breeding line.</p></div></div><table class="caption-top table">
 <tbody>
@@ -537,7 +537,7 @@ window.Quarto = {
 <section id="inference-on-random-effects" class="level4 page-columns page-full" data-number="14.1.1.2">
 <h4 data-number="14.1.1.2" class="anchored" data-anchor-id="inference-on-random-effects"><span class="header-section-number">14.1.1.2</span> Inference on random effects</h4>
 <p>Marginal means of fixed effects can be visualized as demonstrated in previous chapters (e.g.&nbsp;<a href="../chapters/means-and-contrasts.html">marginal means and constrasts</a>).</p>
-<p>The variance components for each random effect can be extracted most easily using the <code>tidy()</code> function from <strong>broom.mixed</strong>. We can also a bit of extra code to calculate the percent of variance explained by each component.</p>
+<p>The variance components for each random effect can be extracted most easily using the <code>tidy()</code> function from ‘broom.mixed’. We can also a bit of extra code to calculate the percent of variance explained by each component.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>var_comps <span class="ot">&lt;-</span> <span class="fu">tidy</span>(potato_m1, <span class="st">"ran_pars"</span>, <span class="at">scales =</span> <span class="st">"vcov"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, <span class="at">variance =</span> <span class="st">"estimate"</span>) <span class="sc">|&gt;</span> </span>
@@ -571,7 +571,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The function <code>ranova()</code> in <strong>lmerTest</strong> conducts log-likelihood ratio tests for all random effects in a model.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p>The function <code>ranova()</code> in ‘lmerTest’ conducts log-likelihood ratio tests for all random effects in a model.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn3"><p><sup>3</sup>&nbsp;It is also possible to conduct log-likelihood tests manually by constructing reduced models and comparing them to the fully specified (or more specified) model. In such cases, the fixed effects need to be identical between models, and the models need to be fit using maximum likelihood instead of REML.</p></div></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranova</span>(potato_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -589,7 +589,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>It is possible to make inferences on specific levels of random effects. This take a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called “BLUPs” (rhymes with “cups”). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs “shrink” the estimates towards zero, reducing their overall spread compared to fixed effects. <a href="https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/" class="external" target="_blank">VSNi</a> has a short summary on BLUPs and BLUEs.</p>
-<p>Recall that random effects are distributed with a mean of zero and a variance <span class="math inline">\(\sigma^2_x\)</span> that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them (in this example, potato clones) is unchanged.</p>
+<p>Recall that random effects are distributed with a mean of zero and a variance <span class="math inline">\(\sigma^2_x\)</span> that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them is unchanged.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the model intercept</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>intercept <span class="ot">=</span> <span class="fu">fixef</span>(potato_m1)[<span class="dv">1</span>]</span>
@@ -916,7 +916,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>This plot illustrates the negative correlation between employee salary and employee salary change indicated by the <code>VarCorr(m1)</code> output.</p>
-<p>There are other functions in <a href="https://CRAN.R-project.org/package=merTools" class="external" target="_blank"><strong>merTools</strong></a> to explore random effects and variances from an <code>lme4</code> analysis.</p>
+<p>There are other functions in <a href="https://CRAN.R-project.org/package=merTools" class="external" target="_blank">merTools</a> to explore random effects and variances from an <code>lme4</code> analysis.</p>
 </section>
 </section>
 </section>
@@ -927,7 +927,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>In the “general” linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject <span class="math inline">\(H_0\)</span>, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the unequal variance model.</p>
 <p><strong>– Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), <em>Generalized Linear Mixed Models</em>, 2nd Ed, Section 7.2.3.1</strong></p>
 </blockquote>
-<p>In previous sections, we have assumed the error terms or residuals were “i.i.d.”, that is “independently and identically distributed. This means they were shared the same distribution (identical) and were uncorrelated (independent). Longitudinal studies, that is, those with repeated measures, do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity.</p>
+<p>In previous sections, we have assumed the error terms or residuals were “i.i.d.”, that is “independently and identically distributed.” This means they shared the same distribution (~identical) and were uncorrelated (~independent). Longitudinal studies (i.e.&nbsp;those with repeated measures) do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity.</p>
 <section id="case-1-unequal-variance-due-to-a-factor" class="level3 page-columns page-full" data-number="14.2.1">
 <h3 data-number="14.2.1" class="anchored" data-anchor-id="case-1-unequal-variance-due-to-a-factor"><span class="header-section-number">14.2.1</span> Case 1: Unequal variance due to a factor</h3>
 <p>This data set consists of a set of canola variety trials conducted within a single year across multiple locations – sometimes called an multi-environment trial (MET). The trials consist of 38 canola varieties that were evaluated at 9 locations using a RCB design. The goal is to estimate varietal performance at each location as precisely as possible.</p>
@@ -997,7 +997,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> var_ex1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The residual plot indicates some association between the residuals and fitted values, violating the i.i.d. model assumption.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;Since the focus of this section is on evaluating the homoscedasticity assumption, the <strong>nlme</strong> residual plotting function is used for its simplicity of display.</p></div></div><div class="cell">
+<div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;Since the focus of this section is on evaluating the homoscedasticity assumption, the ‘nlme’ residual plotting function is used for its simplicity of display.</p></div></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ex1_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
@@ -1008,7 +1008,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>We can add a term, <span class="math inline">\(\delta\)</span> to model the variance by site.</p>
-<p><span class="math display">\[Var(\epsilon_{ij}) = \sigma^2 \delta^2_{s_{ij}} \]</span> The package <strong>nlme</strong> contains a relatively straightforward implementation for heteroscedasticity. Details on the implementation can be found in Pinheiro and Bates <span class="citation" data-cites="nlme_book">(<a href="../references.html#ref-nlme_book" role="doc-biblioref">2000</a>)</span>.</p>
+<p><span class="math display">\[Var(\epsilon_{ij}) = \sigma^2 \delta^2_{s_{ij}} \]</span> The package ‘nlme’ contains a relatively straightforward implementation for heteroscedasticity. Details on the implementation can be found in Pinheiro and Bates <span class="citation" data-cites="nlme_book">(<a href="../references.html#ref-nlme_book" role="doc-biblioref">2000</a>)</span>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ex1_m2 <span class="ot">&lt;-</span> <span class="fu">update</span>(ex1_m1, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>site))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1034,7 +1034,7 @@ ex1_m2     2 353 14489.23 16225.88 -6891.615 1 vs 2 341.0259  &lt;.0001</code></
 </div>
 </div>
 <p>The result is a better-fitting model and with that, better inference for variety at the site level.</p>
-<p>While it may be possible to implement heterogeneous error structures with <strong>lme4</strong>, it requires a good working knowledge of that R package.</p>
+<p>While it may be possible to implement heterogeneous error structures with ‘lme4’, it requires a good working knowledge of that R package.</p>
 </section>
 </section>
 <section id="case-2-variance-is-related-to-the-fitted-values" class="level3 page-columns page-full" data-number="14.2.2">
@@ -1093,7 +1093,7 @@ ex1_m2     2 353 14489.23 16225.88 -6891.615 1 vs 2 341.0259  &lt;.0001</code></
 </div>
 </div>
 <p>This mean-variance relationship can be mitigated by modeling the variance directly as a function of any covariate in the model using a power function:</p>
-<p><span class="math display">\[ Var(\epsilon_{ij}) = \sigma^2|\nu_{ij}|^{2\delta}\]</span> We can accomplish this using the <strong>nlme</strong> function <code>varPower()</code>. This function can take any model covariate, but when there is no argument provided, it defaults to using the fitted values.</p>
+<p><span class="math display">\[ Var(\epsilon_{ij}) = \sigma^2|\nu_{ij}|^{2\delta}\]</span> We can accomplish this using the ‘nlme’ function <code>varPower()</code>. This function can take any model covariate, but when there is no argument provided, it defaults to using the fitted values.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>ex2_m2 <span class="ot">&lt;-</span> <span class="fu">update</span>(ex2_m1, <span class="at">weights =</span> <span class="fu">varPower</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1238,7 +1238,7 @@ pfit2     2 68 2508.314 2725.435 -1186.157 1 vs 2 7.672945  0.0216</code></pre>
 </div>
 </div>
 <p>However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with <code>varIdent()</code>) or much much smaller (e.g.&nbsp;with <code>varPower()</code>). Interpret the coefficient of variation from mixed models with caution.</p>
-<p>Related is Fisher’s least significant difference, i.e.&nbsp;LSD. While most mixed modelling packages do not calculate this (e.g.&nbsp;<strong><em>nlme</em></strong>, <strong><em>lme4/lmerTest</em></strong> or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels.</p>
+<p>Related is Fisher’s least significant difference, i.e.&nbsp;LSD. While most mixed modelling packages do not calculate this (e.g.&nbsp;‘nlme’, ‘lme4’/‘lmerTest’ or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels.</p>
 </div>
 </div>
 </div>

@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -158,7 +177,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 <meta name="twitter:title" content="12&nbsp; Repeated measures mixed models – Field Guide to the R Mixed Model Wilderness">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="repeated-measures_files/figure-html/unnamed-chunk-9-1.png">
+<meta name="twitter:image" content="repeated-measures_files/figure-html/unnamed-chunk-10-1.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -393,15 +412,30 @@ window.Quarto = {
 </header>
 
 
-<p><em>Check if lmerTest works with lme4 v2.0</em></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>THIS CHAPTER IS A WORK IN PROGRESS PARTICULARILY WITH RESPECT TO LME4 v2.0 COVARIANCE STRUCTURES. IT’S UNCLEAR IF THESE WORK WITH ‘lmerTest’. ADDITIONALLY, THERE ARE SOME WEIRD ESTIMATION ISSUES: OVERALLY HIGH VALUES FOR ‘PHI’ WHEN USING AR1, SOME WILD SWINGS IN THE LOG LIKELIHOOD AND NON-PD VARIANCE COMPONENTS THAT STYMIE ‘emmeans’.</p>
+</div>
+</div>
 <section id="background" class="level2 page-columns page-full" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="background"><span class="header-section-number">12.1</span> Background</h2>
 <p>In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called “longitudinal data”).</p>
 <p>Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject or experimental unit, we must model the repeated measures covariance structure when analyzing the treatment effects.</p>
 <p>In these models, the ‘iid’ assumption (independently and identically distributed) is often violated, so we need to introduce specialized covariance structures that can account for these correlations between error terms.</p>
-<p>For this these models, we will use <strong><em>nlme</em></strong> and <strong><em>lme4</em></strong>. These packages provide well documented implementations of heterogeneous error structures. Another package, <a href="https://CRAN.R-project.org/package=mmrm" class="external" target="_blank"><strong><em>mmrm</em></strong></a>, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that due to limitations in implemented models. Until recently, implementing hetergenous error terms was <a href="https://bbolker.github.io/mixedmodels-misc/notes/varmats.html" class="external" target="_blank">quite challenging in lme4</a>. Starting with version 4.0 of lme4, functionality for implementing some <a href="https://cran.r-project.org/web/packages/lme4/vignettes/covariance_structures.html">covariance structures</a> is available.</p>
+<p>For this these models, we will use ‘nlme’ and ‘lme4’. These packages provide well documented implementations of heterogeneous error structures. Another package, <a href="https://CRAN.R-project.org/package=mmrm" class="external" target="_blank">mmrm</a>, does provide functionality for repeated measures for limited experimental designs, but we will not be exploring that due to limitations in implemented models. Until recently, implementing hetergenous error terms was <a href="https://bbolker.github.io/mixedmodels-misc/notes/varmats.html" class="external" target="_blank">quite challenging in lme4</a>. Starting with version 2.0 of lme4, functionality for implementing some <a href="https://cran.r-project.org/web/packages/lme4/vignettes/covariance_structures.html">covariance structures</a> is available. You may need to download the latest development version of ‘lme4’ to access the latest functionality:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"lme4/lme4"</span>, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <div class="callout-information">
-<p>The package <a href="https://CRAN.R-project.org/package=glmmTMB" class="external" target="_blank"><strong><em>glmmTMB</em></strong></a> (generalized linear mixed model using the template model builder) will also implement <a href="https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html" class="external" target="_blank">many covariance structures</a> and despite its name, can work fine with general linear models (Gaussian) and does not require a mixed component. The implemented structures include compound symmetry, AR1, toeplitz, unstructured and several spatial covariance structures. Truly, this package is incredible.</p>
+<p>The package <a href="https://CRAN.R-project.org/package=glmmTMB" class="external" target="_blank">glmmTMB</a> (generalized linear mixed model using the template model builder) will also implement <a href="https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html" class="external" target="_blank">many covariance structures</a> and despite its name, can work fine with general linear models (Gaussian) and does not require a mixed component. The implemented structures include compound symmetry, AR1, toeplitz, unstructured and several spatial covariance structures. Truly, this package is incredible.</p>
 </div>
 <p>In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.</p>
 <p>There are several types of covariance structures:</p>
@@ -442,7 +476,7 @@ window.Quarto = {
 </div></div><p>The repeated measures syntax in <strong>nlme</strong> follow this convention:</p>
 <p><code>corAR1(value = 0, form = ~ t|g, fixed = FALSE)</code>.</p>
 <p>The argument for <code>value</code> is the starting value for iterations (zero is the default), and if <code>fixed = FALSE</code> (the current nlme default), this value will be allowed to change during the model fitting process. The argument structure for <code>form</code>, <code>~ t|g</code>, where <span class="math inline">\(t\)</span> is the temporal variable and <span class="math inline">\(g\)</span> is the grouping factor (the subject or experimental unit) to estimate covariance across. Technically, <span class="math inline">\(g\)</span> is optional and if not specified, the order of the data set will be assumed <span class="math inline">\(t\)</span>. However, for most replicated experiments, you will need to specify <span class="math inline">\(g\)</span>. When we use <code>~t|g</code> form, the correlation structure is supposed to apply only to observations within the same grouping level. The covariate for this correlation structure must be an <strong>integer value</strong>. Similarly, <code>corCompSymm()</code> and <code>corSymm()</code> follow the same argument syntax.</p>
-<p>There are other covariance structures enabled by <strong><em>nlme</em></strong> (e.g., <code>corARMA()</code>, <code>corCAR1()</code>), but we have found that <code>corAR1()</code> and <code>corCompSymm()</code> work for most circumstances. Read the <a href="https://cran.r-project.org/web/packages/nlme/refman/nlme.html" class="external" target="_blank">nlme manual</a> if you want to learn more about covariance structures in that package.</p>
+<p>There are other covariance structures enabled by ‘nlme’ (e.g., <code>corARMA()</code>, <code>corCAR1()</code>), but we have found that <code>corAR1()</code> and <code>corCompSymm()</code> work for most circumstances. Read the <a href="https://cran.r-project.org/web/packages/nlme/refman/nlme.html" class="external" target="_blank">nlme manual</a> if you want to learn more about covariance structures available in that package.</p>
 </section>
 <section id="examples" class="level1 page-columns page-full" data-number="13">
 <h1 data-number="13"><span class="header-section-number">13</span> Examples</h1>
@@ -452,14 +486,14 @@ window.Quarto = {
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4); <span class="fu">library</span>(performance); <span class="fu">library</span>(emmeans)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr); <span class="fu">library</span>(broom.mixed); <span class="fu">library</span>(ggplot2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -467,13 +501,14 @@ window.Quarto = {
 <section id="rcbd-repeated-measures" class="level2 page-columns page-full" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="rcbd-repeated-measures"><span class="header-section-number">13.1</span> RCBD Repeated Measures</h2>
 <p>First, we will start with the first example with randomized complete block design with repeated measures.</p>
-<p>The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, ‘variety’. The dependent variable, y (leaf are index) was measured weekly for 5 weeks.</p>
-<p>We need to have time as both a numeric and a factor variable. In the model, to assess the week effect, week was used as a factor (factweek). For the correlation matrix, the variable “factweek” needs to be converted to a numeric format (“week”).</p>
+<p>The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, ‘variety’. The dependent variable, ‘y’ (leaf are index) was measured weekly for 5 weeks. This data set was originally described by Milliken and Johnson <span class="citation" data-cites="milk2009">(<a href="../references.html#ref-milk2009" role="doc-biblioref">2009</a>)</span>.</p>
+<p>We need to have time as both a numeric and a factor variable for the modeling packages. The variable ‘week’ is formatted as a factor (“factweek”) for estimating the effect of each week. For the repeated measures structure, the numeric variable ‘week’ is used. Since variety and block imported as numeric, they are converted to character variables.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sorghum <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"sorghum.csv"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(varblock),</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">factweek =</span> <span class="fu">as.character</span>(factweek),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">variety =</span> <span class="fu">as.character</span>(variety))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sorghum <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"sorghum.csv"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(block),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">factweek =</span> <span class="fu">as.character</span>(week),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">plot =</span> <span class="fu">as.character</span>(plot),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">variety =</span> <span class="fu">as.character</span>(variety))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <table class="caption-top table">
 <caption>Table of variables in the data set</caption>
@@ -483,12 +518,12 @@ window.Quarto = {
 <td>blocking unit</td>
 </tr>
 <tr class="even">
-<td>Replicate</td>
-<td>replication unit</td>
+<td>week / factweek</td>
+<td>Time points when data was collected</td>
 </tr>
 <tr class="odd">
-<td>Week</td>
-<td>Time points when data was collected</td>
+<td>plot</td>
+<td>plot (experimental unit)</td>
 </tr>
 <tr class="even">
 <td>variety</td>
@@ -507,26 +542,23 @@ window.Quarto = {
 <li>Check structure of the data</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sorghum)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sorghum)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   100 obs. of  9 variables:
- $ y        : num  5 4.84 4.02 3.75 3.13 4.42 4.3 3.67 3.23 2.83 ...
- $ variety  : chr  "1" "1" "1" "1" ...
- $ Replicate: int  1 1 1 1 1 2 2 2 2 2 ...
- $ factweek : chr  "1" "2" "3" "4" ...
- $ factplot : int  1 1 1 1 1 2 2 2 2 2 ...
- $ varweek  : int  1 2 3 4 5 1 2 3 4 5 ...
- $ varblock : int  1 1 1 1 1 2 2 2 2 2 ...
- $ week     : int  1 2 3 4 5 1 2 3 4 5 ...
- $ block    : chr  "1" "1" "1" "1" ...</code></pre>
+<pre><code>'data.frame':   100 obs. of  6 variables:
+ $ block   : chr  "1" "1" "1" "1" ...
+ $ week    : int  1 2 3 4 5 1 2 3 4 5 ...
+ $ plot    : chr  "1" "1" "1" "1" ...
+ $ variety : chr  "1" "1" "1" "1" ...
+ $ y       : num  5 4.84 4.02 3.75 3.13 4.42 4.3 3.67 3.23 2.83 ...
+ $ factweek: chr  "1" "2" "3" "4" ...</code></pre>
 </div>
 </div>
-<p>In this data set, ‘block’, ‘factplot’, ‘factweek’ are factors, while ‘y’ and ‘week’ are coded as numeric.</p>
+<p>In this data set, ‘block’, ‘plot’, and ‘factweek’ are characters, while ‘y’ and ‘week’ are coded as numeric.</p>
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sorghum<span class="sc">$</span>variety, sorghum<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sorghum<span class="sc">$</span>variety, sorghum<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   
     1 2 3 4 5
@@ -541,12 +573,10 @@ window.Quarto = {
 <li>Check the extent of missing data</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(sorghum))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(sorghum))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>        y   variety Replicate  factweek  factplot   varweek  varblock      week 
-        0         0         0         0         0         0         0         0 
-    block 
-        0 </code></pre>
+<pre><code>   block     week     plot  variety        y factweek 
+       0        0        0        0        0        0 </code></pre>
 </div>
 </div>
 <p>No missing values</p>
@@ -554,13 +584,13 @@ window.Quarto = {
 <li>Inspect the dependent variable</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sorghum, <span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">x =</span> factweek, <span class="at">fill =</span> variety)) <span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span>  </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> sorghum, <span class="fu">aes</span>(<span class="at">y =</span> y, <span class="at">x =</span> factweek, <span class="at">fill =</span> variety)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span>  </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -568,7 +598,7 @@ window.Quarto = {
 <p>It loooks like variety ‘1’ has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.</p>
 <p>One last step before we fit model is to look at the distribution of response variable.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sorghum<span class="sc">$</span>y, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"leaf area index"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(sorghum<span class="sc">$</span>y, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"leaf area index"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell page-columns page-full">
 
@@ -587,54 +617,110 @@ Figure&nbsp;13.1: Histogram of the dependent variable.
 </section>
 <section id="model-building" class="level3" data-number="13.1.2">
 <h3 data-number="13.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">13.1.2</span> Model Building</h3>
-<p>Let’s fit the model first using <code>lme()</code> from the <strong>nlme</strong> package.</p>
+<p>Let’s fit the model first using <code>lme()</code> from the <strong>nlme</strong> package. A full specified model is fit and ‘plot’ is nested within ‘block’.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">lme4</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sorg_1a <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>factplot,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sorg_1a <span class="ot">&lt;-</span> <span class="fu">lme</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>plot,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sorg_2a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>factplot),</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sorg_2a <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>plot),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-<p>The model fitted above doesn’t account for the repeated measures effect. To account for the variation caused by repeated measurements, we can model the correlation among responses for a given subject, which is a plot (factor variable) in this case.</p>
-<p>By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximately are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit a model with both correlation structures and compare models to find out the best fit model.</p>
+<p>The model fitted above doesn’t account for the repeated measures effect. To account for the variation caused by repeated measurements, correlation among responses can be modelled for a given subject, which is a plot (factor variable) in this case.</p>
+<p>By adding this correlation structure, we are accounting for variation caused by repeated measurements over weeks for each plot. The AR1 structure assumes that data points collected more proximately are more correlated. Whereas, the compound symmetry structure assumes that correlation is equal for all time gaps. Here, we will fit a model with both correlation structures and compare models to find out the best fitting model.</p>
 <p>In this analysis, the time variable is <code>week</code>, and it must be numeric.</p>
-<p>In the code chunks above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model lm1, with these two matrices.</p>
+<p>In the code chunks above, we fitted two correlation structures including AR1 and compound symmetry matrices. Next we will update the model object separately with each correlation matrix.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">lme4</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cs1 <span class="ot">&lt;-</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cs2 <span class="ot">&lt;-</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>sorg_1b <span class="ot">&lt;-</span> <span class="fu">update</span>(sorg_1a, <span class="at">corr =</span> cs1)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>sorg_1c <span class="ot">&lt;-</span> <span class="fu">update</span>(sorg_1a, <span class="at">corr=</span> cs2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cs1 <span class="ot">&lt;-</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>plot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>cs2 <span class="ot">&lt;-</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> week<span class="sc">|</span>block<span class="sc">/</span>plot,  <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>sorg_1b <span class="ot">&lt;-</span> <span class="fu">update</span>(sorg_1a, <span class="at">corr =</span> cs1)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>sorg_1c <span class="ot">&lt;-</span> <span class="fu">update</span>(sorg_1a, <span class="at">corr=</span> cs2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sorg_2b <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> <span class="fu">ar1</span>(<span class="dv">0</span> <span class="sc">+</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot),</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sorg_2b <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> <span class="fu">ar1</span>(<span class="dv">0</span> <span class="sc">+</span> week<span class="sc">|</span>block<span class="sc">/</span>plot),</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sorg_2c <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> <span class="fu">cs</span>(<span class="dv">1</span> <span class="sc">+</span> week<span class="sc">|</span>block<span class="sc">/</span>factplot),</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sorg_2c <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> <span class="fu">cs</span>(<span class="dv">1</span> <span class="sc">+</span> week<span class="sc">|</span>block<span class="sc">/</span>plot),</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
+</div>
+</div>
+<p>The model using an AR1 structure, ‘sorg_2b’, drew the warning <code>boundary (singular) fit: see help('isSingular')</code> because the variance estimate for ‘block’ is nearing zero due to the plot and the AR1 covariance structure effectively modelling spatial variation. We can refit the model without ‘block’.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sorg_2d <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> variety <span class="sc">+</span> factweek <span class="sc">+</span> variety<span class="sc">:</span>factweek <span class="sc">+</span> <span class="fu">ar1</span>(<span class="dv">0</span> <span class="sc">+</span> week<span class="sc">|</span>plot),</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> sorghum, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>PHI IS 1.00???</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sorg_2b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: y ~ variety + factweek + variety:factweek + ar1(0 + week | block/plot)
+   Data: sorghum
+REML criterion at convergence: 118.5216
+Random effects:
+ Groups     Name Std.Dev. Corr      
+ plot:block week 0.0000   1.00 (ar1)
+ block      week 0.0000   1.00 (ar1)
+ Residual        0.3778             
+Number of obs: 100, groups:  plot:block, 20; block, 5
+Fixed Effects:
+       (Intercept)            variety2            variety3            variety4  
+             4.242               0.906               0.646               0.912  
+         factweek2           factweek3           factweek4           factweek5  
+            -0.196              -0.836              -1.156              -1.542  
+variety2:factweek2  variety3:factweek2  variety4:factweek2  variety2:factweek3  
+             0.028               0.382              -0.014               0.282  
+variety3:factweek3  variety4:factweek3  variety2:factweek4  variety3:factweek4  
+             0.662               0.388               0.228               0.744  
+variety4:factweek4  variety2:factweek5  variety3:factweek5  variety4:factweek5  
+             0.390               0.402               0.672               0.222  
+optimizer (nloptwrap) convergence code: 0 (OK) ; 0 optimizer warnings; 1 lme4 warnings </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sorg_2d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: y ~ variety + factweek + variety:factweek + ar1(0 + week | plot)
+   Data: sorghum
+REML criterion at convergence: 147.2443
+Random effects:
+ Groups   Name Std.Dev. Corr      
+ plot     week 0.1615   1.00 (ar1)
+ Residual      0.3935             
+Number of obs: 100, groups:  plot, 20
+Fixed Effects:
+       (Intercept)            variety2            variety3            variety4  
+             4.242               0.906               0.646               0.912  
+         factweek2           factweek3           factweek4           factweek5  
+            -0.196              -0.836              -1.156              -1.542  
+variety2:factweek2  variety3:factweek2  variety4:factweek2  variety2:factweek3  
+             0.028               0.382              -0.014               0.282  
+variety3:factweek3  variety4:factweek3  variety2:factweek4  variety3:factweek4  
+             0.662               0.388               0.228               0.744  
+variety4:factweek4  variety2:factweek5  variety3:factweek5  variety4:factweek5  
+             0.390               0.402               0.672               0.222  </code></pre>
 </div>
 </div>
 <p>Now let’s compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using <code>anova()</code> or by the <code>compare_performance()</code> function from the <strong>performance</strong> library.</p>
@@ -643,7 +729,7 @@ Figure&nbsp;13.1: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_1a, sorg_1b, sorg_1c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_1a, sorg_1b, sorg_1c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        Model df       AIC      BIC   logLik   Test  L.Ratio p-value
 sorg_1a     1 23 18.837478 73.62409 13.58126                        
@@ -654,21 +740,24 @@ sorg_1c     3 24 20.837478 78.00612 13.58126                        </code></pre
 <p>Let’s compare the models performance to select a model that fits better.</p>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<p>THESE RESULTS ARE WEIRD</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_2a, sorg_2b, sorg_2c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_2a, sorg_2b, sorg_2c, sorg_2d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>refitting model(s) with ML (instead of REML)</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data: sorghum
 Models:
-sorg_2a: y ~ variety + factweek + variety:factweek + (1 | block/factplot)
-sorg_2b: y ~ variety + factweek + variety:factweek + ar1(0 + week | block/factplot)
-sorg_2c: y ~ variety + factweek + variety:factweek + cs(1 + week | block/factplot)
-        npar     AIC     BIC  logLik -2*log(L) Chisq Df Pr(&gt;Chisq)    
-sorg_2a   23 -50.503   9.415  48.252   -96.503                        
-sorg_2b   23 131.602 191.521 -42.801    85.602   0.0  0               
-sorg_2c   27 -99.302 -28.963  76.651  -153.302 238.9  4  &lt; 2.2e-16 ***
+sorg_2d: y ~ variety + factweek + variety:factweek + ar1(0 + week | plot)
+sorg_2a: y ~ variety + factweek + variety:factweek + (1 | block/plot)
+sorg_2b: y ~ variety + factweek + variety:factweek + ar1(0 + week | block/plot)
+sorg_2c: y ~ variety + factweek + variety:factweek + cs(1 + week | block/plot)
+        npar     AIC     BIC  logLik -2*log(L)  Chisq Df Pr(&gt;Chisq)    
+sorg_2d   22 165.505 222.819 -60.753   121.505                         
+sorg_2a   23 -50.503   9.415  48.252   -96.503 218.01  1  &lt; 2.2e-16 ***
+sorg_2b   23 131.602 191.521 -42.801    85.602   0.00  0               
+sorg_2c   27 -99.302 -28.963  76.651  -153.302 238.90  4  &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -677,62 +766,78 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>We prefer to chose model with lower AIC and BIC values. In this scenario, we will move forward with lm2 model containing AR1 structure.</p>
-<p>Let’s run a <code>tidy()</code> on lm2 model to look at the estimates for random and fixed effects.</p>
+<p>Let’s look at the model estimates for random and fixed effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">lme4</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(sorg_1b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in tidy.lme(sorg_1b): ran_pars not yet implemented for nonlinear or
-multilevel models</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#tidy(sorg_1b)</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>sorg_1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 20 × 7
-   effect term               estimate std.error    df statistic  p.value
-   &lt;chr&gt;  &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)          4.24      0.291     64    14.6   5.44e-22
- 2 fixed  variety2             0.906     0.114     12     7.94  4.05e- 6
- 3 fixed  variety3             0.646     0.114     12     5.66  1.05e- 4
- 4 fixed  variety4             0.912     0.114     12     8.00  3.78e- 6
- 5 fixed  factweek2           -0.196     0.0571    64    -3.44  1.04e- 3
- 6 fixed  factweek3           -0.836     0.0755    64   -11.1   1.60e-16
- 7 fixed  factweek4           -1.16      0.0867    64   -13.3   4.00e-20
- 8 fixed  factweek5           -1.54      0.0943    64   -16.3   1.57e-24
- 9 fixed  variety2:factweek2   0.0280    0.0807    64     0.347 7.30e- 1
-10 fixed  variety3:factweek2   0.382     0.0807    64     4.73  1.26e- 5
-11 fixed  variety4:factweek2  -0.0140    0.0807    64    -0.174 8.63e- 1
-12 fixed  variety2:factweek3   0.282     0.107     64     2.64  1.03e- 2
-13 fixed  variety3:factweek3   0.662     0.107     64     6.20  4.55e- 8
-14 fixed  variety4:factweek3   0.388     0.107     64     3.64  5.55e- 4
-15 fixed  variety2:factweek4   0.228     0.123     64     1.86  6.77e- 2
-16 fixed  variety3:factweek4   0.744     0.123     64     6.06  7.86e- 8
-17 fixed  variety4:factweek4   0.39      0.123     64     3.18  2.28e- 3
-18 fixed  variety2:factweek5   0.402     0.133     64     3.01  3.70e- 3
-19 fixed  variety3:factweek5   0.672     0.133     64     5.04  4.11e- 6
-20 fixed  variety4:factweek5   0.222     0.133     64     1.66  1.01e- 1</code></pre>
+<pre><code>Linear mixed-effects model fit by REML
+  Data: sorghum 
+  Log-restricted-likelihood: 25.1737
+  Fixed: y ~ variety + factweek + variety:factweek 
+       (Intercept)           variety2           variety3           variety4 
+             4.242              0.906              0.646              0.912 
+         factweek2          factweek3          factweek4          factweek5 
+            -0.196             -0.836             -1.156             -1.542 
+variety2:factweek2 variety3:factweek2 variety4:factweek2 variety2:factweek3 
+             0.028              0.382             -0.014              0.282 
+variety3:factweek3 variety4:factweek3 variety2:factweek4 variety3:factweek4 
+             0.662              0.388              0.228              0.744 
+variety4:factweek4 variety2:factweek5 variety3:factweek5 variety4:factweek5 
+             0.390              0.402              0.672              0.222 
+
+Random effects:
+ Formula: ~1 | block
+        (Intercept)
+StdDev:   0.6258308
+
+ Formula: ~1 | plot %in% block
+         (Intercept) Residual
+StdDev: 6.827492e-06 0.180349
+
+Correlation Structure: AR(1)
+ Formula: ~week | block/plot 
+ Parameter estimate(s):
+      Phi 
+0.7498238 
+Number of Observations: 100
+Number of Groups: 
+          block plot %in% block 
+              5              20 </code></pre>
 </div>
 </div>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(sorg_2c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>sorg_2c</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 27 × 6
-   effect group term               estimate std.error statistic
-   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 fixed  &lt;NA&gt;  (Intercept)          4.24      0.339     12.5  
- 2 fixed  &lt;NA&gt;  variety2             0.906     0.0922     9.82 
- 3 fixed  &lt;NA&gt;  variety3             0.646     0.0922     7.01 
- 4 fixed  &lt;NA&gt;  variety4             0.912     0.0922     9.89 
- 5 fixed  &lt;NA&gt;  factweek2           -0.196     0.0571    -3.43 
- 6 fixed  &lt;NA&gt;  factweek3           -0.836     0.0744   -11.2  
- 7 fixed  &lt;NA&gt;  factweek4           -1.16      0.0965   -12.0  
- 8 fixed  &lt;NA&gt;  factweek5           -1.54      0.121    -12.8  
- 9 fixed  &lt;NA&gt;  variety2:factweek2   0.0280    0.0719     0.389
-10 fixed  &lt;NA&gt;  variety3:factweek2   0.382     0.0719     5.31 
-# ℹ 17 more rows</code></pre>
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: y ~ variety + factweek + variety:factweek + cs(1 + week | block/plot)
+   Data: sorghum
+REML criterion at convergence: -72.6014
+Random effects:
+ Groups     Name        Std.Dev. Corr      
+ plot:block (Intercept) 0.12511  -0.20 (cs)
+            week        0.02094            
+ block      (Intercept) 0.79886  -0.93 (cs)
+            week        0.05795            
+ Residual               0.07903            
+Number of obs: 100, groups:  plot:block, 20; block, 5
+Fixed Effects:
+       (Intercept)            variety2            variety3            variety4  
+             4.242               0.906               0.646               0.912  
+         factweek2           factweek3           factweek4           factweek5  
+            -0.196              -0.836              -1.156              -1.542  
+variety2:factweek2  variety3:factweek2  variety4:factweek2  variety2:factweek3  
+             0.028               0.382              -0.014               0.282  
+variety3:factweek3  variety4:factweek3  variety2:factweek4  variety3:factweek4  
+             0.662               0.388               0.228               0.744  
+variety4:factweek4  variety2:factweek5  variety3:factweek5  variety4:factweek5  
+             0.390               0.402               0.672               0.222  </code></pre>
 </div>
 </div>
 </div>
@@ -746,11 +851,11 @@ multilevel models</code></pre>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(sorg_1b,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>,<span class="st">'qq'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(sorg_1b,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>,<span class="st">'qq'</span>, <span class="st">'reqq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -758,11 +863,11 @@ multilevel models</code></pre>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(sorg_2c,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>,<span class="st">'qq'</span>, <span class="st">'reqq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(sorg_2c,  <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>,<span class="st">'qq'</span>, <span class="st">'reqq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -778,10 +883,10 @@ multilevel models</code></pre>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_1b, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_1b, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 numDF denDF   F-value p-value
-(Intercept)          1    64 212.10509  &lt;.0001
+(Intercept)          1    64 212.10502  &lt;.0001
 variety              3    12  28.28895  &lt;.0001
 factweek             4    64  74.79758  &lt;.0001
 variety:factweek    12    64   7.03546  &lt;.0001</code></pre>
@@ -789,14 +894,23 @@ variety:factweek    12    64   7.03546  &lt;.0001</code></pre>
 </div>
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<p>‘lmerTest’ is not loaded because it causes issues with estimation for these particular examples (and perhaps other examples using lme4’s covariance structures).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_2c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_2c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
                  npar  Sum Sq Mean Sq F value
-variety             3 1.44944 0.48315  77.333
-factweek            4 1.43597 0.35899  57.461
-variety:factweek   12 0.94273 0.07856  12.575</code></pre>
+variety             3 1.44900 0.48300  77.331
+factweek            4 1.43411 0.35853  57.402
+variety:factweek   12 0.94249 0.07854  12.575</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_2d) <span class="co"># wow</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+                 npar Sum Sq Mean Sq F value
+variety             3 3.9485 1.31618  8.5003
+factweek            4 7.9918 1.99796 12.9034
+variety:factweek   12 0.7843 0.06536  0.4221</code></pre>
 </div>
 </div>
 </div>
@@ -809,7 +923,7 @@ variety:factweek   12 0.94273 0.07856  12.575</code></pre>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(mean_1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_1b, <span class="sc">~</span> variety))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>(mean_1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_1b, <span class="sc">~</span> variety))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -824,7 +938,7 @@ Results are averaged over the levels of: factweek
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>(mean_2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_1b, <span class="sc">~</span> variety<span class="sc">*</span>factweek))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>(mean_2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_1b, <span class="sc">~</span> variety<span class="sc">*</span>factweek))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> variety factweek emmean    SE df lower.CL upper.CL
  1       1          4.24 0.291  4     3.43     5.05
@@ -855,7 +969,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>(mean_1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_2c, <span class="sc">~</span> variety))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(mean_1 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_2c, <span class="sc">~</span> variety))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -870,29 +984,65 @@ Results are averaged over the levels of: factweek
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(mean_2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_2c, <span class="sc">~</span> variety<span class="sc">*</span>factweek))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(sorg_2b, <span class="sc">~</span> variety) <span class="co"># SE/CI's not estimable (negative variance obtained)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in .qf.non0(object@V, x): Negative variance estimate obtained!
+Warning in .qf.non0(object@V, x): Negative variance estimate obtained!
+Warning in .qf.non0(object@V, x): Negative variance estimate obtained!
+Warning in .qf.non0(object@V, x): Negative variance estimate obtained!</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> variety emmean  SE   df lower.CL upper.CL
+ 1         3.50 NaN 1.14      NaN      NaN
+ 2         4.59 NaN 1.14      NaN      NaN
+ 3         4.63 NaN 1.14      NaN      NaN
+ 4         4.61 NaN 1.14      NaN      NaN
+
+Results are averaged over the levels of: factweek 
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(sorg_2d, <span class="sc">~</span> variety) <span class="co"># dramatic shift in DF and hence CIs</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> variety emmean   SE   df lower.CL upper.CL
+ 1         3.50 0.23 16.7     3.01     3.98
+ 2         4.59 0.23 16.7     4.10     5.08
+ 3         4.63 0.23 16.7     4.15     5.12
+ 4         4.61 0.23 16.7     4.12     5.09
+
+Results are averaged over the levels of: factweek 
+Degrees-of-freedom method: kenward-roger 
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>(mean_2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(sorg_2c, <span class="sc">~</span> variety<span class="sc">*</span>factweek))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> variety factweek emmean    SE   df lower.CL upper.CL
- 1       1          4.24 0.339 4.24     3.32     5.16
- 2       1          5.15 0.339 4.24     4.23     6.07
- 3       1          4.89 0.339 4.24     3.97     5.81
- 4       1          5.15 0.339 4.24     4.23     6.08
- 1       2          4.05 0.316 4.29     3.19     4.90
- 2       2          4.98 0.316 4.29     4.12     5.84
- 3       2          5.07 0.316 4.29     4.22     5.93
- 4       2          4.94 0.316 4.29     4.09     5.80
- 1       3          3.41 0.294 4.36     2.61     4.20
- 2       3          4.59 0.294 4.36     3.80     5.39
- 3       3          4.71 0.294 4.36     3.92     5.51
- 4       3          4.71 0.294 4.36     3.91     5.50
+ 1       1          4.24 0.340 4.24     3.32     5.16
+ 2       1          5.15 0.340 4.24     4.23     6.07
+ 3       1          4.89 0.340 4.24     3.97     5.81
+ 4       1          5.15 0.340 4.24     4.23     6.08
+ 1       2          4.05 0.317 4.29     3.19     4.90
+ 2       2          4.98 0.317 4.29     4.12     5.84
+ 3       2          5.07 0.317 4.29     4.22     5.93
+ 4       2          4.94 0.317 4.29     4.09     5.80
+ 1       3          3.41 0.295 4.36     2.61     4.20
+ 2       3          4.59 0.295 4.36     3.80     5.39
+ 3       3          4.71 0.295 4.36     3.92     5.51
+ 4       3          4.71 0.295 4.36     3.91     5.50
  1       4          3.09 0.273 4.45     2.36     3.82
  2       4          4.22 0.273 4.45     3.49     4.95
  3       4          4.48 0.273 4.45     3.75     5.21
  4       4          4.39 0.273 4.45     3.66     5.12
- 1       5          2.70 0.253 4.58     2.03     3.37
- 2       5          4.01 0.253 4.58     3.34     4.68
- 3       5          4.02 0.253 4.58     3.35     4.69
- 4       5          3.83 0.253 4.58     3.16     4.50
+ 1       5          2.70 0.254 4.58     2.03     3.37
+ 2       5          4.01 0.254 4.58     3.34     4.68
+ 3       5          4.02 0.254 4.58     3.35     4.69
+ 4       5          3.83 0.254 4.58     3.16     4.50
 
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
@@ -921,7 +1071,7 @@ Confidence level used: 0.95 </code></pre>
 <p>Recall that we evaluated the split plot design in <a href="../chapters/split-plot-design.html"><strong>Chapter 7</strong></a>. In this example, we will use the same methodology as in Chapter 7 and update it with a repeated measures component.</p>
 <p>Next, let’s load an alfalfa intercropping data set. This data is from an irrigation and intercropping experiment which was conducted in southern Idaho. Irrigation is the main plot, intercropping is the split plot, and the in-season alfalfa cutting (“cutting”) is the unit for repeated measures.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>alfalfa <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/alfalfa_intercropping.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>alfalfa <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/alfalfa_intercropping.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This example contains yield data in a split-plot design. The yield data was collected repeatedly from the same Reps over 5 Sample_times. In this data set, we have:</p>
 <table class="caption-top table">
@@ -968,7 +1118,7 @@ Confidence level used: 0.95 </code></pre>
 </ul>
 <p>First, we need to look at the class of variables in the data set.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(alfalfa)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(alfalfa)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   240 obs. of  8 variables:
  $ cutting   : chr  "First" "Second" "Third" "First" ...
@@ -983,16 +1133,16 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>We will now convert the fertilizer and rep to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>alfalfa <span class="ot">&lt;-</span> alfalfa <span class="sc">|&gt;</span> </span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cut_num =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(cutting))) <span class="sc">|&gt;</span> </span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">"cutting"</span>, <span class="st">"irrigation"</span>, <span class="st">"plot"</span>, <span class="st">"block"</span>), as.factor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>alfalfa <span class="ot">&lt;-</span> alfalfa <span class="sc">|&gt;</span> </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cut_num =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(cutting))) <span class="sc">|&gt;</span> </span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">"cutting"</span>, <span class="st">"irrigation"</span>, <span class="st">"plot"</span>, <span class="st">"block"</span>), as.factor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>To fit the model, we first need to convert Variety, Fertilizer, and Sample_time to factors. In addition, we need to create a variable for each subject which is a ‘plot’ in this case and contains a unique value for each ‘plot’. The plot variable is needed to model the variation in each plot over the sampling time. The plot will be used as a subject with repeated measures. The subject variable can be either a factor or a numeric but the time (could be year, or sample_time) must be a factor.</p>
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(alfalfa<span class="sc">$</span>intercrop, alfalfa<span class="sc">$</span>irrigation) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(alfalfa<span class="sc">$</span>intercrop, alfalfa<span class="sc">$</span>irrigation) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            
              Deficit Full
@@ -1013,7 +1163,7 @@ Confidence level used: 0.95 </code></pre>
 <li>Check the extent of missing data</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(alfalfa))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(alfalfa))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   cutting irrigation       plot      block  intercrop      yield        row 
          0          0          0          0          0          3          0 
@@ -1040,30 +1190,30 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 </div>
 </div></div></div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Yield<span class="sc">$</span>Yield, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">main =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Yield<span class="sc">$</span>Yield, <span class="at">xlab =</span> <span class="st">"yield"</span>, <span class="at">main =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="model-fit" class="level3" data-number="13.2.2">
 <h3 data-number="13.2.2" class="anchored" data-anchor-id="model-fit"><span class="header-section-number">13.2.2</span> Model fit</h3>
-<p>For this data set, we will use <code>lme()</code> from <strong><em>nlme</em></strong> package and <code>lmer()</code> from <strong><em>lme4</em></strong> to fit a linear mixed model with a repeated measures covariance structure. Instead of the <code>summary()</code> function, we will use <code>tidy()</code> function from the <strong><em>broom.mixed</em></strong> package to look at estimates of mixed and random effects.</p>
+<p>For this data set, we will use <code>lme()</code> from ‘nlme’ package and <code>lmer()</code> from ‘lme4’ to fit a linear mixed model with a repeated measures covariance structure. Instead of the <code>summary()</code> function, we will use <code>tidy()</code> function from the ‘broom.mixed’ package to look at estimates of mixed and random effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true" href="">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false" href="">lme4</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> cut_num<span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>alf_1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> irrigation<span class="sc">*</span>intercrop<span class="sc">*</span>cutting,</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot,</span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr=</span> corr_str1,</span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> alfalfa, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> cut_num<span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>alf_1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> irrigation<span class="sc">*</span>intercrop<span class="sc">*</span>cutting,</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot,</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr=</span> corr_str1,</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> alfalfa, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>alf_2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> irrigation<span class="sc">*</span>intercrop<span class="sc">*</span>cutting <span class="sc">+</span> </span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>               <span class="fu">ar1</span>(<span class="dv">0</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot),</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> alfalfa, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>alf_2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> irrigation<span class="sc">*</span>intercrop<span class="sc">*</span>cutting <span class="sc">+</span> </span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>               <span class="fu">ar1</span>(<span class="dv">0</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>irrigation<span class="sc">/</span>intercrop<span class="sc">/</span>plot),</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> alfalfa, <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
@@ -1080,11 +1230,11 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 <div class="tab-content">
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(alf_1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(alf_1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1092,11 +1242,11 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 </div>
 <div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(alf_2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(alf_2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1113,7 +1263,7 @@ Figure&nbsp;13.2: Histogram of the dependent variable
 <div class="tab-content">
 <div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(alf_1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(alf_1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                             numDF denDF   F-value p-value
 (Intercept)                      1   115 157.67647  &lt;.0001
@@ -1129,7 +1279,7 @@ irrigation:intercrop:cutting    18   115   0.77391  0.7263</code></pre>
 </div>
 <div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(alf_2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(alf_2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
                              npar  Sum Sq Mean Sq F value
@@ -1147,7 +1297,7 @@ irrigation:intercrop:cutting   18  136500    7583  0.8505</code></pre>
 </div>
 <p>Next, we can estimate marginal means and confidence intervals at different levels of the independent variables using <code>emmeans()</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_1,<span class="sc">~</span> cutting)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_1,<span class="sc">~</span> cutting)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1161,7 +1311,7 @@ Results are averaged over the levels of: irrigation, intercrop
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_1,<span class="sc">~</span> intercrop)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_1,<span class="sc">~</span> intercrop)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1187,7 +1337,7 @@ Confidence level used: 0.95 </code></pre>
 <section id="lme4-11" class="level3 page-columns page-full" data-number="13.2.5">
 <h3 data-number="13.2.5" class="anchored" data-anchor-id="lme4-11"><span class="header-section-number">13.2.5</span> lme4</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_2,<span class="sc">~</span> cutting)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_2,<span class="sc">~</span> cutting)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Model has 240 prior weights, but we recovered 237 rows of data.
 So prior weights were ignored.</code></pre>
@@ -1205,7 +1355,7 @@ Results are averaged over the levels of: irrigation, intercrop
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_2,<span class="sc">~</span> intercrop)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(alf_2,<span class="sc">~</span> intercrop)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Model has 240 prior weights, but we recovered 237 rows of data.
 So prior weights were ignored.</code></pre>
@@ -1239,9 +1389,9 @@ Confidence level used: 0.95 </code></pre>
 </section>
 <section id="ssp-rm" class="level2 page-columns page-full" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="ssp-rm"><span class="header-section-number">13.3</span> Split-split Plot Repeated Measures</h2>
-<p>Recall, we have evaluated this split-split plot experiment design in the <a href="../chapters/split-split-plot-design.html"><strong>split-split design chapter</strong></a>. In this example,a repeated measures component will be added to the split-split plot model.</p>
+<p>Recall, we have evaluated this split-split plot experiment design in the <a href="../chapters/split-split-plot-design.html"><strong>split-split design chapter</strong></a>. In this example,a repeated measures component will be added to the split-split plot model. This is unpublished data from the PhD Dissertation of Julia Piaskowski.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>phos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"split_split_repeated.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>phos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"split_split_repeated.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <table class="caption-top table">
 <tbody>
@@ -1281,7 +1431,7 @@ Confidence level used: 0.95 </code></pre>
 <li>Check structure of the data</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(phos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(phos)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   240 obs. of  7 variables:
  $ plot  : int  1 1 1 2 2 2 3 3 3 4 ...
@@ -1295,18 +1445,18 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <p>We need two variables for time, one formatted as a factor and the other numeric.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>phos1 <span class="ot">&lt;-</span> phos <span class="sc">%&gt;%</span>   </span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="fu">as.factor</span>(time), </span>
-<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">time_num =</span> <span class="fu">as.numeric</span>(time),</span>
-<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rep =</span> <span class="fu">as.character</span>(bloc),</span>
-<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot =</span> <span class="fu">as.character</span>(plot)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>phos1 <span class="ot">&lt;-</span> phos <span class="sc">|&gt;</span>   </span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">time =</span> <span class="fu">as.factor</span>(time), </span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">time_num =</span> <span class="fu">as.numeric</span>(time),</span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rep =</span> <span class="fu">as.character</span>(bloc),</span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot =</span> <span class="fu">as.character</span>(plot)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(phos1<span class="sc">$</span>Cv, phos1<span class="sc">$</span>Ptrt, phos1<span class="sc">$</span>Inoc) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(phos1<span class="sc">$</span>Cv, phos1<span class="sc">$</span>Ptrt, phos1<span class="sc">$</span>Inoc) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>, ,  = myco
 
@@ -1334,7 +1484,7 @@ Confidence level used: 0.95 </code></pre>
 <li>Check the extent of missing data</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(phos1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(phos1))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    plot     bloc     Ptrt     Inoc       Cv     time   P_leaf time_num 
        0        0        0        0        0        0        0        0 
@@ -1365,8 +1515,8 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 <div class="no-row-height column-margin column-container"><div class="cell">
 
 </div></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(phos1<span class="sc">$</span>P_leaf, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"P leaf"</span>)</span>
-<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(P_leaf <span class="sc">~</span> time, <span class="at">data =</span> phos1, <span class="at">main =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(phos1<span class="sc">$</span>P_leaf, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"P leaf"</span>)</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(P_leaf <span class="sc">~</span> time, <span class="at">data =</span> phos1, <span class="at">main =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1389,18 +1539,18 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> time_num<span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>pfit1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv,</span>
-<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot,</span>
-<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr =</span> corr_str1,</span>
-<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> phos1, <span class="at">na.action=</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>corr_str1 <span class="ot">=</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> time_num<span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot, <span class="at">value =</span> <span class="fl">0.2</span>, <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>pfit1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv,</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot,</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">corr =</span> corr_str1,</span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> phos1, <span class="at">na.action=</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>pfit2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv <span class="sc">+</span> <span class="fu">cs</span>(<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot),</span>
-<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> phos1, <span class="at">na.action=</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>pfit2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(P_leaf <span class="sc">~</span> time<span class="sc">*</span>Ptrt<span class="sc">*</span>Inoc<span class="sc">*</span>Cv <span class="sc">+</span> <span class="fu">cs</span>(<span class="dv">1</span><span class="sc">|</span>rep<span class="sc">/</span>Ptrt<span class="sc">/</span>Inoc<span class="sc">/</span>plot),</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> phos1, <span class="at">na.action=</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>boundary (singular) fit: see help('isSingular')</code></pre>
 </div>
@@ -1416,11 +1566,11 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(pfit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(pfit1, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1428,11 +1578,11 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 </div>
 <div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(pfit2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend=</span><span class="cn">FALSE</span>, <span class="at">alpha =</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(pfit2, <span class="at">check =</span> <span class="fu">c</span>(<span class="st">'linearity'</span>, <span class="st">'qq'</span>), <span class="at">detrend =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="repeated-measures_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="repeated-measures_files/figure-html/unnamed-chunk-52-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1446,7 +1596,7 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(pfit1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(pfit1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in deviance.lme(x, ...): deviance undefined for REML fit</code></pre>
 </div>
@@ -1454,11 +1604,11 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 <pre><code>OK: Error variance appears to be homoscedastic (p &gt; .999).</code></pre>
 </div>
 </div>
-<p>These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a difference in variance for each time point. This issue is addressed in the <a href="../chapters/variance-components.html">chapter on variance components</a>.</p>
+<p>These results do confirm our suspicions that the residuals were not as heteroscedastic as they first appeared. However, the boxplot indicated a difference in variance for each time point. This issue is addressed in the <a href="../chapters/variance-components.html"><strong>chapter on variance components</strong></a>.</p>
 </div>
 <div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(pfit2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_heteroscedasticity</span>(pfit2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Warning: Heteroscedasticity (non-constant error variance) detected (p &lt; .001).</code></pre>
 </div>
@@ -1474,7 +1624,7 @@ Figure&nbsp;13.3: Histogram of the dependent variable.
 <div class="tab-content">
 <div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(pfit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(pfit1, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                  numDF denDF   F-value p-value
 (Intercept)           1   120 1458.2396  &lt;.0001
@@ -1498,7 +1648,7 @@ time:Ptrt:Inoc:Cv     8   120    0.3886  0.9249</code></pre>
 </div>
 <div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(pfit2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(pfit2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
                   npar    Sum Sq   Mean Sq   F value
@@ -1527,7 +1677,7 @@ time:Ptrt:Inoc:Cv    8     57825      7228    0.3886</code></pre>
 <div class="tab-content">
 <div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit1, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit1, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1561,7 +1711,7 @@ Results are averaged over the levels of: time, Ptrt
 Degrees-of-freedom method: containment 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit1, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit1, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1604,7 +1754,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 <div id="tabset-16-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-16-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit2, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit2, <span class="sc">~</span> Inoc<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1650,7 +1800,7 @@ Results are averaged over the levels of: time, Ptrt
 Degrees-of-freedom method: kenward-roger 
 Confidence level used: 0.95 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit2, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emmeans</span>(pfit2, <span class="sc">~</span> time<span class="sc">|</span>Cv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>NOTE: Results may be misleading due to involvement in interactions</code></pre>
 </div>
@@ -1712,6 +1862,11 @@ Confidence level used: 0.95 </code></pre>
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-milk2009" class="csl-entry" role="listitem">
+Milliken, George A., and Dallas E. Johnson. 2009. <em>Analysis of Messy Data Volume 1: Designed Experiments</em>. 2nd Edition. Chapman; Hall/CRC. https://doi.org/<a href="https://doi.org/10.1201/EBK1584883340">https://doi.org/10.1201/EBK1584883340</a>.
+</div>
+</div>
 </section>
 </section>
 </section>
