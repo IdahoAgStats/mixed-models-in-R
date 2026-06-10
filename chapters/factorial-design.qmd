@@ -10,7 +10,9 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 ## Background
 
 Factorial designs are used when there are multiple treatments each with the multiple levels. In a full factorial, these treatments occur in all possible combinations, enabling researchers to estimate the main effect of each treatment level their interactions together on the dependent variable. Incomplete factorials are another experimental design option where some but not combinations occur in the study. This chapter focuses on the former, a full factorial study. The statistical model for a complete factorial design is:
+
 $$y_{ijk} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \delta_k +  \epsilon_{ijk}$$ 
+
 Where: 
 
 $\mu$ = experiment mean
@@ -44,16 +46,12 @@ library(dplyr); library(performance)
 ```
 :::
 
-The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two fabrication methods (trt) on beef top round quality. It includes 11 replications (animal in this case), 2 locations and 2 different treatment factors.
-
-There were two fabrication methods (trt factor) applied to the beef top round which includes alternative and traditional methods. The measurements were taken from superficial and deep locations (location factor) of the muscle. The response variable is a measure of yellowness (b_star) in the meat sample.
+The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two beef fabrication methods ('trt') in two carcass depths ('location') on beef top round quality. It includes 11 replications ('animal'), where each animal was subject to all 4 possible treatment combinations. The response variable is a measure of yellowness (b_star) in the meat sample.
 
 The objective of this example is to evaluate the individual and interactive effect of location and treatment factors on the yellowness of the meat sample. 
 
 ```{r warning=FALSE, message=FALSE}
-library(readxl)
-factorial <- read_excel(here::here("data/factorial.xlsx"))
-data1<- factorial 
+beef <- read.csv(here::here("data/beef_factorial.csv"))
 ```
 
 |       |                                |
@@ -61,7 +59,7 @@ data1<- factorial
 | animal | random variable                 |
 | location     | location factor, 2 levels   |
 | trt     | treatment, 2 levels  |
-|b_star     | response variable |
+|b_star     | dependent variable |
 
 : Table of variables in the data set {tbl-factorial}
 
@@ -72,11 +70,12 @@ data1<- factorial
 First step is to verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.
 
 ```{r}
-str(data1)
+str(beef)
 ```
 In this data, treatment factors, 'n', 'p', & 'k' are integers, we need to convert these variables to factor.
 ```{r}
-dat2 <- data1 |> mutate(animal = as.factor(animal))
+beef <- beef |> 
+  mutate(animal = as.character(animal))
 ```
 
 - Inspect the independent variables
@@ -84,8 +83,8 @@ dat2 <- data1 |> mutate(animal = as.factor(animal))
 We are inspecting levels of independent variables to make sure the expected levels are present in the data.
 
 ```{r}
-table(dat2$animal)
-table(dat2$location, dat2$trt)
+table(beef$animal)
+table(beef$location, beef$trt)
 ```
 
 The design looks well balanced.
@@ -93,7 +92,7 @@ The design looks well balanced.
 - Check the extent of missing data
 
 ```{r}
-colSums(is.na(dat2))
+colSums(is.na(beef))
 ```
 
 There are no missing values in this data set.
@@ -107,11 +106,11 @@ This is the last step is to inspect the dependent variable to ensure it looks as
 #| fig-cap: "Histogram of the dependent variable."
 #| column: margin
 par(mar=c(5.1, 5, 2.1, 2.1))
-hist(dat2$b_star, main = "", xlab = "Infection intensity", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
+hist(beef$b_star, main = "", xlab = "Infection intensity", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
 ```{r, eval=FALSE}
-hist(dat2$b_star, main = NA, xlab = "b1")
+hist(beef$b_star, main = NA, xlab = "b1")
 ```
 
 No extreme values are observed in the dependent variable, and the distribution looks as expected.  
@@ -134,26 +133,28 @@ In this analysis, location and trt are fixed factors and animal is a random effe
 ### lme4
 
 ```{r, warning=FALSE}
-model1_lmer <- lmer(b_star ~ location*trt + (1|animal),
-                   data = dat2, 
+mod_lmer <- lmer(b_star ~ location*trt + (1|animal),
+                   data = beef, 
                    na.action = na.exclude)
-tidy(model1_lmer)
+
+tidy(mod_lmer)
 ```
 
 ### nlme
 
 ```{r}
-model2_lme <- lme(b_star ~ location*trt,
+mod_lme <- lme(b_star ~ location*trt,
               random = ~ 1|animal,
-              data = dat2, 
+              data = beef, 
               na.action = na.exclude)
-tidy(model2_lme)
+
+tidy(mod_lme)
 ```
 :::
 
 :::: column-margin
 ::: callout-note
-The `tidy()` function from the **broom.mixed** package provides a short summary output of the model.
+The `tidy()` function from the 'broom.mixed' package provides a short summary output of the model.
 :::
 ::::
 
@@ -163,13 +164,13 @@ The `tidy()` function from the **broom.mixed** package provides a short summary 
 ### lme4
 
 ```{r, fig.height=6, fig.width=8}
-check_model(model1_lmer,  check = c('qq', 'linearity', 'reqq'), detrend=FALSE, alpha=0)
+check_model(mod_lmer,  check = c('qq', 'linearity', 'reqq'), detrend = FALSE, alpha=0)
 ```
 
 ### nlme
 
 ```{r, fig.height=4, fig.width=7}
-check_model(model2_lme,  check = c('qq', 'linearity'), detrend=FALSE, alpha=0)
+check_model(mod_lme,  check = c('qq', 'linearity'), detrend = FALSE, alpha=0)
 ```
 :::
 
@@ -184,32 +185,33 @@ We can obtain an ANOVA table for the linear mixed model using the function `anov
 ### lme4
 
 ```{r}
-anova(model1_lmer, type = "3", ddf = "Kenward-Roger")
+anova(mod_lmer, type = "3", ddf = "Kenward-Roger")
 ```
+
 ### nlme
 ```{r, fig.height=3}
-anova(model2_lme, type = "marginal")
+anova(mod_lme, type = "marginal")
 ```
 :::
 
 Here we do not observe any difference in group variance of interaction effects. Among all treatment factors, only location had a significant effect on the yellowness in the meat samples. 
 
-Let’s find estimates for some of the main effects and intercation effects of fixed factors on yellowness in the meat samples.
+Let’s find estimates for some of the main effects and interaction effects of fixed factors on yellowness in the meat samples.
 
 ::: panel-tabset
 ### lme4
 ```{r}
-emmeans(model1_lmer, specs = ~ location)
-emmeans(model1_lmer, specs = ~ location)
-emmeans(model1_lmer, specs = ~ trt | location)
+emmeans(mod_lmer, specs = ~ location)
+emmeans(mod_lmer, specs = ~ location)
+emmeans(mod_lmer, specs = ~ trt | location)
 ```
 
 ### nlme
 ```{r}
-emmeans(model2_lme, specs = ~ location)
-emmeans(model2_lme, specs = ~ trt)
-emmeans(model2_lme, specs = ~ trt | location)
+emmeans(mod_lme, specs = ~ location)
+emmeans(mod_lme, specs = ~ trt)
+emmeans(mod_lme, specs = ~ trt | location)
 ```
 :::
 
-The code above is calculating the estimated marginal means for main effects of "trt" within each "location" under the model that includes main effects and interactions. Please note the warning message that means are averaged over the levels. It is an important detail to take into account when conducting inference and making conclusions when calculating means for a reduced model (that ignores interactions). As mentioned in many a statistics course, calculating main effects when there is an interaction present can result in misleading conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.
+The code above is calculating the estimated marginal means for main effects of 'trt' within each 'location' under the model that includes main effects and interactions. Please note the warning message that means are averaged over the levels. It is an important detail to take into account when conducting inference and making conclusions when calculating means for a reduced model (that ignores interactions). As mentioned in many statistics courses, calculating main effects when there is an interaction present can result in misleading conclusions. When working with factorial designs, make sure to interpret ANOVA and estimated marginal means for main and interaction effects with care.
