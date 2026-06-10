@@ -4,9 +4,9 @@ title: Marginal Means & Contrasts
 
 ## Background
 
-Estimated marginal means are the means of a response variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The ***emmeans*** package is one of the most commonly used package in R for determining marginal means (also known as **least-squares means**). In this chapter, we will demonstrate the use of the ***emmeans*** package to calculate estimated marginal means and confidence intervals and conduct post-hoc comparisons.
+Estimated marginal means are the means of a response variable averaged across all levels of other variables in a model, conditioned on the variance-covariance matrix. That is to say, these are much more than plain averages. The 'emmeans' package is one of the most commonly used package in R for determining marginal means (also known as least squares means). In this chapter, we will demonstrate the use of the 'emmeans' package to calculate estimated marginal means and confidence intervals and conduct post hoc comparisons.
 
-To demonstrate the use of the ***emmeans*** package. We will use the model from split plot lesson ([**Chapter 7**](split-plot-design.qmd)), where we evaluated the effect of nitrogen and variety on oat yield. This data contains six blocks, three main plots (Variety) and four subplots (Nitrogen). The dependent variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 7**](split-plot-design.qmd).
+To demonstrate the use of the 'emmeans' package. We will use the model from split plot lesson ([**Chapter 7**](split-plot-design.qmd)), where we evaluated the effect of nitrogen and variety on oat yield. This data contains six blocks, three main plots (Variety) and four subplots (Nitrogen). The dependent variable was oat yield. To read more about the experiment layout details please read RCBD split-plot section in [**Chapter 7**](split-plot-design.qmd).
 
 
 ::: callout-note
@@ -15,7 +15,7 @@ To demonstrate the use of the ***emmeans*** package. We will use the model from 
 For demonstration of the `emmeans` package, we are fitting model with `nlme` package. Please note that code below calculating marginal means works for both `lmer()` and `nlme()` models.
 :::
 
-## Analysis Examples
+## Set Up Analysis
 Let's start this example by loading the required libraries for fitting linear mixed models using **nlme** package.
 
 ```{r, warning=FALSE, message=FALSE}
@@ -38,117 +38,109 @@ To read more about data and model explanation please refer to [**Chapter 7**](sp
 
 ### Model fitting
 ```{r}
-model1 <- lme(Y ~  V + N + V:N ,
-                  random = ~1|B/V,
-                  data = data1, 
-                  na.action = na.exclude)
-tidy(model1)
+m1 <- lme(Y ~  V + N + V:N,
+          random = ~1|B/V,
+          data = data1, 
+          na.action = na.exclude)
+
+tidy(m1)
 ```
 
 ### Check Model Assumptions
+
 ```{r,  fig.height=3}
-check_model(model1, check = c('qq', 'linearity'), detrend = FALSE, alpha = 0)
+check_model(m1, check = c('qq', 'linearity'), detrend = FALSE, alpha = 0)
 ```
 
 Residuals look good with a small hump in middle and normality curve looks reasonable.
 
-### Model Inference
 
+## Estimated Marginal Means
+
+Now that we have fitted a linear mixed model (m1) and it meets the model assumptions, we can use the `emmeans()` function to obtain estimated marginal means for main effects (variety and nitrogen) and interaction (variety-by-nitrogen). 
+
+### Main effects
+
+The main effects in m1 were V and N. 
 ```{r}
-anova(model1, type = "marginal")
-```
-The analysis of variance showed a significant N effect and no effect of V and V x N interaction effect on oat yield.
-
-### Estimated Marginal Means
-
-Now that we have fitted a linear mixed model (model1) and it meets the model assumptions, we can use the `emmeans()` function to obtain estimated marginal means for main effects (variety and nitrogen) and interaction (variety x nitrogen). 
-
-#### Main effects
-
-The main effects in model1 were V and N. 
-```{r, warning=FALSE}
-m1 <- emmeans(model1, ~V, level = 0.95)
+m1 <- emmeans(m1, ~V, level = 0.95)
 m1
 ```
 
-```{r, warning=FALSE}
-m2 <- emmeans(model1, ~N)
-m2
-```
-Make sure to read and interpret marginal means carefully. Here, when we calculated marginal means for main effects of V and N, these were averaged over the levels of other factor in experiment. For example, estimated means for each variety were averaged over the N treatments.
-
-#### Interaction effects
-
-Now let's evaluate the marginal means for the interaction effect of V and N. These can be calculated either using `V*N` or `V|N` format. 
 ```{r}
-m3 <- emmeans(model1, ~V|N)
-m3
+emm2 <- emmeans(m1, ~N)
+emm2
 ```
+These are the model estimated marginal means. By package design, they are labelled "emmeans" in the column header. The columns "SE" and "df" provide the standard error and degrees of freedom, which are used to provide the lower and upper confidence limits ("lower.CL" and "upper.CL", respectively). The default is a 95% confidence interval, but this can be set in the `emmeans()` call. 
+
+Make sure to read and interpret marginal means carefully. Here, when we calculated marginal means for main effects of V and N, these were averaged over the levels of other factor in experiment. That is, estimated means for each N treatment level was averaged over levels of variety.
+
+### Interaction effects
+
+The interaction effect of V and N can be calculated either using `V*N` or `V|N` syntax. 
 
 ```{r}
-m4 <- emmeans(model1, ~V*N)
-m4
+emm3 <- emmeans(m1, ~V|N)
+emm3
 ```
 
-:::{.callout-note}
-Here, note that we estimated marginal means in two ways: 
+```{r}
+emm4 <- emmeans(m1, ~V*N)
+emm4
+```
 
-`V*N` estimates the marginal means for each combination of levels across these variables, and when conducting pairwise comparisons on these, all combinations are compared to one another simultaneously (not recommended). 
+:::{.callout-note collapse=false}
+## Specifying Interactions
 
-`V|N` estimates the marginal means for each V at a given level of N. When conducting pairwise comparisons on these, all levels of the variable V are compared with each other within each level of N, not across all levels of N (a sensible approach). 
+Here, note that estimated marginal means can be provided in two ways: 
+
+- `V*N` estimates the marginal means for each combination of levels across these variables, and downstream comparisons are conducted across all levels along with a p-value adjustment for multiple testing. Depending on your research aims, this may or may not be a desirable attribute. 
+
+- `V|N` estimates the marginal means for each V at a given level of N. When conducting comparisons on these results, the comparison are stratified within "N", the variable to the right of the vertical line. Depending on the researcher's goal, the opposite relationship can be specified: `N|V` where downstream contrasts (and ) are stratified by "V". There is no difference between the estimates themselves, only in how downstream contrasts are conducted. 
+
 :::
 
 ## Contrasts using emmeans
 
-The `pairs()` function from the emmeans package can be used to evaluate pairwise comparisons among treatment factors. The emmean object (m1, m2) will be passed through the `pairs()` function, which will provide a p-value adjustment equivalent to the Tukey test.
+### Pairwise
+
+The `pairs()` function from the emmeans package can be used to evaluate pairwise comparisons among treatment factors. The emmeans object (m1) will be passed through the `pairs()` function, which will provide a p-value adjustment equivalent to the Tukey test.
 
 ```{r}
-pairs(m1, adjust = "tukey")
+pairs(emm2, adjust = "tukey")
 ```
 
 ```{r}
-pairs(m2)
+pairs(emm3)
 ```
 
 The more levels in a variable, the more comparisons that are conducted, reducing statistical power due to the p-value adjustment used to limit type I error.
 
-::: callout-note
-## `pairs()`
+:::{.callout-note collapse="false"}}
+## P-value adjustment for interactions
 
-This function conducts all pairwise tests for the specified variable specified. The default p-value adjustment in the `pairs()` function is "tukey"; other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. If you are conducting this on a variable with many levels (e.g. more than five), this adjustment can be severe, resulting in very few statistically significant results. To avoid this, consider other tests such as 'compare to a control' or more tailored custom contrasts. 
+`pairs()` conducts all pairwise tests for the specified variable(s). The default p-value adjustment in the `pairs()` function is "tukey"; other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. If you are conducting this on a variable with many levels (e.g. more than five), this adjustment can be severe, resulting in very few statistically significant results. To avoid this, use a less conservative adjustment (e.g. 'sidak') or choose options that conduct fewer tests (e.g. compare to a control, tailored custom contrasts). 
+
+Recall that `V*N` and `V|N` produce identical estimates, but differ in how they handle post hoc contrasts. How does this look in practice? 
+
+```{r}
+emmeans(m1, pairwise ~ N*V, at = list(V = c("Marvellous", "Victory")))
+emmeans(m1, pairwise ~ N|V, at = list(V = c("Marvellous", "Victory")))
+```
+The first example `N*V` conducted more comparisons than `V|N`, spanning all possible combinations of N and V factor levels. `N|V` conducted all pairwise comparison between levels of N *for each level of V*.  The result is fewer tests, a less severe p-value adjustment for multiple testing, and a higher proportion of informative constrasts. Only two varieties were included to reduce the output; however, the more factor levels present, the greater this problem becomes if all pairwise tests across all possible factor combinations are done. 
 :::
 
-### Custom contrasts 
 
-Custom contrast in statistics refer to specific comparisons between groups as defined by researcher before analyzing the data. This allows us to test the particular research hypothesis, for example to compare treatment A vs B or treatment A vs C. These are linear combination of treatment means where we assign specific weights to each grouping depending on our hypothesis. The condition for custom contrasts is that the weights must sum to zero. 
+### Pairwise Consecutive
 
-Here, we will demonstrate the steps to build custom contrasts for comparing nitrogen treatment A1 to A2, A3, and A4, separately.
-
-First, run emmeans object 'm2' for nitrogen treatments.
-
+We can also evaluate consecutive pairwise comparison as follows:
 ```{r}
-m2
+contrast(emm2, "consec")
 ```
 
-Now, let's create a vector for each nitrogen treatment in the same order as presented in output from m2. 
-```{r}
-A1 = c(1, 0, 0, 0)
-A2 = c(0, 1, 0, 0)
-A3 = c(0, 0, 1, 0)
-A4 = c(0, 0, 0, 1)
-```
+This conducts pairwise contrasts between adjacent levels of a factor. 
 
-These vectors (A1, A2, A3, A4) represent each nitrogen treatment in the order as presented in the m2 emmeans object. A1, A2, A3, and A4 vectors represent 0.0 cwt, 0.2 cwt, 0.4 cwt, and 0.6 cwt nitrogen treatments, respectively. 
-
-The next step is to create custom contrasts for comparing '0.0cwt' (A1) treatment to  '0.2cwt' (A2), '0.4cwt' (A3), and '0.6cwt' (A4) treatments. 
-
-```{r}
-contrast(m2, method = list(A1 - A2) )
-contrast(m2, method = list(A1 - A3) )
-contrast(m2, method = list(A1 - A4) )
-```
-
-The output shows the difference in mean yield between the control and the three N treatments. The results show that yield increased with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety.
+### Treatment versus Control
 
 In addition to these custom contrast options, we can also use the built-in functions in the **emmeans** package to compare treatments as per our analysis objectives. For example, comparing treatments to control or to compare one treatment level to all other groups.
 
@@ -162,7 +154,8 @@ Let's suppose we want to compare 'Marvellous' with the other varieties in the an
 ```{r}
 contrast(m1, "trt.vs.ctrl", ref = "Marvellous")
 ```
-Alternatively, we can reference the control group by its appearance in the variety order. In m1, 'Golden rain', 'Marvellous', and 'Victory' are ordered as 1, 2, and 3 respectively.^[This follow an alphabetic ordering that can be altered with the `factor()` function.] 
+
+Alternatively, we can reference the control group by its appearance in the variety order. In m1, 'Golden rain', 'Marvellous', and 'Victory' are ordered as 1, 2, and 3 respectively.^[This follow an alphanumeric ordering that can be altered with the `factor()` function.] 
 
 If we want to contrast 'Golden rain' with other varieties, we can do this by either using `trt.vs.ctrl1`  code, or `trt.vs.ctrlk` and referring to group 1. Both code options will generate the same results.
 
@@ -170,66 +163,116 @@ If we want to contrast 'Golden rain' with other varieties, we can do this by eit
 contrast(m1, "trt.vs.ctrl1")
 contrast(m1, "trt.vs.ctrlk", ref = 1)
 ```
-We can further customize the contrasts by excluding specific treatment groups from the comparison.
 
-we can demonstrate this by printing the m2 object first to check the treatment order: 
+### Compare to a Constant
+
+It is sometimes desired to compare the estimated marginal means to a particular value such as zero or 1 if working with ratios. We can ask if all crop yield are greater than 75:
+
 ```{r}
-m2
+summary(emm4, null = 75, infer = TRUE, side = ">")
 ```
+
+Sometimes it is useful to compare to the overall mean, which can be done as thus:
+
+```{r}
+contrast(emm3, "eff")
+```
+
+### Contrasts at Specific Levels
+
+1. Contrasts can be limited to specific levels. In the following code, the contrast statement is wrapped directly into the emmeans statement instead of acting on an emmean object. 
+
+```{r}
+emmeans(m1, consec ~ N|V, at = list(V = "Golden.rain"))
+```
+ 
+2. We can further customize the contrasts by excluding specific treatment levels from the comparison.
+
+We can demonstrate this by printing the emm2 object first to check the treatment order: 
+```{r}
+emm2
+```
+
 Next, we can conduct a pairwise comparison by excluding 0.2 cwt. 
 
 ```{r}
-pairs(m2, exclude = 2)
+pairs(emm2, exclude = 2)
 ```
 
-Or we can also evaluate consecutive pairwise comparison as follows:
-```{r}
-contrast(m2, "consec")
-```
+### Compact letter display
 
-## Compact letter displays
+Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the [**Analysis Tips Chapter**](/chapters/analysis-tips.qmd#sec-cld_warning). In particular, using CLD to compare a large number of levels (e.g. 10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing compact letter display. 
 
-Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the [Analysis Tips Chapter](/chapters/analysis-tips.qmd#sec-cld_warning). In particular, using CLD to contrast a large number of levels (e.g. 10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing compact letter display. 
+The R package 'multcompView' [-@multcompView] can be used to generate a display where any two means associated with same symbol are not statistically different using the function `cld()`.
 
-The R package ***multcompView*** [-@multcompView] can be used to generate a display where any two means associated with same symbol are not statistically different using the function `cld()`.
-
-Below are examples of CLD for objects m1 (examining variety), m2 (examining nitrogen), and m3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the $.group$ are not statistically different from each other. 
+Below are examples of CLD for objects m1 (examining variety), emm2 (examining nitrogen), and emm3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the $.group$ are not statistically different from each other. 
 
 ```{r}
 cld(m1, alpha = 0.05, Letters = letters)
 ```
 
 ```{r}
-cld(m2, alpha = 0.05, Letters = letters)
+cld(emm2, alpha = 0.05, Letters = letters)
 ```
-Let's have a look at the CLDs for the interaction effect:
+
+Compact letter display for an interaction effect:
 
 ```{r}
-cld3 <- cld(m3, alpha = 0.05, Letters = letters)
+cld3 <- cld(emm3, alpha = 0.05, Letters = letters)
 ```
 
+### Custom contrasts 
 
-## Alternative Approaches
+Custom contrast in statistics refer to specific comparisons between groups as defined by researcher before analyzing the data. This allows us to test the particular research hypothesis, for example to compare treatment A vs B or treatment A vs C. These are linear combination of treatment means where we assign specific weights to each grouping depending on our hypothesis. The condition for custom contrasts is that the weights must sum to zero. 
 
-1. Equivalence testing
+Here, we will demonstrate the steps to build custom contrasts for comparing nitrogen treatment A1 to A2, A3, and A4, separately.
+
+First, run emmeans object 'emm2' for nitrogen treatments.
+
+```{r}
+emm2
+```
+
+1.  Specify levels that can be reused:
+Create a vector for each nitrogen treatment in the same order as presented in output from m2. 
+```{r}
+A1 = c(1, 0, 0, 0)
+A2 = c(0, 1, 0, 0)
+A3 = c(0, 0, 1, 0)
+```
+
+Please note that the number of 
+
+These vectors (A1, A2, A3, A4) represent each nitrogen treatment in the order as presented in the 'emm2' emmeans object. A1, A2, and A3 vectors represent 0.0 cwt, 0.2 cwt, and 0.4 cwt nitrogen treatments, respectively. 
+
+The next step is to create custom contrasts for comparing '0.0cwt' (A1) treatment to  '0.2cwt' (A2) and '0.4cwt' (A3) treatments. 
+
+```{r}
+contrast(emm2, method = list(A2 - A1))
+contrast(emm2, method = list(A1 - A3))
+contrast(emm2, method = list(A1 - (A2 + A3)/2))
+```
+
+The output shows the difference in mean yield between the control and the three N treatments. The results show that yield increased with nitrogen treatments compared to the control (0.0 cwt) irrespective of the oat variety. The last contrast is the comparing 0.0 cwt versus the average of 0.2 and 0.4 cwt. Note that the order of the contrast effects if a negative or positive estimate is obtained (through simple subtraction). 
+
+### Equivalence testing
 
 If your experimental goals include evaluating if two or more treatments are the same or equivalent, you can use equivalence testing. This requires that we first establish a specific threshold value, which is the maximum difference between groups that is not considered meaningful in the given the data set. That is, what is a numerical difference that is not substantial, and if two groups differed by that amount or less, the researcher would not consider that to be a difference that matters. This is a value of judgement informed by domain expertise. 
 
-For the next example, we will assume that if the mean difference of two groups differ by less than 30 (specified in `delta` argument), they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object m2). 
+For the next example, we will assume that if the mean difference of two groups differ by less than 30 (specified in `delta` argument), they can be considered equivalent. We will conduct an equivalence test for all pairwise comparisons of nitrogen treatment emmeans (object emm2). 
 
 ```{r}
-cld(m2, delta = 30, adjust = "none", Letters = letters)
+cld(emm2, delta = 30, adjust = "none", Letters = letters)
 ```
 
 Here, two treatment groups 0.0 cwt and 0.2 cwt, 0.4 cwt and 0.6 cwt can be considered equivalent.
 
-2. Significance sets 
+### Significance sets 
 
 Another option to CLDs is the significance sets with command `signif = TRUE` in `cld()` function. In this, means that have same letters are statistically different. This can be a useful method while working with large number of groups.
 
 ```{r}
-cld(m2, signif = TRUE)
-
+cld(emm2, signif = TRUE)
 ```
 
 It's important to note that we cannot conclude that treatment levels with the same letter are equivalent. We can only conclude that they are not different. 
@@ -238,7 +281,7 @@ There is a separate branch of statistics, [equivalence testing](https://en.wikip
 
 See @sec-cld_warning for additional warnings about problems with using compact letter display. 
 
-## Export emmeans to an external file
+## Export emmeans results to an external file
 
 The outputs from `emmeans()` or `cld()` objects can be exported by first converting them to a data frame and using any of the usual export functions (e.g. `write.csv()`)
 
@@ -250,15 +293,14 @@ write.csv(result_n, "results.csv", row.names = FALSE)
 
 ## Graphical display of emmeans 
 
-On easy option is to use default plotting functions that accompany the **emmeans** package. 
+On easy option is to use default plotting functions that accompany the 'emmeans' package. 
 
 ```{r}
 plot(m1)
-plot(m3)
-#pwpp(m1)
+plot(emm3)
 ```
 
-Eventually, you will want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a data frame for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in ggplot, with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
+Eventually, you are likely want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a data frame for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in 'ggplot2', with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
 
 ```{r, warning = FALSE}
 ggplot(cld3) +
@@ -278,18 +320,20 @@ Recall: groups that do not differ significantly from each other share the same l
 
 We can also use the `emmip()` function from the emmeans package to examine the trend in the interaction between variety and nitrogen factors.
 ```{r}
-emmip(model1, N ~ V)
+emmip(m1, N ~ V)
 ```
 
 ::: {.callout-note}
 ## More details on emmeans
 
-The package ***emmeans*** provides extensive functionality for estimating means, confidence intervals, making contrasts and more. We discussed a few major features, but this is far from an exhaustive survey of that packagre. To learn more about this functionality, see the [vignettes](https://rvlenth.github.io/emmeans/){.external target="_blank"} for this package. 
+The package 'emmeans' provides extensive functionality for estimating means, confidence intervals, making contrasts and more. We discussed a few major features, but this is far from an exhaustive survey of that package. To learn more about this functionality, see the [vignettes](https://rvlenth.github.io/emmeans/){.external target="_blank"} for this package. 
+
+Additionally, here another [slide set](https://agstats.io/tutorials/estimated-marginal-means#/making-sense-of-your-estimates) that reviews 'emmeans' functionality. 
 :::
 
 
 ::: {.callout-note}
-## P values, “significance”, and recommendations
+## P values and “significance”
 
 P values are often misunderstood. In particular, the term “statistical significance” has been frequently misused and misinterpreted in myriad ways. Most saliently, a "non-significant" statistical result does not mean there is no treatment effect.  
 
