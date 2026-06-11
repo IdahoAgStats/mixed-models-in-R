@@ -38,7 +38,9 @@ To read more about data and model explanation please refer to [**Chapter 7**](sp
 
 ### Model fitting
 ```{r}
-m1 <- lme(Y ~  V + N + V:N,
+#| warning: false
+
+m1 <- lme(Y ~ V*N,
           random = ~1|B/V,
           data = data1, 
           na.action = na.exclude)
@@ -63,12 +65,12 @@ Now that we have fitted a linear mixed model (m1) and it meets the model assumpt
 
 The main effects in m1 were V and N. 
 ```{r}
-m1 <- emmeans(m1, ~V, level = 0.95)
-m1
+emm1 <- emmeans(m1, ~ V, level = 0.95)
+emm1
 ```
 
 ```{r}
-emm2 <- emmeans(m1, ~N)
+emm2 <- emmeans(m1, ~ N)
 emm2
 ```
 These are the model estimated marginal means. By package design, they are labelled "emmeans" in the column header. The columns "SE" and "df" provide the standard error and degrees of freedom, which are used to provide the lower and upper confidence limits ("lower.CL" and "upper.CL", respectively). The default is a 95% confidence interval, but this can be set in the `emmeans()` call. 
@@ -302,7 +304,7 @@ plot(emm3)
 
 Eventually, you are likely want to create customized plots of model estimates. To do this, the means will have to be manually extracted and converted to a data frame for usage by plotting libraries. The outputs from the cld3 object (yield of variety within each nitrogen level) can be visualized in 'ggplot2', with variety on the x-axis and estimated means of yield on the y-axis. Different N treatments are presented using different colors.
 
-```{r, warning = FALSE}
+```{r}
 ggplot(cld3) +
   aes(x = V, y = emmean, color = N) +
   geom_point(position = position_dodge(width = 0.9)) +
