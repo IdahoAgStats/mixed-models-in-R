@@ -1,36 +1,31 @@
 # mixed-models-in-R
 
-A set of tutorial for running mixed models in R
+*A set of tutorials for running mixed models in R*
 
-#### Not ready for public consumption. 
+#### Currently a Work in Progress
 
-### Sections done
+### Sections Reviewed Internally
 
-- index/intro
+- index & intro
 - background
 - analysis tips
-- RCBD
-- factorial
+- means-and-contrasts
+- analytical flow chart
 - resources
+- factorial
+
+### Sections in Progress (for review)
+
+- repeated measures
+
+### Sections to Review
+
+- RCBD
 - split plot
 - split-split plot
 - latin square
 - IBD
 - strip plot
-- repeated measures 
-- means-and-contrasts
-- analytical flow chart
-
-### Section in progress
-
-
 - variance and variance components
-
-
-### Long-term TODO
-(who knows when we get to this)
-
-- address or add [afex](https://CRAN.R-project.org/package=afex)
-- effect sizes in mixed models and all that funny stuff with the error term and EDF
 
 
