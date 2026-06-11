@@ -7,15 +7,25 @@ reference-location: margin
 source(here::here("settings.r"))
 ```
 
-Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks.
+Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as time, spatial variation, changes in equipment or operators, or myriad other causes. They are a random effect where the 'blocks' used in the study are a random sample from a distribution of other blocks.
 
 ## Background
 
 The statistical model:
 
-$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ Where:
+$$y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}$$ 
 
-$\mu$ = overall experimental mean $\alpha$ = treatment effects (fixed) $\beta$ = block effects (random) $\epsilon$ = error terms
+Where:
+
+$\mu$ = overall experimental mean 
+
+$\alpha$ = treatment effects (fixed) 
+
+\beta$ = block effects (random) 
+
+and
+
+$\epsilon$ = error terms
 
 $$ \epsilon \sim N(0, \sigma)$$
 
@@ -61,15 +71,15 @@ var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 
 ### Data integrity checks
 
-The first thing is to make sure the data is what we expect.We will the steps explained in [**Chapter 4**](model-flow.qmd). Here are the steps to verify our data:
+The first thing is to make sure the data is what we expect. We will follow the steps outline in [**Chapter 4**](model-flow.qmd).
 
--   Check structure of the data
+-   Check the structure of the data
 
 ```{r}
 str(var_trial)
 ```
 
-These look okay except for block, which is currently coded as integer (a simplied numeric type). We don't want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will avoid that. Block can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion since the linear modelling functions from 'lme4' and 'nlme' automatically convert character variables to factors. 
+These look okay except for block, which is currently coded as integer (a simplified numeric type). We don't want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will avoid that. Block can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion since the linear modelling functions from 'lme4' and 'nlme' automatically convert character variables to factors. 
 
 ```{r}
 var_trial$block <- as.character(var_trial$block)
@@ -111,9 +121,9 @@ hist(var_trial$yield_bu_a, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axi
 hist(var_trial$yield_bu_a, main = NA, xlab = "yield")
 ```
 
-The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.
+The range of the observed data falls within the expected range of plausible values. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems that occurred during the trial or in postprocessing.
 
-This data set is ready for analysis!
+This data set is ready for analysis.
 
 ### Model Building
 
@@ -170,7 +180,6 @@ lattice::trellis.par.set("fontsize", list(text=22, points=10))
 
 plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.),
      abline = 0, xlab = "fitted values", ylab = "studentized residuals")
-
 ```
 
 ```{r, eval=FALSE}
@@ -178,9 +187,9 @@ plot(model_rcbd_lmer, resid(., scaled=TRUE) ~ fitted(.),
      xlab = "fitted values", ylab = "studentized residuals")
 ```
 
-We have observed a random and uniform distribution of points. This looks good!
+This plot indicates a random and uniform distribution of points. Brilliant! 
 
-As explained in [**Chapter 4**](model-flow.qmd) we will first extract residuals using`resid()` and then generate a qq-plot and line.
+To make a qq plot, the residuals are extracted first and then applied to the qq plotting function.
 
 ```{r, echo=FALSE}
 #| label: fig-rcbd_norm-1
@@ -195,7 +204,8 @@ qqnorm(resid(model_rcbd_lmer), main = NULL, cex = 1.4, cex.lab = 1.8, cex.axis =
 qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
 ```
 
-This is reasonably good. Things do tend to fall apart at the tails a little, but since linear models are robust to model departures from normality, this is not concerning.
+This is reasonably good. Things do tend to fall apart at the tails a little, but si
+nce linear models are robust to model departures from normality, this is not concerning.
 
 #### New Method {#new-iid-checks}
 
@@ -241,7 +251,7 @@ as.data.frame(rcbd_emm2) |> arrange(desc(emmean)) |> head(n = 10)
 ```
 :::
 
-These tables provide the estimated marginal means ("emmeans", sometimes called "least squares means"), the standard error ("SE") of those means, the degrees of freedom ("df") and the lower and upper bounds of the 95% confidence interval ("lower.CL" and "upper.Cl", respectively). As an additional step, the estimated marginal means were sorted from largest to smallest. Note the difference in degrees of freedom for each model. 'lmerTest' is implmenting the Kenward-Roger's method [@lmertest], while 'nlme' implements the containment method for degrees of freedom calculations. The Kenward-Roger's method is preferred for small sample inference such as this example. Since it has a considerably larger estimate for the degrees of freedom, the resultant confidence intervals are much smaller compared to those using containment for df estimation. However, this has little noticeable effect on downstream statistical contrasts; both the differences in means and t-tests are nearly identical for the two models. 
+These tables provide the estimated marginal means ("emmeans"), the standard error ("SE") of those means, the degrees of freedom ("df") and the lower and upper bounds of the 95% confidence interval ("lower.CL" and "upper.Cl", respectively). As an additional step, the estimated marginal means were sorted from largest to smallest. Note the difference in degrees of freedom for each model. 'lmerTest' is implementing the Kenward-Roger's method [@lmertest], while 'nlme' implements the containment method for degrees of freedom calculations. The Kenward-Roger's method is preferred for small sample inference such as this example. Since it has a considerably larger estimate for the degrees of freedom, the resultant confidence intervals are much smaller compared to those using containment for df estimation.  
 
 At this point, the analysis goals have been met; we know the estimated means for each treatment and their rankings.
 
@@ -262,3 +272,5 @@ anova(model_rcbd_lmer, ddf = "Kenward-Roger")
 anova(model_rcbd_lme)
 ```
 :::
+
+In this example, the difference in the degrees of freedom between models had little noticeable effect on downstream statistical contrasts or ANOVA.
