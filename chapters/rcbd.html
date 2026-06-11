@@ -99,7 +99,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-4cac5c95ad77e2baad9456b82c9c4a8b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-02a0d64e7cf6fc5336fe4ff230730e5e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -394,12 +394,17 @@ window.Quarto = {
 </header>
 
 
-<p>Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as over time, spatial variance, changes in equipment or operators, or myriad other causes. They are a random effect where the actual blocks used in the study are a random sample of a distribution of other blocks.</p>
+<p>Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as time, spatial variation, changes in equipment or operators, or myriad other causes. They are a random effect where the ‘blocks’ used in the study are a random sample from a distribution of other blocks.</p>
 <section id="background" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="background"><span class="header-section-number">5.1</span> Background</h2>
 <p>The statistical model:</p>
-<p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span> Where:</p>
-<p><span class="math inline">\(\mu\)</span> = overall experimental mean <span class="math inline">\(\alpha\)</span> = treatment effects (fixed) <span class="math inline">\(\beta\)</span> = block effects (random) <span class="math inline">\(\epsilon\)</span> = error terms</p>
+<p><span class="math display">\[y_{ij} = \mu + \alpha_i + \beta_j + \epsilon_{ij}\]</span></p>
+<p>Where:</p>
+<p><span class="math inline">\(\mu\)</span> = overall experimental mean</p>
+<p><span class="math inline">\(\alpha\)</span> = treatment effects (fixed)</p>
+<p>$ = block effects (random)</p>
+<p>and</p>
+<p><span class="math inline">\(\epsilon\)</span> = error terms</p>
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[ \beta \sim N(0, \sigma_b)\]</span></p>
 <p>Both the overall error and the block effects are assumed to be normally distributed with a mean of zero and standard deviations of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(\sigma_B\)</span>, respectively.</p>
@@ -455,9 +460,9 @@ window.Quarto = {
 </table>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">5.2.1</span> Data integrity checks</h3>
-<p>The first thing is to make sure the data is what we expect.We will the steps explained in <a href="../chapters/model-flow.html"><strong>Chapter 4</strong></a>. Here are the steps to verify our data:</p>
+<p>The first thing is to make sure the data is what we expect. We will follow the steps outline in <a href="../chapters/model-flow.html"><strong>Chapter 4</strong></a>.</p>
 <ul>
-<li>Check structure of the data</li>
+<li>Check the structure of the data</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(var_trial)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -470,7 +475,7 @@ window.Quarto = {
  $ yield_bu_a: num  128 130 119 115 141 ...</code></pre>
 </div>
 </div>
-<p>These look okay except for block, which is currently coded as integer (a simplied numeric type). We don’t want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will avoid that. Block can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion since the linear modelling functions from ‘lme4’ and ‘nlme’ automatically convert character variables to factors.</p>
+<p>These look okay except for block, which is currently coded as integer (a simplified numeric type). We don’t want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will avoid that. Block can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion since the linear modelling functions from ‘lme4’ and ‘nlme’ automatically convert character variables to factors.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var_trial<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(var_trial<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -561,8 +566,8 @@ Figure&nbsp;5.1: Histogram of the dependent variable.
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(var_trial<span class="sc">$</span>yield_bu_a, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The range is roughly falling into the range we expect. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems.</p>
-<p>This data set is ready for analysis!</p>
+<p>The range of the observed data falls within the expected range of plausible values. We (the authors) know this from talking with the person who generated the data, not through our own intuition. There are no large spikes of points at a single value (indicating something odd), nor are there any extreme values (low or high) that might indicate problems that occurred during the trial or in postprocessing.</p>
+<p>This data set is ready for analysis.</p>
 </section>
 <section id="model-building" class="level3 page-columns page-full" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">5.2.2</span> Model Building</h3>
@@ -630,8 +635,8 @@ Figure&nbsp;5.2: Plot of residuals versus fitted values
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_rcbd_lmer, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"fitted values"</span>, <span class="at">ylab =</span> <span class="st">"studentized residuals"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We have observed a random and uniform distribution of points. This looks good!</p>
-<p>As explained in <a href="../chapters/model-flow.html"><strong>Chapter 4</strong></a> we will first extract residuals using<code>resid()</code> and then generate a qq-plot and line.</p>
+<p>This plot indicates a random and uniform distribution of points. Brilliant!</p>
+<p>To make a qq plot, the residuals are extracted first and then applied to the qq plotting function.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -649,7 +654,7 @@ Figure&nbsp;5.3: QQ-plot of residuals
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd_lmer), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd_lmer))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>This is reasonably good. Things do tend to fall apart at the tails a little, but since linear models are robust to model departures from normality, this is not concerning.</p>
+<p>This is reasonably good. Things do tend to fall apart at the tails a little, but si nce linear models are robust to model departures from normality, this is not concerning.</p>
 </section>
 <section id="new-iid-checks" class="level4" data-number="5.2.3.2">
 <h4 data-number="5.2.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">5.2.3.2</span> New Method</h4>
@@ -731,7 +736,7 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 </div>
-<p>These tables provide the estimated marginal means (“emmeans”, sometimes called “least squares means”), the standard error (“SE”) of those means, the degrees of freedom (“df”) and the lower and upper bounds of the 95% confidence interval (“lower.CL” and “upper.Cl”, respectively). As an additional step, the estimated marginal means were sorted from largest to smallest. Note the difference in degrees of freedom for each model. ‘lmerTest’ is implmenting the Kenward-Roger’s method <span class="citation" data-cites="lmertest">(<a href="../references.html#ref-lmertest" role="doc-biblioref">Kuznetsova et al. 2017</a>)</span>, while ‘nlme’ implements the containment method for degrees of freedom calculations. The Kenward-Roger’s method is preferred for small sample inference such as this example. Since it has a considerably larger estimate for the degrees of freedom, the resultant confidence intervals are much smaller compared to those using containment for df estimation. However, this has little noticeable effect on downstream statistical contrasts; both the differences in means and t-tests are nearly identical for the two models.</p>
+<p>These tables provide the estimated marginal means (“emmeans”), the standard error (“SE”) of those means, the degrees of freedom (“df”) and the lower and upper bounds of the 95% confidence interval (“lower.CL” and “upper.Cl”, respectively). As an additional step, the estimated marginal means were sorted from largest to smallest. Note the difference in degrees of freedom for each model. ‘lmerTest’ is implementing the Kenward-Roger’s method <span class="citation" data-cites="lmertest">(<a href="../references.html#ref-lmertest" role="doc-biblioref">Kuznetsova et al. 2017</a>)</span>, while ‘nlme’ implements the containment method for degrees of freedom calculations. The Kenward-Roger’s method is preferred for small sample inference such as this example. Since it has a considerably larger estimate for the degrees of freedom, the resultant confidence intervals are much smaller compared to those using containment for df estimation.</p>
 <p>At this point, the analysis goals have been met; we know the estimated means for each treatment and their rankings.</p>
 <p>If you want to run ANOVA, it can be done quite easily. By default, sequential (type I) sums of squares is used by ‘nlme’, but partial (type 3) sums of squares is also possible. Containment is the only degrees of freedom calculation method enabled in ‘nlme’. The lmer-extender package ‘lmerTest’ implements <a href="https://go.documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/statug/statug_introglmest_sect009.htm" class="external" target="_blank">SAS-like type 3 tests</a> and the Kenward-Roger’s method for degrees of freedom approximation by default.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;The Type I method is called “sequential” sum of squares because it adds terms to the model one at a time; while type 3 (“partial”) drops model terms one at a time. This can effect the results of an F-test and p-value, but only when a data set is unbalanced across treatments, either due to design or missing data points. In this example, there is only one fixed effect (and the experiment is perfectly balanced), so the sums of squares choice is immaterial.</p></div></div><div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -761,6 +766,7 @@ variety        41   123    2.4528   1e-04</code></pre>
 </div>
 </div>
 </div>
+<p>In this example, the difference in the degrees of freedom between models had little noticeable effect on downstream statistical contrasts or ANOVA.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
