@@ -146,15 +146,15 @@ This conducts pairwise contrasts between adjacent levels of a factor.
 
 In addition to these custom contrast options, we can also use the built-in functions in the **emmeans** package to compare treatments as per our analysis objectives. For example, comparing treatments to control or to compare one treatment level to all other groups.
 
-We will start with examining m1, an emmeans object.
+We will start with examining emm1, an emmeans object.
 ```{r}
-m1
+emm1
 ```
 
 Let's suppose we want to compare 'Marvellous' with the other varieties in the analysis. We can conduct "treatment v control" contrasts, setting the variety 'Marvellous' as the control with the `ref` argument.
 
 ```{r}
-contrast(m1, "trt.vs.ctrl", ref = "Marvellous")
+contrast(emm1, "trt.vs.ctrl", ref = "Marvellous")
 ```
 
 Alternatively, we can reference the control group by its appearance in the variety order. In m1, 'Golden rain', 'Marvellous', and 'Victory' are ordered as 1, 2, and 3 respectively.^[This follow an alphanumeric ordering that can be altered with the `factor()` function.] 
@@ -162,8 +162,8 @@ Alternatively, we can reference the control group by its appearance in the varie
 If we want to contrast 'Golden rain' with other varieties, we can do this by either using `trt.vs.ctrl1`  code, or `trt.vs.ctrlk` and referring to group 1. Both code options will generate the same results.
 
 ```{r}
-contrast(m1, "trt.vs.ctrl1")
-contrast(m1, "trt.vs.ctrlk", ref = 1)
+contrast(emm1, "trt.vs.ctrl1")
+contrast(emm1, "trt.vs.ctrlk", ref = 1)
 ```
 
 ### Compare to a Constant
@@ -210,7 +210,7 @@ The R package 'multcompView' [-@multcompView] can be used to generate a display 
 Below are examples of CLD for objects m1 (examining variety), emm2 (examining nitrogen), and emm3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the $.group$ are not statistically different from each other. 
 
 ```{r}
-cld(m1, alpha = 0.05, Letters = letters)
+cld(emm1, alpha = 0.05, Letters = letters)
 ```
 
 ```{r}
@@ -298,7 +298,7 @@ write.csv(result_n, "results.csv", row.names = FALSE)
 On easy option is to use default plotting functions that accompany the 'emmeans' package. 
 
 ```{r}
-plot(m1)
+plot(emm1)
 plot(emm3)
 ```
 
@@ -322,7 +322,7 @@ Recall: groups that do not differ significantly from each other share the same l
 
 We can also use the `emmip()` function from the emmeans package to examine the trend in the interaction between variety and nitrogen factors.
 ```{r}
-emmip(m1, N ~ V)
+emmip(emm3, N ~ V)
 ```
 
 ::: {.callout-note}
