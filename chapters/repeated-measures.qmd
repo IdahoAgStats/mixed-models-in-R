@@ -5,7 +5,7 @@ source(here::here("settings.r"))
 ```
 
 ::: {.callout-warning}
-THIS CHAPTER IS A WORK IN PROGRESS PARTICULARILY WITH RESPECT TO LME4 v2.0 COVARIANCE STRUCTURES. IT'S UNCLEAR IF THESE WORK WITH 'lmerTest'. ADDITIONALLY, THERE ARE SOME WEIRD ESTIMATION ISSUES: OVERALLY HIGH VALUES FOR 'PHI' WHEN USING AR1, SOME WILD SWINGS IN THE LOG LIKELIHOOD AND NON-PD VARIANCE COMPONENTS THAT STYMIE 'emmeans'. 
+THIS CHAPTER IS A WORK IN PROGRESS PARTICULARILY WITH RESPECT TO LME4 v2.0 COVARIANCE STRUCTURES. IT'S UNCLEAR IF THESE WORK WITH 'lmerTest'. ADDITIONALLY, THERE ARE SOME WEIRD ESTIMATION ISSUES: OVERALLY HIGH VALUES FOR $\phi$ WHEN USING AR1, SOME WILD SWINGS IN THE LOG LIKELIHOOD AND NON-PD VARIANCE COMPONENTS THAT STYMIE 'emmeans'. 
 :::
 
 ## Background
@@ -58,7 +58,7 @@ let's start with loading the required libraries for this analysis.
 
 ::: panel-tabset
 ### nlme
-```{r, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(nlme); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
 ```
@@ -66,6 +66,12 @@ library(dplyr); library(broom.mixed); library(ggplot2)
 ### lme4
 ```{r, message=FALSE, warning=FALSE}
 library(lme4); library(performance); library(emmeans)
+library(dplyr); library(broom.mixed); library(ggplot2)
+```
+
+### glmmTMB
+```{r, message=FALSE, warning=FALSE}
+library(glmmTMB); library(performance); library(emmeans)
 library(dplyr); library(broom.mixed); library(ggplot2)
 ```
 :::
@@ -139,7 +145,8 @@ ggplot(data = sorghum, aes(y = y, x = factweek, fill = variety)) +
   geom_boxplot() +  
     theme_bw()
 ```
-It loooks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
+
+It looks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
 
 One last step before we fit model is to look at the distribution of response variable.
 
@@ -164,18 +171,27 @@ Let's fit the model first using `lme()` from the **nlme** package. A full specif
 
 ```{r}
 sorg_1a <- lme(y ~ variety + factweek + variety:factweek,
-           random = ~1|block/plot,
-           data = sorghum,
-           na.action = na.exclude)
+               random = ~1|block/plot,
+               data = sorghum,
+               na.action = na.exclude)
 ```
 
 ### lme4
 
 ```{r}
-sorg_2a <- lmer(y ~ variety + factweek + variety:factweek + (1|block/plot),
-           data = sorghum,
-           na.action = na.exclude)
+sorg_2a <- lmer(y ~ variety + factweek + variety:factweek + (1|block),
+                data = sorghum,
+                na.action = na.exclude)
 ```
+
+### glmmTMB
+
+```{r}
+sorg_3a <- glmmTMB(y ~ variety + factweek + variety:factweek + (1|block),
+                   data = sorghum,
+                   na.action = na.exclude)
+```
+
 :::
 
 The model fitted above doesn't account for the repeated measures effect. To account for the variation caused by repeated measurements, correlation among responses can be modelled for a given subject, which is a plot (factor variable) in this case.
@@ -199,30 +215,24 @@ sorg_1c <- update(sorg_1a, corr= cs2)
 ### lme4
 
 ```{r}
-sorg_2b <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|block/plot),
-           data = sorghum, na.action = na.exclude)
-sorg_2c <- lmer(y ~ variety + factweek + variety:factweek + cs(1 + week|block/plot),
-           data = sorghum, na.action = na.exclude)
+sorg_2b <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|plot) + (1|block),
+                data = sorghum, na.action = na.exclude)
+sorg_2c <- lmer(y ~ variety + factweek + variety:factweek + cs(1 + week|plot) + (1|block),
+                data = sorghum, na.action = na.exclude)
 ```
+
+### glmmTMB
+
+```{r}
+sorg_3b <- glmmTMB(y ~ variety + factweek + variety:factweek + ar1(0 + factweek|plot) + (1|block),
+                   data = sorghum, na.action = na.exclude)
+sorg_3c <- glmmTMB(y ~ variety + factweek + variety:factweek + cs(1 + factweek|plot) + (1|block),
+                   data = sorghum, na.action = na.exclude)
+```
+
+
 :::
 
-
-The model using an AR1 structure, 'sorg_2b', drew the warning `boundary (singular) fit: see help('isSingular')` because the variance estimate for 'block' is nearing zero due to the plot and the AR1 covariance structure effectively modelling spatial variation. We can refit the model without 'block'.
-
-```{r}
-sorg_2d <- lmer(y ~ variety + factweek + variety:factweek + ar1(0 + week|plot),
-           data = sorghum, na.action = na.exclude)
-
-
-```
-
-
-PHI IS 1.00???
-```{r}
-sorg_2b
-
-sorg_2d
-```
 
 Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by the `compare_performance()` function from the **performance** library.
 
@@ -246,9 +256,13 @@ compare_performance(sorg_1a, sorg_1b, sorg_1c)
 THESE RESULTS ARE WEIRD
 
 ```{r}
-anova(sorg_2a, sorg_2b, sorg_2c, sorg_2d)
+anova(sorg_2a, sorg_2b, sorg_2c)
 ```
+### glmmTMB
 
+```{r}
+anova(sorg_3a, sorg_3b, sorg_3c)
+```
 :::
 
 
@@ -262,15 +276,21 @@ Let's look at the model estimates for random and fixed effects.
 
 
 ```{r}
-#tidy(sorg_1b)
 sorg_1b
 ```
 
 ### lme4
 
 ```{r}
-sorg_2c
+sorg_2b
 ```
+
+### glmmTMB
+
+```{r}
+sorg_3b
+```
+
 
 :::
 
@@ -292,8 +312,17 @@ check_model(sorg_1b,  check = c('linearity','qq', 'reqq'), detrend = FALSE, alph
 ```{r, fig.height=3}
 #| message: false
 #| warning: false
-check_model(sorg_2c,  check = c('linearity','qq', 'reqq'), detrend = FALSE, alpha = 0)
+check_model(sorg_2b,  check = c('linearity','qq', 'reqq'), detrend = FALSE, alpha = 0)
 ```
+
+### glmmTMB
+
+```{r, fig.height=3}
+#| message: false
+#| warning: false
+check_model(sorg_3b,  check = c('linearity','qq', 'reqq'), detrend = FALSE, alpha = 0)
+```
+
 
 :::
 
@@ -312,9 +341,14 @@ anova(sorg_1b, type = "marginal")
 'lmerTest' is not loaded because it causes issues with estimation for these particular examples (and perhaps other examples using lme4's covariance structures). 
 
 ```{r}
-anova(sorg_2c)
-anova(sorg_2d) # wow
+anova(sorg_2b)
 ```
+### glmmTMB
+
+```{r}
+car::Anova(sorg_3b)
+```
+
 :::
 
 
@@ -326,20 +360,20 @@ We can estimate the marginal means for variety and week effect and their interac
 ### nlme
 
 ```{r}
-(mean_1 <- emmeans(sorg_1b, ~ variety))
-
-(mean_2 <- emmeans(sorg_1b, ~ variety*factweek))
+emmeans(sorg_1b, ~ variety)
+emmeans(sorg_1b, ~ variety*factweek)
 ```
 
 ### lme4
 ```{r}
-(mean_1 <- emmeans(sorg_2c, ~ variety))
-emmeans(sorg_2b, ~ variety) # SE/CI's not estimable (negative variance obtained)
-emmeans(sorg_2d, ~ variety) # dramatic shift in DF and hence CIs
-
-(mean_2 <- emmeans(sorg_2c, ~ variety*factweek))
+emmeans(sorg_2b, ~ variety) 
+emmeans(sorg_2b, ~ variety*factweek)
 ```
-
+### glmmTMB
+```{r}
+emmeans(sorg_3b, ~ variety) 
+emmeans(sorg_3b, ~ variety*factweek)
+```
 :::
 
 
@@ -385,7 +419,7 @@ First, we need to look at the class of variables in the data set.
 str(alfalfa)
 ```
 
-We will now convert the fertilizer and rep to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
+We will now convert the variables "fertilizer" and "rep" to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
 
 ```{r}
 alfalfa <- alfalfa |> 
