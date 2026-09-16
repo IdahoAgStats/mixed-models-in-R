@@ -420,11 +420,11 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning
+<span class="screen-reader-only">Warning</span>WIP Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>THIS CHAPTER IS A WORK IN PROGRESS PARTICULARILY WITH RESPECT TO LME4 v2.0 COVARIANCE STRUCTURES. IT’S UNCLEAR IF THESE WORK WITH ‘lmerTest’. ADDITIONALLY, THERE ARE SOME WEIRD ESTIMATION ISSUES: OVERALLY HIGH VALUES FOR <span class="math inline">\(\phi\)</span> WHEN USING AR1, SOME WILD SWINGS IN THE LOG LIKELIHOOD AND NON-PD VARIANCE COMPONENTS THAT STYMIE ‘emmeans’.</p>
+<p>This chapter is a work in progress, particularilty with respect to ‘lme4’ v 2.0 covariance structures. At this time, it is not clear if lme4 covariance structures work with ‘lmerTest’. Additinally, there appear to be some estimation issues with lme4: if a model is over-specified, a very high <span class="math inline">\(\phi\)</span> may result when using AR1, and there are some large swings in the log likelihood when using lme4’s covariance structures.</p>
 </div>
 </div>
 <section id="background" class="level2 page-columns page-full" data-number="12.1">
@@ -450,8 +450,8 @@ Warning
 <thead>
 <tr class="header">
 <th>Structure name</th>
-<th>nlme function</th>
-<th>lme4 function</th>
+<th>nlme syntax</th>
+<th>lme4/glmmTMB syntax</th>
 </tr>
 </thead>
 <tbody>
@@ -704,7 +704,7 @@ sorg_1c     3 24 20.837478 78.00612 13.58126                        </code></pre
 <p>Let’s compare the models performance to select a model that fits better.</p>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<p>THESE RESULTS ARE WEIRD</p>
+<p>These results are a bit weird.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_2a, sorg_2b, sorg_2c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -747,7 +747,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
-<p>We prefer to chose model with lower AIC and BIC values. In this scenario, we will move forward with lm2 model containing AR1 structure.</p>
+<p>For model selection, lower AIC and BIC value indicate higher parsimony, that is, the most efficient use of information. In these examaples, we will move forward with linear model containing an AR1 covariance structure.</p>
 <p>Let’s look at the model estimates for random and fixed effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">nlme</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false" href="">glmmTMB</a></li></ul>
@@ -774,11 +774,11 @@ variety4:factweek4 variety2:factweek5 variety3:factweek5 variety4:factweek5
 Random effects:
  Formula: ~1 | block
         (Intercept)
-StdDev:   0.6258307
+StdDev:   0.6258308
 
  Formula: ~1 | plot %in% block
          (Intercept) Residual
-StdDev: 6.827483e-06 0.180349
+StdDev: 6.827492e-06 0.180349
 
 Correlation Structure: AR(1)
  Formula: ~week | block/plot 
@@ -836,7 +836,7 @@ Random-effects (co)variances:
 Conditional model:
  Groups   Name        Std.Dev. Corr      
  plot     factweek1   0.15997  0.77 (ar1)
- block    (Intercept) 0.56028            
+ block    (Intercept) 0.56029            
  Residual             0.02258            
 
 Number of obs: 100 / Conditional model: plot, 20; block, 5
@@ -916,7 +916,7 @@ variety4:factweek4  variety2:factweek5  variety3:factweek5  variety4:factweek5
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_1b, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 numDF denDF   F-value p-value
-(Intercept)          1    64 212.10509  &lt;.0001
+(Intercept)          1    64 212.10502  &lt;.0001
 variety              3    12  28.28895  &lt;.0001
 factweek             4    64  74.79758  &lt;.0001
 variety:factweek    12    64   7.03546  &lt;.0001</code></pre>

@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -350,12 +369,13 @@ window.Quarto = {
    
   <ul>
   <li><a href="#step-1-define-the-research-questions" id="toc-step-1-define-the-research-questions" class="nav-link active" data-scroll-target="#step-1-define-the-research-questions"><span class="header-section-number">4.0.1</span> Step 1: Define the Research Question(s)</a></li>
-  <li><a href="#example-experiment" id="toc-example-experiment" class="nav-link" data-scroll-target="#example-experiment"><span class="header-section-number">4.1</span> Example experiment</a>
+  <li><a href="#step-2-identity-the-data-generating-process" id="toc-step-2-identity-the-data-generating-process" class="nav-link" data-scroll-target="#step-2-identity-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identity the data generating process</a></li>
+  <li><a href="#example-experiment" id="toc-example-experiment" class="nav-link" data-scroll-target="#example-experiment"><span class="header-section-number">4.2</span> Example experiment</a>
   <ul class="collapse">
-  <li><a href="#step-2-conduct-data-integrity-checks" id="toc-step-2-conduct-data-integrity-checks" class="nav-link" data-scroll-target="#step-2-conduct-data-integrity-checks"><span class="header-section-number">4.1.1</span> Step 2: Conduct data integrity checks</a></li>
-  <li><a href="#step-3-fit-the-model" id="toc-step-3-fit-the-model" class="nav-link" data-scroll-target="#step-3-fit-the-model"><span class="header-section-number">4.1.2</span> Step 3: Fit the Model</a></li>
-  <li><a href="#step-4-check-model-assumptions" id="toc-step-4-check-model-assumptions" class="nav-link" data-scroll-target="#step-4-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 4: Check model assumptions</a></li>
-  <li><a href="#step-5-conduct-inference" id="toc-step-5-conduct-inference" class="nav-link" data-scroll-target="#step-5-conduct-inference"><span class="header-section-number">4.1.4</span> Step 5: Conduct inference</a></li>
+  <li><a href="#step-3-conduct-data-integrity-checks" id="toc-step-3-conduct-data-integrity-checks" class="nav-link" data-scroll-target="#step-3-conduct-data-integrity-checks"><span class="header-section-number">4.2.1</span> Step 3: Conduct data integrity checks</a></li>
+  <li><a href="#step-4-fit-the-model" id="toc-step-4-fit-the-model" class="nav-link" data-scroll-target="#step-4-fit-the-model"><span class="header-section-number">4.2.2</span> Step 4: Fit the Model</a></li>
+  <li><a href="#step-5-check-model-assumptions" id="toc-step-5-check-model-assumptions" class="nav-link" data-scroll-target="#step-5-check-model-assumptions"><span class="header-section-number">4.2.3</span> Step 5: Check model assumptions</a></li>
+  <li><a href="#step-6-conduct-inference" id="toc-step-6-conduct-inference" class="nav-link" data-scroll-target="#step-6-conduct-inference"><span class="header-section-number">4.2.4</span> Step 6: Conduct inference</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/model-flow.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -403,11 +423,12 @@ Note
 <p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">graph TD
-  A[Define Research Question] --&gt; B[Evaluate Data Quality]
-  B --&gt; C[Fit Model]
-  C --&gt; D[Check Model Assumptions]
-  D -- Met --&gt; E[Conduct Inference]
-  D -- Unmet --&gt; F[Check data or consider others models]
+  A[Define Research Question] --&gt; B[Specify the Data Generating Process]
+  B --&gt; C[Evaluate Data Quality]
+  C --&gt; D[Fit Model]
+  D --&gt; E[Check Model Assumptions]
+  E -- Met --&gt; F[Conduct Inference]
+  E -- Unmet --&gt; G[Check data or consider others models]
 </pre>
 </div>
 <p></p></figure><p></p>
@@ -431,14 +452,43 @@ Note
 </blockquote>
 <p>The first two examples are asking for specific inference on the estimated effects of a particular intervention. The third example is a hypothesis test, and the fourth example is also inferential, but focused on variance instead of point estimates.</p>
 </section>
-<section id="example-experiment" class="level2 page-columns page-full" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="example-experiment"><span class="header-section-number">4.1</span> Example experiment</h2>
-<p>For the following steps, imagine that someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen ferilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis.</p>
-<section id="step-2-conduct-data-integrity-checks" class="level3 page-columns page-full" data-number="4.1.1">
-<h3 data-number="4.1.1" class="anchored" data-anchor-id="step-2-conduct-data-integrity-checks"><span class="header-section-number">4.1.1</span> Step 2: Conduct data integrity checks</h3>
+<section id="step-2-identity-the-data-generating-process" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="step-2-identity-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identity the data generating process</h2>
+<p>A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all “cookie cutter”, assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we have learned from experience that many students who need a guide like this also need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results. So, let’s talk about how to properly identify and specify the data-generating processes from your study – that is, let’s discuss how to translate your study into a linear model.</p>
+<p>Below are steps adapted from chapter 2 of <em>Generalized Linear Mixed Models</em> <span class="citation" data-cites="stroup2013">Stroup et al. (<a href="../references.html#ref-stroup2024" role="doc-biblioref">2014</a>)</span>.</p>
+<p>The overall goal to outline what units received (or will receive) what treatment(s) and in what order?</p>
+<ol type="1">
+<li><p>Identify the treatments and their levels. Treatments are also called factors or interventions. They are independent variables whose impact on the dependent variable we want to estimate. Levels are specific categories or amounts of the factor applied to the experiment. A treatment could be nitrogen fertilizer, and the levels of that fertilizer could be two different types of fertilizer (e.g.&nbsp;urea and ammonium nitrate) or different amounts of fertilizer (20, 40, 60 lbs per acre). There may be multiple treatments or factors for a single experiment.</p></li>
+<li><p>Identify the unit of replication (also called the unit of randomization). This is the smallest unit or entity that was independently assigned a treatment combination. This can be a spatial units of land (e.g.&nbsp;a plot), a person, an animal, part of an animal carcass, a single water sample, a soil composite for a specific depth, among many other things. This is not the same as smallest unit being measured; it is the smallest unit subject to a single combination of treatments. This is called the <em>experimental unit</em>.</p></li>
+<li><p>Identify clusters or stratfication. This is the grouping of units of replication that we expect to be similar to each other in some way. In field experiments, this is often the block, but it may be an experimental run or it may also encompass other factors (e.g.&nbsp;locations, years). Survey statistical concepts of “clusters” and “strata” are akin. There are experimental designs without any clustering, but all the examples in this guide assume blocking.</p></li>
+<li><p>Identify the unit of observation. This is often the experimental unit, but sometimes there are multiple observations within a single experimental unit, e.g.&nbsp;multiple measures of plant height at crop maturity, disease scoring for several potato tubers collected from a single plot, student in a classroom where the classroom is the unit of replication. In these cases, it’s important to ascertain how to express the dependent variables so that they reflect the unit of replication and are not artificially inflating the level of replication. A treatment combination was assigned randomly to an experimental unit and hence observations across experimental units are independent; two observations of the same unit at the same time are not independent. The unit of observation is always nested within the unit of replication.</p></li>
+<li><p>Create a “plot plan” of the units that received what treatments and in what arrangement. Agricultural field plot maps are the general framework to use. While these represent relative physical locations of where each treatment was applied, the basic concept can be extended to other circumstances. Which animals in a dairy received a nutritional supplement, how were these animals grouped and how was the nutritional administered? If you are</p></li>
+<li><p>Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below.</p></li>
+</ol>
+</section>
+<section id="example-experiment" class="level2 page-columns page-full" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="example-experiment"><span class="header-section-number">4.2</span> Example experiment</h2>
+<p>For the following steps, imagine that a someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen ferilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Linear models also require that we identify the distributions of the dependent variable and the random effects, and identify a suitable link function for the dependent variable and its distribution. For this tutorial, all dependent variables and random effects are assumed to be normally distributed and use the identity link function (that is, specifying no transformation).</p>
+</div>
+</div>
+</div></div><section id="step-3-conduct-data-integrity-checks" class="level3 page-columns page-full" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="step-3-conduct-data-integrity-checks"><span class="header-section-number">4.2.1</span> Step 3: Conduct data integrity checks</h3>
 <p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
-<section id="check-the-structure-of-the-data" class="level4 page-columns page-full" data-number="4.1.1.1">
-<h4 data-number="4.1.1.1" class="anchored" data-anchor-id="check-the-structure-of-the-data"><span class="header-section-number">4.1.1.1</span> Check the structure of the data</h4>
+<section id="check-the-structure-of-the-data" class="level4 page-columns page-full" data-number="4.2.1.1">
+<h4 data-number="4.2.1.1" class="anchored" data-anchor-id="check-the-structure-of-the-data"><span class="header-section-number">4.2.1.1</span> Check the structure of the data</h4>
 <p>In this step, we need to make sure that class of variables in data is as expected. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> needs to be in a ‘character’ or ‘factor’ format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, although categorical outcomes are certainly plausible for many studies.</p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;No one views the year 2026 as 2,026.</p></div><div id="fn2"><p><sup>2</sup>&nbsp;Since this tutorial is exclusively focused on general linear models and is not addressing <em>generalized</em> scenarios at all.</p></div></div><div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -478,16 +528,16 @@ Warning
 </div>
 </div>
 </section>
-<section id="inspect-the-independent-variables" class="level4" data-number="4.1.1.2">
-<h4 data-number="4.1.1.2" class="anchored" data-anchor-id="inspect-the-independent-variables"><span class="header-section-number">4.1.1.2</span> Inspect the independent variables</h4>
+<section id="inspect-the-independent-variables" class="level4" data-number="4.2.1.2">
+<h4 data-number="4.2.1.2" class="anchored" data-anchor-id="inspect-the-independent-variables"><span class="header-section-number">4.2.1.2</span> Inspect the independent variables</h4>
 <p>Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dataset<span class="sc">$</span>trt, dataset<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The output from this code will give us the number of observations in each replication for a given treatment. It’s helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., “high”, “High” or “High”); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.</p>
 </section>
-<section id="check-the-extent-of-missing-data" class="level4" data-number="4.1.1.3">
-<h4 data-number="4.1.1.3" class="anchored" data-anchor-id="check-the-extent-of-missing-data"><span class="header-section-number">4.1.1.3</span> Check the extent of missing data</h4>
+<section id="check-the-extent-of-missing-data" class="level4" data-number="4.2.1.3">
+<h4 data-number="4.2.1.3" class="anchored" data-anchor-id="check-the-extent-of-missing-data"><span class="header-section-number">4.2.1.3</span> Check the extent of missing data</h4>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dataset))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -506,24 +556,24 @@ Warning
 </div>
 </div>
 </section>
-<section id="inspect-the-dependent-variable-and-all-other-continuous-variables" class="level4" data-number="4.1.1.4">
-<h4 data-number="4.1.1.4" class="anchored" data-anchor-id="inspect-the-dependent-variable-and-all-other-continuous-variables"><span class="header-section-number">4.1.1.4</span> Inspect the dependent variable and all other continuous variables</h4>
+<section id="inspect-the-dependent-variable-and-all-other-continuous-variables" class="level4" data-number="4.2.1.4">
+<h4 data-number="4.2.1.4" class="anchored" data-anchor-id="inspect-the-dependent-variable-and-all-other-continuous-variables"><span class="header-section-number">4.2.1.4</span> Inspect the dependent variable and all other continuous variables</h4>
 <p>Check the dependent variable and all continuous variables (i.e.&nbsp;covariates) to ensure their distributions are following expectations. A histogram is often sufficient to accomplish this. The goal of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme observations (high or low). This is designed to be a quick check, so there is no need to spend time prettifying these plots.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data<span class="sc">$</span>yield)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Data are not expected to be normally distributed at this point, so don’t bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots regularly, you will gain a feel for what your data should look like at this stage.</p>
 </section>
-<section id="next-steps" class="level4" data-number="4.1.1.5">
-<h4 data-number="4.1.1.5" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">4.1.1.5</span> Next Steps</h4>
+<section id="next-steps" class="level4" data-number="4.2.1.5">
+<h4 data-number="4.2.1.5" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">4.2.1.5</span> Next Steps</h4>
 <p>The purpose of these checks is to help us find any data errors that ought to be fixed prior to model fitting. They are designed to be done quickly and should be conducted for <strong><em>every analysis</em></strong> if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis.</p>
 <p>If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.</p>
 </section>
 </section>
-<section id="step-3-fit-the-model" class="level3 page-columns page-full" data-number="4.1.2">
-<h3 data-number="4.1.2" class="anchored" data-anchor-id="step-3-fit-the-model"><span class="header-section-number">4.1.2</span> Step 3: Fit the Model</h3>
-<section id="notes-on-formula-syntax-and-expectations" class="level4 page-columns page-full" data-number="4.1.2.1">
-<h4 data-number="4.1.2.1" class="anchored" data-anchor-id="notes-on-formula-syntax-and-expectations"><span class="header-section-number">4.1.2.1</span> Notes on formula syntax and expectations</h4>
+<section id="step-4-fit-the-model" class="level3 page-columns page-full" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="step-4-fit-the-model"><span class="header-section-number">4.2.2</span> Step 4: Fit the Model</h3>
+<section id="notes-on-formula-syntax-and-expectations" class="level4 page-columns page-full" data-number="4.2.2.1">
+<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="notes-on-formula-syntax-and-expectations"><span class="header-section-number">4.2.2.1</span> Notes on formula syntax and expectations</h4>
 <p>In this guide, we use ‘lme4’ and ‘nlme’ packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for <code>lmer()</code> and <code>lme()</code> models is to specify the response variable, fixed factors, and random factors and follow the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html" class="external" target="_blank">R generic function</a> for <code>formula()</code>. For this demonstration, let’s assume the dependent variable is ‘yield’, ‘tr’t is a fixed effect and ’block’ is a random effect.</p>
 <p>The code below shows the R syntax for a mixed model with one fixed and one random effect:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -564,8 +614,8 @@ Warning
 </div>
 </section>
 </section>
-<section id="step-4-check-model-assumptions" class="level3 page-columns page-full" data-number="4.1.3">
-<h3 data-number="4.1.3" class="anchored" data-anchor-id="step-4-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 4: Check model assumptions</h3>
+<section id="step-5-check-model-assumptions" class="level3 page-columns page-full" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="step-5-check-model-assumptions"><span class="header-section-number">4.2.3</span> Step 5: Check model assumptions</h3>
 <p>Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -581,8 +631,8 @@ Warning
 </div>
 </div>
 <p>In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:</p>
-<section id="original-method" class="level4" data-number="4.1.3.1">
-<h4 data-number="4.1.3.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.1.3.1</span> Original method</h4>
+<section id="original-method" class="level4" data-number="4.2.3.1">
+<h4 data-number="4.2.3.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.2.3.1</span> Original method</h4>
 <p>We can use base <code>plot()</code> function in R for ‘lme4’ and ‘nlme’ modelling objects to check the homoscedasticity (residuals vs.&nbsp;fitted values plot) of residuals.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">nlme</a></li></ul>
@@ -620,8 +670,8 @@ Warning
 </div>
 <p>Interpretiong qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!</p>
 </section>
-<section id="new-iid-checks" class="level4 page-columns page-full" data-number="4.1.3.2">
-<h4 data-number="4.1.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">4.1.3.2</span> New Method</h4>
+<section id="new-iid-checks" class="level4 page-columns page-full" data-number="4.2.3.2">
+<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">4.2.3.2</span> New Method</h4>
 <p>Nowadays, we can take advantage of the <a href="https://easystats.github.io/performance/" class="external" target="_blank">performance</a> package, which provides a comprehensive suite of diagnostic plots.</p>
 <p>The diagnostic plots we created above can be created using one function <code>check_model()</code> from the ‘performance’ package.</p>
 
@@ -656,8 +706,8 @@ Note
 </div>
 </section>
 </section>
-<section id="step-5-conduct-inference" class="level3" data-number="4.1.4">
-<h3 data-number="4.1.4" class="anchored" data-anchor-id="step-5-conduct-inference"><span class="header-section-number">4.1.4</span> Step 5: Conduct inference</h3>
+<section id="step-6-conduct-inference" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="step-6-conduct-inference"><span class="header-section-number">4.2.4</span> Step 6: Conduct inference</h3>
 <p>After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using <code>anova()</code> function and/or we can estimate marginal means using <code>emmeans()</code> function from the ‘emmeans’ package. We can also run post hoc comparisons to evaluate the pairwise comparison or contrasts using estimated means.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -674,6 +724,14 @@ Note
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-stroup2013" class="csl-entry" role="listitem">
+Stroup, Walter W. 2013. <em>General Linear Mixed Models: Modern Concepts, Methods and Applications</em>. 1st ed. Chapman; Hall/CRC Press. https://doi.org/<a href="https://doi.org/10.1201/b13151">https://doi.org/10.1201/b13151</a>.
+</div>
+<div id="ref-stroup2024" class="csl-entry" role="listitem">
+Stroup, Walter W., Marina Ptukhina, and Julie Garai. 2014. <em>General Linear Mixed Models: Modern Concepts, Methods and Applications</em>. 2nd ed. Chapman; Hall/CRC Press. https://doi.org/<a href="https://doi.org/10.1201/9780429092060">https://doi.org/10.1201/9780429092060</a>.
+</div>
+</div>
 </section>
 </section>
 
