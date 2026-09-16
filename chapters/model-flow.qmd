@@ -17,11 +17,12 @@ Analyzing data using linear mixed models involves several key steps, from data p
 %%| fig-align: center
 %%| fig-width: 6.5
 graph TD
-  A[Define Research Question] --> B[Evaluate Data Quality]
-  B --> C[Fit Model]
-  C --> D[Check Model Assumptions]
-  D -- Met --> E[Conduct Inference]
-  D -- Unmet --> F[Check data or consider others models]
+  A[Define Research Question] --> B[Specify the Data Generating Process]
+  B --> C[Evaluate Data Quality]
+  C --> D[Fit Model]
+  D --> E[Check Model Assumptions]
+  E -- Met --> F[Conduct Inference]
+  E -- Unmet --> G[Check data or consider others models]
 ```
 
 
@@ -40,11 +41,39 @@ It is important to define what is your question that you want to answer with you
 
 The first two examples are asking for specific inference on the estimated effects of a particular intervention. The third example is a hypothesis test, and the fourth example is also inferential, but focused on variance instead of point estimates. 
 
+## Step 2: Identity the data generating process
+
+A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all "cookie cutter", assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we have learned from experience that many students who need a guide like this also need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
+
+Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* [@stroup2013, @stroup2024].
+
+The overall goal to outline what units received (or will receive) what treatment(s) and in what order? 
+
+
+1. Identify the  treatments and their levels. Treatments are also called factors or interventions. They are independent variables whose impact on the dependent variable we want to estimate. Levels are specific categories or amounts of the factor applied to the experiment. A treatment could be nitrogen fertilizer, and the levels of that fertilizer could be two different types of fertilizer (e.g. urea and ammonium nitrate) or different amounts of fertilizer (20, 40, 60 lbs per acre). There may be multiple treatments or factors for a single experiment. 
+
+1. Identify the unit of replication (also called the unit of randomization). This is the smallest unit or entity that was independently assigned a treatment combination. This can be a spatial units of land (e.g. a plot), a person, an animal, part of an animal carcass, a single water sample, a soil composite for a specific depth, among many other things. This is not the same as smallest unit being measured; it is the smallest unit subject to a single combination of treatments. This is called the *experimental unit*. 
+
+1. Identify clusters or stratfication.  This is the grouping of units of replication that we expect to be similar to each other in some way. In field experiments, this is often the block, but it may be an experimental run or it may also encompass other factors (e.g. locations, years). Survey statistical concepts of "clusters" and "strata" are akin. There are experimental designs without any clustering, but all the examples in this guide assume blocking. 
+
+1. Identify the unit of observation. This is often the experimental unit, but sometimes there are multiple observations within a single experimental unit, e.g. multiple measures of plant height at crop maturity, disease scoring for several potato tubers collected from a single plot, student in a classroom where the classroom is the unit of replication. In these cases, it's important to ascertain how to express the dependent variables so that they reflect the unit of replication and are not artificially inflating the level of replication. A treatment combination was assigned randomly to an experimental unit and hence observations across experimental units are independent; two observations of the same unit at the same time are not independent. The unit of observation is always nested within the unit of replication. 
+
+1. Create a "plot plan" of the units that received what treatments and in what arrangement. Agricultural field plot maps are the general framework to use. While these represent relative physical locations of where each treatment was applied, the basic concept can be extended to other circumstances. Which animals in a dairy received a nutritional supplement, how were these animals grouped and how was the nutritional administered? If you are 
+
+1. Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below. 
+
+
 ## Example experiment
 
-For the following steps, imagine that someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen ferilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis. 
+For the following steps, imagine that a someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen ferilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis. 
 
-### Step 2: Conduct data integrity checks 
+::::: column-margin
+::: callout-note
+Linear models also require that we identify the distributions of the dependent variable and the random effects, and identify a suitable link function for the dependent variable and its distribution. For this tutorial, all dependent variables and random effects are assumed to be normally distributed and use the identity link function (that is, specifying no transformation). 
+:::
+:::::
+
+### Step 3: Conduct data integrity checks 
 
 The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
 
@@ -127,7 +156,7 @@ The purpose of these checks is to help us find any data errors that ought to be 
 If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
 
 
-### Step 3: Fit the Model  
+### Step 4: Fit the Model  
 
 #### Notes on formula syntax and expectations
 
@@ -164,7 +193,7 @@ The argument `na.action = na.exclude` provides instructions for how to handle mi
 Even when there are no missing data and this step is not necessary, it is a good habit to be in.
 :::
 
-### Step 4: Check model assumptions
+### Step 5: Check model assumptions
 
 Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.
 
@@ -236,7 +265,7 @@ check_model(model_lme, check = c('normality', 'linearity'))
 ```
 :::
 
-### Step 5: Conduct inference
+### Step 6: Conduct inference
 
 After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using `anova()` function and/or we can estimate marginal means using `emmeans()` function from the 'emmeans' package. We can also run post hoc comparisons to evaluate the pairwise comparison or contrasts using estimated means. 
 
