@@ -5,7 +5,8 @@ source(here::here("settings.r"))
 ```
 
 ::: {.callout-warning}
-THIS CHAPTER IS A WORK IN PROGRESS PARTICULARILY WITH RESPECT TO LME4 v2.0 COVARIANCE STRUCTURES. IT'S UNCLEAR IF THESE WORK WITH 'lmerTest'. ADDITIONALLY, THERE ARE SOME WEIRD ESTIMATION ISSUES: OVERALLY HIGH VALUES FOR $\phi$ WHEN USING AR1, SOME WILD SWINGS IN THE LOG LIKELIHOOD AND NON-PD VARIANCE COMPONENTS THAT STYMIE 'emmeans'. 
+## WIP Warning
+This chapter is a work in progress, particularilty with respect to 'lme4' v 2.0 covariance structures. At this time, it is not clear if lme4 covariance structures work with 'lmerTest'. Additinally, there appear to be some estimation issues with lme4: if a model is over-specified, a very high  $\phi$ may result when using AR1, and there are some large swings in the log likelihood when using lme4's covariance structures. 
 :::
 
 ## Background
@@ -34,10 +35,10 @@ In this chapter, we will analyze data from different experiment designs with rep
 
 There are several types of covariance structures:
 
-| Structure name | nlme function  | lme4 function | assumption |
+| Structure name | nlme syntax  | lme4/glmmTMB syntax | assumption |
 |------------------------|------------------------|------------------------|
 | Autoregressive (AR1) | `corAR1()` | `ar1()` | observations which are more proximate are more correlated than measures that are more distant |
-| Compound symmetry | `corCompSymm()` |  `cs()` | Correlation is equal for all time gaps between observations |
+| Compound symmetry | `corCompSymm()` |  `cs()` |   Correlation is equal for all time gaps between observations |
 | Unstructured | `CorSymm()` |  `us()`  | Correlations are different for the various time gaps |
 
 ::: column-margin
@@ -253,7 +254,7 @@ compare_performance(sorg_1a, sorg_1b, sorg_1c)
 
 ### lme4
 
-THESE RESULTS ARE WEIRD
+These results are a bit weird. 
 
 ```{r}
 anova(sorg_2a, sorg_2b, sorg_2c)
@@ -266,7 +267,7 @@ anova(sorg_3a, sorg_3b, sorg_3c)
 :::
 
 
-We prefer to chose model with lower AIC and BIC values. In this scenario, we will move forward with lm2 model containing AR1 structure.
+For model selection, lower AIC and BIC value indicate higher parsimony, that is, the most efficient use of information. In these examaples, we will move forward with linear model containing an AR1 covariance structure.
 
 Let's look at the model estimates for random and fixed effects.
 
