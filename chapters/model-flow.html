@@ -102,7 +102,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e00af50d881c88f0e7c35571a7974566.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-4bfb7afaade4a2ea5f463834128045c0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -184,7 +184,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../styles.css">
 <meta name="twitter:title" content="4&nbsp; Model Preparation and Flow – Field Guide to the R Mixed Model Wilderness">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="model-flow_files/figure-html/unnamed-chunk-3-1.png">
+<meta name="twitter:image" content="model-flow_files/figure-html/unnamed-chunk-2-1.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -369,13 +369,12 @@ window.Quarto = {
    
   <ul>
   <li><a href="#step-1-define-the-research-questions" id="toc-step-1-define-the-research-questions" class="nav-link active" data-scroll-target="#step-1-define-the-research-questions"><span class="header-section-number">4.0.1</span> Step 1: Define the Research Question(s)</a></li>
-  <li><a href="#step-2-identity-the-data-generating-process" id="toc-step-2-identity-the-data-generating-process" class="nav-link" data-scroll-target="#step-2-identity-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identity the data generating process</a></li>
-  <li><a href="#example-experiment" id="toc-example-experiment" class="nav-link" data-scroll-target="#example-experiment"><span class="header-section-number">4.2</span> Example experiment</a>
+  <li><a href="#step-2-identity-the-data-generating-process" id="toc-step-2-identity-the-data-generating-process" class="nav-link" data-scroll-target="#step-2-identity-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identity the data generating process</a>
   <ul class="collapse">
-  <li><a href="#step-3-conduct-data-integrity-checks" id="toc-step-3-conduct-data-integrity-checks" class="nav-link" data-scroll-target="#step-3-conduct-data-integrity-checks"><span class="header-section-number">4.2.1</span> Step 3: Conduct data integrity checks</a></li>
-  <li><a href="#step-4-fit-the-model" id="toc-step-4-fit-the-model" class="nav-link" data-scroll-target="#step-4-fit-the-model"><span class="header-section-number">4.2.2</span> Step 4: Fit the Model</a></li>
-  <li><a href="#step-5-check-model-assumptions" id="toc-step-5-check-model-assumptions" class="nav-link" data-scroll-target="#step-5-check-model-assumptions"><span class="header-section-number">4.2.3</span> Step 5: Check model assumptions</a></li>
-  <li><a href="#step-6-conduct-inference" id="toc-step-6-conduct-inference" class="nav-link" data-scroll-target="#step-6-conduct-inference"><span class="header-section-number">4.2.4</span> Step 6: Conduct inference</a></li>
+  <li><a href="#step-3-conduct-data-integrity-checks" id="toc-step-3-conduct-data-integrity-checks" class="nav-link" data-scroll-target="#step-3-conduct-data-integrity-checks"><span class="header-section-number">4.1.1</span> Step 3: Conduct data integrity checks</a></li>
+  <li><a href="#step-4-fit-the-model" id="toc-step-4-fit-the-model" class="nav-link" data-scroll-target="#step-4-fit-the-model"><span class="header-section-number">4.1.2</span> Step 4: Fit the Model</a></li>
+  <li><a href="#step-5-check-model-assumptions" id="toc-step-5-check-model-assumptions" class="nav-link" data-scroll-target="#step-5-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 5: Check model assumptions</a></li>
+  <li><a href="#step-6-conduct-inference" id="toc-step-6-conduct-inference" class="nav-link" data-scroll-target="#step-6-conduct-inference"><span class="header-section-number">4.1.4</span> Step 6: Conduct inference</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/model-flow.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -435,6 +434,20 @@ Note
 </div>
 </div>
 </div>
+<section id="example-experiment" class="level4" data-number="4.0.0.1">
+<h4 data-number="4.0.0.1" class="anchored" data-anchor-id="example-experiment"><span class="header-section-number">4.0.0.1</span> Example experiment</h4>
+<p>For the following steps, imagine we are running a field trial across 3 different locations. At each location, there is a cover cropping treatment with three levels and date of termination also with three levels. The experimental units are plots and are arranged across the three locations as thus:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="model-flow_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is a complex design. At one level, it can be considered strip plot (also called “split block”) where the locations are blocks and there is one treatment, “termination date”. Nested within that are sub-blocks for the cover cropping treatment that is also applied in strips.</p>
+</section>
 <section id="step-1-define-the-research-questions" class="level3" data-number="4.0.1">
 <h3 data-number="4.0.1" class="anchored" data-anchor-id="step-1-define-the-research-questions"><span class="header-section-number">4.0.1</span> Step 1: Define the Research Question(s)</h3>
 <p>It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. Ideally, tgis was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a project and when the project is finally implemented. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:</p>
@@ -451,11 +464,12 @@ Note
 <p>What are the relative contributions of location, year and cultivar influencing barley yield across southern Idaho?</p>
 </blockquote>
 <p>The first two examples are asking for specific inference on the estimated effects of a particular intervention. The third example is a hypothesis test, and the fourth example is also inferential, but focused on variance instead of point estimates.</p>
+<p>For the example study, the goal is to estimate the impact of termination date and cover cropping on several soil variables indicative of soil health. There is a particular interest in estimates for the interaction of termination date and cover cropping.</p>
 </section>
-<section id="step-2-identity-the-data-generating-process" class="level2" data-number="4.1">
+<section id="step-2-identity-the-data-generating-process" class="level2 page-columns page-full" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="step-2-identity-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identity the data generating process</h2>
 <p>A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all “cookie cutter”, assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we have learned from experience that many students who need a guide like this also need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results. So, let’s talk about how to properly identify and specify the data-generating processes from your study – that is, let’s discuss how to translate your study into a linear model.</p>
-<p>Below are steps adapted from chapter 2 of <em>Generalized Linear Mixed Models</em> <span class="citation" data-cites="stroup2013">Stroup et al. (<a href="../references.html#ref-stroup2024" role="doc-biblioref">2014</a>)</span>.</p>
+<p>Below are steps adapted from chapter 2 of <em>Generalized Linear Mixed Models</em> (<span class="citation" data-cites="stroup2013 stroup2024">(<a href="../references.html#ref-stroup2013" role="doc-biblioref">Stroup 2013</a>; <a href="../references.html#ref-stroup2024" role="doc-biblioref">Stroup et al. 2014</a>)</span>).</p>
 <p>The overall goal to outline what units received (or will receive) what treatment(s) and in what order?</p>
 <ol type="1">
 <li><p>Identify the treatments and their levels. Treatments are also called factors or interventions. They are independent variables whose impact on the dependent variable we want to estimate. Levels are specific categories or amounts of the factor applied to the experiment. A treatment could be nitrogen fertilizer, and the levels of that fertilizer could be two different types of fertilizer (e.g.&nbsp;urea and ammonium nitrate) or different amounts of fertilizer (20, 40, 60 lbs per acre). There may be multiple treatments or factors for a single experiment.</p></li>
@@ -465,20 +479,6 @@ Note
 <li><p>Create a “plot plan” of the units that received what treatments and in what arrangement. Agricultural field plot maps are the general framework to use. While these represent relative physical locations of where each treatment was applied, the basic concept can be extended to other circumstances. Which animals in a dairy received a nutritional supplement, how were these animals grouped and how was the nutritional administered? If you are</p></li>
 <li><p>Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below.</p></li>
 </ol>
-</section>
-<section id="example-experiment" class="level2 page-columns page-full" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="example-experiment"><span class="header-section-number">4.2</span> Example experiment</h2>
-<p>For the following steps, imagine that a someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen fertilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis.</p>
-<p>For the following steps, imagine we are running a field trial across 3 different locations. At each location, there is a cover cropping treatment with three levels and date of termination also with three levels. The experimental units are plots and are arranged across the three locations as thus:</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="model-flow_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="callout callout-style-default callout-note callout-titled">
@@ -494,11 +494,18 @@ Note
 <p>Linear models also require that we identify the distributions of the dependent variable and the random effects, and identify a suitable link function for the dependent variable and its distribution. For this tutorial, all dependent variables and random effects are assumed to be normally distributed and use the identity link function (that is, specifying no transformation).</p>
 </div>
 </div>
-</div></div><section id="step-3-conduct-data-integrity-checks" class="level3 page-columns page-full" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="step-3-conduct-data-integrity-checks"><span class="header-section-number">4.2.1</span> Step 3: Conduct data integrity checks</h3>
+</div></div><p>For the example experiment, the data generating process includes:</p>
+<p><strong>Factors</strong></p>
+<ul>
+<li>termination date (3 levels)</li>
+<li>cover cropping (3 levels)</li>
+</ul>
+<p><strong>Topology</strong> - location (3 levels), randomization unit for termination - subblock (3 levels at each location), randomization unit for cover cropping</p>
+<section id="step-3-conduct-data-integrity-checks" class="level3 page-columns page-full" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="step-3-conduct-data-integrity-checks"><span class="header-section-number">4.1.1</span> Step 3: Conduct data integrity checks</h3>
 <p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
-<section id="check-the-structure-of-the-data" class="level4 page-columns page-full" data-number="4.2.1.1">
-<h4 data-number="4.2.1.1" class="anchored" data-anchor-id="check-the-structure-of-the-data"><span class="header-section-number">4.2.1.1</span> Check the structure of the data</h4>
+<section id="check-the-structure-of-the-data" class="level4 page-columns page-full" data-number="4.1.1.1">
+<h4 data-number="4.1.1.1" class="anchored" data-anchor-id="check-the-structure-of-the-data"><span class="header-section-number">4.1.1.1</span> Check the structure of the data</h4>
 <p>In this step, we need to make sure that class of variables in data is as expected. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> needs to be in a ‘character’ or ‘factor’ format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, although categorical outcomes are certainly plausible for many studies.</p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;No one views the year 2026 as 2,026.</p></div><div id="fn2"><p><sup>2</sup>&nbsp;Since this tutorial is exclusively focused on general linear models and is not addressing <em>generalized</em> scenarios at all.</p></div></div><div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -520,10 +527,11 @@ Warning
 <p>This will print the data class of each variable present in the data set and a few example values for each variable.</p>
 <p>The example code below shows the conversion of rep from numeric to factor class and the conversion of yield from character to numeric class.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>block)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>rep <span class="ot">&lt;-</span> <span class="fu">as.character</span>(dataset<span class="sc">$</span>rep)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>yield <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dataset<span class="sc">$</span>yield)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>subblock <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dataset<span class="sc">$</span>subblock)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>location <span class="ot">&lt;-</span> <span class="fu">as.character</span>(dataset<span class="sc">$</span>location)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>y_var <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dataset<span class="sc">$</span>y_var)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>Note that if your response variable did not import as numeric autommaticaly, this is an indicator that there may be problems with the observations that need attention.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -534,24 +542,25 @@ Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or “string” format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many will also automatically convert character variables to factors.</p>
+<p>Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or “string” format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many will automatically convert character variables to factors. Often, is is less complicated to use the character class for all factors used in analysis.</p>
 </div>
 </div>
 </section>
-<section id="inspect-the-independent-variables" class="level4" data-number="4.2.1.2">
-<h4 data-number="4.2.1.2" class="anchored" data-anchor-id="inspect-the-independent-variables"><span class="header-section-number">4.2.1.2</span> Inspect the independent variables</h4>
+<section id="inspect-the-independent-variables" class="level4" data-number="4.1.1.2">
+<h4 data-number="4.1.1.2" class="anchored" data-anchor-id="inspect-the-independent-variables"><span class="header-section-number">4.1.1.2</span> Inspect the independent variables</h4>
 <p>Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dataset<span class="sc">$</span>trt, dataset<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dataset<span class="sc">$</span>cover_crop, dataset<span class="sc">$</span>subblock, dataset<span class="sc">$</span>location)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dataset<span class="sc">$</span>location, dataset<span class="sc">$</span>termindation_date)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The output from this code will give us the number of observations in each replication for a given treatment. It’s helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., “high”, “High” or “High”); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.</p>
 </section>
-<section id="check-the-extent-of-missing-data" class="level4" data-number="4.2.1.3">
-<h4 data-number="4.2.1.3" class="anchored" data-anchor-id="check-the-extent-of-missing-data"><span class="header-section-number">4.2.1.3</span> Check the extent of missing data</h4>
+<section id="check-the-extent-of-missing-data" class="level4" data-number="4.1.1.3">
+<h4 data-number="4.1.1.3" class="anchored" data-anchor-id="check-the-extent-of-missing-data"><span class="header-section-number">4.1.1.3</span> Check the extent of missing data</h4>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(dataset))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>This will give you the number of missing values in each variable. Missing data is a normal part of experiments and in most cases, is not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.</p>
+<p>This will give you the number of missing values in each variable. Missing data are a normal part of experiments and in most cases, are not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -562,28 +571,28 @@ Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to produce any crop at all due to a field conditions (e.g.&nbsp;drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a field plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as “zero” or the closest appropriate value), or exclude that observation (set the data for that plot as missing).</p>
+<p>We occasionally see users substitute missing data with zeros. This is not recommended unless there is a clear justification for this choice. If in the course of an agronomic trial, one plot (that had been seeded for some crop) failed to produce any crop at all due to a field conditions (e.g.&nbsp;drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if due to some error or choice, a plot was not seeded with a crop and hence produced no crop during the field seasoln, assigning a zero is not an accurate description of what occurred (again, assuming we are measuring a crop variable such as biomass). Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a field plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as “zero” or the closest appropriate value), or exclude that observation (i.e.&nbsp;set the data for that plot as missing).</p>
 </div>
 </div>
 </section>
-<section id="inspect-the-dependent-variable-and-all-other-continuous-variables" class="level4" data-number="4.2.1.4">
-<h4 data-number="4.2.1.4" class="anchored" data-anchor-id="inspect-the-dependent-variable-and-all-other-continuous-variables"><span class="header-section-number">4.2.1.4</span> Inspect the dependent variable and all other continuous variables</h4>
+<section id="inspect-the-dependent-variable-and-all-other-continuous-variables" class="level4" data-number="4.1.1.4">
+<h4 data-number="4.1.1.4" class="anchored" data-anchor-id="inspect-the-dependent-variable-and-all-other-continuous-variables"><span class="header-section-number">4.1.1.4</span> Inspect the dependent variable and all other continuous variables</h4>
 <p>Check the dependent variable and all continuous variables (i.e.&nbsp;covariates) to ensure their distributions are following expectations. A histogram is often sufficient to accomplish this. The goal of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme observations (high or low). This is designed to be a quick check, so there is no need to spend time prettifying these plots.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data<span class="sc">$</span>yield)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(data<span class="sc">$</span>soil_organic_matter)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Data are not expected to be normally distributed at this point, so don’t bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots regularly, you will gain a feel for what your data should look like at this stage.</p>
+<p>Data are not expected to be normally distributed at this point, so don’t bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and are within a valid range of values. Evaluating this requires a mixture of domain knowledge and statistical training. Over time, as you look at these plots regularly, you will develop a sense of what your data should look like at this stage.</p>
 </section>
-<section id="next-steps" class="level4" data-number="4.2.1.5">
-<h4 data-number="4.2.1.5" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">4.2.1.5</span> Next Steps</h4>
-<p>The purpose of these checks is to help us find any data errors that ought to be fixed prior to model fitting. They are designed to be done quickly and should be conducted for <strong><em>every analysis</em></strong> if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis.</p>
+<section id="next-steps" class="level4" data-number="4.1.1.5">
+<h4 data-number="4.1.1.5" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">4.1.1.5</span> Next Steps</h4>
+<p>The purpose of these checks is to help find any data errors that ought to be fixed prior to model fitting. These checks are designed to be done quickly and should be conducted for <strong><em>every analysis</em></strong> if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis.</p>
 <p>If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.</p>
 </section>
 </section>
-<section id="step-4-fit-the-model" class="level3 page-columns page-full" data-number="4.2.2">
-<h3 data-number="4.2.2" class="anchored" data-anchor-id="step-4-fit-the-model"><span class="header-section-number">4.2.2</span> Step 4: Fit the Model</h3>
-<section id="notes-on-formula-syntax-and-expectations" class="level4 page-columns page-full" data-number="4.2.2.1">
-<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="notes-on-formula-syntax-and-expectations"><span class="header-section-number">4.2.2.1</span> Notes on formula syntax and expectations</h4>
+<section id="step-4-fit-the-model" class="level3 page-columns page-full" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="step-4-fit-the-model"><span class="header-section-number">4.1.2</span> Step 4: Fit the Model</h3>
+<section id="notes-on-formula-syntax-and-expectations" class="level4 page-columns page-full" data-number="4.1.2.1">
+<h4 data-number="4.1.2.1" class="anchored" data-anchor-id="notes-on-formula-syntax-and-expectations"><span class="header-section-number">4.1.2.1</span> Notes on formula syntax and expectations</h4>
 <p>In this guide, we use ‘lme4’ and ‘nlme’ packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for <code>lmer()</code> and <code>lme()</code> models is to specify the response variable, fixed factors, and random factors and follow the <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html" class="external" target="_blank">R generic function</a> for <code>formula()</code>. For this demonstration, let’s assume the dependent variable is ‘yield’, ‘tr’t is a fixed effect and ’block’ is a random effect.</p>
 <p>The code below shows the R syntax for a mixed model with one fixed and one random effect:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -591,16 +600,16 @@ Warning
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yield <span class="sc">~</span> trt <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block),</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(soil_organic_matter <span class="sc">~</span> termination_date <span class="sc">*</span> cover_cropping <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>location<span class="sc">/</span>termination_date<span class="sc">/</span>subblock),</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dataset, </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(yield <span class="sc">~</span> trt ,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>block,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> data1, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lmer</span>(soil_organic_matter <span class="sc">~</span> termination_date <span class="sc">*</span> cover_cropping,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>location<span class="sc">/</span>termination_date<span class="sc">/</span>subblock,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dataset, </span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -624,8 +633,8 @@ Warning
 </div>
 </section>
 </section>
-<section id="step-5-check-model-assumptions" class="level3 page-columns page-full" data-number="4.2.3">
-<h3 data-number="4.2.3" class="anchored" data-anchor-id="step-5-check-model-assumptions"><span class="header-section-number">4.2.3</span> Step 5: Check model assumptions</h3>
+<section id="step-5-check-model-assumptions" class="level3 page-columns page-full" data-number="4.1.3">
+<h3 data-number="4.1.3" class="anchored" data-anchor-id="step-5-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 5: Check model assumptions</h3>
 <p>Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -641,8 +650,8 @@ Warning
 </div>
 </div>
 <p>In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:</p>
-<section id="original-method" class="level4" data-number="4.2.3.1">
-<h4 data-number="4.2.3.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.2.3.1</span> Original method</h4>
+<section id="original-method" class="level4" data-number="4.1.3.1">
+<h4 data-number="4.1.3.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.1.3.1</span> Original method</h4>
 <p>We can use base <code>plot()</code> function in R for ‘lme4’ and ‘nlme’ modelling objects to check the homoscedasticity (residuals vs.&nbsp;fitted values plot) of residuals.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">nlme</a></li></ul>
@@ -680,8 +689,8 @@ Warning
 </div>
 <p>Interpretiong qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!</p>
 </section>
-<section id="new-iid-checks" class="level4 page-columns page-full" data-number="4.2.3.2">
-<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">4.2.3.2</span> New Method</h4>
+<section id="new-iid-checks" class="level4 page-columns page-full" data-number="4.1.3.2">
+<h4 data-number="4.1.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">4.1.3.2</span> New Method</h4>
 <p>Nowadays, we can take advantage of the <a href="https://easystats.github.io/performance/" class="external" target="_blank">performance</a> package, which provides a comprehensive suite of diagnostic plots.</p>
 <p>The diagnostic plots we created above can be created using one function <code>check_model()</code> from the ‘performance’ package.</p>
 
@@ -716,8 +725,8 @@ Note
 </div>
 </section>
 </section>
-<section id="step-6-conduct-inference" class="level3" data-number="4.2.4">
-<h3 data-number="4.2.4" class="anchored" data-anchor-id="step-6-conduct-inference"><span class="header-section-number">4.2.4</span> Step 6: Conduct inference</h3>
+<section id="step-6-conduct-inference" class="level3" data-number="4.1.4">
+<h3 data-number="4.1.4" class="anchored" data-anchor-id="step-6-conduct-inference"><span class="header-section-number">4.1.4</span> Step 6: Conduct inference</h3>
 <p>After verifying the assumptions of model, we can move to the inference of model. Based on analysis goals, we can either conduct analysis of variance using <code>anova()</code> function and/or we can estimate marginal means using <code>emmeans()</code> function from the ‘emmeans’ package. We can also run post hoc comparisons to evaluate the pairwise comparison or contrasts using estimated means.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
