@@ -4,6 +4,13 @@ mermaid:
   theme: forest
 ---
 
+```{r, include=FALSE, echo=FALSE}
+source(here::here("settings.r"))
+
+par(mar=c(5.1, 6, 4.1, 2.1))
+```
+
+
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
 ::: callout-note
@@ -65,7 +72,48 @@ The overall goal to outline what units received (or will receive) what treatment
 
 ## Example experiment
 
-For the following steps, imagine that a someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen ferilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis. 
+For the following steps, imagine that a someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen fertilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis. 
+
+For the following steps, imagine we are running a field trial across 3 different locations. At each location, there is a cover cropping treatment with three levels and date of termination also with three levels. The experimental units are plots and are arranged across the three locations as thus:
+
+```{r}
+#| echo: false
+#| warning: false
+
+set.seed(300)
+
+library(ggplot2)
+
+td = c("TD 1", "TD 2", "TD 3")
+cc = c("CC 1", "CC 2", "CC 3")
+
+
+# for cover crop, this needs to be latin square
+
+dataf <- data.frame(location = rep(c("Location A", "Location B", "Location C"), each = 3*3),
+                    termination = rep(unlist(replicate(3, sample(td, 3), simplify = FALSE)), each = 3),
+                    cover_crop = rep(unlist(replicate(3, sample(cc, 3), simplify = FALSE)), 3),
+                    row = rep(1:3, 3*3),
+                    range = rep(rep(1:3, each = 3), 3))
+
+ggplot(dataf, aes(as.factor(row), as.factor(range), fill = termination)) +
+  geom_tile(color = "black") +
+  geom_text(aes(label = cover_crop)) + 
+  facet_grid(. ~ location) + 
+  xlab("block") + 
+  labs(fill = "termination date") + 
+  theme_classic(base_size = 14) +
+  theme(axis.title.y = element_blank(),
+        legend.position = "bottom",
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+  )
+```
+
+
+
+
+
 
 ::::: column-margin
 ::: callout-note
