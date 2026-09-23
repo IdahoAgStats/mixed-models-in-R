@@ -4,13 +4,6 @@ mermaid:
   theme: forest
 ---
 
-```{r, include=FALSE, echo=FALSE}
-source(here::here("settings.r"))
-
-par(mar=c(5.1, 6, 4.1, 2.1))
-```
-
-
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
 ::: callout-note
@@ -33,6 +26,50 @@ graph TD
 ```
 
 
+#### Example experiment
+
+For the following steps, imagine we are running a field trial across 3 different locations. At each location, there is a cover cropping treatment with three levels and date of termination also with three levels. The experimental units are plots and are arranged across the three locations as thus:
+
+```{r}
+#| echo: false
+#| warning: false
+set.seed(300)
+library(ggplot2)
+
+td = c("TD 1", "TD 2", "TD 3")
+cc = c("CC 1", "CC 2", "CC 3")
+
+dataf <- data.frame(order = 1:81,
+                    row = as.factor(rep(rep(1:3, each = 3*3), 3)),
+                    range = as.factor(rep(rep(1:9), 3*3)),
+                    cover_crop = unlist(replicate(3,rep(unlist(replicate(3, sample(cc, 3), simplify = FALSE)), 3), simplify = FALSE)),
+                    termination = rep(unlist(replicate(3, sample(td, 3), simplify = FALSE)), each = 3*3),
+                    location = rep(c("Location A", "Location B", "Location C"), each = 3*3*3))
+
+ggplot(dataf, aes(x = row, y = range, fill = termination)) +
+  geom_tile(color = "white", linewidth = 1.5) +
+  #geom_text(aes(label = order)) + 
+  geom_text(aes(label = cover_crop)) + 
+  facet_grid(. ~ location) + 
+  geom_hline(yintercept = 3.5, linewidth = 1.7) + 
+  geom_hline(yintercept = 6.5, linewidth = 1.7) + 
+  ylab("sub-block") + 
+  labs(fill = "termination date") + 
+  scale_y_discrete(
+    labels = c("", "1", "", "", "2", "", "", "3", "")) + 
+  #scale_fill_brewer(palette = "Accent") +
+  ggokabeito::scale_color_okabe_ito(alpha = 0.7, order = 1:3, aesthetics = "fill") + 
+  theme_classic(base_size = 14) +
+  theme(axis.title.x = element_blank(),
+        legend.position = "bottom",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(), 
+        axis.ticks.y = element_blank()
+  )
+```
+
+This is a complex design. At one level, it can be considered strip plot (also called "split block") where the locations are blocks and there is one treatment, "termination date". Nested within that are sub-blocks for the cover cropping treatment that is also applied in strips. 
+
 ### Step 1: Define the Research Question(s)
 
 It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. Ideally, tgis was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a project and when the project is finally implemented. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:
@@ -48,6 +85,8 @@ It is important to define what is your question that you want to answer with you
 
 The first two examples are asking for specific inference on the estimated effects of a particular intervention. The third example is a hypothesis test, and the fourth example is also inferential, but focused on variance instead of point estimates. 
 
+For the example study, the goal is to estimate the impact of termination date and cover cropping on several soil variables indicative of soil health. There is a particular interest in estimates for the interaction of termination date and cover cropping. 
+
 ## Step 2: Identity the data generating process
 
 A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all "cookie cutter", assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we have learned from experience that many students who need a guide like this also need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
@@ -57,7 +96,7 @@ Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* ([@s
 The overall goal to outline what units received (or will receive) what treatment(s) and in what order? 
 
 
-1. Identify the  treatments and their levels. Treatments are also called factors or interventions. They are independent variables whose impact on the dependent variable we want to estimate. Levels are specific categories or amounts of the factor applied to the experiment. A treatment could be nitrogen fertilizer, and the levels of that fertilizer could be two different types of fertilizer (e.g. urea and ammonium nitrate) or different amounts of fertilizer (20, 40, 60 lbs per acre). There may be multiple treatments or factors for a single experiment. 
+1. Identify the treatments and their levels. Treatments are also called factors or interventions. They are independent variables whose impact on the dependent variable we want to estimate. Levels are specific categories or amounts of the factor applied to the experiment. A treatment could be nitrogen fertilizer, and the levels of that fertilizer could be two different types of fertilizer (e.g. urea and ammonium nitrate) or different amounts of fertilizer (20, 40, 60 lbs per acre). There may be multiple treatments or factors for a single experiment. 
 
 1. Identify the unit of replication (also called the unit of randomization). This is the smallest unit or entity that was independently assigned a treatment combination. This can be a spatial units of land (e.g. a plot), a person, an animal, part of an animal carcass, a single water sample, a soil composite for a specific depth, among many other things. This is not the same as smallest unit being measured; it is the smallest unit subject to a single combination of treatments. This is called the *experimental unit*. 
 
@@ -70,56 +109,23 @@ The overall goal to outline what units received (or will receive) what treatment
 1. Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below. 
 
 
-## Example experiment
-
-For the following steps, imagine that a someone conducted a field trial to study wheat yield response to different nitrogen fertilizer treatments. In this case, we want to analyze how wheat yield responded to the fertilizer treatments using a randomized complete block design. Thus, we have identified the dependent variable (yield) and the fixed effects (nitrogen fertilizer rates) and the random effect (block). A study like this could have other goals such as what is the optimal nitrogen fertilizer rate, how much does yield change as a function of added nitrogen, or what mathematical model best describes this relationship. It is helpful to define these goals before embarking on an analysis. 
-
-For the following steps, imagine we are running a field trial across 3 different locations. At each location, there is a cover cropping treatment with three levels and date of termination also with three levels. The experimental units are plots and are arranged across the three locations as thus:
-
-```{r}
-#| echo: false
-#| warning: false
-
-set.seed(300)
-
-library(ggplot2)
-
-td = c("TD 1", "TD 2", "TD 3")
-cc = c("CC 1", "CC 2", "CC 3")
-
-
-# for cover crop, this needs to be latin square
-
-dataf <- data.frame(location = rep(c("Location A", "Location B", "Location C"), each = 3*3),
-                    termination = rep(unlist(replicate(3, sample(td, 3), simplify = FALSE)), each = 3),
-                    cover_crop = rep(unlist(replicate(3, sample(cc, 3), simplify = FALSE)), 3),
-                    row = rep(1:3, 3*3),
-                    range = rep(rep(1:3, each = 3), 3))
-
-ggplot(dataf, aes(as.factor(row), as.factor(range), fill = termination)) +
-  geom_tile(color = "black") +
-  geom_text(aes(label = cover_crop)) + 
-  facet_grid(. ~ location) + 
-  xlab("block") + 
-  labs(fill = "termination date") + 
-  theme_classic(base_size = 14) +
-  theme(axis.title.y = element_blank(),
-        legend.position = "bottom",
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(), 
-  )
-```
-
-
-
-
-
-
 ::::: column-margin
 ::: callout-note
 Linear models also require that we identify the distributions of the dependent variable and the random effects, and identify a suitable link function for the dependent variable and its distribution. For this tutorial, all dependent variables and random effects are assumed to be normally distributed and use the identity link function (that is, specifying no transformation). 
 :::
 :::::
+
+For the example experiment, the data generating process includes:
+
+**Factors**
+
+- termination date (3 levels)
+- cover cropping (3 levels)
+
+**Topology**
+- location (3 levels), randomization unit for termination
+- subblock (3 levels at each location), randomization unit for cover cropping
+
 
 ### Step 3: Conduct data integrity checks 
 
@@ -147,16 +153,17 @@ This will print the data class of each variable present in the data set and a fe
 
 The example code below shows the conversion of rep from numeric to factor class and the conversion of yield from character to numeric class.
 ```{r, eval=FALSE}
-dataset$block <- as.factor(dataset$block)
-dataset$rep <- as.character(dataset$rep)
-dataset$yield <- as.numeric(dataset$yield)
+dataset$subblock <- as.factor(dataset$subblock)
+dataset$location <- as.character(dataset$location)
+dataset$y_var <- as.numeric(dataset$y_var)
 ```
 
+Note that if your response variable did not import as numeric autommaticaly, this is an indicator that there may be problems with the observations that need attention. Perhaps a decimal point with replaced with a comma instead, a "O" was typed instead of "0", or maybe there were unexpected methods of representing missing values. It is a good to check and make sure there are no data entry errors before proceeding with analysis. 
 
 ::: callout-tip
 ## Factor versus character class
 
-Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or "string" format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many will also automatically convert character variables to factors. 
+Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or "string" format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many will automatically convert character variables to factors. Often, is is less complicated to use the character class for all factors used in analysis. 
 :::
 
 
@@ -165,7 +172,8 @@ Often, factor and character object classes are used interchangeably. However, we
 Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data.
 
 ```{r, eval=FALSE}
-table(dataset$trt, dataset$block)
+table(dataset$cover_crop, dataset$subblock, dataset$location)
+table(dataset$location, dataset$termindation_date)
 ```
 
 The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high", "High" or "High "); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
@@ -177,12 +185,12 @@ The output from this code will give us the number of observations in each replic
 colSums(is.na(dataset))
 ```
 
-This will give you the number of missing values in each variable. Missing data is a normal part of experiments and in most cases, is not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.
+This will give you the number of missing values in each variable. Missing data are a normal part of experiments and in most cases, are not a problem. However, if there is more missingness than expected, it is good to check that the data are correctly entered and that nothing went wrong during data import.
 
 ::: callout-tip
 ## Missingness versus zeros
 
-We occasionally see users substitute missing data with zeros. This is not recommended at all unless there is a clear reason. If I planted an experiment and one plot failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if I failed to plant anything in a plot due to user error, assigning a zero is not an accurate description of what occurred. Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a field plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (set the data for that plot as missing). 
+We occasionally see users substitute missing data with zeros. This is not recommended unless there is a clear justification for this choice. If in the course of an agronomic trial, one plot (that had been seeded for some crop) failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if due to some error or choice, a plot was not seeded with a crop and hence produced no crop during the field seasoln, assigning a zero is not an accurate description of what occurred (again, assuming we are measuring a crop variable such as biomass). Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a field plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (i.e. set the data for that plot as missing). 
 :::
 
 
@@ -192,19 +200,20 @@ Check the dependent variable and all continuous variables (i.e. covariates) to e
 
 
 ```{r, eval=FALSE}
-hist(data$yield)
+hist(data$soil_organic_matter)
 ```
 
-Data are not expected to be normally distributed at this point, so don't bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and appear valid. It requires a mixture of domain knowledge and statistical training to know this, but over time, if you look at these plots regularly, you will gain a feel for what your data should look like at this stage.
+Data are not expected to be normally distributed at this point, so don't bother running any normality tests like the Shapiro-Wilk test. This histogram is a check to ensure that the data are entered correctly and are within a valid range of values. Evaluating this requires a mixture of domain knowledge and statistical training. Over time, as you look at these plots regularly, you will develop a sense of what your data should look like at this stage.
 
 #### Next Steps
 
-The purpose of these checks is to help us find any data errors that ought to be fixed prior to model fitting. They are designed to be done quickly and should be conducted for ***every analysis*** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis. 
+The purpose of these checks is to help find any data errors that ought to be fixed prior to model fitting. These checks are designed to be done quickly and should be conducted for ***every analysis*** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis. 
 
 If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
 
 
 ### Step 4: Fit the Model  
+
 
 #### Notes on formula syntax and expectations
 
@@ -215,16 +224,16 @@ The code below shows the R syntax for a mixed model with one fixed and one rando
 ::: panel-tabset
 ### lme4
 ```{r, eval=FALSE}
-model_lmer <- lmer(yield ~ trt + (1|block),
+model_lmer <- lmer(soil_organic_matter ~ termination_date * cover_cropping + (1|location/termination_date/subblock),
                    data = dataset, 
                    na.action = na.exclude)
 ```
 
 ### nlme
 ```{r, eval=FALSE}
-model_lme <- lme(yield ~ trt ,
-                  random = ~ 1|block,
-                  data = data1, 
+model_lme <- lmer(soil_organic_matter ~ termination_date * cover_cropping,
+                  random = ~ 1|location/termination_date/subblock,
+                  data = dataset, 
                   na.action = na.exclude)
 ```
 :::
