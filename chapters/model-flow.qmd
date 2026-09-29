@@ -140,11 +140,10 @@ The experiment unit and observational unit are the same: a field plot.
 
 
 ```{r}
-#| echo: false
 #| eval: false
-#| include: false
-#| warning: false
 #| message: false
+#| warning: false
+#| include: false
 
 
 library(lme4); library(lmerTest)
@@ -168,18 +167,16 @@ anova(m1, ddf = "Kenward-Roger")
 
 ```{r}
 #| echo: false
-#| eval: true
-#| include: false
-#| warning: false
 #| message: false
+#| warning: false
 library(knitr); library(kableExtra)
 
 # "(2*3-1)(4-1)(3-1)=30 = (TD*rep - 1)(Loc - 1)(CC - 1)"
 # edit this one
 table1 <- data.frame(
-  col1 = c("Location", "Block", "", "", "", "TD Unit(location)", "CC Unit(block)", "CC Unit(block)|TD", "Total"),
+  col1 = c("Location", "Block", "", "", "", "TD Unit(location)\u00B2", "CC Unit(block)\u00B3", "CC Unit(block)|TD\u2074", "Total"),
   col2 = c("4-1=3", "(3-1)*4=8", "", "", "", "(2-1)(4-1)=3", "(3*4-1)*2=22", "(2*3-1)(4-1)(3-1)=30", "(2*3*3*4) - 1 = 71"),
-  col3 = c("", "", "Termination Date", "Cover Cropping", "TD x CC", "", "", "", ""),
+  col3 = c("", "", "Termination Date", "Cover Cropping", "TD x CC\u00B9", "", "", "", ""),
   col4 = c("", "", "2-1=1", "3-1=2", "(2-1)(3-1)=2", "", "", "", ""),
   col5 = c("Location", "Block", "Termination Date", "Cover Cropping", "TD x CC", 
            "TD Unit(location)", "CC Unit(block)", "CC Unit(block)|TD", "Total"),
@@ -203,7 +200,7 @@ table0 <- data.frame(
 ```{r}
 #| echo: false
 #| eval: true
-#| include: true
+
 
 kable(table1, col.names = NULL,  align = rep(c("l", "l"), 3), format = "html") |> 
   add_header_above(rep(c("Source", "df"), 3), align = "l") |> 
@@ -214,7 +211,10 @@ kable(table1, col.names = NULL,  align = rep(c("l", "l"), 3), format = "html") |
 
 ```
 
-_*"CC" refers to the cover cropping treatment._
+*$^1$"CC" refers to the cover cropping treatment.*   
+*$^2$Effect of termination date within location.*   
+*$^3$Cover Crop-within-block effects after accounting for cover crop effects.*    
+*$^4$Unit-within-block effects after accounting for all treatment effects.*      
 
 :::
 
