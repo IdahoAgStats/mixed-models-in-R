@@ -46,11 +46,15 @@ dataf <- data.frame(order = 1:81,
                     range = as.factor(rep(rep(1:9), 3*3)),
                     cover_crop = unlist(replicate(3,rep(unlist(replicate(3, sample(cc, 3), simplify = FALSE)), 3), simplify = FALSE)),
                     termination = rep(unlist(replicate(3, sample(td, 3), simplify = FALSE)), each = 3*3),
-                    location = rep(c("Location A", "Location B", "Location C"), each = 3*3*3))
+                    location = rep(c("Location A", "Location B", "Location C"), each = 3*3*3),
+                    bloc = as.character(rep(rep(rep(1:3), each = 3, 3), 3)), 
+                    block = c(rep(rep(1:3, each = 3), 3), rep(rep(4:6, each = 3), 3), rep(rep(7:9, each = 3), 3)),
+                    yvar = rnorm(81, 30, 1))
 
 ggplot(dataf, aes(x = row, y = range, fill = termination)) +
   geom_tile(color = "white", linewidth = 1.5) +
   #geom_text(aes(label = order)) + 
+  #geom_text(aes(label = block)) + 
   geom_text(aes(label = cover_crop)) + 
   facet_grid(. ~ location) + 
   geom_hline(yintercept = 3.5, linewidth = 1.7) + 
@@ -133,6 +137,43 @@ For the example experiment described above, the data generating process includes
 - subblock (3 levels at each location), randomization unit for cover cropping   
 
 The experiment unit and observational unit are the same: a field plot. 
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| include: false
+#| warning: false
+#| message: false
+
+
+library(lme4); library(lmerTest)
+
+m0 <- lm(yvar ~ cover_crop*termination + location/termination + block:cover_crop + block:termination ,
+           data = dataf)
+
+anova(m0)
+
+# m1 <- lm(yvar ~ cover_crop*termination + location/termination + location/block/cover_crop + 
+#            (location:block):termination + (location:block):cover_crop,
+#            data = dataf)
+# 
+# anova(m1)
+
+m2 <- lmer(yvar ~ cover_crop*termination + 
+             (1|location/termination) + # nesting structure
+            #(1|block/cover_crop) + # nesting structure, not needed after redefining block
+             (1|block:termination) + (1|cover_crop:block), # row and column effects
+           data = dataf)
+
+anova(m2, ddf = "Kenward-Roger")
+
+# m3 <- lmer(yvar ~ cover_crop*termination + 
+#              (1|location/termination) + (1|location/block/cover_crop) ,
+#            data = dataf)
+# 
+# anova(m3, ddf = "Kenward-Roger")
+```
 
 
 ```{r}
