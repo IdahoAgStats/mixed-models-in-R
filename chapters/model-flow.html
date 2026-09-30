@@ -414,7 +414,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The steps explained below were applied to all example analyses.</p>
+<p>The steps explained below were applied to all examples in this tutorial.</p>
 </div>
 </div>
 <p>Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:</p>
@@ -479,7 +479,7 @@ Note
 <li><p>Identify clusters or stratfication. This is the grouping of units of replication that we expect to be similar to each other in some way. In field experiments, this is often the block, but it may be an experimental run or it may also encompass other factors (e.g.&nbsp;locations, years). Survey statistical concepts of “clusters” and “strata” are akin. There are experimental designs without any clustering, but all the examples in this guide assume blocking.</p></li>
 <li><p>Identify the unit of observation. This is often the experimental unit, but sometimes there are multiple observations within a single experimental unit, e.g.&nbsp;multiple measures of plant height at crop maturity, disease scoring for several potato tubers collected from a single plot, student in a classroom where the classroom is the unit of replication. In these cases, it’s important to ascertain how to express the dependent variables so that they reflect the unit of replication and are not artificially inflating the level of replication. A treatment combination was assigned randomly to an experimental unit and hence observations across experimental units are independent; two observations of the same unit at the same time are not independent. The unit of observation is always nested within the unit of replication.</p></li>
 <li><p>Create a “plot plan” of the units that received what treatments and in what arrangement. Agricultural field plot maps are the general framework to use. While these represent relative physical locations of where each treatment was applied, the basic concept can be extended to other circumstances. Which animals in a dairy received a nutritional supplement, how were these animals grouped and how was the nutritional administered? If you are</p></li>
-<li><p>Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below.</p></li>
+<li><p>Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. Below is an example.</p></li>
 </ol>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -643,7 +643,7 @@ df
 </div>
 </div>
 <p><em><span class="math inline">\(^1\)</span>“CC” refers to the cover cropping treatment.</em><br>
-<em><span class="math inline">\(^2\)</span>Effect of termination date within location.</em><br>
+<em><span class="math inline">\(^2\)</span>Effect of termination date within location after accounting for location.</em><br>
 <em><span class="math inline">\(^3\)</span>Cover Crop-within-block effects after accounting for cover crop effects.</em><br>
 <em><span class="math inline">\(^4\)</span>Unit-within-block effects after accounting for all treatment effects.</em></p>
 </div>
@@ -653,8 +653,8 @@ df
 <p>The first thing is to make sure the data is what we expect. Here are the steps to verify our data:</p>
 <section id="check-the-structure-of-the-data" class="level4 page-columns page-full" data-number="4.1.1.1">
 <h4 data-number="4.1.1.1" class="anchored" data-anchor-id="check-the-structure-of-the-data"><span class="header-section-number">4.1.1.1</span> Check the structure of the data</h4>
-<p>In this step, we need to make sure that class of variables in data is as expected. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> needs to be in a ‘character’ or ‘factor’ format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, although categorical outcomes are certainly plausible for many studies.</p>
-<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;No one views the year 2026 as 2,026.</p></div><div id="fn2"><p><sup>2</sup>&nbsp;Since this tutorial is exclusively focused on general linear models and is not addressing <em>generalized</em> scenarios at all.</p></div></div><div class="callout callout-style-default callout-warning callout-titled">
+<p>In this step, we need to make sure that the object class of each variable used in the analysis is correctly defined. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> needs to be in a ‘character’ or ‘factor’ format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, although categorical outcomes are certainly plausible for many studies.</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;The year “2026” is not correctly understood as 2,026.</p></div><div id="fn2"><p><sup>2</sup>&nbsp;Since this tutorial is exclusively focused on general linear models and is not addressing <em>generalized</em> scenarios at all.</p></div></div><div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -664,7 +664,7 @@ Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Most R import functions (e.g.&nbsp;<code>read.csv()</code>, <code>read_csv()</code>, <code>read_excel()</code>) interprets continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as “N/A” instead of “NA”. This is an indicator to double check your data to ensure there are no errors or unexpected input in it.</p>
+<p>Most R import functions (e.g.&nbsp;<code>read.csv()</code>, <code>read_csv()</code>, <code>read_excel()</code>) interpret continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as “N/A” instead of “NA”. This is an indicator to double check your data to ensure there are no errors or unexpected input in it.</p>
 </div>
 </div>
 <p>We can use the command <code>str()</code> in R to look at the class of each variable in the data set.</p>
