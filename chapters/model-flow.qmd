@@ -7,7 +7,7 @@ mermaid:
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
 ::: callout-note
-The steps explained below were applied to all example analyses. 
+The steps explained below were applied to all examples in this tutorial.  
 :::
 
 Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
@@ -111,7 +111,7 @@ The overall goal to outline what units received (or will receive) what treatment
 
 1. Create a "plot plan" of the units that received what treatments and in what arrangement. Agricultural field plot maps are the general framework to use. While these represent relative physical locations of where each treatment was applied, the basic concept can be extended to other circumstances. Which animals in a dairy received a nutritional supplement, how were these animals grouped and how was the nutritional administered? If you are 
 
-1. Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below. 
+1. Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. Below is an example. 
 
 
 ::::: column-margin
@@ -157,7 +157,7 @@ m1 <- lmer(yvar ~ cover_crop*termination +
              (1|location/termination) + # nesting structure
             #(1|block/cover_crop) + # nesting structure, not needed after redefining block
             # (1|block:termination) + # effects already accounted for with block and termination
-             (1|block/cover_crop), # row and column effects
+             (1|block/cover_crop), # row effects (termination w/in location account for columb effects)
            data = dataf)
 
 anova(m1, ddf = "Kenward-Roger")
@@ -172,7 +172,6 @@ anova(m1, ddf = "Kenward-Roger")
 library(knitr); library(kableExtra)
 
 # "(2*3-1)(4-1)(3-1)=30 = (TD*rep - 1)(Loc - 1)(CC - 1)"
-# edit this one
 table1 <- data.frame(
   col1 = c("Location", "Block", "", "", "", "TD Unit(location)\u00B2", "CC Unit(block)\u00B3", "CC Unit(block)|TD\u2074", "Total"),
   col2 = c("4-1=3", "(3-1)*4=8", "", "", "", "(2-1)(4-1)=3", "(3*4-1)*2=22", "(2*3-1)(4-1)(3-1)=30", "(2*3*3*4) - 1 = 71"),
@@ -181,16 +180,6 @@ table1 <- data.frame(
   col5 = c("Location", "Block", "Termination Date", "Cover Cropping", "TD x CC", 
            "TD Unit(location)", "CC Unit(block)", "CC Unit(block)|TD", "Total"),
   col6 = c(3, 8, 1, 2, 2, 3, 22, "30", 71)
-)
-
-# don't edit this, it's the working example
-table0 <- data.frame(
-  col1 = c("Block", "", "Unit(block)", "Total"),
-  col2 = c(4, "", 25, 29),
-  col3 = c("", "Treatment", "", ""),
-  col4 = c("", 5, "", ""),
-  col5 = c("Block", "Treatment", "Unit(block)|Ttr*", "Total"),
-  col6 = c(4, 5, '25-5=20', 29)
 )
 ```
 
@@ -201,18 +190,15 @@ table0 <- data.frame(
 #| echo: false
 #| eval: true
 
-
 kable(table1, col.names = NULL,  align = rep(c("l", "l"), 3), format = "html") |> 
   add_header_above(rep(c("Source", "df"), 3), align = "l") |> 
   add_header_above(c("Study Design" = 2, "Treatment Design" = 2, "Combined" = 2)) |> 
   row_spec(9, bold = TRUE) |> 
   kable_styling(full_width = TRUE, position = "center")#|> 
- # footnote("*Unit-within-block effects after accounting for treatment effects.") # this was added manually instead to the bottom of the table
-
 ```
 
 *$^1$"CC" refers to the cover cropping treatment.*   
-*$^2$Effect of termination date within location.*   
+*$^2$Effect of termination date within location after accounting for location.*   
 *$^3$Cover Crop-within-block effects after accounting for cover crop effects.*    
 *$^4$Unit-within-block effects after accounting for all treatment effects.*      
 
@@ -224,14 +210,14 @@ The first thing is to make sure the data is what we expect. Here are the steps t
 
 #### Check the structure of the data 
 
-In this step, we need to make sure that class of variables in data is as expected. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical[^model-1] needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2], although categorical outcomes are certainly plausible for many studies.
+In this step, we need to make sure that the object class of each variable used in the analysis is correctly defined. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical[^model-1] needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2], although categorical outcomes are certainly plausible for many studies.
 
-[^model-1]: No one views the year 2026 as 2,026.
+[^model-1]: The year "2026" is not correctly understood as 2,026.
 
 [^model-2]: Since this tutorial is exclusively focused on general linear models and is not addressing *generalized* scenarios at all.
 
 ::: callout-warning
-Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interprets continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors or unexpected input in it.
+Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interpret continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors or unexpected input in it.
 :::
 
 
