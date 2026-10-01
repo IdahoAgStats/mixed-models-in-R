@@ -470,7 +470,7 @@ Note
 </section>
 <section id="step-2-identity-the-data-generating-process" class="level2 page-columns page-full" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="step-2-identity-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identity the data generating process</h2>
-<p>A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all “cookie cutter”, assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we have learned from experience that many students who need a guide like this also need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results. So, let’s talk about how to properly identify and specify the data-generating processes from your study – that is, let’s discuss how to translate your study into a linear model.</p>
+<p>A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all “cookie cutter”, assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we all can benefit from formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results <span class="citation" data-cites="bello2018">(<a href="../references.html#ref-bello2018" role="doc-biblioref">Bello and Renter 2018</a>)</span>. So, let’s talk about how to properly identify and specify the data-generating processes from your study–that is, let’s discuss how to translate your study into a linear model.</p>
 <p>Below are steps adapted from chapter 2 of <em>Generalized Linear Mixed Models</em> (<span class="citation" data-cites="stroup2013 stroup2024">(<a href="../references.html#ref-stroup2013" role="doc-biblioref">Stroup 2013</a>; <a href="../references.html#ref-stroup2024" role="doc-biblioref">Stroup et al. 2014</a>)</span>).</p>
 <p>The overall goal to outline what units received (or will receive) what treatment(s) and in what order?</p>
 <ol type="1">
@@ -744,23 +744,27 @@ Warning
 </section>
 <section id="example-1" class="level4 page-columns page-full" data-number="4.1.2.2">
 <h4 data-number="4.1.2.2" class="anchored" data-anchor-id="example-1"><span class="header-section-number">4.1.2.2</span> Example</h4>
-<p>The code below shows the R syntax for a mixed model with one fixed and one random effect:</p>
+<p>The code below shows the R syntax for a mixed model using the package ‘lme4’. It is possible to run this model in ‘nlme’, but the degrees of freedom must be calculated manually.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(soil_organic_matter <span class="sc">~</span> termination_date <span class="sc">*</span> cover_cropping <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>location<span class="sc">/</span>termination_date<span class="sc">/</span>subblock),</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> dataset, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_lmer  <span class="ot">&lt;-</span> <span class="fu">lmer</span>(yvar <span class="sc">~</span> cover_crop<span class="sc">*</span>termination <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>location<span class="sc">/</span>termination) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>block<span class="sc">/</span>cover_crop), </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> dataset)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lmer</span>(soil_organic_matter <span class="sc">~</span> termination_date <span class="sc">*</span> cover_cropping,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>location<span class="sc">/</span>termination_date<span class="sc">/</span>subblock,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dataset, </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">na.action =</span> na.exclude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dataset<span class="sc">$</span>one <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>model_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(yvar <span class="sc">~</span> cover_crop<span class="sc">*</span>termination,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">random =</span> <span class="fu">list</span>(<span class="at">one =</span> <span class="fu">pdBlocked</span>(<span class="fu">list</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> block),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> block<span class="sc">:</span>cover_crop),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> location),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">pdIdent</span>(<span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> location<span class="sc">:</span>termination)))),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> dataset)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -894,6 +898,9 @@ Note
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-bello2018" class="csl-entry" role="listitem">
+Bello, Nora M., and David G. Renter. 2018. <span>“Invited Review: Reproducible Research from Noisy Data: Revisiting Key Statistical Principles for the Animal Sciences.”</span> <em>Journal of Dairy Science</em> 101 (7): 5679–701. <a href="https://doi.org/10.3168/jds.2017-13978">https://doi.org/10.3168/jds.2017-13978</a>.
+</div>
 <div id="ref-stroup2013" class="csl-entry" role="listitem">
 Stroup, Walter W. 2013. <em>General Linear Mixed Models: Modern Concepts, Methods and Applications</em>. 1st ed. Chapman; Hall/CRC Press. https://doi.org/<a href="https://doi.org/10.1201/b13151">https://doi.org/10.1201/b13151</a>.
 </div>
