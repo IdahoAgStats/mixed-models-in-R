@@ -48,7 +48,8 @@ dataf <- data.frame(order = 1:72,
                     termination = rep(unlist(replicate(4, sample(td, 2), simplify = FALSE)), each = 3*3),
                     cover_crop = unlist(replicate(4,rep(unlist(replicate(3, sample(cc, 3), simplify = FALSE)), 2), simplify = FALSE)),
                     bloc = as.character(rep(rep(rep(1:3), each = 3, 2), 4)), 
-                    block = as.character(c(rep(rep(1:3, each = 3), 2), rep(rep(4:6, each = 3), 2), rep(rep(7:9, each = 3), 2), rep(rep(10:12, each = 3), 2))),
+                    block = as.character(c(rep(rep(1:3, each = 3), 2), rep(rep(4:6, each = 3), 2), 
+                                           rep(rep(7:9, each = 3), 2), rep(rep(10:12, each = 3), 2))),
                     yvar = rnorm(72, 50, 5))
 
 ggplot(dataf, aes(x = row, y = range, fill = termination)) +
@@ -95,7 +96,7 @@ For the example study, the goal is to estimate the impact of termination date an
 
 ## Step 2: Identity the data generating process
 
-A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all "cookie cutter", assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we have learned from experience that many students who need a guide like this also need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
+A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all "cookie cutter", assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we all can benefit from formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results [@bello2018]. So, let's talk about how to properly identify and specify the data-generating processes from your study--that is, let's discuss how to translate your study into a linear model. 
 
 Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* ([@stroup2013; @stroup2024]).
 
@@ -144,8 +145,6 @@ The experiment unit and observational unit are the same: a field plot.
 #| message: false
 #| warning: false
 #| include: false
-
-
 library(lme4); library(lmerTest)
 
 m0 <- lm(yvar ~ cover_crop*termination + location/termination + block/cover_crop,
@@ -162,6 +161,18 @@ m1 <- lmer(yvar ~ cover_crop*termination +
 
 anova(m1, ddf = "Kenward-Roger")
 
+library(nlme)
+dataf$one <- factor(1)
+
+m2 <- lme(yvar ~ cover_crop*termination,
+                  random = list(one = pdBlocked(list(
+                    pdIdent(~ 0 + block),
+                    pdIdent(~ 0 + block:cover_crop),
+                    pdIdent(~ 0 + location),
+                    pdIdent(~ 0 + location:termination)))),
+                  data = dataf)
+
+anova(m2)
 ```
 
 
@@ -298,23 +309,28 @@ In this guide, we use 'lme4' and 'nlme' packages to fit linear mixed models. The
 
 #### Example 
 
-The code below shows the R syntax for a mixed model with one fixed and one random effect:
+The code below shows the R syntax for a mixed model using the package 'lme4'. It is possible to run this model in 'nlme', but the degrees of freedom must be calculated manually. 
 
 ::: panel-tabset
 ### lme4
 ```{r, eval=FALSE}
-model_lmer <- lmer(soil_organic_matter ~ termination_date * cover_cropping + (1|location/termination_date/subblock),
-                   data = dataset, 
-                   na.action = na.exclude)
+model_lmer  <- lmer(yvar ~ cover_crop*termination + (1|location/termination) + (1|block/cover_crop), 
+                    data = dataset)
 ```
 
 ### nlme
 ```{r, eval=FALSE}
-model_lme <- lmer(soil_organic_matter ~ termination_date * cover_cropping,
-                  random = ~ 1|location/termination_date/subblock,
-                  data = dataset, 
-                  na.action = na.exclude)
+dataset$one <- factor(1)
+
+model_lme <- lme(yvar ~ cover_crop*termination,
+                random = list(one = pdBlocked(list(
+                    pdIdent(~ 0 + block),
+                    pdIdent(~ 0 + block:cover_crop),
+                    pdIdent(~ 0 + location),
+                    pdIdent(~ 0 + location:termination)))),
+                data = dataset)
 ```
+
 :::
 
 The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit ^[Please refer to [**Chapter 3**](background.qmd)]. This is the most common approach. It means there is one fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
