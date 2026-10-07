@@ -7,7 +7,7 @@ mermaid:
 This chapter provides a brief introduction to the steps involved in data analysis using linear mixed models and some thoughts on data quality and data interpretation. 
 
 ::: callout-note
-The steps explained below were applied to all examples in this tutorial.  
+The steps explained below were applied to all example analyses. 
 :::
 
 Analyzing data using linear mixed models involves several key steps, from data preparation to model interpretation. Here’s a structured approach:
@@ -28,7 +28,7 @@ graph TD
 
 #### Example experiment
 
-For the following steps, imagine we are running a field trial across 3 different locations. At each location, there is a cover cropping treatment with three levels and date of termination also with three levels. The experimental units are plots and are arranged across the three locations as thus:
+For the following steps, imagine we are running a field trial across 4 different locations. At each location, there is a cover cropping treatment (CC) with three levels and date of termination (TD) with two levels. The experimental units are plots and are arranged across the three locations as thus:
 
 ```{r}
 #| echo: false
@@ -48,8 +48,7 @@ dataf <- data.frame(order = 1:72,
                     termination = rep(unlist(replicate(4, sample(td, 2), simplify = FALSE)), each = 3*3),
                     cover_crop = unlist(replicate(4,rep(unlist(replicate(3, sample(cc, 3), simplify = FALSE)), 2), simplify = FALSE)),
                     bloc = as.character(rep(rep(rep(1:3), each = 3, 2), 4)), 
-                    block = as.character(c(rep(rep(1:3, each = 3), 2), rep(rep(4:6, each = 3), 2), 
-                                           rep(rep(7:9, each = 3), 2), rep(rep(10:12, each = 3), 2))),
+                    block = as.character(c(rep(rep(1:3, each = 3), 2), rep(rep(4:6, each = 3), 2), rep(rep(7:9, each = 3), 2), rep(rep(10:12, each = 3), 2))),
                     yvar = rnorm(72, 50, 5))
 
 ggplot(dataf, aes(x = row, y = range, fill = termination)) +
@@ -75,11 +74,11 @@ ggplot(dataf, aes(x = row, y = range, fill = termination)) +
   )
 ```
 
-This is a complex design. At one level, it can be considered strip plot (also called "split block") where the locations are blocks and there is one treatment, "termination date". Nested within that are sub-blocks for the cover cropping treatment that is also applied in strips. 
+This is a complex design. At one level, it can be considered strip plot (also called "split block") where the locations are blocks and there is one treatment applied in strips, the termination date. Nested within that are blocks for the cover cropping treatment that is also applied in strips perpendicular to the termination date treatment. 
 
 ### Step 1: Define the Research Question(s)
 
-It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. Ideally, tgis was determined prior to design of the experiment and data acquisition. However, things change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a project and when the project is finally implemented. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Examples:
+It is important to define what is your question that you want to answer with your research data because it directly influences the model specification, interpretation, and validity. Ideally, this was determined prior to design of the experiment and data acquisition. However, things can change as an experiment unfolds, and sometimes experimental aims become lost in translation between the original grant proposal for a project and when the project is finally implemented. Before embarking on an analysis, write down the goals of analysis in the most precise terms possible. Here are some examples:
 
 > How much does sugar beet yield change as the result of this new fertilizer source compared to another source? 
 
@@ -96,9 +95,9 @@ For the example study, the goal is to estimate the impact of termination date an
 
 ## Step 2: Identity the data generating process
 
-A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be unexpectely challeging step, hence this section on design. The designs described in this guide are all "cookie cutter", assuming you have already correctly defined the sources of variation and can plug your data straight into a model. However, we all can benefit from formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and conclusions drawn from the results [@bello2018]. So, let's talk about how to properly identify and specify the data-generating processes from your study--that is, let's discuss how to translate your study into a linear model. 
+A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be an unexpectedly challenging step, hence this section on design. The designs described in this guide are all "cookie cutter", and the tutorial overall assumes that you have already correctly defined the sources of variation and can plug your data straight into a model. However, many statistical consultants have observed that often researchers need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and the conclusions drawn from the results of the analysis. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
 
-Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* [@stroup2013; @stroup2024].
+Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* ([@stroup2013; @stroup2024]).
 
 The overall goal to outline what units received (or will receive) what treatment(s) and in what order? 
 
@@ -106,18 +105,18 @@ The overall goal to outline what units received (or will receive) what treatment
 
 1. Identify the unit of replication (also called the unit of randomization). This is the smallest unit or entity that was independently assigned a treatment combination. This can be a spatial units of land (e.g. a plot), a person, an animal, part of an animal carcass, a single water sample, a soil composite for a specific depth, among many other things. This is not the same as smallest unit being measured; it is the smallest unit subject to a single combination of treatments. This is called the *experimental unit*. 
 
-1. Identify clusters or stratfication.  This is the grouping of units of replication that we expect to be similar to each other in some way. In field experiments, this is often the block, but it may be an experimental run or it may also encompass other factors (e.g. locations, years). Survey statistical concepts of "clusters" and "strata" are akin. There are experimental designs without any clustering, but all the examples in this guide assume blocking. 
+1. Identify clusters or stratification.  This is the grouping of units of replication that we expect to be similar to each other in some way. In field experiments, this is often the block, but it may be an experimental run or it may also encompass other factors (e.g. locations, years). Survey statistical concepts of "clusters" and "strata" are akin. There are experimental designs without any clustering, but all the examples in this guide assume blocking. 
 
 1. Identify the unit of observation. This is often the experimental unit, but sometimes there are multiple observations within a single experimental unit, e.g. multiple measures of plant height at crop maturity, disease scoring for several potato tubers collected from a single plot, student in a classroom where the classroom is the unit of replication. In these cases, it's important to ascertain how to express the dependent variables so that they reflect the unit of replication and are not artificially inflating the level of replication. A treatment combination was assigned randomly to an experimental unit and hence observations across experimental units are independent; two observations of the same unit at the same time are not independent. The unit of observation is always nested within the unit of replication. 
 
 1. Create a "plot plan" of the units that received what treatments and in what arrangement. Agricultural field plot maps are the general framework to use. While these represent relative physical locations of where each treatment was applied, the basic concept can be extended to other circumstances. Which animals in a dairy received a nutritional supplement, how were these animals grouped and how was the nutritional administered? If you are 
 
-1. Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. Below is an example. 
+1. Create an ANOVA table of the sources of variation impacting the dependent variables. We can use ANOVA as a tool for understanding how the experimental factors and clusters generate experimental data. List each source of variation and the degrees of freedom. There is an example below. 
 
 
 ::::: column-margin
 ::: callout-note
-Linear models also require that we identify the distributions of the dependent variable and the random effects, and identify a suitable link function for the dependent variable and its distribution. For this tutorial, all dependent variables and random effects are assumed to be normally distributed and use the identity link function (that is, specifying no transformation). 
+When using linear mixed models, it is also important that we identify the distributions of the dependent and random variables, and identify a suitable link function for the dependent variable and its distribution. For this tutorial, all dependent variables and random effects are assumed to be normally distributed and hence use the identity link function (that is, specifying no transformation). 
 :::
 :::::
 
@@ -129,15 +128,15 @@ For the example experiment described above, the data generating process includes
 
 **Treatments**
 
-- termination date (3 levels)    
+- termination date (2 levels)    
 - cover cropping (3 levels)    
 
 **Clustering Variables**
 
-- location (3 levels), randomization unit for termination date      
-- subblock (3 levels at each location), randomization unit for cover cropping   
+- location (4 levels), randomization unit for termination date      
+- sub-block (3 levels at each location, 12 total), randomization unit for cover cropping   
 
-The experiment unit and observational unit are the same: a field plot. 
+In this example, the experiment unit and observational unit are the same: a field plot. 
 
 
 ```{r}
@@ -145,6 +144,8 @@ The experiment unit and observational unit are the same: a field plot.
 #| message: false
 #| warning: false
 #| include: false
+
+
 library(lme4); library(lmerTest)
 
 m0 <- lm(yvar ~ cover_crop*termination + location/termination + block/cover_crop,
@@ -156,23 +157,11 @@ m1 <- lmer(yvar ~ cover_crop*termination +
              (1|location/termination) + # nesting structure
             #(1|block/cover_crop) + # nesting structure, not needed after redefining block
             # (1|block:termination) + # effects already accounted for with block and termination
-             (1|block/cover_crop), # row effects (termination w/in location account for columb effects)
+             (1|block/cover_crop), # row and column effects
            data = dataf)
 
 anova(m1, ddf = "Kenward-Roger")
 
-library(nlme)
-dataf$one <- factor(1)
-
-m2 <- lme(yvar ~ cover_crop*termination,
-                  random = list(one = pdBlocked(list(
-                    pdIdent(~ 0 + block),
-                    pdIdent(~ 0 + block:cover_crop),
-                    pdIdent(~ 0 + location),
-                    pdIdent(~ 0 + location:termination)))),
-                  data = dataf)
-
-anova(m2)
 ```
 
 
@@ -183,14 +172,25 @@ anova(m2)
 library(knitr); library(kableExtra)
 
 # "(2*3-1)(4-1)(3-1)=30 = (TD*rep - 1)(Loc - 1)(CC - 1)"
+# edit this one
 table1 <- data.frame(
   col1 = c("Location", "Block", "", "", "", "TD Unit(location)\u00B2", "CC Unit(block)\u00B3", "CC Unit(block)|TD\u2074", "Total"),
-  col2 = c("4-1=3", "(3-1)*4=8", "", "", "", "(2-1)(4-1)=3", "(3*4-1)*(3-1)=22", "(2*3-1)(4-1)(3-1)=30", "(2*3*3*4) - 1 = 71"),
+  col2 = c("4-1=3", "(3-1)*4=8", "", "", "", "(2-1)(4-1)=3", "(3*4-1)*2=22", "(2*3-1)(4-1)(3-1)=30", "(2*3*3*4) - 1 = 71"),
   col3 = c("", "", "Termination Date", "Cover Cropping", "TD x CC\u00B9", "", "", "", ""),
   col4 = c("", "", "2-1=1", "3-1=2", "(2-1)(3-1)=2", "", "", "", ""),
   col5 = c("Location", "Block", "Termination Date", "Cover Cropping", "TD x CC", 
            "TD Unit(location)", "CC Unit(block)", "CC Unit(block)|TD", "Total"),
   col6 = c(3, 8, 1, 2, 2, 3, 22, "30", 71)
+)
+
+# don't edit this, it's the working example
+table0 <- data.frame(
+  col1 = c("Block", "", "Unit(block)", "Total"),
+  col2 = c(4, "", 25, 29),
+  col3 = c("", "Treatment", "", ""),
+  col4 = c("", 5, "", ""),
+  col5 = c("Block", "Treatment", "Unit(block)|Ttr*", "Total"),
+  col6 = c(4, 5, '25-5=20', 29)
 )
 ```
 
@@ -201,15 +201,18 @@ table1 <- data.frame(
 #| echo: false
 #| eval: true
 
+
 kable(table1, col.names = NULL,  align = rep(c("l", "l"), 3), format = "html") |> 
   add_header_above(rep(c("Source", "df"), 3), align = "l") |> 
   add_header_above(c("Study Design" = 2, "Treatment Design" = 2, "Combined" = 2)) |> 
   row_spec(9, bold = TRUE) |> 
   kable_styling(full_width = TRUE, position = "center")#|> 
+ # footnote("*Unit-within-block effects after accounting for treatment effects.") # this was added manually instead to the bottom of the table
+
 ```
 
 *$^1$"CC" refers to the cover cropping treatment.*   
-*$^2$Effect of termination date within location after accounting for location.*   
+*$^2$Effect of termination date within location.*   
 *$^3$Cover Crop-within-block effects after accounting for cover crop effects.*    
 *$^4$Unit-within-block effects after accounting for all treatment effects.*      
 
@@ -217,18 +220,18 @@ kable(table1, col.names = NULL,  align = rep(c("l", "l"), 3), format = "html") |
 
 ### Step 3: Conduct data integrity checks 
 
-The first thing is to make sure the data is what we expect. Here are the steps to verify our data:
+Let's make sure the data are what we expect. Here are the steps to verify our data:
 
 #### Check the structure of the data 
 
-In this step, we need to make sure that the object class of each variable used in the analysis is correctly defined. For example, replication/block and year are often in the numeric format after import into R. But, for analysis the replication unit and other variables that are not truly numerical[^model-1] needs to be in a 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type. For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2], although categorical outcomes are certainly plausible for many studies.
+In this step, we need to make sure that class of variables in data is as expected. For example, replication (or block) and year are often in the numeric format after import into R. But, for analysis the replication unit, year, and other variables that are not truly numerical[^model-1] need to encoded in the 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type (numeric for all examples in this tutorial). For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2]. Categorical outcomes are plausible for many studies, but that is not discussed in this guide.
 
-[^model-1]: The year "2026" is not correctly understood as 2,026.
+[^model-1]: No one views the year 2026 as 2,026.
 
-[^model-2]: Since this tutorial is exclusively focused on general linear models and is not addressing *generalized* scenarios at all.
+[^model-2]: Since this tutorial is exclusively focused on general linear models and is not addressing generalized scenarios at all.
 
 ::: callout-warning
-Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interpret continuously varying numbers (correctly) as numerical variables, but if they do not, that is often a signal that there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors or unexpected input in it.
+Most R import functions (e.g. `read.csv()`, `read_csv()`, `read_excel()`) interpret continuously varying numbers (correctly) as numerical variables. In instances when numeric variables end up encoded as character or another unexpected format, that is often a signal there is an unexpected character in a particular column of data that is incorrectly read as non-numerical. Perhaps a comma is present when a period is expected, or a cells reads as "N/A" instead of "NA". This is an indicator to double check your data to ensure there are no errors or unexpected input in it.
 :::
 
 
@@ -237,34 +240,34 @@ We can use the command `str()` in R to look at the class of each variable in the
 str(dataset)
 ```
 
-This will print the data class of each variable present in the data set and a few example values for each variable. 
+This command prints the data class of each variable present in the data set and a few example values for each variable. 
 
-The code below shows the conversion of rep from numeric to factor class and the conversion of yield from character to numeric class.
+The code below shows the conversion of variables from numeric to factor class and from character to numeric class.
 ```{r, eval=FALSE}
 dataset$subblock <- as.factor(dataset$subblock)
 dataset$location <- as.character(dataset$location)
 dataset$y_var <- as.numeric(dataset$y_var)
 ```
 
-Note that if your response variable did not import as numeric autommaticaly, this is an indicator that there may be problems with the observations that need attention. 
+Note that if your response variable did not import as numeric automatically, this is an indicator that there may be problems with the observations that need attention. 
 
 ::: callout-tip
 ## Factor versus character class
 
-Often, factor and character object classes are used interchangeably. However, we need to keep in mind the differences between these two classes. A character variable represents data stored in a text or "string" format. A factor variable is a categorical variable type with values stored as set levels. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many will automatically convert character variables to factors. Often, is is less complicated to use the character class for all factors used in analysis. 
+In R programming, factor and character object classes are often viewed as equivalent and used interchangeably. There are a few notable differences between these two classes that you may benefit from knowing. A character variable represents data stored in a text or [string format](https://en.wikipedia.org/wiki/String_(computer_science)){.external target="_blank"}. A factor variable is a categorical variable type with values stored as set levels. All levels remain attached to the variable even after filtering the data set unless they are explicitly removed from the factor. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many packages will automatically convert character variables to factors in the modeling process. Thus, it is is often less complicated to use the character class for all independent (non-numeric) variables included in an analysis. 
 :::
 
 
 #### Inspect the independent variables
 
-Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data.
+Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data and there are no misspellings, case differences or unintended white space creating the appearance of additional treatment levels.
 
 ```{r, eval=FALSE}
 table(dataset$cover_crop, dataset$subblock, dataset$location)
 table(dataset$location, dataset$termindation_date)
 ```
 
-The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high", "High" or "High "); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
+The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check: (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high", "High" or "High "); (2) the counts are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
 
 #### Check the extent of missing data
 
@@ -278,13 +281,13 @@ This will give you the number of missing values in each variable. Missing data a
 ::: callout-tip
 ## Missingness versus zeros
 
-We occasionally see users substitute missing data with zeros. This is not recommended unless there is a clear justification for this choice. If in the course of an agronomic trial, one plot (that had been seeded for some crop) failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if due to some error or choice, a plot was not seeded with a crop and hence produced no crop during the field seasoln, assigning a zero is not an accurate description of what occurred (again, assuming we are measuring a crop variable such as biomass). Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, a deer eats the entirety of a field plot. In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (i.e. set the data for that plot as missing). 
+We occasionally see researchers substitute missing data with zeros. This is not recommended unless there is a clear justification for this choice. If in the course of an agronomic trial, one plot that had been seeded for some crop failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if due to some error or choice made, a plot was not seeded with a crop and hence produced no crop during the field season, assigning a zero is not an accurate description of what occurred (again, assuming we are measuring a crop-related variable such as biomass). Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, local deer consume the entirety of a field plot (this happened in North Idaho!). In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (i.e. set the data for that plot as missing). 
 :::
 
 
 ####  Inspect the dependent variable and all other continuous variables
 
-Check the dependent variable and all continuous variables (i.e. covariates) to ensure their distributions are following expectations. A histogram is often sufficient to accomplish this. The goal of this step is to verify the distribution of the variable and to make sure there are no anomalies in the data such as zero-inflation, right or left skewness, or any extreme observations (high or low). This is designed to be a quick check, so there is no need to spend time prettifying these plots.
+Check the dependent variable and all continuous variables (i.e. covariates) to ensure their distributions are following expectations. A histogram is often sufficient to accomplish this. The goal of this step is to verify the distribution of the variable and to make sure there are no unexpected anomalies in the data such as odd binning of data, right or left skewness, or any implausible observations (high or low). This is intended to be a quick check, so there is no need to spend time producing pretty plots.
 
 
 ```{r, eval=FALSE}
@@ -305,35 +308,24 @@ If do you identify issues, check your data and correct as necessary. Once a data
 
 #### Notes on formula syntax and expectations
 
-In this guide, we use 'lme4' and 'nlme' packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is 'yield', 'tr't is a fixed effect and 'block' is a random effect.
+In this guide, we use 'lme4' and 'nlme' packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is 'y_var'; 'termination_date', 'cover_cropping' and their interactions are fixed effects. The random effects are location, location-by-termination date,  block (across locations, totaling 12), and the block-by-cover crop interaction.  
 
 #### Example 
 
-The code below shows the R syntax for a mixed model using the package 'lme4'. It is possible to run this model in 'nlme', but the degrees of freedom must be calculated manually. 
+The code below shows the R syntax for this model:
 
-::: panel-tabset
-### lme4
+
 ```{r, eval=FALSE}
-model_lmer  <- lmer(yvar ~ cover_crop*termination + (1|location/termination) + (1|block/cover_crop), 
-                    data = dataset)
+lmer(yvar ~ cover_crop * termination + 
+            (1|location/termination) + 
+            (1|block/cover_crop), 
+            data = dataset)
+
 ```
 
-### nlme
-```{r, eval=FALSE}
-dataset$one <- factor(1)
 
-model_lme <- lme(yvar ~ cover_crop*termination,
-                random = list(one = pdBlocked(list(
-                    pdIdent(~ 0 + block),
-                    pdIdent(~ 0 + block:cover_crop),
-                    pdIdent(~ 0 + location),
-                    pdIdent(~ 0 + location:termination)))),
-                data = dataset)
-```
 
-:::
-
-The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit ^[Please refer to [**Chapter 3**](background.qmd)]. This is the most common approach. It means there is one fit for each block. Here, note that random effects are specified differently in the `lmer()` and `nlme()` models. 
+The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit ^[Please refer to [**Chapter 3**](background.qmd)], while the `/` notations indicates nesting, e.g. `block/cover_crop` indicates that cover crop is nested in block. 
 
 ::: callout-tip
 ## `na.action = na.exclude`
@@ -347,19 +339,19 @@ Even when there are no missing data and this step is not necessary, it is a good
 
 ### Step 5: Check model assumptions
 
-Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider alternative model specifications.
+Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider a different model.
 
 ::: callout-note
-#### 'iid' assumption for residuals
+#### The 'iid' assumption for residuals
 
-In these model, the error terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they are expected to be normally distributed with a mean of 0 standard deviation of $\sigma$, or more specifically, $\sigma \mathbf{I}$, which refers to constant variance and a covariance of zero between residuals. 
+In these model, the residual terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they are expected to be normally distributed with a mean of zero and a standard deviation of $\sigma$, or more specifically, $\sigma \mathbf{I}$, which indicates constant variance (homoescedasticity) and a covariance of zero between residuals. 
 :::
 
 In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:
 
 #### Original method
 
-We can use base `plot()` function in R for 'lme4' and 'nlme' modelling objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
+We can use base `plot()` function in R for 'lme4' and 'nlme' modeling objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
 
 ::: panel-tabset
 ### lme4
