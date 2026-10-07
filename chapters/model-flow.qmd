@@ -316,16 +316,16 @@ The code below shows the R syntax for this model:
 
 
 ```{r, eval=FALSE}
-lmer(yvar ~ cover_crop * termination + 
-            (1|location/termination) + 
-            (1|block/cover_crop), 
-            data = dataset)
+model_lmer <- lmer(yvar ~ cover_crop * termination + 
+                  (1|location/termination) + 
+                  (1|block/cover_crop), 
+                  data = dataset)
 
 ```
 
-
-
 The parentheses are used to indicate a random effect, and this particular notation `(1|block)` indicates that a 'random intercept' model is being fit ^[Please refer to [**Chapter 3**](background.qmd)], while the `/` notations indicates nesting, e.g. `block/cover_crop` indicates that cover crop is nested in block. 
+
+Because this model has crossed random effects, 'nlme' is not an ideal package for fitting this. 
 
 ::: callout-tip
 ## `na.action = na.exclude`
@@ -351,39 +351,23 @@ In this guide, we well be testing these assumptions by using graphical methods. 
 
 #### Original method
 
-We can use base `plot()` function in R for 'lme4' and 'nlme' modeling objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
+We can use base `plot()` function in R for 'lme4' (and 'nlme') modeling objects to check the homoscedasticity (residuals vs. fitted values plot) of residuals.
 
-::: panel-tabset
-### lme4
+
 ```{r, eval=FALSE}
 plot(model_lmer, resid(., scaled=TRUE) ~ fitted(.), 
      xlab = "fitted values", ylab = "studentized residuals")
 ```
 
-### nlme
-```{r, eval=FALSE}
-plot(model_lme, resid(., scaled=TRUE) ~ fitted(.), 
-     xlab = "fitted values", ylab = "studentized residuals")
-```
-:::
-
 In this output, we expect to see a plot with random and uniform distribution of points. If we notice any specific pattern in the distribution of points, we need to look into the model structure and response variable distribution closely. 
 
 To check the normality of the residuals, we need to extract the residuals first using the `resid()` function and then generating a qq-plot:
 
-::: panel-tabset
-### lme4
 ```{r, eval=FALSE}
 qqnorm(resid(model_lmer), main = NULL); qqline(resid(model_lmer))
 ```
 
-### nlme
-```{r, eval=FALSE}
-qqnorm(resid(model_lme), main = NULL); qqline(resid(model_lme))
-```
-:::
-
-Interpretiong qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!
+Interpreting qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!
 
 #### New Method {#new-iid-checks}
 
@@ -397,17 +381,11 @@ Read the documentation for `check_model()` to find what other checks this functi
 :::
 :::::
 
-::: panel-tabset
-### lme4
+
 ```{r, eval=FALSE}
 check_model(model_lmer, check = c('normality', 'linearity'))
 ```
 
-### nlme
-```{r, eval=FALSE}
-check_model(model_lme, check = c('normality', 'linearity'))
-```
-:::
 
 ### Step 6: Conduct inference
 
