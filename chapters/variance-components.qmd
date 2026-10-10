@@ -637,7 +637,7 @@ There are many other ways of using these functions for modeling heteroscedastici
 
 ### Case 3: Variance is related to a factor under other complex circumstances
 
-Recall the [repeated measures split-split plot example](repeated-measures.qmd#ssp-rm) that indicated some evidence of heteroscedasticity. The model passed a Breusch-Pagan test, but these tests are imperfect, and it may be worthy to investigate if modelling heteroscedasticity improves the model fit. 
+Recall the [repeated measures split-split plot example](repeated-measures.qmd#ssp-rm) that indicated some evidence of heteroscedasticity. The model passed a Breusch-Pagan test, but these tests are imperfect, and it may be worthy to investigate if modeling heteroscedasticity improves the model fit. 
 
 The first step is to reload the data: 
 
@@ -675,7 +675,7 @@ boxplot(P_leaf ~ time, data = phos1, col= base_plot_color, ylab = "dependent var
 plot(fitted(pfit1), residuals(pfit1, type = "pearson"), ylab = "residuals", xlab = "fitted values", col = "maroon"); abline(h = 0, lty = 2, lwd = 1.5)
 ```
 
-Given this uncertainty, it is worth exploring modelling heteroscedasticity. As shown earlier, we can model the variance as a function of a variable by using the `varIdent()` function. 
+Given this uncertainty, it is worth exploring modeling heteroscedasticity. As shown earlier, we can model the variance as a function of a variable by using the `varIdent()` function. 
 
 ```{r}
 pfit2 <- update(pfit1, weights = varIdent(form = ~1|time_num))
@@ -726,6 +726,6 @@ round(ex1_cv, 1)
 
 However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with `varIdent()`) or much smaller (e.g. with `varPower()`). Interpret the coefficient of variation from mixed models with caution. 
 
-Related is Fisher's least significant difference, i.e. LSD. While most mixed modelling packages do not calculate this (e.g. 'nlme', 'lme4'/'lmerTest' or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels. 
+Related is Fisher's least significant difference, i.e. LSD. While most mixed modeling packages do not calculate this (e.g. 'nlme', 'lme4'/'lmerTest' or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels. 
 
 :::
