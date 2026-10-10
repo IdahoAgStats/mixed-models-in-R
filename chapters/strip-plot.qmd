@@ -75,7 +75,7 @@ library(pbkrtest)
 ```
 :::
 
-For this example, we will use a rice strip-plot experiment data from the **agridat** package, "gomez.stripplot". This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.
+For this example, we will use a rice strip-plot experiment data from the 'agridat' package, "gomez.stripplot". This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -241,7 +241,7 @@ anova(model_lmer)
 
 ### nlme
 
-The `anova()` function for **nlme** does not handle the degree of freedom correctly for F-tests in the strip plot design, so we have to manually set it. This only works for balanced data. Wald chi-square tests can be conducted using `car::Anova()` and produce identical results for `lme4::lmer()` and `nlme::lme()`. 
+The `anova()` function for 'nlme' does not handle the degree of freedom correctly for F-tests in the strip plot design, so we have to manually set it. This only works for balanced data. Wald chi-square tests can be conducted using `car::Anova()` and produce identical results for `lme4::lmer()` and `nlme::lme()`. 
 
 ```{r}
 rep_n = length(unique(rice$rep)) - 1
@@ -261,7 +261,7 @@ lme_aov
 
 Analysis of variance showed a significant interaction impact of gen and nitro on rice grain yield.
 
-Next, we can estimate marginal means for the nitro and gen interaction effects using the **emmeans** package.
+Next, we can estimate marginal means for the nitro and gen interaction effects using the 'emmeans' package.
 
 ::: panel-tabset
 ### lme4
@@ -287,7 +287,7 @@ Without specifying the degrees of freedom, `emmeans()` is not able to estimate t
 ::: callout-note
 ## `lme vs lmer`
 
-For strip plot experiment design, fitting nested and crossed random effects is more complicated to implement in **nlme** compared to **lme4**, and this complexity appears to complicate downstream estimation of the degrees of freedom. It is easier and statistically correct to use **lme4**, so understood if an analyst prefers this package for analyzing split plot experiments! 
+For strip plot experiment design, fitting nested and crossed random effects is more complicated to implement in 'nlme' compared to 'lme4', and this complexity appears to complicate downstream estimation of the degrees of freedom. It is easier and statistically correct to use 'lme4', so understood if an analyst prefers this package for analyzing split plot experiments! 
 :::
 
 Sometimes, elements of split plot and split block are combined, resulting in strip-split plot design. Kevin Wright describes [how to analyze this design](https://kwstat.github.io/agridat/reference/cox.stripsplit.html) in the 'agridat' package. 
