@@ -371,11 +371,11 @@ window.Quarto = {
    
   <ul>
   <li><a href="#step-1-define-the-research-questions" id="toc-step-1-define-the-research-questions" class="nav-link active" data-scroll-target="#step-1-define-the-research-questions"><span class="header-section-number">4.0.1</span> Step 1: Define the Research Question(s)</a></li>
-  <li><a href="#step-2-identify-the-data-generating-process" id="toc-step-2-identify-the-data-generating-process" class="nav-link" data-scroll-target="#step-2-identify-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identify the data generating process</a>
+  <li><a href="#step-2-identify-the-data-generating-process" id="toc-step-2-identify-the-data-generating-process" class="nav-link" data-scroll-target="#step-2-identify-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identify the Data Generating Process</a>
   <ul class="collapse">
   <li><a href="#step-3-conduct-data-integrity-checks" id="toc-step-3-conduct-data-integrity-checks" class="nav-link" data-scroll-target="#step-3-conduct-data-integrity-checks"><span class="header-section-number">4.1.1</span> Step 3: Conduct data integrity checks</a></li>
   <li><a href="#step-4-fit-the-model" id="toc-step-4-fit-the-model" class="nav-link" data-scroll-target="#step-4-fit-the-model"><span class="header-section-number">4.1.2</span> Step 4: Fit the Model</a></li>
-  <li><a href="#step-5-check-model-assumptions" id="toc-step-5-check-model-assumptions" class="nav-link" data-scroll-target="#step-5-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 5: Check model assumptions</a></li>
+  <li><a href="#step-5-check-model-assumptions" id="toc-step-5-check-model-assumptions" class="nav-link" data-scroll-target="#step-5-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 5: Check Model Assumptions</a></li>
   <li><a href="#step-6-conduct-inference" id="toc-step-6-conduct-inference" class="nav-link" data-scroll-target="#step-6-conduct-inference"><span class="header-section-number">4.1.4</span> Step 6: Conduct inference</a></li>
   </ul></li>
   </ul>
@@ -469,7 +469,7 @@ Note
 <p>For the example study, the goal is to estimate the impact of termination date and cover cropping on several soil variables indicative of soil health. There is a particular interest in estimates for the interaction of termination date and cover cropping.</p>
 </section>
 <section id="step-2-identify-the-data-generating-process" class="level2 page-columns page-full" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="step-2-identify-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identify the data generating process</h2>
+<h2 data-number="4.1" class="anchored" data-anchor-id="step-2-identify-the-data-generating-process"><span class="header-section-number">4.1</span> Step 2: Identify the Data Generating Process</h2>
 <p>A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be an unexpectedly challenging step, hence this section on design. The designs described in this guide are all “cookie cutter”, and the tutorial overall assumes that you have already correctly defined the sources of variation and can plug your data straight into a model. However, many statistical consultants have observed that often researchers need help in formally defining the data-generating process. Misunderstanding the design can lead to errors in statistical analysis and the conclusions drawn from the results of the analysis. So, let’s talk about how to properly identify and specify the data-generating processes from your study – that is, let’s discuss how to translate your study into a linear model.</p>
 <p>Below are steps adapted from chapter 2 of <em>Generalized Linear Mixed Models</em> <span class="citation" data-cites="stroup2013 stroup2024">(<a href="../references.html#ref-stroup2013" role="doc-biblioref">Stroup 2013</a>; <a href="../references.html#ref-stroup2024" role="doc-biblioref">Stroup et al. 2014</a>)</span>.</p>
 <p>The overall goal to outline what units received (or will receive) what treatment(s) and in what order?</p>
@@ -771,7 +771,7 @@ Warning
 </section>
 </section>
 <section id="step-5-check-model-assumptions" class="level3 page-columns page-full" data-number="4.1.3">
-<h3 data-number="4.1.3" class="anchored" data-anchor-id="step-5-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 5: Check model assumptions</h3>
+<h3 data-number="4.1.3" class="anchored" data-anchor-id="step-5-check-model-assumptions"><span class="header-section-number">4.1.3</span> Step 5: Check Model Assumptions</h3>
 <p>Linear mixed models rely on independence of the observations, normality and homoscedasticity of residuals and linearity between the dependent and independent variables. Violating these assumptions can lead to biased estimates, incorrect inference, and model convergence issues. Always check model assumptions, and if they are unmet, consider a different model.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -788,7 +788,7 @@ Warning
 </div>
 <p>In this guide, we will be testing these assumptions by using graphical methods. This can be done in two ways:</p>
 <section id="original-method" class="level4" data-number="4.1.3.1">
-<h4 data-number="4.1.3.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.1.3.1</span> Original method</h4>
+<h4 data-number="4.1.3.1" class="anchored" data-anchor-id="original-method"><span class="header-section-number">4.1.3.1</span> Original Method</h4>
 <p>We can use base <code>plot()</code> function in R for ‘lme4’ (and ‘nlme’) modeling objects to check the homoscedasticity (residuals vs.&nbsp;fitted values plot) of residuals.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_lmer, <span class="fu">resid</span>(., <span class="at">scaled=</span><span class="cn">TRUE</span>) <span class="sc">~</span> <span class="fu">fitted</span>(.), </span>

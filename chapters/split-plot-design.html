@@ -347,7 +347,7 @@ window.Quarto = {
   <ul>
   <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">7.1</span> Background</a></li>
   <li><a href="#statistical-details" id="toc-statistical-details" class="nav-link" data-scroll-target="#statistical-details"><span class="header-section-number">7.2</span> Statistical Details</a></li>
-  <li><a href="#analysis-example" id="toc-analysis-example" class="nav-link" data-scroll-target="#analysis-example"><span class="header-section-number">7.3</span> Analysis Example</a>
+  <li><a href="#example-analysis" id="toc-example-analysis" class="nav-link" data-scroll-target="#example-analysis"><span class="header-section-number">7.3</span> Example Analysis</a>
   <ul class="collapse">
   <li><a href="#example-data-set-for-split-plot-design" id="toc-example-data-set-for-split-plot-design" class="nav-link" data-scroll-target="#example-data-set-for-split-plot-design"><span class="header-section-number">7.3.1</span> Example Data Set for Split Plot Design</a></li>
   </ul></li>
@@ -404,8 +404,8 @@ window.Quarto = {
 <p><span class="math display">\[ \epsilon \sim N(0, \sigma)\]</span></p>
 <p><span class="math display">\[\ \delta  \sim N(0, \sigma_{sp})\]</span></p>
 </section>
-<section id="analysis-example" class="level2 page-columns page-full" data-number="7.3">
-<h2 data-number="7.3" class="anchored" data-anchor-id="analysis-example"><span class="header-section-number">7.3</span> Analysis Example</h2>
+<section id="example-analysis" class="level2 page-columns page-full" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">7.3</span> Example Analysis</h2>
 <p>Let’s start the analysis by first loading the required libraries.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">nlme</a></li></ul>
@@ -526,8 +526,8 @@ Figure&nbsp;7.1: Histogram of the dependent variable
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(oats<span class="sc">$</span>Y, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">xlab =</span> <span class="st">"yield"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="model-building" class="level4 page-columns page-full" data-number="7.3.1.2">
-<h4 data-number="7.3.1.2" class="anchored" data-anchor-id="model-building"><span class="header-section-number">7.3.1.2</span> Model Building</h4>
+<section id="model-fitting" class="level4 page-columns page-full" data-number="7.3.1.2">
+<h4 data-number="7.3.1.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">7.3.1.2</span> Model Fitting</h4>
 <p>We are evaluating the effect of V, N and their interaction on yield. The <code>1|B/V</code> means that random intercepts vary with block and V nested within each block.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -580,9 +580,9 @@ multilevel models</code></pre>
 <pre><code># A tibble: 12 × 7
    effect term                estimate std.error    df statistic  p.value
    &lt;chr&gt;  &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)           80.0        9.11    45    8.78   2.56e-11
+ 1 fixed  (Intercept)           80          9.11    45    8.78   2.56e-11
  2 fixed  VMarvellous            6.67       9.72    10    0.686  5.08e- 1
- 3 fixed  VVictory              -8.50       9.72    10   -0.875  4.02e- 1
+ 3 fixed  VVictory              -8.5        9.72    10   -0.875  4.02e- 1
  4 fixed  N0.2cwt               18.5        7.68    45    2.41   2.02e- 2
  5 fixed  N0.4cwt               34.7        7.68    45    4.51   4.58e- 5
  6 fixed  N0.6cwt               44.8        7.68    45    5.84   5.48e- 7
@@ -657,7 +657,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(oats_lme, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            numDF denDF  F-value p-value
-(Intercept)     1    45 77.16735  &lt;.0001
+(Intercept)     1    45 77.16732  &lt;.0001
 V               2    10  1.22454  0.3344
 N               3    45 13.02273  &lt;.0001
 V:N             6    45  0.30282  0.9322</code></pre>
