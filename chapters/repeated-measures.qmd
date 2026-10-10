@@ -5,7 +5,7 @@ source(here::here("settings.r"))
 ```
 
 ::: {.callout-warning}
-## WIP Warning
+## WIP warning
 This chapter is a work in progress, particularly with respect to 'lme4' v 2.0 covariance structures. At this time, it is not clear if lme4 covariance structures work with 'lmerTest'. Additionally, there appear to be some estimation issues with lme4: if a model is over-specified, a very high  $\phi$ may result when using AR1, and there are some large swings in the log likelihood when using lme4's covariance structures. 
 :::
 
@@ -163,7 +163,7 @@ par(mar=c(5.1, 5, 2.1, 2.1))
 hist(sorghum$y, main = NA, xlab = "leaf area index", cex.lab = cex_lab, cex.axis = cex_axis, col = base_plot_color)
 ```
 
-### Model Building
+### Model Fitting
 
 Let's fit the model first using `lme()` from the 'nlme' package. A fully specified model is fit and 'plot' is nested within 'block'. 
 
@@ -459,7 +459,7 @@ hist(alfalfa$yield, main = NA, xlab = "yield", cex.lab = cex_lab, cex.axis = cex
 ```{r, eval=FALSE}
 hist(Yield$Yield, xlab = "yield", main = NA)
 ```
-### Model fit
+### Model Fitting
 
 For this data set, we will use `lme()` from 'nlme' package and `lmer()` from 'lme4' to fit a linear mixed model with a repeated measures covariance structure. Instead of the `summary()` function, we will use `tidy()` function from the 'broom.mixed' package to look at estimates of mixed and random effects. 
 
@@ -630,12 +630,12 @@ boxplot(P_leaf ~ time, data = phos1, main = NA)
 ```
 
 ::: callout-warning
-## distribution of dependent variables
+## Distribution of dependent variables
 
 Note that we observed an uneven distribution of response variable with a bimodal distribution and a noticeable gap in the 500 to 1500 range. Given this odd distribution, it may be tempting to consider a transformation in order to attempt to impose normality. It's important to remember that the assumption of normality applies to the residuals, not the raw data. Plotting the data is for checking the data looks *as expected*, a judgment that requires some knowledge of the experiment (this was Julia Piaskowski's PhD research). In this case, the time points, PT1 and PT2, correspond to early wheat growth stages (tillering and jointing, respectively), and the final time point represents senescent leaf tissue at grain maturity. At that physiological stage, it is normal for phosphorus leaf concentration to be much lower. Since the data look as expected, we will proceed with a general linear model and evaluate the residuals from the model-fitting process when deciding if a non-normal distribution is appropriate for the data.  
 :::
 
-### Model fit
+### Model Fitting
 
 ::: panel-tabset
 ### nlme
@@ -659,7 +659,7 @@ pfit2 <- lmer(P_leaf ~ time*Ptrt*Inoc*Cv + cs(1|rep/Ptrt/Inoc/plot),
 ```
 :::
 
-### Check model assumptions 
+### Check Model Assumptions 
 
 ::: panel-tabset
 ### nlme
