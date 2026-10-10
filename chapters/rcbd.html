@@ -397,7 +397,7 @@ window.Quarto = {
 </header>
 
 
-<p>Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as time, spatial variation, changes in equipment or operators, or myriad other causes. They are a random effect where the ‘blocks’ used in the study are a random sample from a distribution of other blocks.</p>
+<p>Randomized complete block design (RCBD) is a very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as time, spatial variation, changes in equipment or operators, or myriad other causes. They are a random effect where the ‘blocks’ used in the study are a random sample from a distribution of other blocks.</p>
 <section id="background" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="background"><span class="header-section-number">5.1</span> Background</h2>
 <p>The statistical model:</p>
@@ -432,7 +432,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the relative rankings of the varieties.</p>
+<p>This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is to estimate the yield of each variety and to determine the relative rankings of the varieties.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>var_trial <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"aberdeen2015.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -463,7 +463,7 @@ window.Quarto = {
 </table>
 <section id="data-integrity-checks" class="level3 page-columns page-full" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="data-integrity-checks"><span class="header-section-number">5.2.1</span> Data integrity checks</h3>
-<p>The first thing is to make sure the data is what we expect. We will follow the steps outline in <a href="../chapters/model-flow.html"><strong>Chapter 4</strong></a>.</p>
+<p>The first thing is to make sure the data is what we expect. We will follow the steps outlined in <a href="../chapters/model-flow.html"><strong>Chapter 4</strong></a>.</p>
 <ul>
 <li>Check the structure of the data</li>
 </ul>
@@ -478,7 +478,7 @@ window.Quarto = {
  $ yield_bu_a: num  128 130 119 115 141 ...</code></pre>
 </div>
 </div>
-<p>These look okay except for block, which is currently coded as integer (a simplified numeric type). We don’t want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will avoid that. Block can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion since the linear modelling functions from ‘lme4’ and ‘nlme’ automatically convert character variables to factors.</p>
+<p>These look okay except for block, which is currently coded as integer (a simplified numeric type). We don’t want run a regression of block, where block 2 has twice the effect of block 1, and so on. So, converting it to a character will avoid that. Block can also be converted to a factor, but character variables are a bit easier to work with, and ultimately, equivalent to factor conversion since the linear modeling functions from ‘lme4’ and ‘nlme’ automatically convert character variables to factors.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var_trial<span class="sc">$</span>block <span class="ot">&lt;-</span> <span class="fu">as.character</span>(var_trial<span class="sc">$</span>block)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -561,7 +561,7 @@ window.Quarto = {
 <img src="rcbd_files/figure-html/fig-rcbd_hist-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rcbd_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: Histogram of the dependent variable.
+Figure&nbsp;5.1: Histogram of the dependent variable
 </figcaption>
 </figure>
 </div>
@@ -619,7 +619,7 @@ Note
 <p>Remember those iid assumptions? Let’s make sure we actually met them.</p>
 <section id="old-iid-checks" class="level4 page-columns page-full" data-number="5.2.3.1">
 <h4 data-number="5.2.3.1" class="anchored" data-anchor-id="old-iid-checks"><span class="header-section-number">5.2.3.1</span> Original Method</h4>
-<p>We will start inspecting the model assumptions by for checking the homoscedasticity (constant variance) first using a <code>plot()</code> function in base R.</p>
+<p>We will start inspecting the model assumptions by checking the homoscedasticity (constant variance) first using a <code>plot()</code> function in base R.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -629,7 +629,7 @@ Note
 <img src="rcbd_files/figure-html/fig-rcbd_error-1-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rcbd_error-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.2: Plot of residuals versus fitted values
+Figure&nbsp;5.2: Plot of residuals vs.&nbsp;fitted values
 </figcaption>
 </figure>
 </div>
@@ -657,7 +657,7 @@ Figure&nbsp;5.3: QQ-plot of residuals
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(model_rcbd_lmer), <span class="at">main =</span> <span class="cn">NULL</span>); <span class="fu">qqline</span>(<span class="fu">resid</span>(model_rcbd_lmer))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>This is reasonably good. Things do tend to fall apart at the tails a little, but si nce linear models are robust to model departures from normality, this is not concerning.</p>
+<p>This is reasonably good. Things do tend to fall apart at the tails a little, but since linear models are robust to model departures from normality, this is not concerning.</p>
 </section>
 <section id="new-iid-checks" class="level4" data-number="5.2.3.2">
 <h4 data-number="5.2.3.2" class="anchored" data-anchor-id="new-iid-checks"><span class="header-section-number">5.2.3.2</span> New Method</h4>

@@ -380,7 +380,7 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="background"><span class="header-section-number">6.1</span> Background</h2>
-<p>Factorial designs are used when there are multiple treatments each with the multiple levels. In a full factorial, these treatments occur in all possible combinations, enabling researchers to estimate the main effect of each treatment level their interactions together on the dependent variable. Incomplete factorials are another experimental design option where some but not combinations occur in the study. This chapter focuses on the former, a full factorial study. The statistical model for a complete factorial design is:</p>
+<p>Factorial designs are used when there are multiple treatments each with multiple levels. In a full factorial, these treatments occur in all possible combinations, enabling researchers to estimate the main effect of each treatment level, their interactions, and their combined effects on the dependent variable. Incomplete factorials are another experimental design option where some but not all combinations occur in the study. This chapter focuses on the former, a full factorial study. The statistical model for a complete factorial design is:</p>
 <p><span class="math display">\[y_{ijk} = \mu +  \tau_i+ \beta_j + (\tau\beta)_{ij} + \delta_k +  \epsilon_{ijk}\]</span></p>
 <p>Where:</p>
 <p><span class="math inline">\(\mu\)</span> = experiment mean</p>
@@ -388,11 +388,11 @@ window.Quarto = {
 <p><span class="math inline">\(\beta\)</span> = effect of factor B</p>
 <p><span class="math inline">\(\tau\beta\)</span> = interaction effect of factor A and B.</p>
 <p><span class="math inline">\(\delta\)</span> = block effect (random)</p>
-<p>Assumptions of this model includes: independent and identically distributed error terms with a constant variance <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>Assumptions of this model include: independent and identically distributed error terms with a constant variance <span class="math inline">\(\sigma^2\)</span>.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">6.2</span> Example Analysis</h2>
-<p>First step is to load the libraries required for the analysis:</p>
+<p>The first step is to load the libraries required for the analysis:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -410,7 +410,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data used in this example analysis is from the UI Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two beef fabrication methods (‘trt’) in two carcass depths (‘location’) on beef top round quality. It includes 11 replications (‘animal’), where each animal was subject to all 4 possible treatment combinations. The response variable is a measure of yellowness (b_star) in the meat sample.</p>
+<p>The data used in this example analysis is from the University of Idaho Department of Animal, Veterinary and Food Sciences. This trial was conducted to study the impact of two beef fabrication methods (‘trt’) in two carcass depths (‘location’) on beef top round quality. It includes 11 replications (‘animal’), where each animal was measured under all 4 possible treatment combinations. The response variable is a measure of yellowness (b_star) in the meat sample.</p>
 <p>The objective of this example is to evaluate the individual and interactive effect of location and treatment factors on the yellowness of the meat sample.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>beef <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/beef_factorial.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -441,7 +441,7 @@ window.Quarto = {
 <ul>
 <li>Check structure of the data</li>
 </ul>
-<p>First step is to verify the class of variables, where animal, location, and treatment are supposed to be a factor/character and b1 should be numeric.</p>
+<p>The first step is to verify the class of the variables, where ‘animal’, ‘location’, and ‘trt’ are supposed to be formatted as factor/character and ‘b_star’ should be numeric.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(beef)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -452,7 +452,7 @@ window.Quarto = {
  $ b_star  : num  21.5 20.1 17.9 20 16.8 15.2 18.2 18.5 20.3 24.5 ...</code></pre>
 </div>
 </div>
-<p>In this data, treatment factors, ‘n’, ‘p’, &amp; ‘k’ are integers, we need to convert these variables to factor.</p>
+<p>In this data, the treatment factors ‘location’ and ‘trt’ are integers; we need to convert these variables to factor.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>beef <span class="ot">&lt;-</span> beef <span class="sc">|&gt;</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">animal =</span> <span class="fu">as.character</span>(animal))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -476,7 +476,7 @@ window.Quarto = {
   superficial  11          11</code></pre>
 </div>
 </div>
-<p>The design looks well balanced.</p>
+<p>The design looks balanced.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
@@ -491,7 +491,7 @@ window.Quarto = {
 <ul>
 <li>Inspect the dependent variable</li>
 </ul>
-<p>This is the last step is to inspect the dependent variable to ensure it looks as expected.</p>
+<p>The last step is to inspect the dependent variable to ensure it looks as expected.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -501,7 +501,7 @@ window.Quarto = {
 <img src="factorial-design_files/figure-html/fig-factorial_hist-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-factorial_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.1: Histogram of the dependent variable.
+Figure&nbsp;6.1: Histogram of the dependent variable
 </figcaption>
 </figure>
 </div>
@@ -513,7 +513,7 @@ Figure&nbsp;6.1: Histogram of the dependent variable.
 </section>
 <section id="model-fitting" class="level3 page-columns page-full" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">6.2.2</span> Model Fitting</h3>
-<p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by using the colon, ‘:’.</p>
+<p>Model fitting with R is exactly the same as shown in previous chapters: we need to include all fixed effects, as well as the interaction, which is represented by the colon ‘:’.</p>
 <p>The model syntax is:</p>
 <p><code>b_star ~  trt + location + trt:location</code></p>
 <p>which can be abbreviated as:</p>
@@ -648,7 +648,7 @@ location:trt     1    30   2.0510  0.1624</code></pre>
 </div>
 </div>
 </div>
-<p>Here we do not observe any difference in group variance of interaction effects. Among all treatment factors, only location had a significant effect on the yellowness in the meat samples.</p>
+<p>Here we do not observe any difference in the group variance of interaction effects. Among all treatment factors, only location had a significant effect on the yellowness in the meat samples.</p>
 <p>Let’s find estimates for some of the main effects and interaction effects of fixed factors on yellowness in the meat samples.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">nlme</a></li></ul>

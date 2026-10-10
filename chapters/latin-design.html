@@ -380,11 +380,11 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="background"><span class="header-section-number">11.1</span> Background</h2>
-<p>Latin square design is a spatial adjustment technique that assumes a row-by-column layout for the experimental units. Two blocking factors are are assigned, one to the rows and one for the columns of a square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that each treatment appears only once in each row and column, and the number of replications is equal to number of treatments.</p>
+<p>Latin square design is a spatial adjustment technique that assumes a row-by-column layout for the experimental units. Two blocking factors are assigned, one to the rows and one for the columns of a square. This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that each treatment appears only once in each row and column, and the number of replications is equal to the number of treatments.</p>
 <p>The statistical model for the Latin square design:</p>
 <p><span class="math inline">\(Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}\)</span></p>
 <p>where, <span class="math inline">\(\mu\)</span> is the experiment mean, <span class="math inline">\(\alpha_i\)</span> represents treatment effect, <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\gamma\)</span> are the row- and column-specific effects.</p>
-<p>Like the other designs, the residuals, <span class="math inline">\(\epsilon_{ijk}\)</span>, are assumed to independently and identically distributed, following a normal distriution. The model also assumes no interactions between the blocking factors (rows and columns) with the treatments.</p>
+<p>Like the other designs, the residuals, <span class="math inline">\(\epsilon_{ijk}\)</span>, are assumed to be independently and identically distributed, following a normal distribution. The model also assumes no interactions between the blocking factors (rows and columns) with the treatments.</p>
 </section>
 <section id="example-analysis" class="level2 page-columns page-full" data-number="11.2">
 <h2 data-number="11.2" class="anchored" data-anchor-id="example-analysis"><span class="header-section-number">11.2</span> Example Analysis</h2>
@@ -406,7 +406,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>The data set used in this example is from the <strong>agridat</strong> package (data set “goulden.latin”). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).</p>
+<p>The data set used in this example is from the ‘agridat’ package (data set “goulden.latin”). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week; E = not applied).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"goulden_latin.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -490,7 +490,7 @@ window.Quarto = {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="latin-design_files/figure-html/lattice_design-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Histogram of the dependent variable.</figcaption>
+<figcaption>Histogram of the dependent variable</figcaption>
 </figure>
 </div>
 </div></div></div>
@@ -500,7 +500,7 @@ window.Quarto = {
 </section>
 <section id="model-fitting" class="level3 page-columns page-full" data-number="11.2.2">
 <h3 data-number="11.2.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">11.2.2</span> Model Fitting</h3>
-<p>Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as a random effects.</p>
+<p>Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as random effects.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -642,11 +642,11 @@ Number of Groups: 5 </code></pre>
 
 <div class="no-row-height column-margin column-container"><section id="latin-square-design-in-nlme" class="level5" data-number="11.2.2.0.1">
 <h5 data-number="11.2.2.0.1" class="anchored" data-anchor-id="latin-square-design-in-nlme"><span class="header-section-number">11.2.2.0.1</span> Latin Square Design in nlme</h5>
-<p>There is no good way (that we know of) to analyze a latin square design with <strong>nlme</strong> specifiying both row and column as random effects. One easy workaround is to only include one spatial components as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row, ‘m_latin_lme2’), while also meeting standard linear modeling assumptions.</p>
+<p>There is no easy way (that we know of) to analyze a latin square design with ‘nlme’, specifying both row and column as random effects. One easy workaround is to only include one spatial component as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row, ‘m_latin_lme2’), while also meeting standard linear modeling assumptions.</p>
 </section></div></section>
 <section id="check-model-assumptions" class="level3" data-number="11.2.3">
 <h3 data-number="11.2.3" class="anchored" data-anchor-id="check-model-assumptions"><span class="header-section-number">11.2.3</span> Check Model Assumptions</h3>
-<p>Evaluate model residuals by using <code>check_model()</code> function from the <strong>performance</strong> package.</p>
+<p>Evaluate model residuals by using <code>check_model()</code> function from the ‘performance’ package.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">

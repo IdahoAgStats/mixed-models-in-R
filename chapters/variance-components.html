@@ -401,7 +401,7 @@ window.Quarto = {
 
 
 <p>Mixed, hierarchical or multilevel models provide the advantage of being able to estimate the variance of random variables and model correlations within the grouping structure of random variables. Instead of looking at a variable as a collection of specific levels to estimate, random effects view variables as being a random draw from a probability distribution.</p>
-<p>The decision of how to designate a variable as random or fixed depends on (1) your experimental aims with regard to inference and (2) your data structure. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> There is a philosophical consider and practical consideration. The philosophical approach is that random variable represents a small sample of a population you want to make inference on. The practical consideration is that when there are few sample levels, the random estimation procedure is not very reliable for those conditions. Ben Bolker has an <a href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#should-i-treat-factor-xxx-as-fixed-or-random" class="external" target="_blank">excellent summary</a> that we strongly recommend that you read to learn more about this. Below is an excerpt from that on the consequences of having too few levels to estimate a random effect well:</p>
+<p>The decision of how to designate a variable as random or fixed depends on (1) your experimental aims with regard to inference and (2) your data structure. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> There is a philosophical consideration and a practical consideration. The philosophical approach is that random variable represents a small sample of a population you want to make inference on. The practical consideration is that when there are few sample levels, the random estimation procedure is not very reliable for those conditions. Ben Bolker has an <a href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#should-i-treat-factor-xxx-as-fixed-or-random" class="external" target="_blank">excellent summary</a> that we strongly recommend that you read to learn more about this. Below is an excerpt from that on the consequences of having too few levels to estimate a random effect well:</p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;<a href="http://mfviz.com/hierarchical-models/" class="external" target="_blank">This animation</a> show how accounting for grouping structure as random effects can impact the results of a linear model. </p></div></div><blockquote class="blockquote">
 <p>Treating factors with small numbers of levels as random will in the best case lead to very small and/or imprecise estimates of random effects; in the worst case it will lead to various numerical difficulties such as lack of convergence, zero variance estimates, etc.. (A small simulation exercise shows that at least the estimates of the standard deviation are downwardly biased in this case; it’s not clear whether/how this bias would affect the point estimates of fixed effects or their estimated confidence intervals.) In the classical method-of-moments approach these problems may not arise (because the sums of squares are always well defined as long as there are at least two units), but the underlying problems of lack of power are there nevertheless.</p>
 </blockquote>
@@ -491,7 +491,7 @@ window.Quarto = {
 17                      93             1</code></pre>
 </div>
 </div>
-<p>The distribution of the dependent variable, length-to-width ratio, had a slight left skew, so the the inverse of this trait was modeled.</p>
+<p>The distribution of the dependent variable, length-to-width ratio, had a slight left skew, so the inverse of this trait was modeled.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(potato<span class="sc">$</span>iLxW, <span class="at">ylab =</span> <span class="cn">NULL</span>, <span class="at">xlab =</span> <span class="cn">NULL</span>, <span class="at">main =</span> <span class="cn">NA</span>, <span class="at">breaks =</span> <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -539,8 +539,8 @@ window.Quarto = {
 </section>
 <section id="inference-on-random-effects" class="level4 page-columns page-full" data-number="14.1.1.2">
 <h4 data-number="14.1.1.2" class="anchored" data-anchor-id="inference-on-random-effects"><span class="header-section-number">14.1.1.2</span> Inference on random effects</h4>
-<p>Marginal means of fixed effects can be visualized as demonstrated in previous chapters (e.g.&nbsp;<a href="../chapters/means-and-contrasts.html">marginal means and constrasts</a>).</p>
-<p>The variance components for each random effect can be extracted most easily using the <code>tidy()</code> function from ‘broom.mixed’. We can also a bit of extra code to calculate the percent of variance explained by each component.</p>
+<p>Marginal means of fixed effects can be visualized as demonstrated in previous chapters (e.g.&nbsp;<a href="../chapters/means-and-contrasts.html">marginal means and contrasts</a>).</p>
+<p>The variance components for each random effect can be extracted most easily using the <code>tidy()</code> function from ‘broom.mixed’. We can also add a bit of extra code to calculate the percent of variance explained by each component.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>var_comps <span class="ot">&lt;-</span> <span class="fu">tidy</span>(potato_m1, <span class="st">"ran_pars"</span>, <span class="at">scales =</span> <span class="st">"vcov"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(group, <span class="at">variance =</span> <span class="st">"estimate"</span>) <span class="sc">|&gt;</span> </span>
@@ -591,8 +591,8 @@ iLxW ~ state + (1 | year) + (1 | state:year) + (1 | clone)
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-<p>It is possible to make inferences on specific levels of random effects. This take a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called “BLUPs” (rhymes with “cups”). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs “shrink” the estimates towards zero, reducing their overall spread compared to fixed effects. <a href="https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/" class="external" target="_blank">VSNi</a> has a short summary on BLUPs and BLUEs.</p>
-<p>Recall that random effects are distributed with a mean of zero and a variance <span class="math inline">\(\sigma^2_x\)</span> that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between the them is unchanged.</p>
+<p>It is possible to make inferences on specific levels of random effects. This takes a different analytical approach than fixed effects and has a different term, predictions, or more specifically Best Linear Unbiased Predictions, commonly called “BLUPs” (rhymes with “cups”). The estimated marginal means from fixed effects are technically BLUEs, or Best Linear Unbiased Estimates. By their nature, BLUPs “shrink” the estimates towards zero, reducing their overall spread compared to fixed effects. <a href="https://vsni.co.uk/blogs/BLUPS_BLUES_breeding_values/" class="external" target="_blank">VSNi</a> has a short summary on BLUPs and BLUEs.</p>
+<p>Recall that random effects are distributed with a mean of zero and a variance <span class="math inline">\(\sigma^2_x\)</span> that is estimated in the model fitting procedure. We can add the overall model intercept to all BLUPs in order to shift them to a scale that may be more intuitive for some. Since this constant (the model intercept) was added to all BLUPs, the overall relationship between them is unchanged.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the model intercept</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>intercept <span class="ot">=</span> <span class="fu">fixef</span>(potato_m1)[<span class="dv">1</span>]</span>
@@ -642,7 +642,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>It is possible to have a nested data set: learners in a classroom and classrooms in institutions, cows in dairies and dairies in counties or other regional indicators. These are truly hierarchical models, where we expect that there is some covariance between observations at the different levels. Cows in the same dairy are likely to be more correlated with each other than cows from another dairy. But how correlated? And how much does each grouping level influence the variation of whatever dependent variable is being studied.</p>
 <p>This example is looking at pay at institutions of higher education in Washington. There are 3 dozen higher educational institutions located in Washington, each with hundreds or thousands of employees. How much did salary vary within and across Washington State higher educational institutions? In particular, to what extent did year, the institution itself and the individual employee contribute to salary changes over time? This is an example where we will use random slopes to examine how an individual’s salary changed over time.</p>
 <p>All annual earnings less than $25,000 were excluded from the data set, and only earners with a minimum of four years of data were included. Although this is public information, all individual names were anonymized.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;This data set (<a href="https://govsalaries.com/state/WA">source</a>) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only.</p></div></div><p>The data set:</p>
+<div class="no-row-height column-margin column-container"><div id="fn4"><p><sup>4</sup>&nbsp;This data set (<a href="https://govsalaries.com/state/WA" class="external" target="_blank">source</a>) was incompletely curated and hence no substantive conclusions should be drawn from this particular analysis. This example is for teaching and demonstration purposes only.</p></div></div><p>The data set:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 24%">
@@ -739,14 +739,14 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </figure>
 </div>
 </div></div></div>
-<p>Employee salary is very skewed, where the 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum of $3.1 million. The salaries were log transformed for a log-linear model. This is a special case of generalized linear mixed model (GLMM); log-linear model follow the assumption of normally-distributed residuals terms when the dependent variable is log-transformed. The salaries are observed to increase a small amount each year.</p>
+<p>Employee salary is very skewed, where 70% of salaries are less than $100,000, but there are a few very high salaries, up to a maximum of $3.1 million. The salaries were log transformed for a log-linear model. This is a special case of generalized linear mixed model (GLMM); log-linear models follow the assumption of normally-distributed residual terms when the dependent variable is log-transformed. The salaries are observed to increase a small amount each year.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="variance-components_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Box plot of Log Salaries by Year</figcaption>
+<figcaption>Boxplot of Log Salaries by Year</figcaption>
 </figure>
 </div>
 </div></div></div>
@@ -930,10 +930,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p>In the “general” linear model days, when a premium was placed on the i.i.d. error paradigm, if we did reject <span class="math inline">\(H_0\)</span>, it would set off a minor crisis in the form of a hunt for a variance stabilizing transformation. In contemporary modeling, we simply proceed with inference on estimable functions using the unequal variance model.</p>
 <p><strong>– Walt Stroup, Marina Ptukhiuna and Julie Garai (2024), <em>Generalized Linear Mixed Models</em>, 2nd Ed, Section 7.2.3.1</strong></p>
 </blockquote>
-<p>In previous sections, we have assumed the error terms or residuals were “i.i.d.”, that is “independently and identically distributed.” This means they shared the same distribution (~identical) and were uncorrelated (~independent). Longitudinal studies (i.e.&nbsp;those with repeated measures) do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to the their observations, particular treatments or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity.</p>
+<p>In previous sections, we have assumed the error terms or residuals were “i.i.d.”, that is “independently and identically distributed.” This means they shared the same distribution (~identical) and were uncorrelated (~independent). Longitudinal studies (i.e.&nbsp;those with repeated measures) do have correlated residuals, so we relax the independence assumption and model those correlations. However, residuals can be unexpectedly related to their observations, particular treatments, or the order data was gathered from the experimental units (among other causes). As mentioned in the previous quote, we now have tools for handling this rather than trying to transform the data. Below are examples on how to model heteroscedasticity.</p>
 <section id="case-1-unequal-variance-due-to-a-factor" class="level3 page-columns page-full" data-number="14.2.1">
 <h3 data-number="14.2.1" class="anchored" data-anchor-id="case-1-unequal-variance-due-to-a-factor"><span class="header-section-number">14.2.1</span> Case 1: Unequal variance due to a factor</h3>
-<p>This data set consists of a set of canola variety trials conducted within a single year across multiple locations – sometimes called an multi-environment trial (MET). The trials consist of 38 canola varieties that were evaluated at 9 locations using a RCB design. The goal is to estimate varietal performance at each location as precisely as possible.</p>
+<p>This data set consists of a set of canola variety trials conducted within a single year across multiple locations – sometimes called a multi-environment trial (MET). The trials consist of 38 canola varieties that were evaluated at 9 locations using a RCB design. The goal is to estimate varietal performance at each location as precisely as possible.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>var_ex1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"MET_trial_variance.csv"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">block =</span> <span class="fu">as.character</span>(block))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1063,7 +1063,7 @@ ex1_m2     2 353 14489.23 16225.88 -6891.615 1 vs 2 341.0259  &lt;.0001</code></
 </tr>
 </tbody>
 </table>
-<p>A histogram does indicate there is anything unusual about the dependent variable (seed yield), except that is varies quite a bit, ranging from 24 to nearly 950 units.</p>
+<p>A histogram does not indicate anything unusual about the dependent variable (seed yield), except that it varies quite a bit, ranging from 24 to nearly 950 units.</p>
 <div class="cell page-columns page-full">
 
 <div class="no-row-height column-margin column-container"><div class="cell-output-display">
@@ -1124,7 +1124,7 @@ ex2_m2     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></p
 </section>
 <section id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances" class="level3" data-number="14.2.3">
 <h3 data-number="14.2.3" class="anchored" data-anchor-id="case-3-variance-is-related-to-a-factor-under-other-complex-circumstances"><span class="header-section-number">14.2.3</span> Case 3: Variance is related to a factor under other complex circumstances</h3>
-<p>Recall the <a href="../chapters/repeated-measures.html#ssp-rm">repeated measures split-split plot example</a> that indicated some evidence of heteroscedasticity. The model passed a Breusch-Pagan test, but these tests are imperfect, and it may be worthy to investigate if modelling heteroscedasticity improves the model fit.</p>
+<p>Recall the <a href="../chapters/repeated-measures.html#ssp-rm">repeated measures split-split plot example</a> that indicated some evidence of heteroscedasticity. The model passed a Breusch-Pagan test, but these tests are imperfect, and it may be worthy to investigate if modeling heteroscedasticity improves the model fit.</p>
 <p>The first step is to reload the data:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/phos_fit1.RData"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1169,7 +1169,7 @@ ex2_m2     2 41 1519.199 1631.383 -718.5996 1 vs 2 28.39636  &lt;.0001</code></p
 </div>
 </div>
 </div>
-<p>Given this uncertainty, it is worth exploring modelling heteroscedasticity. As shown earlier, we can model the variance as a function of a variable by using the <code>varIdent()</code> function.</p>
+<p>Given this uncertainty, it is worth exploring modeling heteroscedasticity. As shown earlier, we can model the variance as a function of a variable by using the <code>varIdent()</code> function.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>pfit2 <span class="ot">&lt;-</span> <span class="fu">update</span>(pfit1, <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>time_num))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -1240,8 +1240,8 @@ pfit2     2 68 2508.314 2725.435 -1186.157 1 vs 2 7.672945  0.0216</code></pre>
 <pre><code>[1] 14.4</code></pre>
 </div>
 </div>
-<p>However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with <code>varIdent()</code>) or much much smaller (e.g.&nbsp;with <code>varPower()</code>). Interpret the coefficient of variation from mixed models with caution.</p>
-<p>Related is Fisher’s least significant difference, i.e.&nbsp;LSD. While most mixed modelling packages do not calculate this (e.g.&nbsp;‘nlme’, ‘lme4’/‘lmerTest’ or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels.</p>
+<p>However, in cases of unequal variance, the overall error term can be larger than expected under homoscedasticity (with <code>varIdent()</code>) or much smaller (e.g.&nbsp;with <code>varPower()</code>). Interpret the coefficient of variation from mixed models with caution.</p>
+<p>Related is Fisher’s least significant difference, i.e.&nbsp;LSD. While most mixed modeling packages do not calculate this (e.g.&nbsp;‘nlme’, ‘lme4’/‘lmerTest’ or any SAS mixed modeling procedure), there are some add-on packages that will. This is generally not recommended for reasons of multiple testing. However, LSD output is strongly discouraged in the case of heteroscedasticity; since there is unequal variance, it is not possible to set a global difference that can apply to all possible pairwise comparisons of factor levels.</p>
 </div>
 </div>
 </div>

@@ -380,7 +380,7 @@ window.Quarto = {
 
 <section id="background" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="background"><span class="header-section-number">9.1</span> Background</h2>
-<p>Also referred by “split block design”, this design can be very useful for agricultural field experiments when there are two treatments that need to be applied at a larger scale than the experimental units. It is a row-column design where treatments are applied in <em>strips</em> within each block. Below is an example layout of this design.</p>
+<p>Also referred to as “split block design”, this design can be very useful for agricultural field experiments when there are two treatments that need to be applied at a larger scale than the experimental units. It is a row-column design where treatments are applied in <em>strips</em> within each block. Below is an example layout of this design.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -393,7 +393,7 @@ window.Quarto = {
 <p>The statistical model for this design is:</p>
 <p><span class="math display">\[y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_{ik} + (\alpha\beta)_{jk} +  \epsilon_{ijk}\]</span></p>
 <p>Where:</p>
-<p><span class="math inline">\(\mu\)</span>= overall experimental mean, <span class="math inline">\(\tau\)</span> is the block effect, and <span class="math inline">\((\tau\alpha)_{ij}\)</span>, <span class="math inline">\((\tau\beta)_{ik}\)</span>, and <span class="math inline">\(\epsilon_{ijk}\)</span> are the errors used to test factor A, B, and their interaction AB, respectively. <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are the main effects applied A and B, and <span class="math inline">\(\alpha_j\beta_k\)</span> represents the interaction between main factors.</p>
+<p><span class="math inline">\(\mu\)</span>= overall experimental mean, <span class="math inline">\(\tau\)</span> is the block effect, and <span class="math inline">\((\tau\alpha)_{ij}\)</span>, <span class="math inline">\((\tau\beta)_{ik}\)</span>, and <span class="math inline">\(\epsilon_{ijk}\)</span> are the errors used to test factor A, B, and their interaction AB, respectively. <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are the main effects for factors A and B, and <span class="math inline">\(\alpha_j\beta_k\)</span> represents the interaction between the main factors.</p>
 <p><span class="math display">\[ \epsilon_{ijk} \sim N(0, \sigma^2)\]</span><br>
 </p>
 </section>
@@ -419,7 +419,7 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>For this example, we will use a rice strip-plot experiment data from the <strong>agridat</strong> package, “gomez.stripplot”. This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.</p>
+<p>For this example, we will use a rice strip-plot experiment data from the ‘agridat’ package, “gomez.stripplot”. This data contains a strip-plot experiment with three reps, variety as the whole plot and nitrogen fertilizer as the whole plot applied in the strips.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rice <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"rice_stripplot.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -467,7 +467,7 @@ window.Quarto = {
 <ul>
 <li>Check structure of the data</li>
 </ul>
-<p>The ‘rep’, ‘nitro’, and ‘gen’ variables in the data needs to be a factor/character variables and ‘yield’ should be numeric.</p>
+<p>The ‘rep’, ‘nitro’, and ‘gen’ variables in the data need to be factor/character and ‘yield’ should be numeric.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(rice)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -487,7 +487,7 @@ window.Quarto = {
 <ul>
 <li>Inspect the independent variables</li>
 </ul>
-<p>Let’s running a a cross tabulation of independent variables to look at the balance of treatment factors.</p>
+<p>Let’s run a cross tabulation of the independent variables to look at the balance of the treatment factors.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(rice<span class="sc">$</span>gen, rice<span class="sc">$</span>nitro)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -501,7 +501,7 @@ window.Quarto = {
   G6 3  3   3</code></pre>
 </div>
 </div>
-<p>It looks balanced with 3 number of observations for each variety and nitrogen level.</p>
+<p>It looks balanced with 3 observations for each variety and nitrogen level.</p>
 <ul>
 <li>Check the extent of missing data</li>
 </ul>
@@ -527,7 +527,7 @@ window.Quarto = {
 <img src="strip-plot_files/figure-html/fig-strip_plot_hist-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-strip_plot_hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.1: Histogram of the dependent variable.
+Figure&nbsp;9.1: Histogram of the dependent variable
 </figcaption>
 </figure>
 </div>
@@ -698,7 +698,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<p>The <code>anova()</code> function for <strong>nlme</strong> does not handle the degree of freedom correctly for F-tests in the strip plot design, so we have to manually set it. This only works for balanced data. Wald chi-square tests can be conducted using <code>car::Anova()</code> and produce identical results for <code>lme4::lmer()</code> and <code>nlme::lme()</code>.</p>
+<p>The <code>anova()</code> function for ‘nlme’ does not handle the degree of freedom correctly for F-tests in the strip plot design, so we have to manually set it. This only works for balanced data. Wald chi-square tests can be conducted using <code>car::Anova()</code> and produce identical results for <code>lme4::lmer()</code> and <code>nlme::lme()</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rep_n <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(rice<span class="sc">$</span>rep)) <span class="sc">-</span> <span class="dv">1</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>gen_n <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(rice<span class="sc">$</span>gen)) <span class="sc">-</span> <span class="dv">1</span></span>
@@ -721,7 +721,7 @@ nitro:gen    10    20  5.800612 0.0004270726</code></pre>
 </div>
 </div>
 <p>Analysis of variance showed a significant interaction impact of gen and nitro on rice grain yield.</p>
-<p>Next, We can estimate marginal means for nitro and gen interaction effects using the <strong>emmeans</strong> package.</p>
+<p>Next, we can estimate marginal means for the nitro and gen interaction effects using the ‘emmeans’ package.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">lme4</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">nlme</a></li></ul>
 <div class="tab-content">
@@ -801,10 +801,10 @@ Confidence level used: 0.95 </code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For strip plot experiment design, fitting nested and crossed random effects is more complicated to implement in <strong>nlme</strong> compared to <strong>lme4</strong>, and this complexity appears to complicate downstream estimation of the degrees of freedom. It is easier and statistically correct to use <strong>lme4</strong>, so understood if an analyst prefers this package for analyzing split plot experiments!</p>
+<p>For strip plot experiment design, fitting nested and crossed random effects is more complicated to implement in ‘nlme’ compared to ‘lme4’, and this complexity complicates downstream estimation of the degrees of freedom. It is easier and statistically correct to use ‘lme4’, so understood if an analyst prefers this package for analyzing split plot experiments!</p>
 </div>
 </div>
-<p>Sometimes, elements of split plot and split block are combined, resulting in strip-split plot design. Kevin Wright describes <a href="https://kwstat.github.io/agridat/reference/cox.stripsplit.html">how to analyze this design</a> in the ‘agridat’ package.</p>
+<p>Sometimes, elements of split plot and split block are combined, resulting in strip-split plot design. Kevin Wright describes <a href="https://kwstat.github.io/agridat/reference/cox.stripsplit.html" class="external" target="_blank">how to analyze this design</a> in the ‘agridat’ package.</p>
 
 
 </section>
