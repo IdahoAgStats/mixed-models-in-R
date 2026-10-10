@@ -6,12 +6,12 @@ source(here::here("settings.r"))
 
 ::: {.callout-warning}
 ## WIP Warning
-This chapter is a work in progress, particularilty with respect to 'lme4' v 2.0 covariance structures. At this time, it is not clear if lme4 covariance structures work with 'lmerTest'. Additinally, there appear to be some estimation issues with lme4: if a model is over-specified, a very high  $\phi$ may result when using AR1, and there are some large swings in the log likelihood when using lme4's covariance structures. 
+This chapter is a work in progress, particularly with respect to 'lme4' v 2.0 covariance structures. At this time, it is not clear if lme4 covariance structures work with 'lmerTest'. Additionally, there appear to be some estimation issues with lme4: if a model is over-specified, a very high  $\phi$ may result when using AR1, and there are some large swings in the log likelihood when using lme4's covariance structures. 
 :::
 
 ## Background
 
-In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent measure designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called "longitudinal data").
+In the previous chapters, we have covered how to run linear mixed models for various experimental designs. All the examples in those chapters were independent-measures designs, where each subject was assigned to a different treatment. Now we will move on to experiment with repeated measures effects (also called "longitudinal data").
 
 Studies that involve repeated data collection from the same experimental units (or subjects) requires a repeated measures component in analysis to model correlations across time for each subject. This is common in studies that are evaluated across different time periods. For example, if samples are collected over different time periods from the same subject or experimental unit, we must model the repeated measures covariance structure when analyzing the treatment effects.
 
@@ -55,7 +55,7 @@ There are other covariance structures enabled by 'nlme' (e.g., `corARMA()`, `cor
 
 # Examples 
 
-let's start with loading the required libraries for this analysis.
+Let's start by loading the required libraries for this analysis.
 
 ::: panel-tabset
 ### nlme
@@ -82,9 +82,9 @@ library(dplyr); library(broom.mixed); library(ggplot2)
 
 First, we will start with the first example with randomized complete block design with repeated measures. 
 
-The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, 'variety'. The dependent variable, 'y' (leaf are index) was measured weekly for 5 weeks. This data set was originally described by Milliken and Johnson [-@milk2009].
+The data for this example are a sorghum trial, arranged in a RCBD with five replications and 4 levels of the treatment, 'variety'. The dependent variable, 'y' (leaf area index) was measured weekly for 5 weeks. This data set was originally described by Milliken and Johnson [-@milk2009].
 
-We need to have time as both a numeric and a factor variable for the modeling packages. The variable 'week' is formatted as a factor ("factweek") for estimating the effect of each week. For the repeated measures structure, the numeric variable 'week' is used. Since variety and block imported as numeric, they are converted to character variables.  
+We need to have time as both a numeric and a factor variable for the modeling packages. The variable 'week' is formatted as a factor ("factweek") for estimating the effect of each week. For the repeated measures structure, the numeric variable 'week' is used. Since variety and block were imported as numeric, they are converted to character variables.  
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -130,7 +130,7 @@ In this data set, 'block', 'plot', and 'factweek' are characters, while 'y' and 
 table(sorghum$variety, sorghum$block)
 ```
 
-The cross tabulation shows a equal number of variety treatments in each block.
+The cross tabulation shows an equal number of variety treatments in each block.
 
 - Check the extent of missing data
 
@@ -147,7 +147,7 @@ ggplot(data = sorghum, aes(y = y, x = factweek, fill = variety)) +
     theme_bw()
 ```
 
-It looks like variety '1' has the lowest yield and showed drastic reduction in yield over weeks compared to other varieties.
+It looks like variety '1' has the lowest values and shows a drastic reduction in yield over weeks compared to other varieties.
 
 One last step before we fit model is to look at the distribution of response variable.
 
@@ -165,7 +165,7 @@ hist(sorghum$y, main = NA, xlab = "leaf area index", cex.lab = cex_lab, cex.axis
 
 ### Model Building
 
-Let's fit the model first using `lme()` from the **nlme** package. A full specified model is fit and 'plot' is nested within 'block'. 
+Let's fit the model first using `lme()` from the **nlme** package. A fully specified model is fit and 'plot' is nested within 'block'. 
 
 ::: panel-tabset
 ### nlme
@@ -235,7 +235,7 @@ sorg_3c <- glmmTMB(y ~ variety + factweek + variety:factweek + cs(1 + factweek|p
 :::
 
 
-Now let's compare how model fitness differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by the `compare_performance()` function from the **performance** library.
+Now let's compare how model fit differs among models with no correlation structure (lm1), with AR1 correlation structure (lm2), and with compound symmetry structure (lm3). We will compare these models by using `anova()` or by the `compare_performance()` function from the **performance** library.
 
 ::: panel-tabset
 ### nlme
@@ -267,7 +267,7 @@ anova(sorg_3a, sorg_3b, sorg_3c)
 :::
 
 
-For model selection, lower AIC and BIC value indicate higher parsimony, that is, the most efficient use of information. In these examaples, we will move forward with linear model containing an AR1 covariance structure.
+For model selection, lower AIC and BIC value indicate higher parsimony, that is, the most efficient use of information. In these examples, we will move forward with the linear model containing an AR1 covariance structure.
 
 Let's look at the model estimates for random and fixed effects.
 
@@ -382,7 +382,7 @@ emmeans(sorg_3b, ~ variety*factweek)
 ::: callout-tip
 ## Representing time variables
 
-It's common to have two versions of temporary variables in a data set: one coded as numeric and the other being coded as a factor or categorical variable. When modelling, the numeric variable is used for fitting correlation matrix, and a factor/character variable may be used in model statement to evaluate the temporal variable's effect on the response if you choose to treat it a categorical variable. It is also a valid choice to view a temporal variables as numeric assuming it represents a real time interval. Days and weeks are real time intervals, while "early", "middle" and "late" are categorical representations of time. 
+It's common to have two versions of temporal variables in a data set: one coded as numeric and the other being coded as a factor or categorical variable. When modelling, the numeric variable is used for fitting correlation matrix, and a factor/character variable may be used in model statement to evaluate the temporal variable's effect on the response if you choose to treat it a categorical variable. It is also a valid choice to view a temporal variables as numeric assuming it represents a real time interval. Days and weeks are real time intervals, while "early", "middle" and "late" are categorical representations of time. 
 :::
 
 ## Split Plot Repeated Measures
@@ -420,7 +420,7 @@ First, we need to look at the class of variables in the data set.
 str(alfalfa)
 ```
 
-We will now convert the variables "fertilizer" and "rep" to factors. In addition, we need to create a new factor variable (sample_time1) to analyze the time effect.
+We will now convert the variables "irrigation", "intercrop", "plot", and "block" to factors. In addition, we need to create a new numeric variable (`cut_num`) to analyze the time effect.
 
 ```{r}
 alfalfa <- alfalfa |> 
@@ -490,7 +490,7 @@ alf_2 <- lmer(yield ~ irrigation*intercrop*cutting +
 
 ### Check Model Assumptions
 
-We will use `check_model()` from the **performance** package to evaluate the model fitness of model fitted using nlme (mod1). 
+We will use `check_model()` from the **performance** package to evaluate the model fit of the model fitted using nlme (`alf_1`). 
 
 ::: panel-tabset
 ### nlme
@@ -557,7 +557,7 @@ To explore more about contrasts and emmeans please refer to [**Chapter 13**](mea
 
 ## Split-split Plot Repeated Measures {#ssp-rm}
 
-Recall, we have evaluated this split-split plot experiment design in the [**split-split design chapter**](split-split-plot-design.qmd). In this example,a repeated measures component will be added to the split-split plot model. This is unpublished data from the PhD Dissertation of Julia Piaskowski. 
+Recall, we have evaluated this split-split plot experiment design in the [**split-split design chapter**](split-split-plot-design.qmd). In this example, a repeated measures component will be added to the split-split plot model. This is unpublished data from the PhD Dissertation of Julia Piaskowski. 
 
 ```{r}
 phos <- read.csv(here::here("data", "split_split_repeated.csv"))
@@ -680,7 +680,7 @@ check_model(pfit2, check = c('linearity', 'qq'), detrend = FALSE, alpha = 0)
 
 :::
 
-This model fit a first glance is not ideal, but that LOESS line is trying to model a space where there are no data (between 500 and 1500 ppm P leaf concentration), so that can introduce artifacts. **Performance** does have an option for testing for heteroscedascity:
+This model fit, at first glance, is not ideal, but that LOESS line is trying to model a space where there are no data (between 500 and 1500 ppm P leaf concentration), so that can introduce artifacts. **Performance** does have an option for testing for heteroscedasticity:
 
 ::: panel-tabset
 ### nlme

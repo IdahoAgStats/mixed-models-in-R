@@ -20,13 +20,13 @@ boundary (singular) fit: see ?isSingular
 
 This can happen when trying to fit a model that is too complex for the amount of data available, or when the random effects are minimal and cannot be distinguished from zero.
 
-This error occurs because one of the variance components is approximately zero. If a model is "singular", this means that an aspect of the variance-covariance matrix have been estimated as nearly zero or as close to zero as your computer's precision allows. 
+This error occurs because one of the variance components is approximately zero. If a model is "singular", this means that an aspect of the variance-covariance matrix has been estimated as nearly zero or as close to zero as your computer's precision allows. 
 
 There is no single solution for this problem. Here are the possible solutions that you can try:
 
-First, look at the summary of the fitted model using `summary()` function, If random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are loosing the model complexity and potentially important variation that the random effect was initially intended to capture.
+First, look at the summary of the fitted model using the `summary()` function. If the random effect variance is near zero, simplify the model by removing it. However, by removing the random effect we are losing the model complexity and potentially important variation that the random effect was initially intended to capture.
 
-Another option is to include the block as a fixed effect and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` from the **nlme** that uses generalized least squares for model fit and allows for correlated and unequal variances. 
+Another option is to include the block as a fixed effect and re-analyze the experiment. If there are no other random effects in the model, you can use the function `gls()` from the **nlme** package, which uses generalized least squares for model fit and allows for correlated and unequal variances. 
 
 2. **fixed-effect model matrix is rank deficient**
 
@@ -96,7 +96,7 @@ model2 <- update(model1, control = lmerControl(optCtrl = list(maxfun = 100000)))
 
 Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and ensure it looks like what you expect, and that your expectations of the variables align with their representation in R. 
 
-Having an understanding of the moving parts of 'lme4' and how they each contribute to model fit can help. A helpful 'lme4' control structures for model fitting can be accessed via `?lmerControl`. 
+Having an understanding of the moving parts of 'lme4' and how they each contribute to model fit can help. Helpful 'lme4' control structures for model fitting can be accessed via `?lmerControl`. 
 
 - Posit (née RStudio) has published a [rather useful guide](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html){.external target="_blank"} for advanced troubleshooting of convergence issues in 'lme4'. 
 

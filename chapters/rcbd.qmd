@@ -7,7 +7,7 @@ reference-location: margin
 source(here::here("settings.r"))
 ```
 
-Randomized complete block design (RCBD) is very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as time, spatial variation, changes in equipment or operators, or myriad other causes. They are a random effect where the 'blocks' used in the study are a random sample from a distribution of other blocks.
+Randomized complete block design (RCBD) is a very common design where experimental treatments are applied at random to experimental units within each block. The block can represent a spatial or temporal unit or even different technicians taking data. The blocks are intended to control for a nuisance source of variation, such as time, spatial variation, changes in equipment or operators, or myriad other causes. They are a random effect where the 'blocks' used in the study are a random sample from a distribution of other blocks.
 
 ## Background
 
@@ -53,7 +53,7 @@ library(dplyr)
 ```
 :::
 
-This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is the estimate the yield of each variety and the determine the relative rankings of the varieties.
+This data set is for a single wheat variety trial conducted in Aberdeen, Idaho in 2015. The trial includes 4 blocks and 42 different treatments (wheat varieties in this case). This experiment consists of a series of plots (the experimental unit) laid out in a rectangular grid in a farm field. The goal of this analysis is to estimate the yield of each variety and to determine the relative rankings of the varieties.
 
 ```{r}
 var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
@@ -71,7 +71,7 @@ var_trial <- read.csv(here::here("data", "aberdeen2015.csv"))
 
 ### Data integrity checks
 
-The first thing is to make sure the data is what we expect. We will follow the steps outline in [**Chapter 4**](model-flow.qmd).
+The first thing is to make sure the data is what we expect. We will follow the steps outlined in [**Chapter 4**](model-flow.qmd).
 
 -   Check the structure of the data
 
@@ -168,7 +168,7 @@ Remember those iid assumptions? Let's make sure we actually met them.
 
 #### Original Method {#old-iid-checks}
 
-We will start inspecting the model assumptions by for checking the homoscedasticity (constant variance) first using a `plot()` function in base R.
+We will start inspecting the model assumptions by checking the homoscedasticity (constant variance) first using a `plot()` function in base R.
 
 ```{r, echo=FALSE}
 #| label: fig-rcbd_error-1
@@ -204,8 +204,7 @@ qqnorm(resid(model_rcbd_lmer), main = NULL, cex = 1.4, cex.lab = 1.8, cex.axis =
 qqnorm(resid(model_rcbd_lmer), main = NULL); qqline(resid(model_rcbd_lmer))
 ```
 
-This is reasonably good. Things do tend to fall apart at the tails a little, but si
-nce linear models are robust to model departures from normality, this is not concerning.
+This is reasonably good. Things do tend to fall apart at the tails a little, but since linear models are robust to model departures from normality, this is not concerning.
 
 #### New Method {#new-iid-checks}
 

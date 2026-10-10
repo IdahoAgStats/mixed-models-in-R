@@ -84,7 +84,7 @@ It is important to define what is your question that you want to answer with you
 
 > What is the estimated change in milk yield with each unit increase in cow parity? 
 
-> Does an experimental drug has a stronger effect on reducing cholesterol rates where a difference of 5 units or more is considered a meaningful result? 
+> Does an experimental drug have a stronger effect on reducing cholesterol rates where a difference of 5 units or more is considered a meaningful result? 
 
 > What are the relative contributions of location, year and cultivar influencing barley yield across southern Idaho?
 
@@ -93,9 +93,9 @@ The first two examples are asking for specific inference on the estimated effect
 
 For the example study, the goal is to estimate the impact of termination date and cover cropping on several soil variables indicative of soil health. There is a particular interest in estimates for the interaction of termination date and cover cropping. 
 
-## Step 2: Identity the data generating process
+## Step 2: Identify the data generating process
 
-A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be an unexpectedly challenging step, hence this section on design. The designs described in this guide are all "cookie cutter", and the tutorial overall assumes that you have already correctly defined the sources of variation and can plug your data straight into a model. However, many statistical consultants have observed that often researchers need help on formally defining data-generated process. Misunderstanding the design can lead to errors in statistical analysis and the conclusions drawn from the results of the analysis. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
+A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be an unexpectedly challenging step, hence this section on design. The designs described in this guide are all "cookie cutter", and the tutorial overall assumes that you have already correctly defined the sources of variation and can plug your data straight into a model. However, many statistical consultants have observed that often researchers need help in formally defining the data-generating process. Misunderstanding the design can lead to errors in statistical analysis and the conclusions drawn from the results of the analysis. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
 
 Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* [@stroup2013; @stroup2024].
 
@@ -224,7 +224,7 @@ Let's make sure the data are what we expect. Here are the steps to verify our da
 
 #### Check the structure of the data 
 
-In this step, we need to make sure that class of variables in data is as expected. For example, replication (or block) and year are often in the numeric format after import into R. But, for analysis the replication unit, year, and other variables that are not truly numerical[^model-1] need to encoded in the 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type (numeric for all examples in this tutorial). For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2]. Categorical outcomes are plausible for many studies, but that is not discussed in this guide.
+In this step, we need to make sure that the class of variables in the data is as expected. For example, replication (or block) and year are often in the numeric format after import into R. But, for analysis the replication unit, year, and other variables that are not truly numerical[^model-1] need to be encoded in the 'character' or 'factor' format. The dependent variable must also be in the correct format for its intended data type (numeric for all examples in this tutorial). For this tutorial, the dependent variable is expected to be numeric in all cases[^model-2]. Categorical outcomes are plausible for many studies, but that is not discussed in this guide.
 
 [^model-1]: No one views the year 2026 as 2,026.
 
@@ -254,20 +254,20 @@ Note that if your response variable did not import as numeric automatically, thi
 ::: callout-tip
 ## Factor versus character class
 
-In R programming, factor and character object classes are often viewed as equivalent and used interchangeably. There are a few notable differences between these two classes that you may benefit from knowing. A character variable represents data stored in a text or [string format](https://en.wikipedia.org/wiki/String_(computer_science)){.external target="_blank"}. A factor variable is a categorical variable type with values stored as set levels. All levels remain attached to the variable even after filtering the data set unless they are explicitly removed from the factor. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many packages will automatically convert character variables to factors in the modeling process. Thus, it is is often less complicated to use the character class for all independent (non-numeric) variables included in an analysis. 
+In R programming, factor and character object classes are often viewed as equivalent and used interchangeably. There are a few notable differences between these two classes that you may benefit from knowing. A character variable represents data stored in a text or [string format](https://en.wikipedia.org/wiki/String_(computer_science)){.external target="_blank"}. A factor variable is a categorical variable type with values stored as set levels. All levels remain attached to the variable even after filtering the data set unless they are explicitly removed from the factor. Most linear modeling packages in R expect categorical independent variables to be formatted as factors, but, many packages will automatically convert character variables to factors in the modeling process. Thus, it is often less complicated to use the character class for all independent (non-numeric) variables included in an analysis. 
 :::
 
 
 #### Inspect the independent variables
 
-Running a cross-tabulation across treatments and replications is generally sufficient to make sure ensure the expected levels of these factors are present in the data and there are no misspellings, case differences or unintended white space creating the appearance of additional treatment levels.
+Running a cross-tabulation across treatments and replications is generally sufficient to ensure the expected levels of these factors are present in the data and there are no misspellings, case differences or unintended white space creating the appearance of additional treatment levels.
 
 ```{r, eval=FALSE}
 table(dataset$cover_crop, dataset$subblock, dataset$location)
 table(dataset$location, dataset$termindation_date)
 ```
 
-The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check: (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high", "High" or "High "); (2) the number of observations per treatment combination are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues.The main primary goal is to verify what the data looks like after import compared to your personal understanding of the data.
+The output from this code will give us the number of observations in each replication for a given treatment. It's helpful to check: (1) all the expected levels of categorical data are present and no additional levels are present (e.g., "high", "High" or "High "); (2) the number of observations per treatment combination are as expected; and (3) what the balance of treatments is. Are they perfectly balanced? Slightly unbalanced? Very unbalanced? Is one treatment combination missing altogether? Depending on the context, these are resolvable issues. The main goal is to verify what the data looks like after import compared to your personal understanding of the data.
 
 #### Check the extent of missing data
 
@@ -281,7 +281,7 @@ This will give you the number of missing values in each variable. Missing data a
 ::: callout-tip
 ## Missingness versus zeros
 
-We occasionally see researchers substitute missing data with zeros. This is not recommended unless there is a clear justification for this choice. If in the course of an agronomic trial, one plot that had been seeded for some crop failed to produce any crop at all due to a field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if due to some error or choice made, a plot was not seeded with a crop and hence produced no crop during the field season, assigning a zero is not an accurate description of what occurred (again, assuming we are measuring a crop-related variable such as biomass). Likewise, it not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, local deer consume the entirety of a field plot (this happened in North Idaho!). In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (i.e. set the data for that plot as missing). 
+We occasionally see researchers substitute missing data with zeros. This is not recommended unless there is a clear justification for this choice. If in the course of an agronomic trial, one plot that had been seeded for some crop failed to produce any crop at all due to field conditions (e.g. drought, disease), it is reasonable to assign a zero to that plot for a variable we expected to measure such as total biomass. However, if due to some error or choice made, a plot was not seeded with a crop and hence produced no crop during the field season, assigning a zero is not an accurate description of what occurred (again, assuming we are measuring a crop-related variable such as biomass). Likewise, it is not appropriate to treat true zeros as missing. Sometimes highly unusual conditions can occur, for example, local deer consume the entirety of a field plot (this happened in North Idaho!). In these unusual instances, it is up to the researcher to decide if these conditions reflect a common reality they want incorporated into the final estimates (assign the plot as "zero" or the closest appropriate value), or exclude that observation (i.e. set the data for that plot as missing). 
 :::
 
 
@@ -300,7 +300,7 @@ Data are not expected to be normally distributed at this point, so don't bother 
 
 The purpose of these checks is to help find any data errors that ought to be fixed prior to model fitting. These checks are designed to be done quickly and should be conducted for ***every analysis*** if you have not previously inspected your data as thus. We do this before every analysis and often discover surprising things! It is best to discover these things early, since they are likely to impact the final analysis. 
 
-If do you identify issues, check your data and correct as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
+If you do identify issues, check your data and correct them as necessary. Once a data set passes these checks, we can move to next step: model fitting.  
 
 
 ### Step 4: Fit the Model  
@@ -344,10 +344,10 @@ Linear mixed models rely on independence of the observations, normality and homo
 ::: callout-note
 #### The 'iid' assumption for residuals
 
-In these model, the residual terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they are expected to be normally distributed with a mean of zero and a standard deviation of $\sigma$, or more specifically, $\sigma \mathbf{I}$, which indicates constant variance (homoescedasticity) and a covariance of zero between residuals. 
+In these model, the residual terms, $\epsilon$ are assumed to be "iid", that is, independently and identically distributed. This means they are expected to be normally distributed with a mean of zero and a standard deviation of $\sigma$, or more specifically, $\sigma \mathbf{I}$, which indicates constant variance (homoscedasticity) and a covariance of zero between residuals. 
 :::
 
-In this guide, we well be testing these assumptions by using graphical methods. This can be done in two ways:
+In this guide, we will be testing these assumptions by using graphical methods. This can be done in two ways:
 
 #### Original method
 
@@ -367,7 +367,7 @@ To check the normality of the residuals, we need to extract the residuals first 
 qqnorm(resid(model_lmer), main = NULL); qqline(resid(model_lmer))
 ```
 
-Interpreting qq-plots: if residuals falls closely along the 45-degree qq-line, it suggests normality of the residuals. It is common see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!
+Interpreting qq-plots: if residuals fall closely along the 45-degree qq-line, it suggests normality of the residuals. It is common to see mild deviations at the ends of the distribution, and since these models are robust to modest deviations from normality, that may not be a concern. However, if there is strong deviation of residual points from the qq-line, consider a different model that fits the data better. How to do this is beyond the scope of this guide, sorry!
 
 #### New Method {#new-iid-checks}
 

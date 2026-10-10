@@ -8,7 +8,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-Latin square design is a spatial adjustment technique that assumes a row-by-column layout for the experimental units. Two blocking factors are are assigned, one to the rows and one for the columns of a square.  This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that each treatment appears only once in each row and column, and the number of replications is equal to number of treatments.
+Latin square design is a spatial adjustment technique that assumes a row-by-column layout for the experimental units. Two blocking factors are assigned, one to the rows and one for the columns of a square.  This allows blocking across rows and columns to reduce the variability in those spatial units in the trial. The requirement of Latin square design is that each treatment appears only once in each row and column, and the number of replications is equal to the number of treatments.
 
 The statistical model for the Latin square design:
 
@@ -16,7 +16,7 @@ $Y_{ijk} = \mu + \alpha_i + \beta_j +  \gamma_k + \epsilon_{ijk}$
 
 where, $\mu$ is the experiment mean, $\alpha_i$ represents treatment effect, $\beta$ and $\gamma$ are the row- and column-specific effects.
 
-Like the other designs, the residuals, $\epsilon_{ijk}$, are assumed to independently and identically distributed, following a normal distriution. The model also assumes no interactions between the blocking factors (rows and columns) with the treatments.
+Like the other designs, the residuals, $\epsilon_{ijk}$, are assumed to be independently and identically distributed, following a normal distribution. The model also assumes no interactions between the blocking factors (rows and columns) with the treatments.
 
 ## Example Analysis
 
@@ -38,7 +38,7 @@ library(dplyr)
 ```
 :::
 
-The data set used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week. E = not applied).
+The data set used in this example is from the **agridat** package (data set "goulden.latin"). In this experiment, 5 treatments were tested to control stem rust in wheat (A = applied before rain; B = applied after rain; C = applied once each week; D = drifting once each week; E = not applied).
 
 ```{r, eval=FALSE, echo=FALSE}
 #save data from the package
@@ -124,7 +124,7 @@ hist(dat1$yield, main = NA, xlab = "yield")
 
 ### Model Fitting
 
-Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as a random effects.
+Here we will fit a model to evaluate the impact of fungicide treatments on wheat yield with trt as a fixed effect and row and col as random effects.
 
 ::: panel-tabset
 ### lme4
@@ -162,7 +162,7 @@ summary(m_latin_lme2)
 
 ::: {.column-margin}
 ##### Latin Square Design in nlme
-There is no easy way (that we know of) to analyze a latin square design with **nlme** specifiying both row and column as random effects. One easy workaround is to only include one spatial components as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row, 'm_latin_lme2'), while also meeting standard linear modeling assumptions.  
+There is no easy way (that we know of) to analyze a latin square design with **nlme**, specifying both row and column as random effects. One easy workaround is to only include one spatial component as random and the other as fixed. The overall estimates tend to be quite similar between models, but the variance-covariance matrices differ between models, which impacts the standard error of the estimates and any downstream comparisons made. In this case, I choose the model whose spatial component had the largest variance (row, 'm_latin_lme2'), while also meeting standard linear modeling assumptions.  
 :::
 
 

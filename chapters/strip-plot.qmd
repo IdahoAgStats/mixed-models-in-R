@@ -8,7 +8,7 @@ par(mar=c(5.1, 6, 4.1, 2.1))
 
 ## Background
 
-Also referred by "split block design", this design can be very useful for agricultural field experiments when there are two treatments that need to be applied at a larger scale than the experimental units. It is a row-column design where treatments are applied in *strips* within each block. Below is an example layout of this design.
+Also referred to as "split block design", this design can be very useful for agricultural field experiments when there are two treatments that need to be applied at a larger scale than the experimental units. It is a row-column design where treatments are applied in *strips* within each block. Below is an example layout of this design.
 
 ```{r}
 #| echo: false
@@ -49,7 +49,7 @@ $$y_{ijk} = \mu + \tau_i + \alpha_j + (\tau\alpha)_{ij} + \beta_k + (\tau\beta)_
 
 Where:
 
-$\mu$= overall experimental mean, $\tau$ is the block effect, and $(\tau\alpha)_{ij}$, $(\tau\beta)_{ik}$, and $\epsilon_{ijk}$ are the errors used to test factor A, B, and their interaction AB, respectively. $\alpha$ and $\beta$ are the main effects applied A and B, and $\alpha_j\beta_k$ represents the interaction between main factors.
+$\mu$= overall experimental mean, $\tau$ is the block effect, and $(\tau\alpha)_{ij}$, $(\tau\beta)_{ik}$, and $\epsilon_{ijk}$ are the errors used to test factor A, B, and their interaction AB, respectively. $\alpha$ and $\beta$ are the main effects for factors A and B, and $\alpha_j\beta_k$ represents the interaction between the main factors.
 
 $$ \epsilon_{ijk} \sim N(0, \sigma^2)$$\
 
@@ -110,7 +110,7 @@ desplot(rice, gen ~ col*row,
 
 -   Check structure of the data
 
-The 'rep', 'nitro', and 'gen' variables in the data needs to be a factor/character variables and 'yield' should be numeric.
+The 'rep', 'nitro', and 'gen' variables in the data need to be factor/character and 'yield' should be numeric.
 
 ```{r}
 str(rice)
@@ -124,13 +124,13 @@ rice$nitro <- as.factor(rice$nitro)
 
 -   Inspect the independent variables
 
-Let's running a a cross tabulation of independent variables to look at the balance of treatment factors.
+Let's run a cross tabulation of the independent variables to look at the balance of the treatment factors.
 
 ```{r}
 table(rice$gen, rice$nitro)
 ```
 
-It looks balanced with 3 number of observations for each variety and nitrogen level.
+It looks balanced with 3 observations for each variety and nitrogen level.
 
 -   Check the extent of missing data
 
@@ -261,7 +261,7 @@ lme_aov
 
 Analysis of variance showed a significant interaction impact of gen and nitro on rice grain yield.
 
-Next, We can estimate marginal means for nitro and gen interaction effects using the **emmeans** package.
+Next, we can estimate marginal means for the nitro and gen interaction effects using the **emmeans** package.
 
 ::: panel-tabset
 ### lme4

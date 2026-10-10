@@ -8,7 +8,7 @@ source(here::here("settings.r"))
 
 ## Background
 
-Split plot designs are needed when we cannot randomly assign one treatment's levels to the experimental units individually. Instead, one treatment is applied using randomization to a group of experimental units called "whole plots" or "main plots".The experimental units are also called "split-plots" or "sub plots" and are nested within *whole plots* using randomization. The whole plots can be furthered nested into blocks, which they are in this guide in order to constitute a mixed model. This arrangement of split plots within whole plots affects the level of replication for the treatments, the degrees of freedom and the error terms used for evaluating the effects of each treatment through ANOVA. 
+Split plot designs are needed when we cannot randomly assign one treatment's levels to the experimental units individually. Instead, one treatment is applied using randomization to a group of experimental units called "whole plots" or "main plots". The experimental units are also called "split-plots" or "sub plots" and are nested within *whole plots* using randomization. The whole plots can be further nested into blocks, which they are in this guide in order to constitute a mixed model. This arrangement of split plots within whole plots affects the level of replication for the treatments, the degrees of freedom and the error terms used for evaluating the effects of each treatment through ANOVA. 
 
 ```{r, echo=FALSE, eval=FALSE}
 library(FielDHub)
@@ -123,7 +123,7 @@ $$\ \delta  \sim N(0, \sigma_{sp})$$
 
 ## Analysis Example
 
-Let's start analysis by first loading required libraries.
+Let's start the analysis by first loading the required libraries.
 
 ::: panel-tabset
 ### lme4
@@ -157,7 +157,7 @@ The oats data used in this example is from the **MASS** package. The design is a
 
 The objective of this analysis is to study the impact of different varieties and nitrogen application rates on oat yields.
 
-To fully examine the response of oat yield with different varieties and nutrient levels in a split plots, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (split plot), their interaction.
+To fully examine the response of oat yield with different varieties and nutrient levels in a split plot, we will need to statistically analyse and compare the effects of varieties (main plot), nutrient levels (split plot), their interaction.
 
 Let's start this example analysis by first loading the 'oat' data from the **MASS** package.
 
@@ -170,7 +170,7 @@ head(oats,5)
 
 -   Check structure of the data
 
-We will first examine the structure of the data. The "B", "V", and "N" needs to be a factor and "Y" should be numeric.
+We will first examine the structure of the data. The "B", "V", and "N" need to be factors and "Y" should be numeric.
 
 ```{r}
 str(oats)
@@ -257,7 +257,7 @@ check_model(oats_lme,  check = c('qq', 'linearity'), detrend = FALSE, alpha = 0)
 ```
 :::
 
-Residuals from the model follows normal distribution and no evidence of homoscedasticity.
+Residuals from the model follow a normal distribution, and there is no evidence of heteroscedasticity.
 
 #### Inference
 
