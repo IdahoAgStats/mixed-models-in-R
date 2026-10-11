@@ -464,9 +464,9 @@ window.Quarto = {
 <pre><code># A tibble: 12 × 7
    effect term                estimate std.error    df statistic  p.value
    &lt;chr&gt;  &lt;chr&gt;                  &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
- 1 fixed  (Intercept)           80          9.11    45    8.78   2.56e-11
+ 1 fixed  (Intercept)           80.0        9.11    45    8.78   2.56e-11
  2 fixed  VMarvellous            6.67       9.72    10    0.686  5.08e- 1
- 3 fixed  VVictory              -8.5        9.72    10   -0.875  4.02e- 1
+ 3 fixed  VVictory              -8.50       9.72    10   -0.875  4.02e- 1
  4 fixed  N0.2cwt               18.5        7.68    45    2.41   2.02e- 2
  5 fixed  N0.4cwt               34.7        7.68    45    4.51   4.58e- 5
  6 fixed  N0.6cwt               44.8        7.68    45    5.84   5.48e- 7
@@ -670,7 +670,18 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 </div>
 </div>
 <p>The more levels in a variable, the more comparisons that are conducted, reducing statistical power due to the p-value adjustment used to limit type I error.</p>
-<p>:::{.callout-note collapse=“false”}} ## P-value adjustment for interactions</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>P-value adjustment for interactions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
 <p><code>pairs()</code> conducts all pairwise tests for the specified variable(s). The default p-value adjustment in the <code>pairs()</code> function is “tukey”; other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. If you are conducting this on a variable with many levels (e.g.&nbsp;more than five), this adjustment can be severe, resulting in very few statistically significant results. To avoid this, use a less conservative adjustment (e.g.&nbsp;‘sidak’) or choose options that conduct fewer tests (e.g.&nbsp;compare to a control, tailored custom contrasts).</p>
 <p>Recall that <code>V*N</code> and <code>V|N</code> produce identical estimates, but differ in how they handle post hoc contrasts. How does this look in practice?</p>
 <div class="cell">
@@ -767,7 +778,10 @@ Degrees-of-freedom method: containment
 P value adjustment: tukey method for comparing a family of 4 estimates </code></pre>
 </div>
 </div>
-<p>The first example <code>N*V</code> conducted more comparisons than <code>V|N</code>, spanning all possible combinations of N and V factor levels. <code>N|V</code> conducted all pairwise comparison between levels of N <em>for each level of V</em>. The result is fewer tests, a less severe p-value adjustment for multiple testing, and a higher proportion of informative contrasts. Only two varieties were included to reduce the output; however, the more factor levels present, the greater this problem becomes if all pairwise tests across all possible factor combinations are done. :::</p>
+<p>The first example <code>N*V</code> conducted more comparisons than <code>V|N</code>, spanning all possible combinations of N and V factor levels. <code>N|V</code> conducted all pairwise comparison between levels of N <em>for each level of V</em>. The result is fewer tests, a less severe p-value adjustment for multiple testing, and a higher proportion of informative contrasts. Only two varieties were included to reduce the output; however, the more factor levels present, the greater this problem becomes if all pairwise tests across all possible factor combinations are done.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="pairwise-consecutive" class="level3" data-number="13.4.2">
 <h3 data-number="13.4.2" class="anchored" data-anchor-id="pairwise-consecutive"><span class="header-section-number">13.4.2</span> Pairwise Consecutive</h3>
@@ -777,8 +791,8 @@ P value adjustment: tukey method for comparing a family of 4 estimates </code></
 <div class="cell-output cell-output-stdout">
 <pre><code> contrast        estimate   SE df t.ratio p.value
  0.2cwt - 0.0cwt    19.50 4.44 45   4.396  0.0002
- 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0033
- 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1148
+ 0.4cwt - 0.2cwt    15.33 4.44 45   3.457  0.0035
+ 0.6cwt - 0.4cwt     9.17 4.44 45   2.067  0.1153
 
 Results are averaged over the levels of: V 
 Degrees-of-freedom method: containment 
@@ -922,9 +936,9 @@ Confidence level used: 0.95
 $contrasts
 V = Golden.rain:
  contrast        estimate   SE df t.ratio p.value
- 0.2cwt - 0.0cwt     18.5 7.68 45   2.408  0.0545
+ 0.2cwt - 0.0cwt     18.5 7.68 45   2.408  0.0536
  0.4cwt - 0.2cwt     16.2 7.68 45   2.104  0.1064
- 0.6cwt - 0.4cwt     10.2 7.68 45   1.323  0.4263
+ 0.6cwt - 0.4cwt     10.2 7.68 45   1.323  0.4261
 
 Degrees-of-freedom method: containment 
 P value adjustment: mvt method for 3 tests </code></pre>
@@ -966,7 +980,7 @@ P value adjustment: tukey method for comparing a family of 3 estimates </code></
 <section id="compact-letter-display" class="level3" data-number="13.4.6">
 <h3 data-number="13.4.6" class="anchored" data-anchor-id="compact-letter-display"><span class="header-section-number">13.4.6</span> Compact letter display</h3>
 <p>Compact letter display (CLD) is a widely used tool by researchers to show multiple comparisons among treatment means. However, the implementation of CLDs can be problematic depending on the analysis aim and experiment design. This is discussed in detail in the <a href="../chapters/analysis-tips.html#sec-cld_warning"><strong>Analysis Tips Chapter</strong></a>. In particular, using CLD to compare a large number of levels (e.g.&nbsp;10 or more) often leads to misinterpretation of the results, where people assume items not significantly different from each other are equivalent. It is a good practice in any statistical analysis to carefully consider the research goals before implementing compact letter display.</p>
-<p>The R package ‘multcompView’ <span class="citation" data-cites="multcompView">(<a href="../references.html#ref-multcompView" role="doc-biblioref">2019</a>)</span> can be used to generate a display where any two means associated with same symbol are not statistically different using the function <code>cld()</code>.</p>
+<p>The R package ‘multcompView’ <span class="citation" data-cites="multcompView">(<a href="../references.html#ref-multcompView" role="doc-biblioref">2026</a>)</span> can be used to generate a display where any two means associated with same symbol are not statistically different using the function <code>cld()</code>.</p>
 <p>Below are examples of CLD for objects m1 (examining variety), emm2 (examining nitrogen), and emm3 (examining variety within each nitrogen group). In the output below, groups sharing a same letter in the <span class="math inline">\(.group\)</span> are not statistically different from each other.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(emm1, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">Letters =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1213,7 +1227,7 @@ Estimates sharing the same symbol are significantly different </code></pre>
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-multcompView" class="csl-entry" role="listitem">
-Graves, Piepho Hans-Pieter, Spencer, and Sundar Dorai-Raj. 2019. <em>multcompView: Visualizations of Paired Comparisons</em>. <a href="https://CRAN.R-project.org/package=multcompView">https://CRAN.R-project.org/package=multcompView</a>.
+Graves, Spencer, Hans-Peter Piepho, and Luciano Selzer. 2026. <em>multcompView: Visualizations of Paired Comparisons</em>. <a href="https://doi.org/10.32614/CRAN.package.multcompView">https://doi.org/10.32614/CRAN.package.multcompView</a>.
 </div>
 </div>
 </section>
@@ -1636,7 +1650,7 @@ Graves, Piepho Hans-Pieter, Spencer, and Sundar Dorai-Raj. 2019. <em>multcompVie
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© {year}</p>
+<p>© 2026 University of Idaho</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://www.uidaho.edu"><img src="https://github.com/IdahoAgStats/r-for-ag-scientists/raw/main/images/UI_Main_horizontal_4c.png" class="img-fluid" style="width:50.0%" alt="Uidaho Logo"></a></p>

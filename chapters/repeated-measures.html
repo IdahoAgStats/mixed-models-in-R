@@ -435,7 +435,7 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"lme4/lme4"</span>, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout-information">
-<p>The package <a href="https://CRAN.R-project.org/package=glmmTMB" class="external" target="_blank">glmmTMB</a> (generalized linear mixed model using the template model builder) will also implement <a href="https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html" class="external" target="_blank">many covariance structures</a> and despite its name, can work fine with general linear models (Gaussian) and does not require a mixed component. The implemented structures include compound symmetry, AR1, toeplitz, unstructured and several spatial covariance structures. Truly, this package is incredible.</p>
+<p>The package <a href="https://CRAN.R-project.org/package=glmmTMB" class="external" target="_blank">glmmTMB</a> (generalized linear mixed model using the template model builder) will also implement <a href="https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html" class="external" target="_blank">many covariance structures</a> and despite its name, can work fine with general linear models (Gaussian) and does not require a mixed component. The implemented structures include compound symmetry, AR1, toeplitz, unstructured and several spatial covariance structures <span class="citation" data-cites="glmmtmb1">(<a href="../references.html#ref-glmmtmb1" role="doc-biblioref">McGillycuddy et al. 2025</a>)</span>. Truly, this package is incredible.</p>
 </div>
 <p>In this chapter, we will analyze data from different experiment designs with repeated measures including randomized complete block design, split-plot, and split-split plot designs.</p>
 <p>There are several types of covariance structures:</p>
@@ -773,11 +773,11 @@ variety4:factweek4 variety2:factweek5 variety3:factweek5 variety4:factweek5
 Random effects:
  Formula: ~1 | block
         (Intercept)
-StdDev:   0.6258308
+StdDev:   0.6258307
 
  Formula: ~1 | plot %in% block
          (Intercept) Residual
-StdDev: 6.827492e-06 0.180349
+StdDev: 6.827483e-06 0.180349
 
 Correlation Structure: AR(1)
  Formula: ~week | block/plot 
@@ -835,7 +835,7 @@ Random-effects (co)variances:
 Conditional model:
  Groups   Name        Std.Dev. Corr      
  plot     factweek1   0.15997  0.77 (ar1)
- block    (Intercept) 0.56029            
+ block    (Intercept) 0.56028            
  Residual             0.02258            
 
 Number of obs: 100 / Conditional model: plot, 20; block, 5
@@ -915,7 +915,7 @@ variety4:factweek4  variety2:factweek5  variety3:factweek5  variety4:factweek5
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(sorg_1b, <span class="at">type =</span> <span class="st">"marginal"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 numDF denDF   F-value p-value
-(Intercept)          1    64 212.10502  &lt;.0001
+(Intercept)          1    64 212.10509  &lt;.0001
 variety              3    12  28.28895  &lt;.0001
 factweek             4    64  74.79758  &lt;.0001
 variety:factweek    12    64   7.03546  &lt;.0001</code></pre>
@@ -1918,6 +1918,9 @@ Confidence level used: 0.95 </code></pre>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-glmmtmb1" class="csl-entry" role="listitem">
+McGillycuddy, Maeve, David I. Warton, Gordana Popovic, and Benjamin M. Bolker. 2025. <span>“Parsimoniously Fitting Large Multivariate Random Effects in <span class="nocase">glmmTMB</span>.”</span> <em>Journal of Statistical Software</em> 112 (1): 1–19. <a href="https://doi.org/10.18637/jss.v112.i01">https://doi.org/10.18637/jss.v112.i01</a>.
+</div>
 <div id="ref-milk2009" class="csl-entry" role="listitem">
 Milliken, George A., and Dallas E. Johnson. 2009. <em>Analysis of Messy Data Volume 1: Designed Experiments</em>. 2nd Edition. Chapman; Hall/CRC. https://doi.org/<a href="https://doi.org/10.1201/EBK1584883340">https://doi.org/10.1201/EBK1584883340</a>.
 </div>
@@ -2342,7 +2345,7 @@ Milliken, George A., and Dallas E. Johnson. 2009. <em>Analysis of Messy Data Vol
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© {year}</p>
+<p>© 2026 University of Idaho</p>
 </div>   
     <div class="nav-footer-center">
 <p><a href="https://www.uidaho.edu"><img src="https://github.com/IdahoAgStats/r-for-ag-scientists/raw/main/images/UI_Main_horizontal_4c.png" class="img-fluid" style="width:50.0%" alt="Uidaho Logo"></a></p>
