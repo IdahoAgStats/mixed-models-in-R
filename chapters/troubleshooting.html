@@ -318,7 +318,7 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
   <ul>
   <li><a href="#common-errors-we-encounter" id="toc-common-errors-we-encounter" class="nav-link active" data-scroll-target="#common-errors-we-encounter"><span class="header-section-number">15.1</span> Common errors we encounter</a>
   <ul class="collapse">
-  <li><a href="#other-tools" id="toc-other-tools" class="nav-link" data-scroll-target="#other-tools"><span class="header-section-number">15.1.1</span> Other Tools</a></li>
+  <li><a href="#other-resources" id="toc-other-resources" class="nav-link" data-scroll-target="#other-resources"><span class="header-section-number">15.1.1</span> Other Resources</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/blob/main/chapters/troubleshooting.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/IdahoAgStats/mixed-models-in-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -365,8 +365,11 @@ gtag('config', 'G-ZZST40VXE1', { 'anonymize_ip': true});
 <p>This error from ‘nlme’ indicates a rank-deficient model that cannot be estimated as it is currently specified.</p>
 <pre><code>fixed-effect model matrix is rank deficient so dropping 1 column / coefficient
 boundary (singular) fit: see help('isSingular')</code></pre>
-<p>If you are getting a rank deficiency warning in <code>lmer()</code> (from the ’lme4*’ package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.</p>
-<p>Here are the methods to diagnose and fix it: - check the rank of model matrix using <code>model.matrix()</code> function. If the rank is less than the number of columns, the model matrix is deficient.</p>
+<p>If you are getting a rank deficiency warning in <code>lmer()</code> (from the ‘lme4’ package), it means your fixed-effect model matrix contains redundant or collinear predictors, preventing the model from estimating unique coefficients.</p>
+<p>Here are the methods to diagnose and fix it:</p>
+<ul>
+<li>check the rank of model matrix using <code>model.matrix()</code> function. If the rank is less than the number of columns, the model matrix is deficient.</li>
+</ul>
 <ol start="3" type="1">
 <li><strong>Model failed to converge</strong>.</li>
 </ol>
@@ -398,8 +401,8 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 <ul>
 <li>Last, we can simplify the model by removing random effects that do not appear to be detectable for a given model and data set.</li>
 </ul>
-<section id="other-tools" class="level3" data-number="15.1.1">
-<h3 data-number="15.1.1" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">15.1.1</span> Other Tools</h3>
+<section id="other-resources" class="level3" data-number="15.1.1">
+<h3 data-number="15.1.1" class="anchored" data-anchor-id="other-resources"><span class="header-section-number">15.1.1</span> Other Resources</h3>
 <p>Troubleshooting LMM model failures is difficult. One thing that helps is to browse through your data and ensure it looks like what you expect, and that your expectations of the variables align with their representation in R.</p>
 <p>Having an understanding of the moving parts of ‘lme4’ and how they each contribute to model fit can help. Helpful ‘lme4’ control structures for model fitting can be accessed via <code>?lmerControl</code>.</p>
 <ul>
