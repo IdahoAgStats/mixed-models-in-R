@@ -10,7 +10,7 @@ To demonstrate the use of the 'emmeans' package, we will use the model from the 
 
 
 ::: callout-note
-#### Marginal means using lmer and nlme
+## Marginal means using lmer and nlme
 
 For demonstration of the `emmeans` package, we are fitting model with `nlme` package. Please note that code below calculating marginal means works for both `lmer()` and `nlme()` models.
 :::
@@ -91,7 +91,7 @@ emm4 <- emmeans(m1, ~V*N)
 emm4
 ```
 
-:::{.callout-note collapse=false}
+::: {.callout-note collapse=false}
 ## Specifying interactions
 
 Here, note that estimated marginal means can be provided in two ways: 
@@ -118,7 +118,7 @@ pairs(emm3)
 
 The more levels in a variable, the more comparisons that are conducted, reducing statistical power due to the p-value adjustment used to limit type I error.
 
-:::{.callout-note collapse="false"}}
+::: {.callout-note collapse="false"}
 ## P-value adjustment for interactions
 
 `pairs()` conducts all pairwise tests for the specified variable(s). The default p-value adjustment in the `pairs()` function is "tukey"; other options include “holm”, “hochberg”, “BH”, “BY”, and “none”. If you are conducting this on a variable with many levels (e.g. more than five), this adjustment can be severe, resulting in very few statistically significant results. To avoid this, use a less conservative adjustment (e.g. 'sidak') or choose options that conduct fewer tests (e.g. compare to a control, tailored custom contrasts). 
