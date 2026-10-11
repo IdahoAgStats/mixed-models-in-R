@@ -1,0 +1,1 @@
+writeLines(paste0("year: ", format(Sys.Date(), "%Y")), "_year.yml")
