@@ -93,9 +93,9 @@ The first two examples are asking for specific inference on the estimated effect
 
 For the example study, the goal is to estimate the impact of termination date and cover cropping on several soil variables indicative of soil health. There is a particular interest in estimates for the interaction of termination date and cover cropping. 
 
-## Step 2: Identify the Data Generating Process
+## Step 2: Identify the Data Generating Process -- Model Specification
 
-A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be an unexpectedly challenging step, hence this section on design. The designs described in this guide are all "cookie cutter", and the tutorial overall assumes that you have already correctly defined the sources of variation and can plug your data straight into a model. However, many statistical consultants have observed that often researchers need help in formally defining the data-generating process. Misunderstanding the design can lead to errors in statistical analysis and the conclusions drawn from the results of the analysis. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
+A linear model requires a linear predictor, that is, a statistical model specifying what will be estimated, the levels of replication and error terms estimated in the model-fitting process. Moving from a data set to the experimental design and model can be an unexpectedly challenging step, hence this section on design. The designs described in this guide (aside from this example) are all "cookie cutter", and the tutorial overall assumes that you have already correctly defined the sources of variation and can plug your data straight into a model. However, many statistical consultants have observed that often researchers need help in formally defining the data-generating process. Misunderstanding the design can lead to errors in statistical analysis and the conclusions drawn from the results of the analysis. So, let's talk about how to properly identify and specify the data-generating processes from your study -- that is, let's discuss how to translate your study into a linear model. 
 
 Below are steps adapted from chapter 2 of *Generalized Linear Mixed Models* [@stroup2013; @stroup2024].
 
@@ -145,19 +145,18 @@ In this example, the experiment unit and observational unit are the same: a fiel
 #| warning: false
 #| include: false
 
-
 library(lme4); library(lmerTest)
 
-m0 <- lm(yvar ~ cover_crop*termination + location/termination + block/cover_crop,
-           data = dataf)
-
-anova(m0)
+# m0 <- lm(yvar ~ cover_crop*termination + location/termination + block/cover_crop,
+#            data = dataf)
+# 
+# anova(m0)
 
 m1 <- lmer(yvar ~ cover_crop*termination + 
              (1|location/termination) + # nesting structure
-            #(1|block/cover_crop) + # nesting structure, not needed after redefining block
             # (1|block:termination) + # effects already accounted for with block and termination
-             (1|block/cover_crop), # row and column effects
+             (1|block/cover_crop), # row and column effects 
+           # (1|location/sublock/(cover_crop:termination)) residual
            data = dataf)
 
 anova(m1, ddf = "Kenward-Roger")
@@ -308,7 +307,7 @@ If you do identify issues, check your data and correct them as necessary. Once a
 
 #### Notes on formula syntax and expectations
 
-In this guide, we use 'lme4' and 'nlme' packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is 'y_var'; 'termination_date', 'cover_cropping' and their interactions are fixed effects. The random effects are location, location-by-termination date,  block (across locations, totaling 12), and the block-by-cover crop interaction.  
+In this guide, we use 'lme4' and 'nlme' packages to fit linear mixed models. These packages have overlapping functionality and follow a similar framework and syntax. The general framework for `lmer()` and `lme()` models is to specify the response variable, fixed factors, and random factors and follow the [R generic function](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/formula.html){.external target="_blank"}  for `formula()`. For this demonstration, let's assume the dependent variable is 'yvar'; 'termination_date', 'cover_cropping' and their interactions are fixed effects. The random effects are location, location-by-termination date,  block (across locations, totaling 12), and the block-by-cover crop interaction.  
 
 #### Example 
 
